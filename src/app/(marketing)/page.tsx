@@ -8,11 +8,11 @@ import { FeedCard } from '@/components/home/FeedCard'
 import NewPostButton from '@/components/home/NewPostButton'
 import { feedPosts } from '@/data/feed'
 
+
 export const metadata: Metadata = {
   title: SITE_NAME,
   description: SITE_DESCRIPTION,
 }
-
 
 export default function Home() {
   return (
