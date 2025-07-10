@@ -9,6 +9,9 @@ export interface FeedPost {
   tags: string[]
   comments: number
   likes: number
+  /** Optional visual layout variation */
+  layout?: 'default' | 'reverse' | 'compact'
+
 }
 
 export const feedPosts: FeedPost[] = [
@@ -22,6 +25,8 @@ export const feedPosts: FeedPost[] = [
     tags: ['plugin', 'tesztelés'],
     comments: 5,
     likes: 20,
+    layout: 'reverse',
+
   },
   {
     id: 2,
@@ -33,6 +38,8 @@ export const feedPosts: FeedPost[] = [
     tags: ['frissítés', 'dark mode'],
     comments: 3,
     likes: 12,
+    layout: 'compact',
+
   },
   {
     id: 3,
@@ -44,6 +51,8 @@ export const feedPosts: FeedPost[] = [
     tags: ['kérdés', 'plugins'],
     comments: 17,
     likes: 9,
+    layout: 'default',
+
   },
   {
     id: 4,
@@ -55,6 +64,8 @@ export const feedPosts: FeedPost[] = [
     tags: ['szavazás', 'fejlesztés'],
     comments: 8,
     likes: 13,
+    layout: 'default',
+
   },
   {
     id: 5,
@@ -66,6 +77,8 @@ export const feedPosts: FeedPost[] = [
     tags: ['verseny', 'hír'],
     comments: 2,
     likes: 10,
+    layout: 'default',
+
   },
   {
     id: 6,
@@ -77,5 +90,34 @@ export const feedPosts: FeedPost[] = [
     tags: ['közösség', 'update'],
     comments: 1,
     likes: 5,
+
+    layout: 'reverse',
+  },
+  {
+    id: 7,
+    type: 'news',
+    author: 'Yume Hírek',
+    title: 'Új partnerség a Cloudflare-rel',
+    description:
+      'Örömmel jelentjük be, hogy a Yume hivatalos Cloudflare partnerré vált.',
+    date: new Date(Date.now() - 14 * 3600_000).toISOString(),
+    tags: ['partner', 'hír'],
+    comments: 4,
+    likes: 22,
+    layout: 'compact',
+  },
+  {
+    id: 8,
+    type: 'idea',
+    author: 'Csilla',
+    title: 'Pluginverseny ötlet: AI asszisztens',
+    description:
+      'Mit szólnátok egy olyan pluginhoz, ami AI segítségével ír kódot?',
+    date: new Date(Date.now() - 16 * 3600_000).toISOString(),
+    tags: ['plugin', 'ai'],
+    comments: 6,
+    likes: 18,
+    layout: 'default',
+
   },
 ]

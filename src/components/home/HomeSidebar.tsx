@@ -7,7 +7,11 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarRail
+  SidebarRail,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarSeparator
+
 } from '@/components/ui/sidebar'
 
 const navItems = [
@@ -21,18 +25,39 @@ export default function HomeSidebar() {
   return (
     <Sidebar collapsible="icon" variant="inset" className="border-r" >
       <SidebarContent>
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.label}>
-              <SidebarMenuButton asChild>
-                <Link href={item.href} className="flex items-center gap-2">
-                  <item.icon className="size-4" />
-                  <span>{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Navigáció</SidebarGroupLabel>
+          <SidebarMenu>
+            {navItems.slice(0, 1).map((item) => (
+              <SidebarMenuItem key={item.label}>
+                <SidebarMenuButton asChild>
+                  <Link href={item.href} className="flex items-center gap-2">
+                    <item.icon className="size-4" />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+        <SidebarSeparator />
+        <SidebarGroup>
+          <SidebarGroupLabel>Fiókom</SidebarGroupLabel>
+          <SidebarMenu>
+            {navItems.slice(1).map((item) => (
+              <SidebarMenuItem key={item.label}>
+                <SidebarMenuButton asChild>
+                  <Link href={item.href} className="flex items-center gap-2">
+                    <item.icon className="size-4" />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
