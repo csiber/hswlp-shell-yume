@@ -9,11 +9,18 @@ interface Props {
   avatar?: string
   title: string
   description: string
+
+  date: string
   tags?: string[]
 }
 
-export function FeedCard({ author, avatar, title, description, tags = [] }: Props) {
+import { formatDistanceToNow } from 'date-fns'
+import { hu } from 'date-fns/locale'
+
+export function FeedCard({ author, avatar, title, description, date, tags = [] }: Props) {
   const initials = author.slice(0,2).toUpperCase()
+  const timeAgo = formatDistanceToNow(new Date(date), { addSuffix: true, locale: hu })
+
   return (
     <Card className="hover:shadow-lg transition-shadow">
       <CardHeader className="flex flex-row items-center gap-3">
@@ -23,7 +30,9 @@ export function FeedCard({ author, avatar, title, description, tags = [] }: Prop
         </Avatar>
         <div>
           <CardTitle className="text-base leading-none">{title}</CardTitle>
-          <p className="text-xs text-muted-foreground">{author}</p>
+
+          <p className="text-xs text-muted-foreground">{author} · {timeAgo}</p>
+
         </div>
       </CardHeader>
       <CardContent className="text-sm text-muted-foreground">
