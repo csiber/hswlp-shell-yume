@@ -11,6 +11,7 @@ export interface FeedPost {
   likes: number
   /** Optional visual layout variation */
   layout?: 'default' | 'reverse' | 'compact'
+
 }
 
 export const feedPosts: FeedPost[] = [
@@ -25,6 +26,7 @@ export const feedPosts: FeedPost[] = [
     comments: 5,
     likes: 20,
     layout: 'reverse',
+
   },
   {
     id: 2,
@@ -37,6 +39,7 @@ export const feedPosts: FeedPost[] = [
     comments: 3,
     likes: 12,
     layout: 'compact',
+
   },
   {
     id: 3,
@@ -49,6 +52,7 @@ export const feedPosts: FeedPost[] = [
     comments: 17,
     likes: 9,
     layout: 'default',
+
   },
   {
     id: 4,
@@ -61,6 +65,7 @@ export const feedPosts: FeedPost[] = [
     comments: 8,
     likes: 13,
     layout: 'default',
+
   },
   {
     id: 5,
@@ -73,6 +78,7 @@ export const feedPosts: FeedPost[] = [
     comments: 2,
     likes: 10,
     layout: 'default',
+
   },
   {
     id: 6,
@@ -84,6 +90,7 @@ export const feedPosts: FeedPost[] = [
     tags: ['közösség', 'update'],
     comments: 1,
     likes: 5,
+
     layout: 'reverse',
   },
   {
@@ -111,5 +118,6 @@ export const feedPosts: FeedPost[] = [
     comments: 6,
     likes: 18,
     layout: 'default',
+
   },
 ]

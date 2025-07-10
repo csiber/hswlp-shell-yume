@@ -3,6 +3,7 @@ import * as React from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
+
 function SidebarSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <Card className="animate-in fade-in slide-in-from-right-1">
@@ -51,6 +52,7 @@ export default function RightSidebar() {
               key={t}
               className="text-xs rounded-md bg-muted px-2 py-0.5 hover:bg-muted/70 hover:scale-105 transition-all"
             >
+
               #{t}
             </span>
           ))}
@@ -73,6 +75,7 @@ export default function RightSidebar() {
         <p className="hover:underline cursor-pointer">#dark-mode</p>
         <p className="hover:underline cursor-pointer">#pluginverseny</p>
         <p className="hover:underline cursor-pointer">#yume</p>
+
       </SidebarSection>
     </div>
   )

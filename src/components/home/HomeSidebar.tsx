@@ -11,6 +11,7 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarSeparator
+
 } from '@/components/ui/sidebar'
 
 const navItems = [
@@ -24,6 +25,7 @@ export default function HomeSidebar() {
   return (
     <Sidebar collapsible="icon" variant="inset" className="border-r" >
       <SidebarContent>
+
         <SidebarGroup>
           <SidebarGroupLabel>Navigáció</SidebarGroupLabel>
           <SidebarMenu>
@@ -55,6 +57,7 @@ export default function HomeSidebar() {
             ))}
           </SidebarMenu>
         </SidebarGroup>
+
       </SidebarContent>
       <SidebarRail />
     </Sidebar>

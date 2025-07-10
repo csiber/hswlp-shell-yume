@@ -8,6 +8,7 @@ import { FeedCard } from '@/components/home/FeedCard'
 import NewPostButton from '@/components/home/NewPostButton'
 import { feedPosts } from '@/data/feed'
 
+
 export const metadata: Metadata = {
   title: SITE_NAME,
   description: SITE_DESCRIPTION,
@@ -21,6 +22,7 @@ export default function Home() {
       <SidebarInset>
         <HomeNavbar />
         <div className="container mx-auto flex gap-6 p-4 pt-16">
+
           <div className="flex-1 max-w-[640px] space-y-4">
             {feedPosts.map((post) => (
               <FeedCard key={post.id} {...post} />
