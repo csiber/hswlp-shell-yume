@@ -47,7 +47,7 @@ export default function RightSidebar() {
       </SidebarSection>
       <SidebarSection title="Felfedezés">
         <div className="grid grid-cols-2 gap-2">
-          {tags.map((t, i) => (
+          {tags.map((t) => (
             <span
               key={t}
               className="text-xs rounded-md bg-muted px-2 py-0.5 hover:bg-muted/70 hover:scale-105 transition-all"
