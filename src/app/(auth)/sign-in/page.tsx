@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 const SignInPage = async ({
   searchParams,
 }: {
-  searchParams?: { redirect?: string };
+  searchParams: Promise<{ redirect?: string }>;
 }) => {
-  const redirectParam = searchParams?.redirect;
+  const { redirect: redirectParam } = await searchParams;
   const session = await getSessionFromCookie();
   const redirectPath = redirectParam ?? REDIRECT_AFTER_SIGN_IN;
 
