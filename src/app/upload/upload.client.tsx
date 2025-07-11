@@ -9,7 +9,6 @@ import ShinyButton from '@/components/ui/shiny-button'
 import { Spinner } from '@/components/ui/spinner'
 import { UploadCloud } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-
 import { toast } from 'sonner'
 
 export default function UploadClient() {
@@ -33,7 +32,6 @@ export default function UploadClient() {
     formData.append('file', file)
     setLoading(true)
     setMessage(null)
-
     try {
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -47,13 +45,11 @@ export default function UploadClient() {
       } else {
         toast.error(data.error || 'Hiba történt')
         setMessage({ type: 'error', text: data.error || 'Hiba történt' })
-
       }
     } catch (err) {
       console.error(err)
       toast.error('Hiba történt')
       setMessage({ type: 'error', text: 'Hiba történt' })
-
     } finally {
       setLoading(false)
     }
@@ -122,6 +118,5 @@ export default function UploadClient() {
         </CardContent>
       </Card>
     </div>
-
   )
 }
