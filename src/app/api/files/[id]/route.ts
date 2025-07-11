@@ -28,9 +28,11 @@ export async function GET(req: NextRequest) {
     return new Response("File not found", { status: 404 })
   }
 
-  return new Response(object.body, {
-    headers: {
-      "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
-    },
-  })
+return new Response(object.body, {
+  headers: {
+    "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
+    "Content-Disposition": "inline",
+  },
+})
+
 }
