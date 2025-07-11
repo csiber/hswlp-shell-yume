@@ -1,18 +1,34 @@
 import { PageHeader } from "@/components/page-header"
 
+import { getCloudflareContext } from "@opennextjs/cloudflare"
+import { getSessionFromCookie } from "@/utils/auth"
 import type { DashboardItem } from "@/components/dashboard/RecentUploadsBox"
-import { RecentUploadsBox } from "@/components/dashboard/RecentUploadsBox"
+import type { UploadItem } from "@/components/dashboard/MyUploadsBox"
+import { MyUploadsBox } from "@/components/dashboard/MyUploadsBox"
 import { TrendingBox } from "@/components/dashboard/TrendingBox"
 import { FavoritesBox } from "@/components/dashboard/FavoritesBox"
 import { CommunityFeedBox } from "@/components/dashboard/CommunityFeedBox"
 
 
-export default function Page() {
-  const recentUploads: DashboardItem[] = [
-    { id: "1", type: "image", title: "Kép #1" },
-    { id: "2", type: "music", title: "Zene #2" },
-    { id: "3", type: "prompt", title: "Prompt #3" },
-  ]
+export default async function Page() {
+  const session = await getSessionFromCookie()
+  const uploads: UploadItem[] = []
+
+  if (session?.user?.id) {
+    const { env } = getCloudflareContext()
+    const result = await env.DB.prepare(
+      'SELECT id, title, type, url FROM uploads WHERE user_id = ? ORDER BY created_at DESC'
+    ).bind(session.user.id).all<Record<string, string>>()
+
+    for (const row of result.results || []) {
+      uploads.push({
+        id: row.id,
+        title: row.title,
+        type: row.type as UploadItem['type'],
+        url: row.url,
+      })
+    }
+  }
 
   const trendingItems: DashboardItem[] = [
     { id: "1", type: "image", title: "Trend #1" },
@@ -44,7 +60,7 @@ export default function Page() {
       />
       <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
         <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          <RecentUploadsBox items={recentUploads} />
+          <MyUploadsBox items={uploads} />
           <TrendingBox items={trendingItems} />
           <FavoritesBox items={favorites} />
         </div>

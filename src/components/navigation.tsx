@@ -47,6 +47,7 @@ export function Navigation() {
     ...(session
       ? [
           { name: "Vezérlőpult", href: "/dashboard" as Route },
+          { name: "Feltöltés", href: "/upload" as Route },
           { name: "Beállítások", href: "/settings" as Route },
         ]
       : []),
