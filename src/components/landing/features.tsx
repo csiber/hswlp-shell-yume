@@ -1,99 +1,57 @@
-import {
-  CloudIcon,
-  BoltIcon,
-  ShieldCheckIcon,
-  RocketLaunchIcon,
-  EnvelopeIcon,
-  CommandLineIcon,
-  SunIcon,
-  UserGroupIcon,
-} from "@heroicons/react/24/outline";
+"use client";
+
+import { motion } from "framer-motion";
+import { CheckCircle2 } from "lucide-react";
 
 const features = [
-  {
-    name: "Bejelentkezésre kész",
-    description:
-      "Teljes hitelesítési rendszer email/jelszó belépéssel, regisztrációval, elfelejtett jelszó folyamattal és munkamenet-kezeléssel Lucia Auth segítségével.",
-    icon: ShieldCheckIcon,
-  },
-  {
-    name: "Adatbázis és e-mail",
-    description:
-      "Drizzle ORM és Cloudflare D1 az adatbázishoz, valamint React Email és Resend a látványos e-mail sablonokhoz.",
-    icon: EnvelopeIcon,
-  },
-  {
-    name: "Modern stack",
-    description:
-      "Next.js 15 App Router React Server Components-szel, Server Actions-szel és Edge Runtime-mal az optimális teljesítményért.",
-    icon: BoltIcon,
-  },
-  {
-    name: "Letisztult felület",
-    description:
-      "Reszponzív, sötét/világos módot támogató felület Tailwind CSS és Shadcn UI komponensekkel.",
-    icon: SunIcon,
-  },
-  {
-    name: "Edge deploy",
-    description:
-      "Globális deploy Cloudflare Workers segítségével, hidegindítás nélkül, kihasználva a Cloudflare edge hálózatának sebességét.",
-    icon: CloudIcon,
-  },
-  {
-    name: "Fejlesztői élmény",
-    description:
-      "GitHub Actions alapú deploy, részletes dokumentáció és TypeScript a típusbiztonságért.",
-    icon: CommandLineIcon,
-  },
-  {
-    name: "Űrlapkezelés",
-    description:
-      "Beépített űrlapvalidáció Zod és React Hook Form segítségével a gördülékeny felhasználói élményért.",
-    icon: RocketLaunchIcon,
-  },
-  {
-    name: "Csapatra felkészítve",
-    description:
-      "Együttműködésre tervezve, könnyen testreszabható és bővíthető a csapat igényei szerint.",
-    icon: UserGroupIcon,
-  },
+  "AI-alapú generálás: képek, szövegek, zene",
+  "Sablon alapú projektindítás (portfólió, galéria, blog)",
+  "Egy kattintásos kiadás Cloudflare Pages-re",
+  "Saját domain + tárhely csatolás",
+  "Közösségi visszajelzések, szavazások",
+  "Beépített kreditrendszer és piactér",
 ];
 
-export function Features() {
+export default function Features() {
   return (
-    <div className="py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-400">
-            Éles használatra kész
-          </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-            Minden, ami egy SaaS alkalmazáshoz kell
-          </p>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            Teljes alapokra építünk, hogy a lényegre koncentrálhass.
-          </p>
-        </div>
-        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-4">
-            {features.map((feature) => (
-              <div key={feature.name} className="flex flex-col">
-                <dt className="flex items-center gap-x-3 text-base font-semibold leading-7">
-                  <feature.icon
-                    className="h-5 w-5 flex-none text-indigo-600 dark:text-indigo-400"
-                    aria-hidden="true"
-                  />
-                  {feature.name}
-                </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
-                  <p className="flex-auto">{feature.description}</p>
-                </dd>
-              </div>
-            ))}
-          </dl>
+    <section className="bg-[#0b0e1a] text-white py-24">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-3xl sm:text-4xl font-extrabold mb-8"
+        >
+          Minden, amire egy kreatívnak szüksége lehet
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="text-zinc-400 mb-12 max-w-2xl mx-auto"
+        >
+          A Yume egy helyre hozza össze az AI-t, a design-t és a webet. Nem kell
+          többé máshol regisztrálnod, ha alkotni szeretnél.
+        </motion.p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
+          {features.map((text, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className="flex items-start gap-3"
+            >
+              <CheckCircle2 className="text-indigo-500 mt-1" size={20} />
+              <p>{text}</p>
+            </motion.div>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

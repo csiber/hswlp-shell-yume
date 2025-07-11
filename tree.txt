@@ -1,0 +1,516 @@
+.
+├── cloudflare-env.d.ts
+├── components.json
+├── .cursor
+│   └── rules
+│       ├── 001-main-project-context.mdc
+│       ├── 002-project-technical-details.mdc
+│       ├── 003-authentication.mdc
+│       ├── 004-database-patterns.mdc
+│       ├── 005-code-style.mdc
+│       ├── 006-typescript-conventions.mdc
+│       ├── 007-ui-styling.mdc
+│       └── 008-nextjs-patterns.mdc
+├── custom-env.d.ts
+├── .dev.vars
+├── .dev.vars.example
+├── drizzle.config.ts
+├── .editorconfig
+├── .env
+├── .env.example
+├── eslint.config.mjs
+├── .github
+│   └── workflows
+│       └── deploy.yml
+├── .gitignore
+├── LICENSE
+├── LICENSE.hu.md
+├── next.config.mjs
+├── next-env.d.ts
+├── .npmrc
+├── .open-next
+│   ├── assets
+│   │   ├── BUILD_ID
+│   │   ├── favicon.ico
+│   │   ├── .gitkeep
+│   │   ├── _headers
+│   │   └── _next
+│   │       └── static
+│   │           ├── chunks
+│   │           │   ├── 1014-34f3b0e2dfeb95be.js
+│   │           │   ├── 1059-d629f6a91839559d.js
+│   │           │   ├── 1367-87115309158b7767.js
+│   │           │   ├── 1558.dbbbcfaf2d92a6e9.js
+│   │           │   ├── 1748-8f2b9f89d5ac4c01.js
+│   │           │   ├── 2406-fef18efaa16281a1.js
+│   │           │   ├── 2599-c4caf104fc3444fa.js
+│   │           │   ├── 272-321c0e2184115d35.js
+│   │           │   ├── 2752-f2fa6b69ea9bbf41.js
+│   │           │   ├── 2975-c627b1607577dbe1.js
+│   │           │   ├── 2985-b7851800ea4542d3.js
+│   │           │   ├── 3539-c887c87e140a5040.js
+│   │           │   ├── 3759-39416b36e7f1a7ad.js
+│   │           │   ├── 3767-db3af19222d690d9.js
+│   │           │   ├── 3893-4443549454ada996.js
+│   │           │   ├── 4072-ab4513b5f5475954.js
+│   │           │   ├── 4304-1f99e15b7a6181d9.js
+│   │           │   ├── 4328-13e4bab9ca094ee7.js
+│   │           │   ├── 4365-f5432a2a6bfcc7e9.js
+│   │           │   ├── 4705-dbe1a542753754f3.js
+│   │           │   ├── 5334-6cc4005069ceac52.js
+│   │           │   ├── 5531-553ffa455dc3451d.js
+│   │           │   ├── 5662.7506240bd49633cd.js
+│   │           │   ├── 5980.e6ef2fec2de71f2d.js
+│   │           │   ├── 6016-4b7d0047aeccea7e.js
+│   │           │   ├── 6373-1b5d748b5af708a1.js
+│   │           │   ├── 6643-c3f078e65bfe5efd.js
+│   │           │   ├── 6874-cc49e8f6f85fe40a.js
+│   │           │   ├── 7047-89633c15b9d2f25e.js
+│   │           │   ├── 7620-a2e41912aaad87f1.js
+│   │           │   ├── 7754.db78ff2da9b1b2e7.js
+│   │           │   ├── 8197-6e35d47f2e06636a.js
+│   │           │   ├── 8211-1a18b3c839a095e7.js
+│   │           │   ├── 8935-7178faf7329e45a3.js
+│   │           │   ├── 914-1eba0cd78cb47baa.js
+│   │           │   ├── 9177.dbbbcfaf2d92a6e9.js
+│   │           │   ├── 9790-c9b1a48a3b484ab9.js
+│   │           │   ├── 9889-7738388055197a9f.js
+│   │           │   ├── 9923-b8ae23b18b191c13.js
+│   │           │   ├── app
+│   │           │   │   ├── (admin)
+│   │           │   │   │   └── admin
+│   │           │   │   │       ├── layout-fbdbc6cb1a1bf203.js
+│   │           │   │   │       └── page-cc8889733566c104.js
+│   │           │   │   ├── api
+│   │           │   │   │   └── get-session
+│   │           │   │   │       └── route-ba4b6e3c283c0267.js
+│   │           │   │   ├── (auth)
+│   │           │   │   │   ├── forgot-password
+│   │           │   │   │   │   └── page-489f2f5b3fe105ee.js
+│   │           │   │   │   ├── layout-f744d03f2b70eadf.js
+│   │           │   │   │   ├── reset-password
+│   │           │   │   │   │   ├── not-found-0c6aefae38c75a0c.js
+│   │           │   │   │   │   └── page-60276ce73e500a2f.js
+│   │           │   │   │   ├── sign-in
+│   │           │   │   │   │   └── page-1bf9b4e1c8a0aa1e.js
+│   │           │   │   │   ├── sign-up
+│   │           │   │   │   │   └── page-1902afe8086fe177.js
+│   │           │   │   │   ├── sso
+│   │           │   │   │   │   └── google
+│   │           │   │   │   │       ├── callback
+│   │           │   │   │   │       │   └── page-c76213d509d0d5fa.js
+│   │           │   │   │   │       └── route-da6db121f7f83d99.js
+│   │           │   │   │   ├── team-invite
+│   │           │   │   │   │   ├── not-found-da988cac28719764.js
+│   │           │   │   │   │   └── page-5fde31a017130953.js
+│   │           │   │   │   └── verify-email
+│   │           │   │   │       ├── not-found-5c79ef07a480b6f3.js
+│   │           │   │   │       └── page-67bf59d141749ded.js
+│   │           │   │   ├── (dashboard)
+│   │           │   │   │   ├── dashboard
+│   │           │   │   │   │   ├── billing
+│   │           │   │   │   │   │   └── page-f509ad65bd4bde2a.js
+│   │           │   │   │   │   ├── marketplace
+│   │           │   │   │   │   │   └── page-69c29ffd6177c886.js
+│   │           │   │   │   │   ├── page-39a00d32d9c6dabb.js
+│   │           │   │   │   │   └── teams
+│   │           │   │   │   │       ├── create
+│   │           │   │   │   │       │   └── page-c55dea14292ded1e.js
+│   │           │   │   │   │       ├── page-243f35b4cd77bf1a.js
+│   │           │   │   │   │       └── [teamSlug]
+│   │           │   │   │   │           └── page-91b9637e656558e0.js
+│   │           │   │   │   └── layout-aaf1f4d2c48017b9.js
+│   │           │   │   ├── layout-80125d979aa56aef.js
+│   │           │   │   ├── (legal)
+│   │           │   │   │   ├── layout-c2b2d26dcbf4af21.js
+│   │           │   │   │   ├── privacy
+│   │           │   │   │   │   └── page-ab5fa5a5277803db.js
+│   │           │   │   │   └── terms
+│   │           │   │   │       └── page-5de1c8d12076b1d3.js
+│   │           │   │   ├── (marketing)
+│   │           │   │   │   ├── layout-81e93e276ee28358.js
+│   │           │   │   │   └── page-da31cbf00f1af671.js
+│   │           │   │   ├── _not-found
+│   │           │   │   │   └── page-15e112a10f88921f.js
+│   │           │   │   └── (settings)
+│   │           │   │       └── settings
+│   │           │   │           ├── layout-946d629fb0c08f64.js
+│   │           │   │           ├── page-4831666559982b14.js
+│   │           │   │           ├── security
+│   │           │   │           │   └── page-9e98cfc2b6c6618b.js
+│   │           │   │           ├── [...segment]
+│   │           │   │           │   └── page-c6438703ff53e276.js
+│   │           │   │           └── sessions
+│   │           │   │               └── page-aac3254e7fb702ed.js
+│   │           │   ├── fbc02937-5f6922f94c7f8f5c.js
+│   │           │   ├── framework-c5e360cefaf8f3a5.js
+│   │           │   ├── main-27c190864421992c.js
+│   │           │   ├── main-app-bfc19c0d5da5d322.js
+│   │           │   ├── pages
+│   │           │   │   ├── _app-e3bf56ecb2f5ea36.js
+│   │           │   │   └── _error-dda1c37db1bcae61.js
+│   │           │   ├── polyfills-42372ed130431b0a.js
+│   │           │   └── webpack-5d6070984c39312a.js
+│   │           ├── css
+│   │           │   ├── 21089480f9215fc7.css
+│   │           │   └── 931b179cff3131dc.css
+│   │           ├── media
+│   │           │   ├── 26a46d62cd723877-s.woff2
+│   │           │   ├── 55c55f0601d81cf3-s.woff2
+│   │           │   ├── 581909926a08bbc8-s.woff2
+│   │           │   ├── 8e9860b6e62d6359-s.woff2
+│   │           │   ├── 97e0cb1ae144a2a9-s.woff2
+│   │           │   ├── df0a9ae256c0569c-s.woff2
+│   │           │   └── e4af272ccee01ff0-s.p.woff2
+│   │           └── _tJf9u6LA09TPMnTJIj2h
+│   │               ├── _buildManifest.js
+│   │               └── _ssgManifest.js
+│   ├── .build
+│   │   ├── cache.cjs
+│   │   ├── composable-cache.cjs
+│   │   ├── durable-objects
+│   │   │   ├── bucket-cache-purge.js
+│   │   │   ├── queue.js
+│   │   │   └── sharded-tag-cache.js
+│   │   ├── open-next.config.edge.mjs
+│   │   └── open-next.config.mjs
+│   ├── cache
+│   │   └── _tJf9u6LA09TPMnTJIj2h
+│   │       ├── 500.cache
+│   │       └── favicon.ico.cache
+│   ├── cloudflare
+│   │   ├── cache-assets-manifest.sql
+│   │   ├── images.js
+│   │   ├── init.js
+│   │   └── next-env.mjs
+│   ├── cloudflare-templates
+│   │   ├── images.d.ts
+│   │   ├── images.js
+│   │   ├── init.d.ts
+│   │   ├── init.js
+│   │   ├── shims
+│   │   │   ├── empty.d.ts
+│   │   │   ├── empty.js
+│   │   │   ├── env.d.ts
+│   │   │   ├── env.js
+│   │   │   ├── fetch.d.ts
+│   │   │   ├── fetch.js
+│   │   │   ├── throw.d.ts
+│   │   │   └── throw.js
+│   │   ├── worker.d.ts
+│   │   └── worker.js
+│   ├── dynamodb-provider
+│   │   ├── dynamodb-cache.json
+│   │   └── open-next.config.mjs
+│   ├── middleware
+│   │   ├── assets
+│   │   ├── handler.mjs
+│   │   ├── open-next.config.mjs
+│   │   └── wasm
+│   ├── server-functions
+│   │   └── default
+│   │       ├── cache.cjs
+│   │       ├── composable-cache.cjs
+│   │       ├── .env
+│   │       ├── handler.mjs
+│   │       ├── handler.mjs.meta.json
+│   │       ├── index.mjs
+│   │       ├── open-next.config.mjs
+│   │       ├── package.json
+│   │       └── patchedAsyncStorage.cjs
+│   └── worker.js
+├── open-next.config.ts
+├── package.json
+├── pnpm-lock.yaml
+├── postcss.config.mjs
+├── public
+│   ├── .gitkeep
+│   └── _headers
+├── README.md
+├── scripts
+│   ├── dev
+│   │   └── next-rollback.sh
+│   ├── get-db-id.mjs
+│   ├── get-db-name.mjs
+│   ├── get-kv-id.mjs
+│   ├── package.json
+│   └── utils
+│       └── parse-wrangler.mjs
+├── src
+│   ├── actions
+│   │   ├── credits.action.ts
+│   │   ├── sign-out.action.ts
+│   │   ├── team-actions.ts
+│   │   ├── team-membership-actions.ts
+│   │   └── team-role-actions.ts
+│   ├── app
+│   │   ├── (admin)
+│   │   │   └── admin
+│   │   │       ├── _actions
+│   │   │       │   └── get-users.action.ts
+│   │   │       ├── admin-constants.ts
+│   │   │       ├── _components
+│   │   │       │   ├── admin-sidebar.tsx
+│   │   │       │   └── users
+│   │   │       │       ├── columns.tsx
+│   │   │       │       └── users-table.tsx
+│   │   │       ├── layout.tsx
+│   │   │       └── page.tsx
+│   │   ├── api
+│   │   │   └── get-session
+│   │   │       └── route.ts
+│   │   ├── (auth)
+│   │   │   ├── _components
+│   │   │   │   └── sso-buttons.tsx
+│   │   │   ├── forgot-password
+│   │   │   │   ├── forgot-password.action.ts
+│   │   │   │   ├── forgot-password.client.tsx
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   ├── resend-verification.action.ts
+│   │   │   ├── reset-password
+│   │   │   │   ├── not-found.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── reset-password.action.ts
+│   │   │   │   └── reset-password.client.tsx
+│   │   │   ├── sign-in
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── sign-in.actions.ts
+│   │   │   │   └── sign-in.client.tsx
+│   │   │   ├── sign-up
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── passkey-sign-up.actions.ts
+│   │   │   │   ├── sign-up.actions.ts
+│   │   │   │   └── sign-up.client.tsx
+│   │   │   ├── sso
+│   │   │   │   └── google
+│   │   │   │       ├── callback
+│   │   │   │       │   ├── google-callback.action.ts
+│   │   │   │       │   ├── google-callback.client.tsx
+│   │   │   │       │   └── page.tsx
+│   │   │   │       └── route.ts
+│   │   │   ├── team-invite
+│   │   │   │   ├── not-found.tsx
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── team-invite.action.ts
+│   │   │   │   └── team-invite.client.tsx
+│   │   │   └── verify-email
+│   │   │       ├── not-found.tsx
+│   │   │       ├── page.tsx
+│   │   │       ├── verify-email.action.ts
+│   │   │       └── verify-email.client.tsx
+│   │   ├── (dashboard)
+│   │   │   ├── dashboard
+│   │   │   │   ├── billing
+│   │   │   │   │   ├── _components
+│   │   │   │   │   │   ├── credit-packages.tsx
+│   │   │   │   │   │   ├── stripe-payment-form.tsx
+│   │   │   │   │   │   └── transaction-history.tsx
+│   │   │   │   │   └── page.tsx
+│   │   │   │   ├── marketplace
+│   │   │   │   │   ├── components-catalog.tsx
+│   │   │   │   │   ├── page.tsx
+│   │   │   │   │   └── purchase.action.ts
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── teams
+│   │   │   │       ├── create
+│   │   │   │       │   └── page.tsx
+│   │   │   │       ├── page.tsx
+│   │   │   │       ├── pending-invitations.tsx
+│   │   │   │       └── [teamSlug]
+│   │   │   │           └── page.tsx
+│   │   │   └── layout.tsx
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── (legal)
+│   │   │   ├── layout.tsx
+│   │   │   ├── privacy
+│   │   │   │   └── page.tsx
+│   │   │   └── terms
+│   │   │       └── page.tsx
+│   │   ├── (marketing)
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   └── (settings)
+│   │       └── settings
+│   │           ├── layout.tsx
+│   │           ├── page.tsx
+│   │           ├── security
+│   │           │   ├── page.tsx
+│   │           │   ├── passkey.client.tsx
+│   │           │   └── passkey-settings.actions.ts
+│   │           ├── [...segment]
+│   │           │   └── page.tsx
+│   │           ├── sessions
+│   │           │   ├── page.tsx
+│   │           │   ├── sessions.actions.ts
+│   │           │   └── sessions.client.tsx
+│   │           ├── settings.actions.ts
+│   │           ├── settings-breadcrumbs.tsx
+│   │           ├── settings-form.tsx
+│   │           └── settings-sidebar.tsx
+│   ├── components
+│   │   ├── agenticdev-studio-logo.tsx
+│   │   ├── app-sidebar.tsx
+│   │   ├── captcha.tsx
+│   │   ├── data-table.tsx
+│   │   ├── email-verification-dialog.tsx
+│   │   ├── footer.tsx
+│   │   ├── landing
+│   │   │   ├── faq.tsx
+│   │   │   ├── features.tsx
+│   │   │   └── hero.tsx
+│   │   ├── marketplace-card.tsx
+│   │   ├── navigation.tsx
+│   │   ├── nav-main.tsx
+│   │   ├── nav-projects.tsx
+│   │   ├── nav-user.tsx
+│   │   ├── page-header.tsx
+│   │   ├── providers.tsx
+│   │   ├── purchase-button.tsx
+│   │   ├── separator-with-text.tsx
+│   │   ├── startup-studio-sticky-banner.tsx
+│   │   ├── teams
+│   │   │   ├── create-team-form.tsx
+│   │   │   ├── invite-member-modal.tsx
+│   │   │   └── remove-member-button.tsx
+│   │   ├── team-switcher.tsx
+│   │   ├── theme-switch.tsx
+│   │   └── ui
+│   │       ├── accordion.tsx
+│   │       ├── avatar.tsx
+│   │       ├── badge.tsx
+│   │       ├── breadcrumb.tsx
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── collapsible.tsx
+│   │       ├── dialog.tsx
+│   │       ├── dropdown-menu.tsx
+│   │       ├── form.tsx
+│   │       ├── input.tsx
+│   │       ├── label.tsx
+│   │       ├── select.tsx
+│   │       ├── separator.tsx
+│   │       ├── sheet.tsx
+│   │       ├── shiny-button.tsx
+│   │       ├── sidebar.tsx
+│   │       ├── skeleton.tsx
+│   │       ├── sonner.tsx
+│   │       ├── spinner.tsx
+│   │       ├── table.tsx
+│   │       ├── textarea.tsx
+│   │       └── tooltip.tsx
+│   ├── constants.ts
+│   ├── db
+│   │   ├── index.ts
+│   │   ├── migrations
+│   │   │   ├── 0000_init.sql
+│   │   │   ├── 0001_add_emailVerified.sql
+│   │   │   ├── 0003_add_google_sso.sql
+│   │   │   ├── 0004_add_passkey_credentials.sql
+│   │   │   ├── 0005_add_opennext_cache_tables.sql
+│   │   │   ├── 0006_add_credit_billing_system.sql
+│   │   │   ├── 0007_add_update_counter_and_payment_intent_id.sql
+│   │   │   ├── 0008_add_multi_tenancy.sql
+│   │   │   └── meta
+│   │   │       ├── 0000_snapshot.json
+│   │   │       ├── 0001_snapshot.json
+│   │   │       ├── 0003_snapshot.json
+│   │   │       ├── 0004_snapshot.json
+│   │   │       ├── 0005_snapshot.json
+│   │   │       ├── 0006_snapshot.json
+│   │   │       ├── 0007_snapshot.json
+│   │   │       ├── 0008_snapshot.json
+│   │   │       └── _journal.json
+│   │   └── schema.ts
+│   ├── flags.ts
+│   ├── hooks
+│   │   ├── useMediaQuery.ts
+│   │   └── useSignOut.ts
+│   ├── icons
+│   │   └── google.tsx
+│   ├── layouts
+│   │   └── NavFooterLayout.tsx
+│   ├── lib
+│   │   ├── sso
+│   │   │   └── google-sso.ts
+│   │   ├── stripe.ts
+│   │   ├── try-catch.ts
+│   │   └── utils.ts
+│   ├── react-email
+│   │   ├── reset-password.tsx
+│   │   ├── team-invite.tsx
+│   │   └── verify-email.tsx
+│   ├── schemas
+│   │   ├── catcha.schema.ts
+│   │   ├── forgot-password.schema.ts
+│   │   ├── google-sso-callback.schema.ts
+│   │   ├── passkey.schema.ts
+│   │   ├── reset-password.schema.ts
+│   │   ├── settings.schema.ts
+│   │   ├── signin.schema.ts
+│   │   ├── signup.schema.ts
+│   │   ├── team-invite.schema.ts
+│   │   └── verify-email.schema.ts
+│   ├── server
+│   │   ├── team-members.ts
+│   │   ├── team-roles.ts
+│   │   └── teams.ts
+│   ├── state
+│   │   ├── config.ts
+│   │   ├── nav.ts
+│   │   ├── session.ts
+│   │   └── transaction.ts
+│   ├── types.ts
+│   └── utils
+│       ├── api.ts
+│       ├── auth.ts
+│       ├── auth-utils.ts
+│       ├── cn.ts
+│       ├── credits.ts
+│       ├── email.tsx
+│       ├── format-date.ts
+│       ├── get-IP.ts
+│       ├── is-prod.ts
+│       ├── kv-session.ts
+│       ├── name-initials.ts
+│       ├── passkey-authenticator-ids.ts
+│       ├── password-hasher.ts
+│       ├── rate-limit.ts
+│       ├── slugify.ts
+│       ├── stats.ts
+│       ├── team-auth.ts
+│       ├── text.ts
+│       ├── validate-captcha.ts
+│       ├── webauthn.ts
+│       ├── with-kv-cache.ts
+│       └── with-rate-limit.ts
+├── tailwind.config.ts
+├── TODO.md
+├── tree.txt
+├── tsconfig.json
+├── .vscode
+│   ├── extensions.json
+│   └── settings.json
+├── .wrangler
+│   ├── state
+│   │   └── v3
+│   │       ├── cache
+│   │       ├── d1
+│   │       │   └── miniflare-D1DatabaseObject
+│   │       │       └── 6f11febfda3e351dc94ff2ff36a22cf1912d3d02b5451981c8c9d5f5b1cfb1a5.sqlite
+│   │       ├── do
+│   │       ├── kv
+│   │       │   ├── 60d93d82ece44987aefed74b1ec420ef
+│   │       │   │   └── blobs
+│   │       │   │       ├── 3b222da68c3c2ba9661f4b1b2ea647e1b16a2357af9f4d7593cc4f5fa7da1c8400000197f47a2261
+│   │       │   │       └── 918b2c308752f45286b91f2ad7c8b2da03c0af3099e2ab2f7d9ea9a79e2e8b8d00000197f55192d5
+│   │       │   └── miniflare-KVNamespaceObject
+│   │       │       └── ffe32c6290ecd120e5c2de820835f38a2dbcf252a878d11b9fd5a9a1cd7312cb.sqlite
+│   │       ├── r2
+│   │       └── workflows
+│   └── tmp
+└── wrangler.jsonc
+
+132 directories, 381 files
