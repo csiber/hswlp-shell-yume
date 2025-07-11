@@ -2,13 +2,15 @@
 import * as React from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Puzzle, Users, Compass, MessageCircle, Flame } from 'lucide-react'
 
 
-function SidebarSection({ title, children }: { title: string; children: React.ReactNode }) {
+function SidebarSection({ title, icon: Icon, children }: { title: string; icon?: React.ComponentType<{className?: string}>; children: React.ReactNode }) {
   return (
     <Card className="animate-in fade-in slide-in-from-right-1">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
+      <CardHeader className="flex items-center gap-2 py-3">
+        {Icon && <Icon className="w-4 h-4 text-muted-foreground" />}
+        <h3 className="text-sm font-medium">{title}</h3>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">{children}</CardContent>
     </Card>
@@ -28,13 +30,13 @@ export default function RightSidebar() {
     { user: 'Csilla', text: 'Nekem a harmadik opció tetszik.', avatar: 'https://i.pravatar.cc/40?img=25' },
   ]
   return (
-    <div className="space-y-4">
-      <SidebarSection title="Neked ajánljuk">
+    <div className="space-y-4 xl:sticky xl:top-20">
+      <SidebarSection title="Neked ajánljuk" icon={Puzzle}>
         <p className="hover:underline hover:text-primary cursor-pointer">Plugin A</p>
         <p className="hover:underline hover:text-primary cursor-pointer">Plugin B</p>
         <p className="hover:underline hover:text-primary cursor-pointer">Plugin C</p>
       </SidebarSection>
-      <SidebarSection title="Top szerzők">
+      <SidebarSection title="Top szerzők" icon={Users}>
         {authors.map((a) => (
           <div key={a.name} className="flex items-center gap-2 hover:scale-105 transition-transform">
             <Avatar className="h-6 w-6">
@@ -45,7 +47,7 @@ export default function RightSidebar() {
           </div>
         ))}
       </SidebarSection>
-      <SidebarSection title="Felfedezés">
+      <SidebarSection title="Felfedezés" icon={Compass}>
         <div className="grid grid-cols-2 gap-2">
           {tags.map((t) => (
             <span
@@ -58,7 +60,7 @@ export default function RightSidebar() {
           ))}
         </div>
       </SidebarSection>
-      <SidebarSection title="Legutóbbi hozzászólások">
+      <SidebarSection title="Legutóbbi hozzászólások" icon={MessageCircle}>
         {comments.map((c) => (
           <div key={c.text} className="flex items-start gap-2 hover:bg-muted/40 rounded-md p-1">
             <Avatar className="h-5 w-5">
@@ -71,7 +73,7 @@ export default function RightSidebar() {
           </div>
         ))}
       </SidebarSection>
-      <SidebarSection title="Trendek ma">
+      <SidebarSection title="Trendek ma" icon={Flame}>
         <p className="hover:underline cursor-pointer">#dark-mode</p>
         <p className="hover:underline cursor-pointer">#pluginverseny</p>
         <p className="hover:underline cursor-pointer">#yume</p>
