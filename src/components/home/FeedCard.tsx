@@ -37,9 +37,9 @@ import { cn } from '@/lib/utils'
 
 const typeMap = {
   news: { icon: Newspaper, className: 'bg-muted' },
-  poll: { icon: BarChart3, className: 'border border-primary' },
-  idea: { icon: Lightbulb, className: '' },
-  question: { icon: HelpCircle, className: '' },
+  poll: { icon: BarChart3, className: 'border border-primary bg-background' },
+  idea: { icon: Lightbulb, className: 'bg-yellow-500/10 dark:bg-yellow-400/10' },
+  question: { icon: HelpCircle, className: 'bg-blue-500/10 dark:bg-blue-400/10' },
   update: { icon: RefreshCcw, className: 'bg-accent/10' },
   community: { icon: Users2, className: 'bg-secondary/20' },
 } as const
@@ -67,7 +67,7 @@ export function FeedCard({
   return (
     <Card
       className={cn(
-        'hover:shadow-xl transition-shadow animate-in fade-in slide-in-from-bottom-1',
+        'rounded-2xl shadow-md hover:bg-accent/10 transition-all animate-in fade-in slide-in-from-bottom-1',
         typeInfo?.className
       )}
     >
