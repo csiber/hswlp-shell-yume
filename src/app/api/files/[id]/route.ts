@@ -32,7 +32,9 @@ return new Response(object.body, {
   headers: {
     "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
     "Content-Disposition": "inline",
+    "Access-Control-Allow-Origin": "*", // vagy később finomítva
   },
-})
+});
+
 
 }
