@@ -1,7 +1,6 @@
 "use client"
 
-import { Metadata } from 'next'
-import { SITE_NAME, SITE_DESCRIPTION } from '@/constants'
+// metadata is exported from ./page-metadata.ts
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import HomeSidebar from '@/components/home/HomeSidebar'
 import RightSidebar from '@/components/home/RightSidebar'
@@ -13,10 +12,6 @@ import { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 
 
-export const metadata: Metadata = {
-  title: SITE_NAME,
-  description: SITE_DESCRIPTION,
-}
 
 
 export default function Home() {
