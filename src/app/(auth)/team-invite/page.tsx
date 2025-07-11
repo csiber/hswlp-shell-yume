@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 export default async function TeamInvitePage({
   searchParams,
 }: {
-  searchParams: Promise<{ token?: string }>;
+  searchParams?: { token?: string };
 }) {
   const session = await getSessionFromCookie();
-  const token = (await searchParams)?.token;
+  const token = searchParams?.token;
 
   // If no token is provided, redirect to sign in
   if (!token) {
