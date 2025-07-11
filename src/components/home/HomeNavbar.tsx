@@ -45,6 +45,8 @@ export default function HomeNavbar() {
       : user.email
     : ''
 
+  const avatarSrc: string | undefined = user.avatar ?? undefined
+
   return (
     <nav className="fixed inset-x-0 top-0 z-30 border-b bg-background/80 backdrop-blur">
       <div className="container mx-auto flex h-14 items-center gap-3 px-4">
@@ -66,7 +68,7 @@ export default function HomeNavbar() {
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
 
-                    <AvatarImage src={user.avatar !== null ? user.avatar : undefined} alt={displayName} />
+                    <AvatarImage src={avatarSrc} alt={displayName} />
 
                     <AvatarFallback className="uppercase text-xs">
                       {displayName.slice(0, 2)}
