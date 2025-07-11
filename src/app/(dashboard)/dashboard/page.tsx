@@ -1,9 +1,11 @@
 import { PageHeader } from "@/components/page-header"
+
 import type { DashboardItem } from "@/components/dashboard/RecentUploadsBox"
 import { RecentUploadsBox } from "@/components/dashboard/RecentUploadsBox"
 import { TrendingBox } from "@/components/dashboard/TrendingBox"
 import { FavoritesBox } from "@/components/dashboard/FavoritesBox"
 import { CommunityFeedBox } from "@/components/dashboard/CommunityFeedBox"
+
 
 export default function Page() {
   const recentUploads: DashboardItem[] = [
@@ -47,6 +49,7 @@ export default function Page() {
           <FavoritesBox items={favorites} />
         </div>
         <CommunityFeedBox items={communityFeed} />
+
       </div>
     </>
   )
