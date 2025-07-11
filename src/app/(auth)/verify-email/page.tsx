@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 export default async function VerifyEmailPage({
   searchParams,
 }: {
-  searchParams?: { token?: string };
+  searchParams: Promise<{ token?: string }>;
 }) {
   const session = await getSessionFromCookie();
-  const token = searchParams?.token;
+  const { token } = await searchParams;
 
   if (session?.user.emailVerified) {
     return redirect(REDIRECT_AFTER_SIGN_IN);
