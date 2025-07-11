@@ -1,3 +1,5 @@
+"use client"
+
 import { Metadata } from 'next'
 import { SITE_NAME, SITE_DESCRIPTION } from '@/constants'
 import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
