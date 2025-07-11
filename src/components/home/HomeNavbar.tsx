@@ -65,7 +65,7 @@ export default function HomeNavbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
                   <Avatar className="h-8 w-8">
-                    <AvatarImage src={(user.avatar ?? '') as string} alt={displayName} />
+                    <AvatarImage src={user.avatar !== null ? user.avatar : undefined} alt={displayName} />
                     <AvatarFallback className="uppercase text-xs">
                       {displayName.slice(0, 2)}
                     </AvatarFallback>
