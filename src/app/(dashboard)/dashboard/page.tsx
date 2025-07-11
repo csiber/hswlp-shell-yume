@@ -9,7 +9,6 @@ import { TrendingBox } from "@/components/dashboard/TrendingBox"
 import { FavoritesBox } from "@/components/dashboard/FavoritesBox"
 import { CommunityFeedBox } from "@/components/dashboard/CommunityFeedBox"
 
-
 export default async function Page() {
   const session = await getSessionFromCookie()
   const uploads: UploadItem[] = []
@@ -17,7 +16,7 @@ export default async function Page() {
   if (session?.user?.id) {
     const { env } = getCloudflareContext()
     const result = await env.DB.prepare(
-      'SELECT id, title, type, url FROM uploads WHERE user_id = ? ORDER BY created_at DESC'
+      'SELECT id, title, type FROM uploads WHERE user_id = ? ORDER BY created_at DESC'
     ).bind(session.user.id).all<Record<string, string>>()
 
     for (const row of result.results || []) {
@@ -25,7 +24,7 @@ export default async function Page() {
         id: row.id,
         title: row.title,
         type: row.type as UploadItem['type'],
-        url: row.url,
+        url: `/api/files/${row.id}`, // Privát fájl-elérés
       })
     }
   }
@@ -65,7 +64,6 @@ export default async function Page() {
           <FavoritesBox items={favorites} />
         </div>
         <CommunityFeedBox items={communityFeed} />
-
       </div>
     </>
   )

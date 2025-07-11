@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from 'uuid'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
-import { SITE_URL } from "@/constants"
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -46,7 +45,17 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'File too large' }, { status: 400 })
   }
 
-  const ext = extFromMime(file.type)
+  // MIME ellenőrzés
+  const mime = file.type
+  if (
+    (type === 'image' && !mime.startsWith('image/')) ||
+    (type === 'music' && !mime.startsWith('audio/')) ||
+    (type === 'prompt' && !mime.startsWith('text/'))
+  ) {
+    return jsonResponse({ success: false, error: 'MIME mismatch' }, { status: 400 })
+  }
+
+  const ext = extFromMime(mime)
   const id = uuidv4()
   const key = `uploads/${session.user.id}/${id}.${ext}`
   const { env } = getCloudflareContext()
@@ -54,7 +63,7 @@ export async function POST(req: Request) {
   try {
     await env.hswlp_r2.put(key, file)
 
-    const url = `${SITE_URL}/${key}`
+    const url = `/api/files/${id}` // helyi proxy link, védett!
 
     const exists = await env.DB.prepare(
       'SELECT id FROM uploads WHERE user_id = ?1 AND title = ?2 AND type = ?3 LIMIT 1'
@@ -65,8 +74,8 @@ export async function POST(req: Request) {
     }
 
     await env.DB.prepare(
-      'INSERT INTO uploads (id, user_id, title, type, url) VALUES (?1, ?2, ?3, ?4, ?5)'
-    ).bind(id, session.user.id, title, type, url).run()
+      'INSERT INTO uploads (id, user_id, title, type, url, r2_key) VALUES (?1, ?2, ?3, ?4, ?5, ?6)'
+    ).bind(id, session.user.id, title, type, url, key).run()
 
     return jsonResponse({ success: true, uploadId: id, url })
   } catch (err) {

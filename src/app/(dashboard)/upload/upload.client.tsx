@@ -11,6 +11,11 @@ import { UploadCloud } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { toast } from 'sonner'
 
+interface UploadResponse {
+  success: boolean
+  error?: string
+}
+
 export default function UploadClient() {
   const router = useRouter()
   const [title, setTitle] = useState('')
@@ -21,6 +26,7 @@ export default function UploadClient() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+
     if (!title.trim() || !type || !file) {
       setMessage({ type: 'error', text: 'Minden mező kitöltése kötelező' })
       return
@@ -30,26 +36,30 @@ export default function UploadClient() {
     formData.append('title', title)
     formData.append('type', type)
     formData.append('file', file)
+
     setLoading(true)
     setMessage(null)
+
     try {
       const res = await fetch('/api/upload', {
         method: 'POST',
-        body: formData
+        body: formData,
       })
-      const data = await res.json()
+
+      const data: UploadResponse = await res.json()
+
       if (res.ok && data.success) {
         toast.success('🎉 Feltöltés sikeres! Visszairányítunk a dashboardra...')
         setMessage({ type: 'success', text: '🎉 Feltöltés sikeres! Visszairányítunk a dashboardra...' })
         setTimeout(() => router.push('/dashboard'), 2000)
       } else {
-        toast.error(data.error || 'Hiba történt')
-        setMessage({ type: 'error', text: data.error || 'Hiba történt' })
+        toast.error(data.error || 'Ismeretlen hiba történt')
+        setMessage({ type: 'error', text: data.error || 'Ismeretlen hiba történt' })
       }
     } catch (err) {
-      console.error(err)
-      toast.error('Hiba történt')
-      setMessage({ type: 'error', text: 'Hiba történt' })
+      console.error('Feltöltési hiba:', err)
+      toast.error('Kapcsolódási hiba vagy szerverhiba')
+      setMessage({ type: 'error', text: 'Kapcsolódási hiba vagy szerverhiba' })
     } finally {
       setLoading(false)
     }
@@ -81,6 +91,7 @@ export default function UploadClient() {
             </Select>
             <Input
               type="file"
+              accept={type === 'image' ? 'image/*' : type === 'music' ? 'audio/*' : '*'}
               onChange={(e) => setFile(e.target.files?.[0] || null)}
             />
             <ShinyButton
@@ -99,6 +110,7 @@ export default function UploadClient() {
               )}
             </ShinyButton>
           </form>
+
           <AnimatePresence>
             {message && (
               <motion.div

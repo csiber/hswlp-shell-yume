@@ -1,0 +1,1 @@
+ALTER TABLE uploads ADD COLUMN r2_key TEXT;
