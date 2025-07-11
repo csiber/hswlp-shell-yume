@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Music, ScrollText } from "lucide-react"
-import Image from "next/image"
 
 export interface UploadItem {
   id: string
@@ -24,13 +23,16 @@ export function MyUploadsBox({ items }: MyUploadsBoxProps) {
           {items.map((item) => (
             <li key={item.id} className="flex items-center gap-3">
               {item.type === "image" ? (
-                <Image
-                  src={item.url}
-                  alt={item.title}
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 rounded-md object-cover"
-                />
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.url}
+                    alt={item.title}
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-md object-cover"
+                  />
+                </>
               ) : item.type === "music" ? (
                 <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center">
                   <Music className="w-5 h-5 text-muted-foreground" />
