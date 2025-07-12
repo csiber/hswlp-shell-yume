@@ -41,12 +41,6 @@ export default async function Page() {
     { id: "3", type: "image", title: "Kedvenc #3" },
   ]
 
-  const communityFeed: DashboardItem[] = [
-    { id: "1", type: "image", title: "Feed #1" },
-    { id: "2", type: "music", title: "Feed #2" },
-    { id: "3", type: "prompt", title: "Feed #3" },
-  ]
-
   return (
     <>
       <PageHeader
@@ -63,7 +57,7 @@ export default async function Page() {
           <TrendingBox items={trendingItems} />
           <FavoritesBox items={favorites} />
         </div>
-        <CommunityFeedBox items={communityFeed} />
+        <CommunityFeedBox />
       </div>
     </>
   )
