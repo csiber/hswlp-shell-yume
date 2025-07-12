@@ -7,7 +7,7 @@ import type { UploadItem } from "@/components/dashboard/MyUploadsBox"
 import { MyUploadsBox } from "@/components/dashboard/MyUploadsBox"
 import { TrendingBox } from "@/components/dashboard/TrendingBox"
 import { FavoritesBox } from "@/components/dashboard/FavoritesBox"
-import { CommunityFeedBox } from "@/components/dashboard/CommunityFeedBox"
+import CommunityFeed from "@/components/dashboard/CommunityFeed"
 
 export default async function Page() {
   const session = await getSessionFromCookie()
@@ -57,7 +57,7 @@ export default async function Page() {
           <TrendingBox items={trendingItems} />
           <FavoritesBox items={favorites} />
         </div>
-        <CommunityFeedBox />
+        <CommunityFeed />
       </div>
     </>
   )
