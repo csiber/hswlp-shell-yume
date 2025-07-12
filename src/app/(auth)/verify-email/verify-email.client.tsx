@@ -14,7 +14,7 @@ import { REDIRECT_AFTER_SIGN_IN } from "@/constants";
 export default function VerifyEmailClientComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams ? searchParams.get("token") : null;
   const hasCalledVerification = useRef(false);
 
   const { execute: handleVerification, isPending, error } = useServerAction(verifyEmailAction, {

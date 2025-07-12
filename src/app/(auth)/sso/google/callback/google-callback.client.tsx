@@ -14,8 +14,8 @@ import { REDIRECT_AFTER_SIGN_IN } from "@/constants";
 export default function GoogleCallbackClientComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const code = searchParams.get("code");
-  const state = searchParams.get("state");
+  const code = searchParams ? searchParams.get("code") : null;
+  const state = searchParams ? searchParams.get("state") : null;
   const hasCalledCallback = useRef(false);
 
   const { execute: handleCallback, isPending, error } = useServerAction(googleSSOCallbackAction, {

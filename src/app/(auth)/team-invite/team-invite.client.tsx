@@ -13,7 +13,7 @@ import { Spinner } from "@/components/ui/spinner";
 export default function TeamInviteClientComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams ? searchParams.get("token") : null;
   const hasCalledAcceptInvite = useRef(false);
 
   const { execute: handleAcceptInvite, isPending, error } = useServerAction(acceptTeamInviteAction, {

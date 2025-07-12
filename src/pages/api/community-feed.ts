@@ -59,7 +59,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
   }
 
-  const response = jsonResponse(items)
+  const response = jsonResponse({ items })
   res.status(response.status)
   for (const [key, value] of Object.entries(response.headers)) {
     res.setHeader(key, value)

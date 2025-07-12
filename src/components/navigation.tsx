@@ -37,7 +37,7 @@ const ActionButtons = () => {
 
 // Teljes navigációs komponens
 export function Navigation() {
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "";
   const { session, isLoading } = useSessionStore();
   const { isOpen, setIsOpen } = useNavStore();
 

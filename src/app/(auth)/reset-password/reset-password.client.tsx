@@ -23,7 +23,7 @@ import { useEffect } from "react";
 export default function ResetPasswordClientComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+  const token = searchParams ? searchParams.get("token") : "";
 
   const form = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
