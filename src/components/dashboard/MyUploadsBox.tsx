@@ -20,7 +20,7 @@ export function MyUploadsBox({ items }: MyUploadsBoxProps) {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {items.map((item) => (
+          {items.slice(0, 3).map((item) => (
             <li key={item.id} className="flex items-center gap-3">
               {item.type === "image" ? (
                 <>
