@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 interface UserInfo {
+  id?: string
   name: string
   email: string
   credits: number
@@ -88,6 +89,14 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
               <span>Settings</span>
             </Link>
           </li>
+          {user?.id && (
+            <li>
+              <Link href={`/profile/${user.id}`} className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span className="text-lg">👤</span>
+                <span>Profilom</span>
+              </Link>
+            </li>
+          )}
           <li>
             <Link href="/dashboard/analytics" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">📊</span>
