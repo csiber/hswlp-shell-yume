@@ -10,7 +10,7 @@ interface Props {
   id: string
   url: string
   title: string
-  audioRef: React.RefObject<HTMLAudioElement>
+  audioRef: React.RefObject<HTMLAudioElement | null>
   playingId: string | null
   setPlayingId: (id: string | null) => void
 }

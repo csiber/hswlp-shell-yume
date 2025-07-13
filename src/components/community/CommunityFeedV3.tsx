@@ -36,13 +36,25 @@ export default function CommunityFeedV3() {
     try {
       const res = await fetch("/api/community-feed")
       if (!res.ok) throw new Error("failed to load feed")
-      const raw = await res.json()
+      const raw: unknown = await res.json()
+      type FeedResponse = { items?: FeedItem[] } | FeedItem[] | unknown
+      const data = raw as FeedResponse
       let arr: FeedItem[] = []
-      if (Array.isArray(raw.items)) arr = raw.items
-      else if (Array.isArray(raw)) arr = raw
+      if (Array.isArray(data)) arr = data
+      else if (Array.isArray((data as { items?: unknown }).items))
+        arr = (data as { items?: FeedItem[] }).items as FeedItem[]
+      const detect = (url: string): "image" | "music" | "prompt" => {
+        const ext = url.split(".").pop()?.toLowerCase() || ""
+        if (["mp3", "wav", "ogg"].includes(ext)) return "music"
+        if (["txt", "prompt"].includes(ext)) return "prompt"
+        return ["jpg", "jpeg", "png", "webp"].includes(ext) ? "image" : "image"
+      }
       arr = arr.map((it) => ({
         ...it,
-        type: it.type === "music" || it.type === "prompt" || it.type === "image" ? it.type : "image",
+        type:
+          it.type === "music" || it.type === "prompt" || it.type === "image"
+            ? it.type
+            : detect(it.url),
       }))
       arr.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       setItems(arr)
