@@ -34,6 +34,18 @@ export default function CommunityFeedV2() {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const handleEnded = () => setPlayingId(null);
+    audio.addEventListener("ended", handleEnded);
+    return () => {
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, []);
+
+
   async function loadFeed() {
     setLoading(true);
     try {
