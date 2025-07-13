@@ -25,23 +25,34 @@ export default function CommunityFeed() {
   const [playingId, setPlayingId] = useState<string | null>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  async function loadFeed() {
-    try {
-      const res = await fetch("/api/community-feed")
-      if (!res.ok) throw new Error("failed to load feed")
-      const data: FeedItem[] = await res.json()
-      setItems(
-        data
-          .slice()
-          .sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          )
-      )
-    } catch (err) {
-      console.error(err)
-    }
+async function loadFeed() {
+  try {
+    const res = await fetch("/api/community-feed")
+    if (!res.ok) throw new Error("failed to load feed")
+
+    const raw = await res.json()
+
+    const data = Array.isArray(raw)
+      ? raw
+      : Array.isArray(raw.data)
+        ? raw.data
+        : []
+
+    setItems(
+      data
+        .slice()
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() -
+            new Date(a.created_at).getTime()
+        )
+    )
+  } catch (err) {
+    console.error("Hiba a feed betöltésekor:", err)
   }
+}
+
+
 
   function togglePlay(item: FeedItem) {
     const audio = audioRef.current
