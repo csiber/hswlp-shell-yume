@@ -42,8 +42,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (publicBase) {
       const base = publicBase.endsWith('/') ? publicBase : `${publicBase}/`
       fileUrl = `${base}${row.r2_key}`
-    } else {
+    } else if (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      typeof (env.hswlp_r2 as any).createSignedUrl === 'function'
+    ) {
       fileUrl = await getSignedUrl(env.hswlp_r2, row.r2_key)
+    } else {
+      fileUrl = row.url
     }
 
     items.push({
