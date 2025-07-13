@@ -1,11 +1,15 @@
-import "server-only"
+"use client"
 
-import CommunityFeed from "@/components/community/CommunityFeedV3"
+import StoryList from "./StoryList"
+import CreatePostBox from "./CreatePostBox"
+import FeedList from "./FeedList"
 
 export default function FeedCenter() {
   return (
-    <div className="flex-1 overflow-y-auto p-4">
-      <CommunityFeed />
+    <div className="flex-1 flex flex-col gap-4 px-4 py-6">
+      <StoryList />
+      <CreatePostBox />
+      <FeedList />
     </div>
   )
 }
