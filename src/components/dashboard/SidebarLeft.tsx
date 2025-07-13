@@ -1,7 +1,7 @@
 import "server-only"
 
-import { AppSidebar } from "@/components/app-sidebar"
+import SidebarLeftPlugin from "@/plugins/ShellLayout/SidebarLeft"
 
 export default function SidebarLeft() {
-  return <AppSidebar />
+  return <SidebarLeftPlugin />
 }
