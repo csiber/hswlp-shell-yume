@@ -7,7 +7,7 @@ import type { UploadItem } from "@/components/dashboard/MyUploadsBox"
 import { MyUploadsBox } from "@/components/dashboard/MyUploadsBox"
 import { TrendingBox } from "@/components/dashboard/TrendingBox"
 import { FavoritesBox } from "@/components/dashboard/FavoritesBox"
-import CommunityFeed from "@/components/community/CommunityFeedV3"
+import CommunityFeed from "@/components/community/CommunityFeedV2"
 
 export default async function Page() {
   const session = await getSessionFromCookie()
