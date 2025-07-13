@@ -1,8 +1,7 @@
-import { AppSidebar } from "@/components/app-sidebar";
 import { getSessionFromCookie } from "@/utils/auth";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+import ShellLayout from "@/layouts/ShellLayout";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -17,10 +16,5 @@ export default async function DashboardLayout({
     return redirect("/");
   }
 
-  return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
-    </SidebarProvider>
-  );
+  return <ShellLayout>{children}</ShellLayout>;
 }

@@ -1,8 +1,8 @@
 import "server-only"
 
-import SidebarLeft from "@/components/shell/SidebarLeft"
-import FeedCenter from "@/components/shell/FeedCenter"
-import RightSidebar from "@/components/shell/RightSidebar"
+import SidebarLeft from "@/components/dashboard/SidebarLeft"
+import FeedCenter from "@/components/dashboard/FeedCenter"
+import RightSidebar from "@/components/dashboard/RightSidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default function ShellLayout({
