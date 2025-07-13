@@ -1,0 +1,7 @@
+CREATE TABLE webhooks (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL,
+  url TEXT NOT NULL,
+  enabled INTEGER DEFAULT 1,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);

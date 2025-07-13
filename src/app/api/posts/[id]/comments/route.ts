@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
+import { WebhookService } from '@/app/services/WebhookService'
 import { NextRequest } from 'next/server'
 import { init } from '@paralleldrive/cuid2'
 
@@ -51,6 +52,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   await env.DB.prepare(
     'INSERT INTO comments (id, post_id, user_id, text) VALUES (?1, ?2, ?3, ?4)'
   ).bind(id, params.id, session.user.id, text.trim()).run()
+  const upload = await env.DB.prepare(
+    'SELECT user_id FROM uploads WHERE id = ?1 LIMIT 1'
+  ).bind(params.id).first<{ user_id: string }>()
+  if (upload?.user_id) {
+    await WebhookService.dispatch(upload.user_id, 'comment', { by: session.user.id, comment_id: id })
+  }
   return jsonResponse({
     success: true,
     comment: {
