@@ -6,6 +6,9 @@ import relativeTime from "dayjs/plugin/relativeTime"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import MusicPlayer from "./MusicPlayer"
 import PromptBox from "./PromptBox"
+import ImageLightbox from "@/components/ui/ImageLightbox"
+import jsmediatags from "jsmediatags"
+import { useEffect, useState } from "react"
 import {
   HeartIcon,
   ChatBubbleLeftEllipsisIcon,
@@ -17,7 +20,7 @@ dayjs.extend(relativeTime)
 
 interface PostCardProps {
   item: FeedItem
-  audioRef: React.RefObject<HTMLAudioElement>
+  audioRef: React.RefObject<HTMLAudioElement | null>
   playingId: string | null
   setPlayingId: (id: string | null) => void
 }
@@ -34,6 +37,53 @@ export default function PostCard({
       .join("")
       .slice(0, 2)
       .toUpperCase() || item.user.email.slice(0, 2).toUpperCase()
+
+  const [promptText, setPromptText] = useState<string | null>(null)
+  const [promptError, setPromptError] = useState<boolean>(false)
+
+  const [musicMeta, setMusicMeta] = useState<{
+    title: string
+    artist: string
+    album?: string
+    picture?: string
+  } | null>(null)
+
+  useEffect(() => {
+    if (item.type === "prompt") {
+      fetch(item.url)
+        .then((res) => res.text())
+        .then((txt) => setPromptText(txt))
+        .catch(() => setPromptError(true))
+    }
+
+    if (item.type === "music") {
+      new jsmediatags.Reader(item.url).read({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onSuccess: (info: any) => {
+          const tags = info.tags
+          let picture
+          if (tags.picture) {
+            const { data, format } = tags.picture
+            const byteArray = new Uint8Array(data)
+            let binary = ""
+            byteArray.forEach((b) => (binary += String.fromCharCode(b)))
+            picture = `data:${format};base64,${btoa(binary)}`
+          }
+          setMusicMeta({
+            title: tags.title || item.title || "Ismeretlen szám",
+            artist: tags.artist || "Ismeretlen előadó",
+            album: tags.album,
+            picture,
+          })
+        },
+        onError: () =>
+          setMusicMeta({
+            title: item.title || "Ismeretlen szám",
+            artist: "Ismeretlen előadó",
+          }),
+      })
+    }
+  }, [item])
 
   return (
     <motion.div
@@ -58,24 +108,46 @@ export default function PostCard({
       </div>
       <div className="mb-2">
         {item.type === "image" && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={item.url}
-            alt={item.title}
-            className="w-full rounded-xl object-cover"
-          />
+          <ImageLightbox src={item.url} alt={item.title}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.url}
+              alt={item.title}
+              className="w-full rounded-xl object-cover"
+            />
+          </ImageLightbox>
         )}
         {item.type === "music" && (
-          <MusicPlayer
-            id={item.id}
-            url={item.url}
-            title={item.title}
-            audioRef={audioRef}
-            playingId={playingId}
-            setPlayingId={setPlayingId}
+          <div className="flex flex-col items-center gap-2">
+            {musicMeta?.picture && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={musicMeta.picture}
+                alt={musicMeta.title}
+                className="rounded-md w-24 h-24 object-cover"
+              />
+            )}
+            <div className="text-center text-sm">
+              <p>{musicMeta?.title || item.title || "Ismeretlen szám"}</p>
+              <p className="text-xs text-gray-500">
+                {musicMeta?.artist || "Ismeretlen előadó"}
+              </p>
+            </div>
+            <MusicPlayer
+              id={item.id}
+              url={item.url}
+              title={musicMeta?.title || item.title || "Ismeretlen szám"}
+              audioRef={audioRef}
+              playingId={playingId}
+              setPlayingId={setPlayingId}
+            />
+          </div>
+        )}
+        {item.type === "prompt" && (
+          <PromptBox
+            text={promptError ? "A prompt nem olvasható" : promptText || ""}
           />
         )}
-        {item.type === "prompt" && <PromptBox text={item.title} />}
       </div>
       {item.type !== "prompt" && (
         <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">

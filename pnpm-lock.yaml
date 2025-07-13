@@ -107,6 +107,9 @@ importers:
       ipaddr.js:
         specifier: ^2.2.0
         version: 2.2.0
+      jsmediatags:
+        specifier: ^3.9.7
+        version: 3.9.7
       lucide-react:
         specifier: ^0.471.0
         version: 0.471.2(react@19.1.0)
@@ -5341,6 +5344,10 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
+  jsmediatags@3.9.7:
+    resolution: {integrity: sha512-xCAO8C3li3t5hYkXqn8iv8zQQUB4T1QqRN2aSONHMls21ICdEvXi4xtb6W70/fAFYSDwMHd32hIqvo4YuXoNcQ==}
+    engines: {node: '>=4.0.0'}
+
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
 
@@ -6633,6 +6640,10 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  xhr2@0.1.4:
+    resolution: {integrity: sha512-3QGhDryRzTbIDj+waTRvMBe8SyPhW79kz3YnNb+HQt/6LPYQT3zT3Jt0Y8pBofZqQX26x8Ecfv0FXR72uH5VpA==}
+    engines: {node: '>= 0.6'}
 
   yallist@3.1.1:
     resolution: {integrity: sha512-a4UGQaWPH59mOXUYnAG2ewncQS4i4F43Tv3JoAM+s2VDAmS9NsK8GpDMLrCHPksFT7h3K6TOoUNn2pb7RoXx4g==}
@@ -13353,6 +13364,10 @@ snapshots:
 
   jsesc@3.1.0: {}
 
+  jsmediatags@3.9.7:
+    dependencies:
+      xhr2: 0.1.4
+
   json-buffer@3.0.1: {}
 
   json-schema-traverse@0.4.1: {}
@@ -14795,6 +14810,8 @@ snapshots:
   ws@8.17.1: {}
 
   ws@8.18.0: {}
+
+  xhr2@0.1.4: {}
 
   yallist@3.1.1: {}
 

@@ -15,7 +15,6 @@ export async function getSignedUrl(
 
   if (typeof createSignedUrl === 'function') {
     // TypeScript may not recognize this method in older type definitions
-    // @ts-expect-error -- Cloudflare Workers provides createSignedUrl at runtime
     const url = await createSignedUrl.call(bucket, {
       method: 'GET',
       key,
