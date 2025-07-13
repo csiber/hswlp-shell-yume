@@ -6,13 +6,7 @@ export default function CreatePostBox() {
   return (
     <div className="rounded-xl bg-white p-4 shadow dark:bg-gray-800">
       <div className="flex items-center gap-3">
-        <Image
-          src="https://i.pravatar.cc/150?img=32"
-          alt="User avatar"
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
+
         <input
           type="text"
           placeholder="What's on your mind?"
