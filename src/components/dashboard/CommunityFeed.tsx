@@ -51,8 +51,14 @@ export default function CommunityFeedV2() {
     try {
       const res = await fetch("/api/community-feed");
       if (!res.ok) throw new Error("failed to load feed");
-      const raw = await res.json();
-      let arr: unknown = (raw.items ?? raw) as unknown;
+      const raw: unknown = await res.json();
+      type FeedResponse = { items?: FeedItem[] } | FeedItem[] | unknown;
+      const data = raw as FeedResponse;
+      let arr: unknown = Array.isArray(data)
+        ? data
+        : Array.isArray((data as { items?: unknown }).items)
+          ? (data as { items?: FeedItem[] }).items
+          : [];
       if (!Array.isArray(arr)) {
         console.warn("/api/community-feed válasz nem tömb");
         arr = [];
