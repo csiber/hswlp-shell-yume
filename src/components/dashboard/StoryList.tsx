@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 
 const stories = [
   { id: "add", name: "Add Story", image: "#", avatar: "#" },

@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 
 export interface FeedPost {
   id: string
