@@ -9,11 +9,9 @@ import PromptBox from "./PromptBox"
 import ImageLightbox from "@/components/ui/ImageLightbox"
 import jsmediatags from "jsmediatags"
 import { useEffect, useState } from "react"
-import {
-  HeartIcon,
-  ChatBubbleLeftEllipsisIcon,
-  ShareIcon,
-} from "@heroicons/react/24/outline"
+import { ShareIcon } from "@heroicons/react/24/outline"
+import LikeButton from "./LikeButton"
+import CommentList from "./CommentList"
 import type { FeedItem } from "./CommunityFeedV3"
 
 dayjs.extend(relativeTime)
@@ -155,16 +153,12 @@ export default function PostCard({
         </p>
       )}
       <div className="mt-auto flex justify-between text-gray-500">
-        <button className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800">
-          <HeartIcon className="h-5 w-5" /> Like
-        </button>
-        <button className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800">
-          <ChatBubbleLeftEllipsisIcon className="h-5 w-5" /> Comment
-        </button>
+        <LikeButton postId={item.id} />
         <button className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800">
           <ShareIcon className="h-5 w-5" /> Share
         </button>
       </div>
+      <CommentList postId={item.id} />
     </motion.div>
   )
 }
