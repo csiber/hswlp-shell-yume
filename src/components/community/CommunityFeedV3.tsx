@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useCallback } from "react"
 import PostCard from "./PostCard"
 import SkeletonPost from "./SkeletonPost"
 
@@ -16,7 +16,7 @@ export interface FeedItem {
   }
 }
 
-export default function CommunityFeedV3() {
+export default function CommunityFeedV3({ endpoint = "/api/community-feed" }: { endpoint?: string } = {}) {
   const [items, setItems] = useState<FeedItem[]>([])
   const [visible, setVisible] = useState(10)
   const [loading, setLoading] = useState(true)
@@ -31,10 +31,10 @@ export default function CommunityFeedV3() {
     return () => audio.removeEventListener("ended", onEnded)
   }, [])
 
-  async function loadFeed() {
+  const loadFeed = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch("/api/community-feed")
+      const res = await fetch(endpoint)
       if (!res.ok) throw new Error("failed to load feed")
       const raw: unknown = await res.json()
       type FeedResponse = { items?: FeedItem[] } | FeedItem[] | unknown
@@ -65,13 +65,13 @@ export default function CommunityFeedV3() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [endpoint])
 
   useEffect(() => {
     loadFeed()
     const timer = setInterval(loadFeed, 60000)
     return () => clearInterval(timer)
-  }, [])
+  }, [endpoint, loadFeed])
 
   const visibleItems = items.slice(0, visible)
 

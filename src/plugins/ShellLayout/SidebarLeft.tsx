@@ -1,6 +1,12 @@
 import Link from "next/link";
 
-export default function SidebarLeft() {
+interface UserInfo {
+  name: string
+  email: string
+  credits: number
+}
+
+export default function SidebarLeft({ user }: { user?: UserInfo }) {
   return (
     <div className="w-[250px] bg-white dark:bg-gray-900 p-4 flex flex-col gap-6 text-sm">
       {/* New Feeds szekció */}
@@ -8,34 +14,34 @@ export default function SidebarLeft() {
         <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">New Feeds</h3>
         <ul className="flex flex-col gap-1 border-b border-gray-200 dark:border-gray-800 pb-4">
           <li>
-            <Link href="/" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">📰</span>
               <span>Newsfeed</span>
             </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/badges" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">🏅</span>
               <span>Badges</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/explore-stories" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">🌍</span>
               <span>Explore Stories</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/popular-groups" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">💥</span>
               <span>Popular Groups</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/author-profile" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">👤</span>
               <span>Author Profile</span>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
@@ -45,29 +51,29 @@ export default function SidebarLeft() {
         <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">More Pages</h3>
         <ul className="flex flex-col gap-1 border-b border-gray-200 dark:border-gray-800 pb-4">
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/email-box" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">📬</span>
               <span>Email Box</span>
               <span className="ml-auto bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded">584</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/near-hotel" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">🏨</span>
               <span>Near Hotel</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/latest-event" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">📍</span>
               <span>Latest Event</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/live-stream" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">📹</span>
               <span>Live Stream</span>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
@@ -77,26 +83,38 @@ export default function SidebarLeft() {
         <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">Account</h3>
         <ul className="flex flex-col gap-1">
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/settings" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">⚙️</span>
               <span>Settings</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/analytics" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">📊</span>
               <span>Analytics</span>
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="#" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+            <Link href="/dashboard/chat" className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
               <span className="text-lg">💬</span>
               <span>Chat</span>
               <span className="ml-auto bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded">23</span>
-            </a>
+            </Link>
           </li>
         </ul>
       </div>
+      {user && (
+        <div className="mt-auto flex items-center gap-2 border-t border-gray-200 dark:border-gray-800 pt-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
+            {user.name.split(' ').map(n => n[0]).join('').slice(0,2)}
+          </div>
+          <div className="flex-1">
+            <div className="font-semibold leading-none truncate">{user.name}</div>
+            <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+            <div className="text-xs text-muted-foreground">{user.credits} kredit</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
