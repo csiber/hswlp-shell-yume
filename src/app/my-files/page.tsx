@@ -4,7 +4,12 @@
 
 import useSWR from 'swr'
 import { useState } from 'react'
-import { UploadItem } from '@/components/dashboard/MyUploadsBox'
+interface UploadItem {
+  id: string
+  type: 'image' | 'music' | 'prompt'
+  title: string
+  url: string
+}
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import Image from 'next/image'
