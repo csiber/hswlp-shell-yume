@@ -34,6 +34,7 @@ export default function CommunityFeedV2() {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
+
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -43,6 +44,7 @@ export default function CommunityFeedV2() {
       audio.removeEventListener("ended", handleEnded);
     };
   }, []);
+
 
   async function loadFeed() {
     setLoading(true);
