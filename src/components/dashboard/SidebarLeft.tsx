@@ -7,8 +7,8 @@ export default async function SidebarLeft() {
   const session = await getSessionFromCookie()
   const user = session?.user
     ? {
-        name:
-          userFullName(session.user) ?? session.user.email,
+        id: session.user.id,
+        name: userFullName(session.user) ?? session.user.email,
         email: session.user.email,
         credits: session.user.currentCredits ?? 0,
       }
