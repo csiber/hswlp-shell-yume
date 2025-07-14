@@ -1,9 +1,9 @@
-import { getDB } from '@/db'
+import { getCloudflareContext } from '@opennextjs/cloudflare'
 
 export class WebhookService {
   static async dispatch(user_id: string, event: string, payload: unknown) {
-    const db = getDB()
-    const result = await db.prepare(
+    const { env } = getCloudflareContext()
+    const result = await env.DB.prepare(
       'SELECT url FROM webhooks WHERE user_id = ?1 AND enabled = 1'
     ).bind(user_id).first<{ url: string }>()
 
