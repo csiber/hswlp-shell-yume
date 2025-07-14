@@ -20,13 +20,28 @@ export const getServerSideProps: GetServerSideProps<ExplorePageProps> = async (
   const allowed = ['image', 'music', 'prompt']
   const filter = allowed.includes(type || '') ? type : undefined
 
-  let query = 'SELECT id, title, type, url, r2_key, created_at FROM uploads'
-  if (filter) query += ' WHERE type = ?1'
-  query += ' ORDER BY created_at DESC LIMIT 30'
+  const cf = (context.req as unknown as { cf?: { user?: { id?: string } } }).cf
+  const userId = cf?.user?.id as string | undefined
 
-  const stmt = filter
-    ? env.DB.prepare(query).bind(filter)
-    : env.DB.prepare(query)
+  let query =
+    'SELECT u.id, u.title, u.type, u.url, u.r2_key, u.created_at'
+  if (userId) {
+    query += ', CASE WHEN f.id IS NOT NULL THEN 1 ELSE 0 END as is_favorited'
+  }
+  query += ' FROM uploads u'
+  if (userId) {
+    query += ' LEFT JOIN favorites f ON f.upload_id = u.id AND f.user_id = ?1'
+  }
+  if (filter) {
+    query += userId ? ' WHERE u.type = ?2' : ' WHERE u.type = ?1'
+  }
+  query += ' ORDER BY u.created_at DESC LIMIT 30'
+
+  let stmt
+  if (userId && filter) stmt = env.DB.prepare(query).bind(userId, filter)
+  else if (userId) stmt = env.DB.prepare(query).bind(userId)
+  else if (filter) stmt = env.DB.prepare(query).bind(filter)
+  else stmt = env.DB.prepare(query)
 
   const result = await stmt.all<Record<string, string>>()
 
@@ -49,6 +64,7 @@ export const getServerSideProps: GetServerSideProps<ExplorePageProps> = async (
       type: row.type as UploadItem['type'],
       url: fileUrl,
       title: row.title,
+      is_favorited: row.is_favorited === 1,
     })
   }
 
