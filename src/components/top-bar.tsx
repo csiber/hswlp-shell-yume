@@ -1,11 +1,9 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Bell, Mail, Home, Sun, Moon } from "lucide-react"
-import { useTheme } from "next-themes"
-
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Bell, Mail, Home } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,36 +11,33 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useSessionStore } from "@/state/session"
-import useSignOut from "@/hooks/useSignOut"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSessionStore } from "@/state/session";
+import useSignOut from "@/hooks/useSignOut";
+import ThemeSwitcher from "@/plugins/ShellLayout/ThemeSwitcher";
 
 interface TopBarProps {
-  logo?: "hswlp" | "sociala"
+  logo?: "hswlp" | "sociala";
 }
 
 export default function TopBar({ logo = "hswlp" }: TopBarProps) {
-  const { session, isLoading } = useSessionStore()
-  const { signOut } = useSignOut()
-  const router = useRouter()
-  const { resolvedTheme, setTheme } = useTheme()
+  const { session, isLoading } = useSessionStore();
+  const { signOut } = useSignOut();
+  const router = useRouter();
 
-  const user = session?.user
-  const displayName = user?.firstName && user?.lastName
-    ? `${user.firstName} ${user.lastName}`
-    : user?.email ?? ""
+  const user = session?.user;
+  const displayName =
+    user?.firstName && user?.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user?.email ?? "";
   const initials = displayName
     .split(" ")
-    .map(n => n[0])
+    .map((n) => n[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase()
-
-  const toggleTheme = () => {
-    setTheme(resolvedTheme === "dark" ? "light" : "dark")
-  }
+    .toUpperCase();
 
   return (
     <div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900">
@@ -70,24 +65,21 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
         />
       </div>
       <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
+        >
           <Bell className="size-5" />
-        </Button>
-        <Button variant="ghost" size="icon" className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800">
-          <Mail className="size-5" />
         </Button>
         <Button
           variant="ghost"
           size="icon"
-          onClick={toggleTheme}
           className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
         >
-          {resolvedTheme === "dark" ? (
-            <Sun className="size-5" />
-          ) : (
-            <Moon className="size-5" />
-          )}
+          <Mail className="size-5" />
         </Button>
+        <ThemeSwitcher />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -114,16 +106,18 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
                 <DropdownMenuSeparator />
               </>
             )}
-            <DropdownMenuItem onClick={() => router.push(`/profile/${user?.id}`)}>
+            <DropdownMenuItem
+              onClick={() => router.push(`/profile/${user?.id}`)}
+            >
               Profil
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push('/settings')}>
+            <DropdownMenuItem onClick={() => router.push("/settings")}>
               Beállítások
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
-                signOut().then(() => router.push('/'))
+                signOut().then(() => router.push("/"));
               }}
             >
               Kijelentkezés
@@ -132,6 +126,5 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
         </DropdownMenu>
       </div>
     </div>
-  )
+  );
 }
-
