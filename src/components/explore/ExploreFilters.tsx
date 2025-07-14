@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
 interface ExploreFiltersProps {
-  currentType?: string
+  currentType: string | null | undefined
 }
 
 export default function ExploreFilters({ currentType }: ExploreFiltersProps) {
@@ -15,17 +15,17 @@ export default function ExploreFilters({ currentType }: ExploreFiltersProps) {
 
   return (
     <div className="mb-4 flex gap-3">
-      {tabs.map((tab) => (
-        <Button
-          key={tab.label}
-          asChild
-          variant={currentType === tab.type ? 'default' : 'outline'}
-        >
-          <Link href={tab.type ? `/dashboard/explore?type=${tab.type}` : '/dashboard/explore'}>
-            {tab.label}
-          </Link>
-        </Button>
-      ))}
+      {tabs.map((tab) => {
+        const active =
+          currentType === tab.type || (currentType == null && tab.type === undefined)
+        return (
+          <Button key={tab.label} asChild variant={active ? 'default' : 'outline'}>
+            <Link href={tab.type ? `/dashboard/explore?type=${tab.type}` : '/dashboard/explore'}>
+              {tab.label}
+            </Link>
+          </Button>
+        )
+      })}
     </div>
   )
 }

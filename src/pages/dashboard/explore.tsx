@@ -7,7 +7,7 @@ import Head from 'next/head'
 
 interface ExplorePageProps {
   items: UploadItem[]
-  currentType?: string
+  currentType: string | null
 }
 
 export const runtime = 'experimental-edge'
@@ -71,7 +71,7 @@ export const getServerSideProps: GetServerSideProps<ExplorePageProps> = async (
   return {
     props: {
       items,
-      currentType: filter,
+      currentType: filter ?? null,
     },
   }
 }
