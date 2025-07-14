@@ -3,11 +3,19 @@ import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
 import { NextRequest } from 'next/server'
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+interface RouteContext<T> {
+  params: Promise<T>
+}
+
+export async function GET(
+  _req: NextRequest,
+  { params }: RouteContext<{ id: string }>
+) {
+  const { id } = await params
   const { env } = getCloudflareContext()
   const user = await env.DB.prepare(
     'SELECT id, firstName, lastName, email, avatar, currentCredits FROM user WHERE id = ?1 LIMIT 1'
-  ).bind(params.id).first<{
+  ).bind(id).first<{
     id: string; firstName: string | null; lastName: string | null; email: string; avatar: string | null; currentCredits: number | null
   }>()
 
@@ -17,7 +25,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
   const uploads = await env.DB.prepare(
     'SELECT id, title, type, url, r2_key, created_at FROM uploads WHERE user_id = ?1 ORDER BY created_at DESC'
-  ).bind(params.id).all<{
+  ).bind(id).all<{
     id: string; title: string; type: string; url: string; r2_key: string; created_at: string
   }>()
 

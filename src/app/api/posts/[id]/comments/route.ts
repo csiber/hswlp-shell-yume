@@ -24,7 +24,7 @@ export async function GET(
   _req: NextRequest,
   { params }: RouteContext<{ id: string }>
 ) {
-  const { id } = await params
+  const { id: uploadId } = await params
   const { env } = getCloudflareContext()
   const rows = await env.DB.prepare(
     `SELECT c.id, c.content, c.created_at, u.firstName, u.lastName, u.email, u.avatar
@@ -32,7 +32,7 @@ export async function GET(
      LEFT JOIN user u ON c.user_id = u.id
      WHERE c.upload_id = ?1
      ORDER BY c.created_at ASC`
-  ).bind(id).all<CommentRow>()
+  ).bind(uploadId).all<CommentRow>()
   const comments = (rows.results || []).map(row => ({
     id: row.id,
     text: row.content,
@@ -49,7 +49,7 @@ export async function POST(
   req: NextRequest,
   { params }: RouteContext<{ id: string }>
 ) {
-  const { id: postId } = await params
+  const { id: uploadId } = await params
   const session = await getSessionFromCookie()
   if (!session?.user?.id) {
     return jsonResponse({ success: false }, { status: 401 })
@@ -62,7 +62,7 @@ export async function POST(
   const id = `com_${createId()}`
   await env.DB.prepare(
     'INSERT INTO comments (id, upload_id, user_id, content) VALUES (?1, ?2, ?3, ?4)'
-  ).bind(id, postId, session.user.id, text.trim()).run()
+  ).bind(id, uploadId, session.user.id, text.trim()).run()
   return jsonResponse({
     success: true,
     comment: {
