@@ -4,6 +4,12 @@ import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid"
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface Props {
   postId: string
@@ -47,17 +53,27 @@ export default function LikeButton({ postId }: Props) {
   }
 
   return (
-    <motion.button
-      whileTap={{ scale: 1.2 }}
-      onClick={toggle}
-      className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800"
-    >
-      {liked ? (
-        <HeartSolid className="h-5 w-5 text-red-500" />
-      ) : (
-        <HeartOutline className="h-5 w-5" />
-      )}
-      <span>{count}</span>
-    </motion.button>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.05 }}
+            onClick={toggle}
+            className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800"
+          >
+            {liked ? (
+              <HeartSolid className="h-5 w-5 text-red-500" />
+            ) : (
+              <HeartOutline className="h-5 w-5" />
+            )}
+            <span>{count}</span>
+          </motion.button>
+        </TooltipTrigger>
+        <TooltipContent>
+          {liked ? "Mégse tetszik" : "Tetszik"}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
