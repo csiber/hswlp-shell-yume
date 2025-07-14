@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavUser } from "@/components/nav-user";
 
 interface UserInfo {
   id?: string
@@ -112,18 +113,9 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
           </li>
         </ul>
       </div>
-      {user && (
-        <div className="mt-auto flex items-center gap-2 border-t border-gray-200 dark:border-gray-800 pt-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
-            {user.name.split(' ').map(n => n[0]).join('').slice(0,2)}
-          </div>
-          <div className="flex-1">
-            <div className="font-semibold leading-none truncate">{user.name}</div>
-            <div className="text-xs text-muted-foreground truncate">{user.email}</div>
-            <div className="text-xs text-muted-foreground">{user.credits} kredit</div>
-          </div>
-        </div>
-      )}
+      <div className="mt-auto border-t border-gray-200 dark:border-gray-800 pt-4">
+        <NavUser />
+      </div>
     </div>
   );
 }
