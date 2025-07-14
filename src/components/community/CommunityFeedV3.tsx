@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react"
 import PostCard from "./PostCard"
 import SkeletonPost from "./SkeletonPost"
+import UploadBox from "../upload/UploadBox"
 
 export interface FeedItem {
   id: string
@@ -83,6 +84,7 @@ export default function CommunityFeedV3({ endpoint = "/api/community-feed" }: { 
           Frissítés
         </button>
       </div>
+      <UploadBox />
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 5 }).map((_, i) => (
