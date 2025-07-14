@@ -1,26 +1,30 @@
-import type { GetServerSideProps } from 'next'
+import { Metadata } from 'next'
+import { getSessionFromCookie } from '@/utils/auth'
+import { redirect } from 'next/navigation'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSignedUrl } from '@/utils/r2'
 import ExploreFilters from '@/components/explore/ExploreFilters'
 import UploadGrid, { type UploadItem } from '@/components/explore/UploadGrid'
-import Head from 'next/head'
 
-interface ExplorePageProps {
-  items: UploadItem[]
-  currentType: string | null
+export const metadata: Metadata = {
+  title: 'Felfedezés',
 }
 
-export const runtime = 'experimental-edge'
+interface ExplorePageProps {
+  searchParams?: { type?: string }
+}
 
-export const getServerSideProps: GetServerSideProps<ExplorePageProps> = async (
-  context,
-) => {
-  const { env } = getCloudflareContext()
-  const type = context.query.type as string | undefined
+export default async function ExplorePage({ searchParams }: ExplorePageProps) {
+  const session = await getSessionFromCookie()
+  if (!session) {
+    redirect('/')
+  }
+
+  const { env, cf } = getCloudflareContext()
+  const type = searchParams?.type
   const allowed = ['image', 'music', 'prompt']
   const filter = allowed.includes(type || '') ? type : undefined
 
-  const cf = (context.req as unknown as { cf?: { user?: { id?: string } } }).cf
   const userId = cf?.user?.id as string | undefined
 
   let query =
@@ -68,22 +72,10 @@ export const getServerSideProps: GetServerSideProps<ExplorePageProps> = async (
     })
   }
 
-  return {
-    props: {
-      items,
-      currentType: filter ?? null,
-    },
-  }
-}
-
-export default function ExplorePage({ items, currentType }: ExplorePageProps) {
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <Head>
-        <title>Felfedezés</title>
-      </Head>
-      <h1 className="text-3xl font-bold mb-4">Felfedezés</h1>
-      <ExploreFilters currentType={currentType} />
+    <div className="px-4 py-8 max-w-6xl mx-auto">
+      <h1 className="text-2xl font-semibold mb-6">Felfedezés</h1>
+      <ExploreFilters currentType={filter ?? null} />
       <UploadGrid items={items} />
     </div>
   )
