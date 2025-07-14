@@ -68,7 +68,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
       type: row.type as UploadItem['type'],
       url: fileUrl,
       title: row.title,
-      is_favorited: row.is_favorited === '1',
+      is_favorited: Number(row.is_favorited) === 1,
     })
   }
 
