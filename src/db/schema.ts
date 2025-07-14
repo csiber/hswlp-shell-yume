@@ -162,6 +162,23 @@ export const purchasedItemsTable = sqliteTable("purchased_item", {
   index('purchased_item_user_item_idx').on(table.userId, table.itemType, table.itemId),
 ]));
 
+export const badgeTable = sqliteTable("badges", {
+  id: text().primaryKey().notNull(),
+  slug: text().unique().notNull(),
+  name: text().notNull(),
+  description: text(),
+  iconUrl: text("icon_url"),
+  category: text(),
+  createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const userBadgeTable = sqliteTable("user_badges", {
+  id: text().primaryKey().notNull(),
+  userId: text("user_id").notNull().references(() => userTable.id),
+  badgeId: text("badge_id").notNull().references(() => badgeTable.id),
+  awardedAt: integer("awarded_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
 // System-defined roles - these are always available
 export const SYSTEM_ROLES_ENUM = {
   OWNER: 'owner',
@@ -339,10 +356,26 @@ export const purchasedItemsRelations = relations(purchasedItemsTable, ({ one }) 
   }),
 }));
 
+export const badgeRelations = relations(badgeTable, ({ many }) => ({
+  userBadges: many(userBadgeTable),
+}));
+
+export const userBadgeRelations = relations(userBadgeTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [userBadgeTable.userId],
+    references: [userTable.id],
+  }),
+  badge: one(badgeTable, {
+    fields: [userBadgeTable.badgeId],
+    references: [badgeTable.id],
+  }),
+}));
+
 export const userRelations = relations(userTable, ({ many }) => ({
   passkeys: many(passKeyCredentialTable),
   creditTransactions: many(creditTransactionTable),
   purchasedItems: many(purchasedItemsTable),
+  badges: many(userBadgeTable),
   teamMemberships: many(teamMembershipTable),
 }));
 
@@ -361,3 +394,5 @@ export type Team = InferSelectModel<typeof teamTable>;
 export type TeamMembership = InferSelectModel<typeof teamMembershipTable>;
 export type TeamRole = InferSelectModel<typeof teamRoleTable>;
 export type TeamInvitation = InferSelectModel<typeof teamInvitationTable>;
+export type Badge = InferSelectModel<typeof badgeTable>;
+export type UserBadge = InferSelectModel<typeof userBadgeTable>;
