@@ -3,6 +3,7 @@ import "server-only"
 import SidebarLeft from "@/components/dashboard/SidebarLeft"
 import FeedCenter from "@/components/dashboard/FeedCenter"
 import RightSidebar from "@/components/dashboard/RightSidebar"
+import TopBar from "@/components/top-bar"
 import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default function ShellLayout({
@@ -12,12 +13,15 @@ export default function ShellLayout({
 }) {
   return (
     <SidebarProvider>
-      <div className="flex h-full w-full">
-        <SidebarLeft />
-        <FeedCenter />
-        <RightSidebar />
+      <div className="flex h-full w-full flex-col">
+        <TopBar />
+        <div className="flex flex-1">
+          <SidebarLeft />
+          <FeedCenter />
+          <RightSidebar />
+        </div>
+        {children}
       </div>
-      {children}
     </SidebarProvider>
   )
 }
