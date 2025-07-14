@@ -23,7 +23,7 @@ export default async function Page() {
      ORDER BY b.created_at ASC`
   ).bind(session.user.id).all<Record<string, unknown>>()
 
-  const badges = (rows.results as BadgeItem[] | null) ?? []
+  const badges = (rows.results as unknown as BadgeItem[] | null) ?? []
 
   return (
     <div className="p-6">
