@@ -8,8 +8,8 @@ export default async function SidebarLeft() {
   const user = session?.user
     ? {
         id: session.user.id,
-        name: userFullName(session.user) ?? session.user.email,
-        email: session.user.email,
+        name: userFullName(session.user) ?? session.user.email ?? "",
+        email: session.user.email ?? "",
         credits: session.user.currentCredits ?? 0,
       }
     : undefined

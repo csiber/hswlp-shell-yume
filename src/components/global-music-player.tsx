@@ -22,8 +22,8 @@ export default function GlobalMusicPlayer() {
   // fetch music list on mount
   useEffect(() => {
     fetch('/api/music-feed')
-      .then(res => res.json())
-      .then((data: { items: Track[] }) => {
+      .then(res => res.json() as Promise<{ items: Track[] }>)
+      .then((data) => {
         setQueue(data.items)
       })
       .catch(err => console.error(err))
