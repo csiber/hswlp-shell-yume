@@ -9,6 +9,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NextTopLoader from 'nextjs-toploader'
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/constants";
 import { AgenticDevStudioStickyBanner } from "@/components/startup-studio-sticky-banner";
+import GlobalMusicPlayer from "@/components/global-music-player";
 
 export const dynamic = "force-dynamic";
 
@@ -77,6 +78,7 @@ export default function BaseLayout({
           </TooltipProvider>
         </ThemeProvider>
         <Toaster richColors closeButton position="top-right" expand duration={7000} />
+        <GlobalMusicPlayer />
         <AgenticDevStudioStickyBanner />
       </body>
     </html>
