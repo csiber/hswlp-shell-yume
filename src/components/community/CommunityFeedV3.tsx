@@ -13,6 +13,7 @@ export interface FeedItem {
   user: {
     name: string | null
     email: string
+    avatar_url?: string | null
   }
 }
 

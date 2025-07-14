@@ -3,11 +3,11 @@
 import { motion } from "framer-motion"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import MusicPlayer from "./MusicPlayer"
 import PromptBox from "./PromptBox"
 import ImageLightbox from "@/components/ui/ImageLightbox"
-import jsmediatags from "jsmediatags"
+import jsmediatags from "jsmediatags/dist/jsmediatags.min.js"
 import { useEffect, useState } from "react"
 import { ShareIcon } from "@heroicons/react/24/outline"
 import LikeButton from "./LikeButton"
@@ -89,20 +89,28 @@ export default function PostCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col bg-white dark:bg-zinc-900 rounded-lg shadow p-4"
+      className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4"
     >
-      <div className="mb-2 flex items-center justify-between text-sm">
-        <div className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <span className="font-semibold">
-            {item.user.name || item.user.email}
+      <div className="mb-3 flex items-center gap-3">
+        <Avatar className="h-12 w-12">
+          {item.user.avatar_url && (
+            <AvatarImage src={item.user.avatar_url} alt={item.user.name || item.user.email} />
+          )}
+          <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-sm">
+              {item.user.name || item.user.email}
+            </span>
+            <span className="text-muted-foreground">
+              {item.type === 'music' ? '🎵' : item.type === 'prompt' ? '💬' : '🖼'}
+            </span>
+          </div>
+          <span className="text-xs text-gray-500">
+            {dayjs(item.created_at).fromNow()}
           </span>
         </div>
-        <span className="text-xs text-gray-500">
-          {dayjs(item.created_at).fromNow()}
-        </span>
       </div>
       <div className="mb-2">
         {item.type === "image" && (
@@ -152,11 +160,13 @@ export default function PostCard({
           {item.title}
         </p>
       )}
-      <div className="mt-auto flex justify-between text-gray-500">
-        <LikeButton postId={item.id} />
+      <div className="mt-auto flex justify-between text-gray-500 relative">
         <button className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800">
           <ShareIcon className="h-5 w-5" /> Share
         </button>
+        <div className="absolute right-0 bottom-0">
+          <LikeButton postId={item.id} />
+        </div>
       </div>
       <CommentList postId={item.id} />
     </motion.div>

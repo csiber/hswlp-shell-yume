@@ -4,6 +4,10 @@ import { jsonResponse } from '@/utils/api'
 import { NextRequest } from 'next/server'
 import { init } from '@paralleldrive/cuid2'
 
+interface RouteContext<T> {
+  params: Promise<T>
+}
+
 const createId = init({ length: 32 })
 
 interface CommentRow {
@@ -16,7 +20,11 @@ interface CommentRow {
   avatar: string | null
 }
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  _req: NextRequest,
+  { params }: RouteContext<{ id: string }>
+) {
+  const { id } = await params
   const { env } = getCloudflareContext()
   const rows = await env.DB.prepare(
     `SELECT c.id, c.text, c.created_at, u.firstName, u.lastName, u.email, u.avatar
@@ -24,7 +32,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
      LEFT JOIN user u ON c.user_id = u.id
      WHERE c.post_id = ?1
      ORDER BY c.created_at ASC`
-  ).bind(params.id).all<CommentRow>()
+  ).bind(id).all<CommentRow>()
   const comments = (rows.results || []).map(row => ({
     id: row.id,
     text: row.text,
@@ -37,7 +45,11 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   return jsonResponse({ comments })
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(
+  req: NextRequest,
+  { params }: RouteContext<{ id: string }>
+) {
+  const { id: postId } = await params
   const session = await getSessionFromCookie()
   if (!session?.user?.id) {
     return jsonResponse({ success: false }, { status: 401 })
@@ -50,7 +62,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const id = `com_${createId()}`
   await env.DB.prepare(
     'INSERT INTO comments (id, post_id, user_id, text) VALUES (?1, ?2, ?3, ?4)'
-  ).bind(id, params.id, session.user.id, text.trim()).run()
+  ).bind(id, postId, session.user.id, text.trim()).run()
   return jsonResponse({
     success: true,
     comment: {
