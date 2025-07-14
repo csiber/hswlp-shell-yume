@@ -49,7 +49,7 @@ export async function GET() {
       created_at: new Date(row.created_at).toISOString(),
       user: {
         name: nameParts.length ? nameParts.join(' ') : session.user.email,
-        email: session.user.email,
+        email: session.user.email!,
       },
     })
   }
