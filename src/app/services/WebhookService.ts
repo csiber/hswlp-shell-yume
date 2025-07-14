@@ -1,7 +1,7 @@
 import { getDB } from '@/db'
 
 export class WebhookService {
-  static async dispatch(user_id: string, event: string, payload: any) {
+  static async dispatch(user_id: string, event: string, payload: unknown) {
     const db = getDB()
     const result = await db.prepare(
       'SELECT url FROM webhooks WHERE user_id = ?1 AND enabled = 1'
