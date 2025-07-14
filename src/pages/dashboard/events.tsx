@@ -3,7 +3,6 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import EventGrid from '@/components/events/EventGrid'
 import Head from 'next/head'
 
-export const runtime = 'experimental-edge'
 
 interface EventsPageProps {
   events: {
