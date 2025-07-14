@@ -1,23 +1,28 @@
-import { Card } from '@/components/ui/card'
-import { StarIcon as StarSolid } from '@heroicons/react/24/solid'
-import { StarIcon as StarOutline } from '@heroicons/react/24/outline'
-import { useSessionStore } from '@/state/session'
-import { useFavorite } from '@/hooks/useFavorite'
-import { useState } from 'react'
-import CommentBox from './CommentBox'
+"use client";
+
+import { Card } from "@/components/ui/card";
+import { StarIcon as StarSolid } from "@heroicons/react/24/solid";
+import { StarIcon as StarOutline } from "@heroicons/react/24/outline";
+import { useSessionStore } from "@/state/session";
+import { useFavorite } from "@/hooks/useFavorite";
+import { useState } from "react";
+import CommentBox from "./CommentBox";
 
 export interface UploadItem {
-  id: string
-  type: 'image' | 'music' | 'prompt'
-  url: string
-  title: string | null
-  is_favorited?: boolean
+  id: string;
+  type: "image" | "music" | "prompt";
+  url: string;
+  title: string | null;
+  is_favorited?: boolean;
 }
 
 function UploadCard({ item }: { item: UploadItem }) {
-  const session = useSessionStore((s) => s.session)
-  const { favorited, toggle } = useFavorite(item.is_favorited ?? false, item.id)
-  const [showComments, setShowComments] = useState(false)
+  const session = useSessionStore((s) => s.session);
+  const { favorited, toggle } = useFavorite(
+    item.is_favorited ?? false,
+    item.id
+  );
+  const [showComments, setShowComments] = useState(false);
 
   return (
     <Card className="overflow-hidden relative">
@@ -33,15 +38,19 @@ function UploadCard({ item }: { item: UploadItem }) {
           )}
         </button>
       )}
-      {item.type === 'image' ? (
+      {item.type === "image" ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={item.url} alt={item.title || ''} className="h-48 w-full object-cover" />
-      ) : item.type === 'music' ? (
+        <img
+          src={item.url}
+          alt={item.title || ""}
+          className="h-48 w-full object-cover"
+        />
+      ) : item.type === "music" ? (
         <audio controls src={item.url} className="w-full" />
       ) : (
         <div className="p-4 text-sm">{item.title}</div>
       )}
-      {item.type !== 'prompt' && (
+      {item.type !== "prompt" && (
         <div className="p-2 text-sm text-center">{item.title}</div>
       )}
       <div className="p-2">
@@ -56,7 +65,7 @@ function UploadCard({ item }: { item: UploadItem }) {
         )}
       </div>
     </Card>
-  )
+  );
 }
 
 export default function UploadGrid({ items }: { items: UploadItem[] }) {
@@ -66,5 +75,5 @@ export default function UploadGrid({ items }: { items: UploadItem[] }) {
         <UploadCard key={item.id} item={item} />
       ))}
     </div>
-  )
+  );
 }
