@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 }
 
 interface ExplorePageProps {
-  searchParams?: { type?: string }
+  searchParams: Promise<{ type?: string }>
 }
 
 export default async function ExplorePage({ searchParams }: ExplorePageProps) {
@@ -21,11 +21,11 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   }
 
   const { env, cf } = getCloudflareContext()
-  const type = searchParams?.type
+  const { type } = await searchParams
   const allowed = ['image', 'music', 'prompt']
   const filter = allowed.includes(type || '') ? type : undefined
 
-  const userId = cf?.user?.id as string | undefined
+  const userId = (cf as unknown as { user?: { id?: string } })?.user?.id as string | undefined
 
   let query =
     'SELECT u.id, u.title, u.type, u.url, u.r2_key, u.created_at'
