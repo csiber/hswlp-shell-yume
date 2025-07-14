@@ -3,6 +3,8 @@ import { StarIcon as StarSolid } from '@heroicons/react/24/solid'
 import { StarIcon as StarOutline } from '@heroicons/react/24/outline'
 import { useSessionStore } from '@/state/session'
 import { useFavorite } from '@/hooks/useFavorite'
+import { useState } from 'react'
+import CommentBox from './CommentBox'
 
 export interface UploadItem {
   id: string
@@ -15,6 +17,7 @@ export interface UploadItem {
 function UploadCard({ item }: { item: UploadItem }) {
   const session = useSessionStore((s) => s.session)
   const { favorited, toggle } = useFavorite(item.is_favorited ?? false, item.id)
+  const [showComments, setShowComments] = useState(false)
 
   return (
     <Card className="overflow-hidden relative">
@@ -41,6 +44,17 @@ function UploadCard({ item }: { item: UploadItem }) {
       {item.type !== 'prompt' && (
         <div className="p-2 text-sm text-center">{item.title}</div>
       )}
+      <div className="p-2">
+        <button
+          onClick={() => setShowComments((v) => !v)}
+          className="mb-2 text-xs text-indigo-500 hover:underline"
+        >
+          💬 Kommentek
+        </button>
+        {showComments && (
+          <CommentBox uploadId={item.id} currentUserId={session?.user?.id} />
+        )}
+      </div>
     </Card>
   )
 }
