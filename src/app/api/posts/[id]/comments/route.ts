@@ -63,6 +63,7 @@ export async function POST(
   await env.DB.prepare(
     'INSERT INTO comments (id, upload_id, user_id, content) VALUES (?1, ?2, ?3, ?4)'
   ).bind(id, uploadId, session.user.id, text.trim()).run()
+
   return jsonResponse({
     success: true,
     comment: {
