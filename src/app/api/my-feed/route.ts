@@ -48,7 +48,7 @@ export async function GET() {
       url: fileUrl,
       created_at: new Date(row.created_at).toISOString(),
       user: {
-        name: nameParts.length ? nameParts.join(' ') : null,
+        name: nameParts.length ? nameParts.join(' ') : session.user.email,
         email: session.user.email,
       },
     })

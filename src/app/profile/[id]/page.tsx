@@ -13,9 +13,14 @@ interface ApiResponse {
   }[]
 }
 
-export default async function ProfilePage({ params }: { params: { id: string } }) {
+interface ProfilePageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function ProfilePage({ params }: ProfilePageProps) {
+  const { id } = await params
   const session = await getSessionFromCookie()
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/profile/${params.id}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/profile/${id}`, {
     cache: 'no-store',
   })
 
