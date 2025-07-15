@@ -1,38 +1,29 @@
-import { getSessionFromCookie } from "@/utils/auth"
-import { getCloudflareContext } from "@opennextjs/cloudflare"
-import { NextRequest } from "next/server"
+import { getCloudflareContext } from '@opennextjs/cloudflare'
+import { jsonResponse } from '@/utils/api'
 
-export async function GET(req: NextRequest) {
-  const session = await getSessionFromCookie()
+export async function GET() {
   const { env } = getCloudflareContext()
+  const result = await env.DB.prepare(`
+    SELECT u.id, u.title, u.type, u.created_at,
+           usr.firstName, usr.lastName, usr.email
+    FROM uploads u
+    JOIN user usr ON u.user_id = usr.id
+    WHERE u.type = 'music'
+    ORDER BY u.created_at DESC
+    LIMIT 50
+  `).all<Record<string, string>>()
 
-  if (!session) {
-    return new Response("Unauthorized", { status: 401 })
-  }
-
-  const id = req.nextUrl.pathname.split("/").pop()!
-
-  const upload = await env.DB.prepare(
-    'SELECT r2_key, type FROM uploads WHERE id = ?1 LIMIT 1'
-  ).bind(id).first<{ r2_key: string; type: string }>()
-
-  if (!upload) {
-    return new Response("Not found", { status: 404 })
-  }
-
-  const object = await env.hswlp_r2.get(upload.r2_key)
-  if (!object?.body) {
-    return new Response("File not found", { status: 404 })
-  }
-
-  return new Response(object.body, {
-    status: 200,
-    headers: {
-      "Content-Type": object.httpMetadata?.contentType || "audio/mpeg",
-      "Content-Disposition": 'inline; filename="audio.mp3"',
-      "Access-Control-Allow-Origin": "*",
-      "Accept-Ranges": "bytes",
-      "Cache-Control": "no-store",
+  const items = result.results.map(row => ({
+    id: row.id,
+    title: row.title,
+    type: 'music',
+    url: `/api/files/${row.id}`,
+    created_at: new Date(row.created_at).toISOString(),
+    user: {
+      name: [row.firstName, row.lastName].filter(Boolean).join(' ') || null,
+      email: row.email,
     },
-  })
+  }))
+
+  return jsonResponse({ items })
 }
