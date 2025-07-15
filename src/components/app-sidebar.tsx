@@ -112,20 +112,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       },
       {
         title: "Beállítások",
-        url: "/settings",
+        url: "/dashboard/settings",
         icon: Settings2,
         items: [
           {
             title: "Profil",
-            url: "/settings",
+            url: "/dashboard/settings",
           },
           {
             title: "Biztonság",
-            url: "/settings/security",
+            url: "/dashboard/settings/security",
           },
           {
             title: "Munkamenetek",
-            url: "/settings/sessions",
+            url: "/dashboard/settings/sessions",
           },
           {
             title: "Jelszó módosítása",

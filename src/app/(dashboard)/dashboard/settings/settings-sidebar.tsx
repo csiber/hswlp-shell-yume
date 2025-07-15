@@ -35,17 +35,17 @@ interface SidebarNavItem {
 const sidebarNavItems: SidebarNavItem[] = [
   {
     title: "Profile",
-    href: "/settings",
+    href: "/dashboard/settings",
     icon: User,
   },
   {
     title: "Security",
-    href: "/settings/security",
+    href: "/dashboard/settings/security",
     icon: Lock,
   },
   {
     title: "Sessions",
-    href: "/settings/sessions",
+    href: "/dashboard/settings/sessions",
     icon: Smartphone,
   },
   {

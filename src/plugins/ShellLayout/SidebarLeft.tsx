@@ -96,7 +96,7 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
         <ul className="flex flex-col gap-1">
           <li>
             <Link
-              href="/settings"
+              href="/dashboard/settings"
               className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <span className="text-lg">⚙️</span>

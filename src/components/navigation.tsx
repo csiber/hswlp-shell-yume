@@ -48,7 +48,7 @@ export function Navigation() {
       ? [
           { name: "Vezérlőpult", href: "/dashboard" as Route },
           { name: "Feltöltés", href: "/upload" as Route },
-          { name: "Beállítások", href: "/settings" as Route },
+          { name: "Beállítások", href: "/dashboard/settings" as Route },
         ]
       : []),
   ];

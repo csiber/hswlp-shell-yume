@@ -97,7 +97,7 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
             >
               Profil
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push("/settings")}>
+            <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
               Beállítások
             </DropdownMenuItem>
             <DropdownMenuSeparator />

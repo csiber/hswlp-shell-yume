@@ -19,7 +19,7 @@ export function SettingsBreadcrumbs() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="/settings">Settings</BreadcrumbLink>
+          <BreadcrumbLink href="/dashboard/settings">Settings</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator className="hidden md:block" />
         <BreadcrumbItem>

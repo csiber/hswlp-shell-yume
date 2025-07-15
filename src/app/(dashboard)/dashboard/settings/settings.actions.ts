@@ -31,7 +31,7 @@ export const updateUserProfileAction = createServerAction()
 
           await updateAllSessionsOfUser(session.user.id)
 
-          revalidatePath("/settings");
+          revalidatePath("/dashboard/settings");
           return { success: true };
         } catch (error) {
           console.error(error)
