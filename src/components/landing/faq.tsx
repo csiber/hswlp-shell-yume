@@ -6,7 +6,7 @@ import clsx from "clsx";
 
 const faqs = [
   {
-    q: "Mit tud a Yume?",
+    q: "Mit tud a Yumekaira?",
     a: "Egy AI-alapú kreatív platform, ahol weboldalakat, képeket, szövegeket és zenei projekteket indíthatsz el pár kattintással.",
   },
   {

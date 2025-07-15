@@ -24,7 +24,7 @@ const posts = [
   },
   {
     id: 3,
-    title: "Zenészek figyelem: AI dallamgenerátor Yume-ban!",
+    title: "Zenészek figyelem: AI dallamgenerátor Yumekairában!",
     author: "mididev",
     date: "2025.07.08.",
     comments: 21,

@@ -72,7 +72,7 @@ export function Footer() {
                   className="flex items-center font-medium text-sm hover:text-foreground transition-colors"
                 >
                   <span>Készítette: </span>
-                  <span>Polyák Csaba (PromNET)</span>
+                  <span>Csaba Polyak</span>
                 </a>
               </div>
             </div>

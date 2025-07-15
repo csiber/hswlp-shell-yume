@@ -1,6 +1,6 @@
 import type { Route } from "next"
 
-export const SITE_NAME = "HSWLP Yume"
+export const SITE_NAME = "HSWLP Yumekaira"
 export const SITE_DESCRIPTION =
   "🧩 Hybrid Service Workflow Launch Platform – felhőalapú SaaS sablon a gyors induláshoz."
 export const SITE_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://hswlp-next.promnet.workers.dev/"

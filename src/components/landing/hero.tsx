@@ -30,7 +30,7 @@ export default function Hero() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="mt-6 text-lg text-zinc-300"
         >
-          Építs, alkoss, inspirálj – a Yume egy olyan hely, ahol a közösség, a
+          Építs, alkoss, inspirálj – a Yumekaira egy olyan hely, ahol a közösség, a
           mesterséges intelligencia és a művészet összeolvad.
         </motion.p>
 

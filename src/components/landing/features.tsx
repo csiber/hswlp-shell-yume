@@ -32,7 +32,7 @@ export default function Features() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-zinc-400 mb-12 max-w-2xl mx-auto"
         >
-          A Yume egy helyre hozza össze az AI-t, a design-t és a webet. Nem kell
+          A Yumekaira egy helyre hozza össze az AI-t, a design-t és a webet. Nem kell
           többé máshol regisztrálnod, ha alkotni szeretnél.
         </motion.p>
 

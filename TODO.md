@@ -1,13 +1,13 @@
-# ✅ YUME PLATFORM TODO
+# ✅ YUMEKAIRA PLATFORM TODO
 
-Yume: AI-kép és zene megosztó, közösségi platform.
+Yumekaira: AI-kép és zene megosztó, közösségi platform.
 Funkciók: generált tartalmak feltöltése, feed, AI-asszisztensek, globális zenelejátszó, kredites piactér, profilrendszer.
 
 ---
 
 ## 📦 0. ALAPSTRUKTÚRA
 
-- [ ] Projektmappa létrehozása (`yume-app`)
+- [ ] Projektmappa létrehozása (`yumekaira-app`)
 - [ ] Frontend: Vue 3 + Vite + TailwindCSS
 - [ ] Backend: Laravel API / Cloudflare Worker / edge setup
 - [ ] Auth: Cloudflare Access vagy Supabase / Laravel Sanctum
@@ -22,7 +22,7 @@ Funkciók: generált tartalmak feltöltése, feed, AI-asszisztensek, globális z
 
 ## 🎨 1. LANDING OLDAL
 
-- [ ] Hero szekció: Yume bemutatása (szlogen + CTA)
+- [ ] Hero szekció: Yumekaira bemutatása (szlogen + CTA)
 - [ ] Fő funkciók kiemelése (pl. AI kép generálás, zenelejátszó)
 - [ ] Screenshot vagy demo preview komponens
 - [ ] Regisztráció / Belépés gomb

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🕰️  Yume / Next rollback script"
+echo "🕰️  Yumekaira / Next rollback script"
 echo "-------------------------------"
 read -p "Add meg a commit hash-t vagy relatív pozíciót (pl. HEAD~1): " rollback_point
 
