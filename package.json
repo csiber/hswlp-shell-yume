@@ -74,6 +74,7 @@
     "ua-parser-js": "^2.0.0",
     "usehooks-ts": "^3.1.0",
     "uuid": "^11.1.0",
+    "wavesurfer.js": "^7.10.0",
     "zod": "^3.25.28",
     "zsa": "^0.6.0",
     "zsa-react": "^0.2.3",

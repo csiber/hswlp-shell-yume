@@ -9,7 +9,13 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import clsx from "clsx";
-import { UploadCloud, File as FileIcon } from "lucide-react";
+import {
+  UploadCloud,
+  File as FileIcon,
+  Image as ImageIcon,
+  Music as MusicIcon,
+} from "lucide-react";
+import AudioWaveform from "@/components/AudioWaveform";
 import "./UploadBox.css";
 
 function detectType(file: File): "image" | "music" | "prompt" {
@@ -107,16 +113,41 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           </p>
         </div>
         {selectedFiles && selectedFiles.length > 0 && (
-          <ul className="mt-3 flex flex-wrap gap-2">
-            {Array.from(selectedFiles).map((file) => (
-              <li
-                key={file.name}
-                className="flex items-center gap-1 rounded bg-gray-100 px-2 py-1 text-sm dark:bg-gray-800"
-              >
-                <FileIcon className="h-4 w-4" />
-                <span className="truncate max-w-[120px]">{file.name}</span>
-              </li>
-            ))}
+          <ul className="mt-3 flex flex-col gap-2">
+            {Array.from(selectedFiles).map((file) => {
+              const url = URL.createObjectURL(file);
+              const isImage = file.type.startsWith("image/");
+              const isAudio = file.type.startsWith("audio/");
+              return (
+                <li
+                  key={file.name}
+                  className="rounded bg-gray-100 p-2 text-sm dark:bg-gray-800"
+                >
+                  <div className="flex items-center gap-1">
+                    {isImage ? (
+                      <ImageIcon className="h-4 w-4" />
+                    ) : isAudio ? (
+                      <MusicIcon className="h-4 w-4" />
+                    ) : (
+                      <FileIcon className="h-4 w-4" />
+                    )}
+                    <span className="truncate max-w-[120px]">{file.name}</span>
+                  </div>
+                  {isImage && (
+                    <img
+                      src={url}
+                      alt="preview"
+                      className="mt-1 max-w-[150px] rounded border"
+                    />
+                  )}
+                  {isAudio && (
+                    <div className="mt-1 w-full">
+                      <AudioWaveform src={url} />
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </CardContent>
@@ -128,7 +159,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
             "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300",
             loading
               ? "bg-gray-600"
-              : "bg-gradient-to-r from-black via-gray-800 to-black hover:brightness-110"
+              : "bg-gradient-to-r from-black via-gray-800 to-black hover:brightness-110",
           )}
         >
           <span className="z-10">{loading ? "Feltöltés..." : "Feltöltés"}</span>
