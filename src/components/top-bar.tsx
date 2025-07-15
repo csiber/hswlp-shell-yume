@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, Mail, Home } from "lucide-react";
+import { Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -42,43 +42,29 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
   return (
     <div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900">
       <div className="flex items-center gap-2">
-        <Link href="/" className="text-lg font-bold">
-          {logo === "sociala" ? "Sociala" : "HSWLP"}
+        <Link
+          href="/"
+          className="text-lg font-bold tracking-tight transition-transform hover:scale-105"
+        >
+          {logo === "sociala" ? "Yume" : "Yume"}
         </Link>
+
         <Button
           asChild
           variant="ghost"
           size="icon"
-          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
+          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
         >
           <Link href="/dashboard">
             <Home className="size-5" />
-            <span className="sr-only">Home</span>
+            <span className="sr-only">Kezdőlap</span>
           </Link>
         </Button>
       </div>
-      <div className="flex-1 px-4 hidden sm:block">
-        <input
-          type="text"
-          placeholder="Start typing to search..."
-          className="w-full rounded-full bg-muted px-4 py-2 text-sm focus:outline-none dark:bg-zinc-800"
-        />
+      <div className="text-center text-xs text-muted-foreground animate-fade-in">
+        🚀 új funkciók hamarosan!
       </div>
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
-        >
-          <Bell className="size-5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
-        >
-          <Mail className="size-5" />
-        </Button>
         <ThemeSwitcher />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -90,7 +76,7 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
               {isLoading ? (
                 <Skeleton className="h-8 w-8 rounded-full" />
               ) : (
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-8 w-8 transition-all hover:ring-2 hover:ring-indigo-500 dark:hover:ring-indigo-400">
                   <AvatarImage src={user?.avatar ?? ""} alt={displayName} />
                   <AvatarFallback>{initials}</AvatarFallback>
                 </Avatar>

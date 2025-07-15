@@ -61,6 +61,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.56.4",
+    "react-intersection-observer": "^9.16.0",
     "react-native-fs": "^2.20.0",
     "react-turnstile": "^1.1.4",
     "remeda": "^2.22.1",
@@ -96,5 +97,5 @@
     "typescript": "^5",
     "wrangler": "^4.20.5"
   },
-  "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912"
+  "packageManager": "pnpm@10.13.1"
 }

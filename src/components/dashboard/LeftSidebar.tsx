@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-export default function RightSidebar() {
+export default function SidebarLeft() {
   return (
-    <aside className="hidden w-[280px] px-4 py-6 xl:block">
+    <aside className="w-[250px] px-4 py-6 hidden xl:block">
       <div className="rounded-xl bg-white p-4 shadow dark:bg-gray-800">
         <h3 className="mb-3 text-sm font-semibold text-gray-800 dark:text-gray-100">
           Sponsored
@@ -19,5 +19,5 @@ export default function RightSidebar() {
         </div>
       </div>
     </aside>
-  )
+  );
 }
