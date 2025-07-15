@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import clsx from "clsx";
-import { UploadCloud } from "lucide-react";
+import { UploadCloud, File as FileIcon } from "lucide-react";
 import "./UploadBox.css";
 
 function detectType(file: File): "image" | "music" | "prompt" {
@@ -24,19 +24,19 @@ function detectType(file: File): "image" | "music" | "prompt" {
 }
 
 export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [loading, setLoading] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
 
   const handleUpload = async () => {
-    if (!files || files.length === 0) {
+    if (!selectedFiles || selectedFiles.length === 0) {
       toast.error("Nincs kiválasztott fájl");
       return;
     }
 
     setLoading(true);
     let success = false;
-    for (const file of Array.from(files)) {
+    for (const file of Array.from(selectedFiles)) {
       const formData = new FormData();
       formData.append("title", file.name);
       formData.append("type", detectType(file));
@@ -60,13 +60,13 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     }
 
     setLoading(false);
-    setFiles(null);
+    setSelectedFiles(null);
     if (success && onUpload) onUpload();
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setFiles(e.dataTransfer.files);
+    setSelectedFiles(e.dataTransfer.files);
     dropRef.current?.classList.remove("dragover");
   };
 
@@ -101,11 +101,24 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                 type="file"
                 multiple
                 className="hidden"
-                onChange={(e) => setFiles(e.target.files)}
+                onChange={(e) => setSelectedFiles(e.target.files)}
               />
             </label>
           </p>
         </div>
+        {selectedFiles && selectedFiles.length > 0 && (
+          <ul className="mt-3 flex flex-wrap gap-2">
+            {Array.from(selectedFiles).map((file) => (
+              <li
+                key={file.name}
+                className="flex items-center gap-1 rounded bg-gray-100 px-2 py-1 text-sm dark:bg-gray-800"
+              >
+                <FileIcon className="h-4 w-4" />
+                <span className="truncate max-w-[120px]">{file.name}</span>
+              </li>
+            ))}
+          </ul>
+        )}
       </CardContent>
       <CardFooter className="flex justify-end">
         <button
