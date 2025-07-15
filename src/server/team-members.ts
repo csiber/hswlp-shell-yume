@@ -8,9 +8,7 @@ import { eq, and, isNull, count } from "drizzle-orm";
 import { TEAM_PERMISSIONS } from "@/db/schema";
 import { requireTeamPermission } from "@/utils/team-auth";
 import { updateAllSessionsOfUser } from "@/utils/kv-session";
-import { canSignUp } from "@/utils/auth";
 import { MAX_TEAMS_JOINED_PER_USER } from "@/constants";
-import { sendTeamInvitationEmail } from "@/utils/email";
 
 /**
  * Get all members of a team
@@ -196,15 +194,6 @@ export async function inviteUserToTeam({
     throw new ZSAError("NOT_AUTHORIZED", "Not authenticated");
   }
 
-  // Validate email
-  try {
-    await canSignUp({ email });
-  } catch (error) {
-    if (error instanceof ZSAError) {
-      throw error;
-    }
-    throw new ZSAError("ERROR", "Invalid or disposable email address");
-  }
 
   const db = getDB();
 
@@ -217,14 +206,7 @@ export async function inviteUserToTeam({
     throw new ZSAError("NOT_FOUND", "Team not found");
   }
 
-  const teamName = team.name as string || "Team";
-
-  // Get inviter's name for email
-  const inviter = {
-    firstName: session.user.firstName || "",
-    lastName: session.user.lastName || "",
-    fullName: `${session.user.firstName || ""} ${session.user.lastName || ""}`.trim() || session.user.email,
-  };
+  // Get inviter info (unused without email sending)
 
   // Check if user is already a member
   const existingUser = await db.query.userTable.findFirst({
@@ -304,13 +286,7 @@ export async function inviteUserToTeam({
       })
       .where(eq(teamInvitationTable.id, existingInvitation.id));
 
-    // Send invitation email
-    await sendTeamInvitationEmail({
-      email,
-      invitationToken: token,
-      teamName,
-      inviterName: inviter.fullName || "Team Owner",
-    });
+    // Invitation email disabled in lightweight build
 
     return {
       success: true,
@@ -335,13 +311,7 @@ export async function inviteUserToTeam({
     throw new ZSAError("ERROR", "Could not create invitation");
   }
 
-  // Send invitation email
-  await sendTeamInvitationEmail({
-    email,
-    invitationToken: token,
-    teamName,
-    inviterName: inviter.fullName || "Team Owner",
-  });
+  // Invitation email disabled in lightweight build
 
   return {
     success: true,

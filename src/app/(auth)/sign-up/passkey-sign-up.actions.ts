@@ -6,16 +6,11 @@ import { generatePasskeyRegistrationOptions, verifyPasskeyRegistration } from "@
 import { getDB } from "@/db";
 import { userTable } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { createId } from "@paralleldrive/cuid2";
 import { cookies, headers } from "next/headers";
-import { createSession, generateSessionToken, setSessionTokenCookie, canSignUp } from "@/utils/auth";
+import { createSession, generateSessionToken, setSessionTokenCookie } from "@/utils/auth";
 import type { RegistrationResponseJSON, PublicKeyCredentialCreationOptionsJSON } from "@simplewebauthn/types";
 import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
 import { getIP } from "@/utils/get-IP";
-import { getCloudflareContext } from "@opennextjs/cloudflare";
-import { getVerificationTokenKey } from "@/utils/auth-utils";
-import { sendVerificationEmail } from "@/utils/email";
-import { EMAIL_VERIFICATION_TOKEN_EXPIRATION_SECONDS } from "@/constants";
 import { passkeyEmailSchema } from "@/schemas/passkey.schema";
 import ms from "ms";
 import { validateTurnstileToken } from "@/utils/validate-captcha";
@@ -42,9 +37,6 @@ export const startPasskeyRegistrationAction = createServerAction()
 
         const db = getDB();
 
-        // Check if email is disposable
-        await canSignUp({ email: input.email });
-
         const existingUser = await db.query.userTable.findFirst({
           where: eq(userTable.email, input.email),
         });
@@ -64,6 +56,7 @@ export const startPasskeyRegistrationAction = createServerAction()
             firstName: input.firstName,
             lastName: input.lastName,
             signUpIpAddress: ipAddress,
+            emailVerified: new Date(),
           })
           .returning();
 
@@ -159,33 +152,8 @@ export const completePasskeyRegistrationAction = createServerAction()
         );
       }
 
-      // Generate verification token
-      const { env } = getCloudflareContext();
-      const verificationToken = createId();
-      const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TOKEN_EXPIRATION_SECONDS * 1000);
 
-      if (!env?.NEXT_INC_CACHE_KV) {
-        throw new Error("Nem sikerült csatlakozni a KV tárhoz");
-      }
-
-      // Save verification token in KV with expiration
-      await env.NEXT_INC_CACHE_KV.put(
-        getVerificationTokenKey(verificationToken),
-        JSON.stringify({
-          userId: user.id,
-          expiresAt: expiresAt.toISOString(),
-        }),
-        {
-          expirationTtl: Math.floor((expiresAt.getTime() - Date.now()) / 1000),
-        }
-      );
-
-      // Send verification email
-      await sendVerificationEmail({
-        email: user.email,
-        verificationToken,
-        username: user.firstName || user.email,
-      });
+      // email verification is disabled in this lightweight build
 
       // Create a session
       const sessionToken = generateSessionToken();
