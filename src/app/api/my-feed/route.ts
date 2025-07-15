@@ -23,9 +23,8 @@ export async function GET() {
     id: string
     title: string
     type: 'image' | 'music' | 'prompt'
-    url: string
+    r2_url: string
     created_at: string
-    user: { name: string | null; email: string }
   }[]
 
   for (const row of result.results || []) {
@@ -40,17 +39,12 @@ export async function GET() {
       fileUrl = row.url
     }
 
-    const nameParts = [session.user.firstName, session.user.lastName].filter(Boolean)
     items.push({
       id: row.id,
       title: row.title,
       type: row.type as 'image' | 'music' | 'prompt',
-      url: fileUrl,
+      r2_url: fileUrl,
       created_at: new Date(row.created_at).toISOString(),
-      user: {
-        name: nameParts.length ? nameParts.join(' ') : session.user.email,
-        email: session.user.email!,
-      },
     })
   }
 
