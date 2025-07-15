@@ -2,6 +2,7 @@ import { getSessionFromCookie } from "@/utils/auth";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import ShellLayout from "@/layouts/ShellLayout";
+import FeedCenter from "@/components/dashboard/FeedCenter";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -16,5 +17,5 @@ export default async function DashboardLayout({
     return redirect("/");
   }
 
-  return <ShellLayout>{children}</ShellLayout>;
+  return <ShellLayout center={<FeedCenter />}>{children}</ShellLayout>;
 }

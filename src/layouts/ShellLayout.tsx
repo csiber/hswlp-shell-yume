@@ -1,23 +1,23 @@
-import "server-only";
+"use client";
 
 import LeftSidebar from "@/components/dashboard/LeftSidebar";
-import FeedCenter from "@/components/dashboard/FeedCenter";
-import RightSidebar from "@/components/dashboard/RightSidebar";
 import TopBar from "@/components/top-bar";
+import RightSidebar from "@/components/dashboard/RightSidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
-export default function ShellLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+type ShellLayoutProps = {
+  children?: React.ReactNode;
+  center?: React.ReactNode;
+};
+
+export default function ShellLayout({ children, center }: ShellLayoutProps) {
   return (
     <SidebarProvider>
       <div className="flex h-full w-full flex-col">
         <TopBar />
         <div className="flex flex-1">
           <LeftSidebar />
-          <FeedCenter />
+          <div className="flex-1">{center}</div>
           <RightSidebar />
         </div>
         {children}
