@@ -12,7 +12,7 @@ declare namespace Cloudflare {
 		hswlp_r2: R2Bucket;
 		DB: D1Database;
 		NEXT_TAG_CACHE_D1: D1Database;
-		WORKER_SELF_REFERENCE: Fetcher /* hswlp-shell-yume */;
+		WORKER_SELF_REFERENCE: Fetcher /* hswlp-shell-yumekaira */;
 		ASSETS: Fetcher;
 	}
 }

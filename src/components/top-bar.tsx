@@ -47,7 +47,7 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
           href="/"
           className="text-lg font-bold tracking-tight transition-transform hover:scale-105"
         >
-          {logo === "sociala" ? "Yume" : "Yume"}
+          {logo === "sociala" ? "Yumekaira" : "Yumekaira"}
         </Link>
 
         <Button
