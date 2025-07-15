@@ -62,7 +62,6 @@ export function ThemeProvider({
   const refetchSession = useSessionStore((store) => store.refetchSession);
   const clearSession = useSessionStore((store) => store.clearSession);
   const documentRef = useRef(typeof window === "undefined" ? null : document);
-  const windowRef = useRef(typeof window === "undefined" ? null : window);
 
   const doFetchSession = useCallback(async () => {
     try {
@@ -102,15 +101,6 @@ export function ThemeProvider({
       }
     },
     documentRef as RefObject<Document>
-  );
-
-  useEventListener(
-    "focus",
-    () => {
-      fetchSession();
-      // @ts-expect-error window is not defined in the server
-    },
-    windowRef
   );
 
   // Add fetchSession to the session store
