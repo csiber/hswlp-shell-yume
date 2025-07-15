@@ -16,7 +16,8 @@ export default function GlobalMusicPlayer() {
   const [queue, setQueue] = useState<Track[]>([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // zene betöltése
@@ -36,6 +37,7 @@ export default function GlobalMusicPlayer() {
 
     audio.src = queue[currentIndex].url
     audio.load()
+    setCurrentTime(0)
 
     if (isPlaying) {
       audio.play().catch((err) => {
@@ -43,24 +45,8 @@ export default function GlobalMusicPlayer() {
         setIsPlaying(false)
       })
     }
-  }, [currentIndex, queue])
+  }, [currentIndex, queue, isPlaying])
 
-  // progress sáv frissítése
-  useEffect(() => {
-    const audio = audioRef.current
-    if (!audio) return
-
-    const update = () => {
-      if (audio.duration) {
-        setProgress(audio.currentTime / audio.duration)
-      }
-    }
-
-    audio.addEventListener('timeupdate', update)
-    return () => {
-      audio.removeEventListener('timeupdate', update)
-    }
-  }, [])
 
   const togglePlay = () => {
     const audio = audioRef.current
@@ -131,15 +117,25 @@ export default function GlobalMusicPlayer() {
           <input
             type="range"
             min={0}
-            max={1}
-            step={0.01}
-            value={progress}
-            onChange={() => {}}
+            max={duration || 0}
+            step={0.1}
+            value={currentTime}
+            onChange={(e) => {
+              const time = Number(e.target.value)
+              if (audioRef.current) audioRef.current.currentTime = time
+              setCurrentTime(time)
+            }}
             className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer"
           />
         </div>
       </div>
-      <audio ref={audioRef} onEnded={handleEnded} className="hidden" />
+      <audio
+        ref={audioRef}
+        onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
+        onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
+        onEnded={handleEnded}
+        className="hidden"
+      />
     </div>
   )
 }
