@@ -156,7 +156,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           onClick={handleUpload}
           disabled={loading}
           className={clsx(
-            "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300",
+            "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
             loading
               ? "bg-gray-600"
               : "bg-gradient-to-r from-black via-gray-800 to-black hover:brightness-110",
