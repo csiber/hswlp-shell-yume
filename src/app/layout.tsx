@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   keywords: ["SaaS", "Next.js", "React", "TypeScript", "Cloudflare Workers", "Edge Computing"],
   authors: [{ name: "Lubomir Georgiev" }],
-  creator: "Lubomir Georgiev",
+  creator: "L",
   openGraph: {
     type: "website",
     locale: "en_US",

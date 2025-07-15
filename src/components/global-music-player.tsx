@@ -19,27 +19,33 @@ export default function GlobalMusicPlayer() {
   const [progress, setProgress] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  // fetch music list on mount
+  // zene betöltése
   useEffect(() => {
     fetch('/api/music-feed')
-      .then(res => res.json() as Promise<{ items: Track[] }>)
-      .then((data) => {
+      .then(res => res.json() as Promise<{ items: Track[] }> )
+      .then(data => {
         setQueue(data.items)
       })
-      .catch(err => console.error(err))
+      .catch(err => console.error('music-feed hiba:', err))
   }, [])
 
-  // update audio source when currentIndex changes
+  // forrás frissítése
   useEffect(() => {
     const audio = audioRef.current
     if (!audio || !queue[currentIndex]) return
-    audio.src = queue[currentIndex].url
-    if (isPlaying) {
-      audio.play().catch(() => {})
-    }
-  }, [currentIndex, queue, isPlaying])
 
-  // progress tracking
+    audio.src = queue[currentIndex].url
+    audio.load()
+
+    if (isPlaying) {
+      audio.play().catch((err) => {
+        console.error('play error:', err)
+        setIsPlaying(false)
+      })
+    }
+  }, [currentIndex, queue])
+
+  // progress sáv frissítése
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
@@ -59,11 +65,16 @@ export default function GlobalMusicPlayer() {
   const togglePlay = () => {
     const audio = audioRef.current
     if (!audio) return
+
     if (isPlaying) {
       audio.pause()
       setIsPlaying(false)
     } else {
-      audio.play().then(() => setIsPlaying(true)).catch(() => {})
+      audio.play()
+        .then(() => setIsPlaying(true))
+        .catch(err => {
+          console.error('play error:', err)
+        })
     }
   }
 

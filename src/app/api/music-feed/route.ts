@@ -1,41 +1,38 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { jsonResponse } from '@/utils/api'
+import { getSessionFromCookie } from "@/utils/auth"
+import { getCloudflareContext } from "@opennextjs/cloudflare"
+import { NextRequest } from "next/server"
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const session = await getSessionFromCookie()
   const { env } = getCloudflareContext()
-  const result = await env.DB.prepare(`
-    SELECT u.id, u.title, u.type, u.created_at,
-           usr.firstName, usr.lastName, usr.email
-    FROM uploads u
-    JOIN user usr ON u.user_id = usr.id
-    WHERE u.type = 'music'
-    ORDER BY u.created_at DESC
-    LIMIT 50
-  `).all<Record<string, string>>()
 
-  const items = [] as {
-    id: string
-    title: string
-    type: 'music'
-    url: string
-    created_at: string
-    user: { name: string | null; email: string }
-  }[]
-
-  for (const row of result.results || []) {
-    const nameParts = [row.firstName, row.lastName].filter(Boolean)
-    items.push({
-      id: row.id,
-      title: row.title,
-      type: 'music',
-      url: `/api/files/${row.id}`, // privát API endpoint
-      created_at: new Date(row.created_at).toISOString(),
-      user: {
-        name: nameParts.length ? nameParts.join(' ') : null,
-        email: row.email,
-      },
-    })
+  if (!session) {
+    return new Response("Unauthorized", { status: 401 })
   }
 
-  return jsonResponse({ items })
+  const id = req.nextUrl.pathname.split("/").pop()!
+
+  const upload = await env.DB.prepare(
+    'SELECT r2_key, type FROM uploads WHERE id = ?1 LIMIT 1'
+  ).bind(id).first<{ r2_key: string; type: string }>()
+
+  if (!upload) {
+    return new Response("Not found", { status: 404 })
+  }
+
+  const object = await env.hswlp_r2.get(upload.r2_key)
+  if (!object?.body) {
+    return new Response("File not found", { status: 404 })
+  }
+
+  return new Response(object.body, {
+    status: 200,
+    headers: {
+      "Content-Type": object.httpMetadata?.contentType || "audio/mpeg",
+      "Content-Disposition": 'inline; filename="audio.mp3"',
+      "Access-Control-Allow-Origin": "*",
+      "Accept-Ranges": "bytes",
+      "Cache-Control": "no-store",
+    },
+  })
 }
