@@ -10,6 +10,7 @@ import NextTopLoader from 'nextjs-toploader'
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/constants";
 import { AgenticDevStudioStickyBanner } from "@/components/startup-studio-sticky-banner";
 import GlobalMusicPlayer from "@/components/global-music-player";
+import { getSessionFromCookie } from "@/utils/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -52,11 +53,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BaseLayout({
+export default async function BaseLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSessionFromCookie();
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
@@ -78,7 +80,7 @@ export default function BaseLayout({
           </TooltipProvider>
         </ThemeProvider>
         <Toaster richColors closeButton position="top-right" expand duration={7000} />
-        <GlobalMusicPlayer />
+        {session?.user && <GlobalMusicPlayer />}
         <AgenticDevStudioStickyBanner />
       </body>
     </html>
