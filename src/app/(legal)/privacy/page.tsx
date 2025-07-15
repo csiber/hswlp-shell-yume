@@ -3,58 +3,76 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description: "Learn how we collect, use, and protect your data",
+  title: "Adatkezelési tájékoztató",
+  description:
+    "Tudd meg, hogyan kezeljük és védjük az adataidat a Yumekai rendszerben.",
 };
 
 export default function PrivacyPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold text-foreground mb-8">Privacy Policy</h1>
+      <h1 className="text-4xl font-bold text-foreground mb-8">
+        Adatkezelési tájékoztató
+      </h1>
 
-      <p className="text-muted-foreground mb-6">Last updated: {new Date().toLocaleDateString()}</p>
+      <p className="text-muted-foreground mb-6">
+        Utolsó frissítés: {new Date().toLocaleDateString("hu-HU")}
+      </p>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">1. Information We Collect</h2>
+        <h2 className="text-2xl font-semibold text-foreground mb-4">
+          1. Milyen adatokat gyűjtünk
+        </h2>
         <p className="text-muted-foreground">
-          We collect information you provide directly to us, including but not limited to your name,
-          email address, and any other information you choose to provide.
+          A Yumekai használata során az általad megadott adatokat gyűjtjük,
+          például a nevedet, e-mail címedet, valamint minden egyéb információt,
+          amit önkéntesen megosztasz velünk.
         </p>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">2. How We Use Your Information</h2>
+        <h2 className="text-2xl font-semibold text-foreground mb-4">
+          2. Az adatok felhasználásának módja
+        </h2>
         <p className="text-muted-foreground">
-          We use the information we collect to:
+          Az összegyűjtött adatokat az alábbi célokra használjuk:
         </p>
         <ul className="list-disc pl-6 mt-2 text-muted-foreground">
-          <li>Provide, maintain, and improve our services</li>
-          <li>Send you technical notices and support messages</li>
-          <li>Respond to your comments and questions</li>
-          <li>Protect against fraud and abuse</li>
+          <li>Szolgáltatásaink működtetése, fejlesztése és fenntartása</li>
+          <li>Technikai értesítések és támogatási üzenetek küldése</li>
+          <li>Visszajelzések és kérdések megválaszolása</li>
+          <li>
+            Visszaélések, csalás vagy jogosulatlan használat elleni védelem
+          </li>
         </ul>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">3. Data Security</h2>
+        <h2 className="text-2xl font-semibold text-foreground mb-4">
+          3. Adatbiztonság
+        </h2>
         <p className="text-muted-foreground">
-          We take reasonable measures to help protect information about you from loss, theft,
-          misuse and unauthorized access, disclosure, alteration, and destruction.
+          Megfelelő technikai és szervezési intézkedéseket alkalmazunk annak
+          érdekében, hogy az adataidat megvédjük elvesztéstől, illetéktelen
+          hozzáféréstől, módosítástól vagy törléstől.
         </p>
       </section>
 
       <section className="mb-8">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">4. Contact Us</h2>
+        <h2 className="text-2xl font-semibold text-foreground mb-4">
+          4. Kapcsolatfelvétel
+        </h2>
         <p className="text-muted-foreground">
-          If you have any questions about this Privacy Policy, please contact us at:
+          Ha kérdésed van az adatkezelési tájékoztatóval kapcsolatban, az alábbi
+          elérhetőségen keresztül léphetsz velünk kapcsolatba:
           <br />
-          Email: privacy@example.com
+          E-mail: privacy@yumekai.hu
         </p>
       </section>
 
       <div className="mt-12 text-center">
         <Button asChild>
-          <Link href="/">Return to Home</Link>
+          <Link href="/">Vissza a főoldalra</Link>
         </Button>
       </div>
     </>

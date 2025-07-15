@@ -10,9 +10,7 @@ export async function GET(req: NextRequest) {
     return new Response("Unauthorized", { status: 401 })
   }
 
-  // Kivonjuk az `id` paramétert az URL-ből
   const id = req.nextUrl.pathname.split("/").pop()!
-
   const upload = await env.DB.prepare(
     'SELECT r2_key, type FROM uploads WHERE id = ?1 AND user_id = ?2 LIMIT 1'
   )
@@ -24,17 +22,18 @@ export async function GET(req: NextRequest) {
   }
 
   const object = await env.hswlp_r2.get(upload.r2_key)
-  if (!object) {
+  if (!object?.body) {
     return new Response("File not found", { status: 404 })
   }
 
-return new Response(object.body, {
-  headers: {
-    "Content-Type": object.httpMetadata?.contentType || "application/octet-stream",
-    "Content-Disposition": "inline",
-    "Access-Control-Allow-Origin": "*", // vagy később finomítva
-  },
-});
-
-
+  return new Response(object.body, {
+    status: 200,
+    headers: {
+      "Content-Type": object.httpMetadata?.contentType || "audio/mpeg",
+      "Content-Disposition": 'inline; filename="audio.mp3"',
+      "Access-Control-Allow-Origin": "*",
+      "Accept-Ranges": "bytes", // <--- ez fontos a seek és stream működéséhez
+      "Cache-Control": "no-store",
+    },
+  })
 }
