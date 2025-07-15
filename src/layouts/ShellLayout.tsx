@@ -1,10 +1,6 @@
 import "server-only"
 
-import SidebarLeft from "@/components/dashboard/SidebarLeft"
-import FeedCenter from "@/components/dashboard/FeedCenter"
-import RightSidebar from "@/components/dashboard/RightSidebar"
 import TopBar from "@/components/top-bar"
-import { SidebarProvider } from "@/components/ui/sidebar"
 
 export default function ShellLayout({
   children,
@@ -12,16 +8,9 @@ export default function ShellLayout({
   children: React.ReactNode
 }) {
   return (
-    <SidebarProvider>
-      <div className="flex h-full w-full flex-col">
-        <TopBar />
-        <div className="flex flex-1">
-          <SidebarLeft />
-          <FeedCenter />
-          <RightSidebar />
-        </div>
-        {children}
-      </div>
-    </SidebarProvider>
+    <div className="flex min-h-screen flex-col">
+      <TopBar />
+      <main className="flex-1">{children}</main>
+    </div>
   )
 }
