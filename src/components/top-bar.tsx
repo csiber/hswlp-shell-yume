@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge"; // 🆕
 import { useSessionStore } from "@/state/session";
 import useSignOut from "@/hooks/useSignOut";
 import ThemeSwitcher from "@/plugins/ShellLayout/ThemeSwitcher";
@@ -61,55 +62,64 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
           </Link>
         </Button>
       </div>
+
       <div className="text-center text-xs text-muted-foreground animate-fade-in">
         🚀 új funkciók hamarosan!
       </div>
-      <div className="flex items-center gap-2">
+
+      <div className="flex items-center gap-3">
         <ThemeSwitcher />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 p-0"
-            >
-              {isLoading ? (
-                <Skeleton className="h-8 w-8 rounded-full" />
-              ) : (
-                <Avatar className="h-8 w-8 transition-all hover:ring-2 hover:ring-indigo-500 dark:hover:ring-indigo-400">
-                  <AvatarImage src={user?.avatar ?? ""} alt={displayName} />
-                  <AvatarFallback>{initials}</AvatarFallback>
-                </Avatar>
+
+        <div className="flex flex-col items-center">
+          {isLoading ? (
+            <Skeleton className="h-8 w-8 rounded-full" />
+          ) : (
+            <>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 p-0"
+                  >
+                    <Avatar className="h-8 w-8 transition-all hover:ring-2 hover:ring-indigo-500 dark:hover:ring-indigo-400">
+                      <AvatarImage src={user?.avatar ?? ""} alt={displayName} />
+                      <AvatarFallback>{initials}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  {user && (
+                    <>
+                      <DropdownMenuLabel className="font-normal">
+                        {displayName}
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  <DropdownMenuItem onClick={() => router.push("/settings")}>
+                    Beállítások
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => {
+                      signOut().then(() => router.push("/"));
+                    }}
+                  >
+                    Kijelentkezés
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* 🟢 Kredit badge itt */}
+              {user?.currentCredits != null && (
+                <Badge variant="secondary" className="mt-1 text-[10px]">
+                  {user.currentCredits} kredit
+                </Badge>
               )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            {user && (
-              <>
-                <DropdownMenuLabel className="font-normal">
-                  {displayName}
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-              </>
-            )}
-            <DropdownMenuItem
-              onClick={() => router.push(`/profile/${user?.id}`)}
-            >
-              Profil
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push("/settings")}>
-              Beállítások
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => {
-                signOut().then(() => router.push("/"));
-              }}
-            >
-              Kijelentkezés
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
