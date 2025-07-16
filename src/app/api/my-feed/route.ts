@@ -11,13 +11,15 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
-    SELECT id, title, type, created_at, url, r2_key,
-           view_count, play_count
-    FROM uploads
-    WHERE user_id = ?1
-    ORDER BY created_at DESC
+    SELECT u.id, u.title, u.type, u.created_at, u.url, u.r2_key,
+           u.view_count, u.play_count,
+           usr.firstName, usr.lastName, usr.email
+    FROM uploads u
+    JOIN user usr ON u.user_id = usr.id
+    WHERE u.visibility = 'public' OR u.visibility IS NULL
+    ORDER BY u.created_at DESC
     LIMIT 50
-  `).bind(session.user.id).all<Record<string, string>>()
+  `).all<Record<string, string>>()
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
   const items = [] as {
@@ -43,7 +45,7 @@ export async function GET() {
       fileUrl = row.url
     }
 
-    const nameParts = [session.user.firstName, session.user.lastName].filter(Boolean)
+    const nameParts = [row.firstName, row.lastName].filter(Boolean)
     items.push({
       id: row.id,
       title: row.title,
@@ -53,8 +55,8 @@ export async function GET() {
       view_count: Number(row.view_count ?? 0),
       play_count: Number(row.play_count ?? 0),
       user: {
-        name: nameParts.length ? nameParts.join(' ') : session.user.email,
-        email: session.user.email!,
+        name: nameParts.length ? nameParts.join(' ') : row.email,
+        email: row.email,
       },
     })
   }
