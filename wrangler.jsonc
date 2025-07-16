@@ -95,6 +95,10 @@
   {
     "binding": "NEXT_INC_CACHE_KV",
     "id": "60d93d82ece44987aefed74b1ec420ef"
+  },
+  {
+    "binding": "PRESENCE_KV",
+    "id": "00000000000000000000000000000000"
   }
 ],
     "r2_buckets": [

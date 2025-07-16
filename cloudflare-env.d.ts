@@ -4,8 +4,9 @@
 declare namespace Cloudflare {
 	interface Env {
 		SESSION_KV: KVNamespace;
-		NEXT_INC_CACHE_KV: KVNamespace;
-		EMAIL_FROM: "no-reply@hswlp.hu";
+                NEXT_INC_CACHE_KV: KVNamespace;
+                PRESENCE_KV: KVNamespace;
+                EMAIL_FROM: "no-reply@hswlp.hu";
 		EMAIL_FROM_NAME: "HSWLP System";
 		EMAIL_REPLY_TO: "support@hswlp.hu";
 		NEXTJS_ENV: string;

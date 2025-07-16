@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Home, FolderDown, ShieldCheck } from "lucide-react";
+import { Home, FolderDown, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,6 +20,7 @@ import { useSessionStore } from "@/state/session";
 import useSignOut from "@/hooks/useSignOut";
 import ThemeSwitcher from "@/plugins/ShellLayout/ThemeSwitcher";
 import LogoIcon from "@/components/logo-icon";
+import useOnlineCount from "@/hooks/useOnlineCount";
 
 interface TopBarProps {
   logo?: "hswlp" | "sociala";
@@ -29,6 +30,7 @@ export default function TopBar({}: TopBarProps) {
   const { session, isLoading } = useSessionStore();
   const { signOut } = useSignOut();
   const router = useRouter();
+  const onlineCount = useOnlineCount();
 
   const user = session?.user;
   const displayName =
@@ -74,8 +76,11 @@ export default function TopBar({}: TopBarProps) {
         </Button>
       </div>
 
-      <div className="text-center text-xs text-muted-foreground animate-fade-in">
-        🚀 új funkciók hamarosan!
+      <div className="text-center animate-fade-in">
+        <Button variant="ghost" size="icon">
+          <Users className="w-5 h-5" />
+          <span className="text-xs ml-1">{onlineCount}</span>
+        </Button>
       </div>
 
       <div className="flex items-center gap-3">
