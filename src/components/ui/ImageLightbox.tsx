@@ -32,7 +32,8 @@ export default function ImageLightbox({ src, alt, children, onOpen }: ImageLight
             exit={{ opacity: 0 }}
             src={src}
             alt={alt}
-            className="max-h-[90vh] w-auto rounded-lg"
+            onContextMenu={(e) => e.preventDefault()}
+            className="max-h-[90vh] w-auto rounded-lg select-none"
           />
         </DialogContent>
       </Dialog>
