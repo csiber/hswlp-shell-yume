@@ -9,11 +9,14 @@ interface FeedItem {
   type: 'image' | 'music' | 'prompt'
   url: string
   created_at: string
+  view_count: number
+  play_count: number
   user: {
     name: string | null
     email: string
   }
 }
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {

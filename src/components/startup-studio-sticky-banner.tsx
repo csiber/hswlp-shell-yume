@@ -1,19 +1,18 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
-import AgenticDevStudioLogo from "./agenticdev-studio-logo";
 import { ChevronLeft, X } from "lucide-react";
+import LogoIcon from "@/components/logo-icon";
 
-const STORAGE_KEY = 'agenticdev-studio-banner-collapsed';
+const STORAGE_KEY = "hswlp-sticky-banner-collapsed";
 
-export function AgenticDevStudioStickyBanner() {
+export function HSWLPStickyBanner() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
-    // Get initial state from localStorage
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored !== null) {
       setIsCollapsed(JSON.parse(stored));
@@ -26,19 +25,21 @@ export function AgenticDevStudioStickyBanner() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
   };
 
-  if (!isHydrated) return null; // Prevent flash of content
+  if (!isHydrated) return null;
 
   return (
     <div
       className={cn(
         "fixed bottom-4 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-4 z-[100] print:hidden",
-        isCollapsed && "pointer-events-none" // Make entire container click-through when collapsed
+        isCollapsed && "pointer-events-none"
       )}
     >
       <div
         className={cn(
           "transition-all duration-300 ease-in-out transform",
-          isCollapsed ? "translate-x-[calc(100%+1rem)] md:translate-x-[calc(100%+1rem)]" : "translate-x-0"
+          isCollapsed
+            ? "translate-x-[calc(100%+1rem)] md:translate-x-[calc(100%+1rem)]"
+            : "translate-x-0"
         )}
       >
         <div className="relative flex items-center w-[90vw] md:max-w-[400px]">
@@ -49,7 +50,7 @@ export function AgenticDevStudioStickyBanner() {
               "absolute left-0 h-8 w-8 rounded-full shadow-lg -translate-x-full",
               "bg-background hover:bg-background",
               "border-2 hover:border-border",
-              isCollapsed ? "opacity-100 pointer-events-auto" : "opacity-0" // Ensure button is clickable when collapsed
+              isCollapsed ? "opacity-100 pointer-events-auto" : "opacity-0"
             )}
             onClick={() => toggleCollapsed(false)}
           >
@@ -66,22 +67,26 @@ export function AgenticDevStudioStickyBanner() {
             </Button>
             <div className="flex items-center flex-col py-3 px-3">
               <a
-                href="https://agenticdev.agency?ref=saas-template-sticky-banner"
+                href="https://hswlp.hu"
                 target="_blank"
                 className="flex flex-col items-center font-medium text-sm hover:text-foreground transition-colors"
               >
                 <div className="flex items-center">
-                  <span className="whitespace-nowrap">Built by</span>
-                  <AgenticDevStudioLogo className="h-7 w-7 mx-1.5" />
-                  <span className="whitespace-nowrap">AgenticDev</span>
+                  <span className="whitespace-nowrap">Powered by</span>
+                  <LogoIcon className="h-7 w-7 mx-1.5" />
+                  <span className="whitespace-nowrap">HSWLP</span>
                 </div>
 
-                <div className="text-tiny text-muted-foreground mt-3">
-                Transform operations with AI solutions that adapt to your actual needs—automating routine tasks or solving complex challenges through customized systems. Focus on growth while we handle the tech specifics that matter most to your business.
+                <div className="text-tiny text-muted-foreground mt-3 text-center">
+                  Egyetlen platform szolgáltatások indítására, weboldalak
+                  kiadására és automatizálásra. Fejlesztőknek, vállalkozóknak és
+                  techmániásoknak. Nincs szükség szerverre – elég egy ötlet.
                 </div>
               </a>
               <Button size="sm" className="mt-4" asChild>
-                <a href="https://agenticdev.agency?ref=saas-template-sticky-banner" target="_blank">Book a free consultation</a>
+                <a href="https://hswlp.hu#pricing" target="_blank">
+                  Próbáld ki most
+                </a>
               </Button>
             </div>
           </div>

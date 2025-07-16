@@ -21,7 +21,6 @@ export default function AudioWaveform({ src }: { src: string }) {
       progressColor: "#0ea5e9",
       cursorColor: "#0ea5e9",
       height: 80,
-      responsive: true,
       barWidth: 2,
     });
 

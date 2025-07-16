@@ -2,7 +2,10 @@
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 
-function Container({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+function Container({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("mx-auto max-w-4xl px-4", className)} {...props} />;
 }
 
@@ -10,12 +13,25 @@ function Section({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   return <section className={cn("py-6", className)} {...props} />;
 }
 
+const headingLevels = {
+  1: "h1",
+  2: "h2",
+  3: "h3",
+  4: "h4",
+  5: "h5",
+  6: "h6",
+} as const;
+
+type HeadingLevel = keyof typeof headingLevels;
+
 function Heading({
   level = 2,
   className,
   ...props
-}: React.HTMLAttributes<HTMLHeadingElement> & { level?: 1 | 2 | 3 | 4 | 5 | 6 }) {
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+}: React.HTMLAttributes<HTMLHeadingElement> & {
+  level?: HeadingLevel;
+}) {
+  const Tag = headingLevels[level] ?? "h2";
   return (
     <Tag
       className={cn(
@@ -28,8 +44,16 @@ function Heading({
   );
 }
 
-function Text({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("leading-7 [&:not(:first-child)]:mt-4", className)} {...props} />;
+function Text({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn("leading-7 [&:not(:first-child)]:mt-4", className)}
+      {...props}
+    />
+  );
 }
 
 export default function AboutPage() {
@@ -51,10 +75,11 @@ export default function AboutPage() {
           Küldetésünk
         </Heading>
         <Text>
-          A Yumekai célja, hogy egy olyan platformot hozzon létre, ahol a kreatív
-          alkotók – zenészek, képzőművészek, fotósok, írók és fejlesztők – szabadon
-          kifejezhetik magukat, miközben modern AI technológiák segítik őket az
-          alkotásban. A közösség és az innováció nálunk kéz a kézben járnak.
+          A Yumekai célja, hogy egy olyan platformot hozzon létre, ahol a
+          kreatív alkotók – zenészek, képzőművészek, fotósok, írók és fejlesztők
+          – szabadon kifejezhetik magukat, miközben modern AI technológiák
+          segítik őket az alkotásban. A közösség és az innováció nálunk kéz a
+          kézben járnak.
         </Text>
       </Section>
 
@@ -76,8 +101,8 @@ export default function AboutPage() {
           Technológia
         </Heading>
         <Text>
-          A Yumekai a HSWLP platformon alapul, amely Cloudflare Workers, R2, D1 és
-          KV technológiákat használ a maximális sebesség, biztonság és
+          A Yumekai a HSWLP platformon alapul, amely Cloudflare Workers, R2, D1
+          és KV technológiákat használ a maximális sebesség, biztonság és
           skálázhatóság érdekében. A rendszer teljesen statikus, edge-alapú,
           globálisan elérhető infrastruktúrával.
         </Text>
@@ -89,9 +114,16 @@ export default function AboutPage() {
         </Heading>
         <ul className="list-disc space-y-2 pl-6">
           <li>AI-rajongóknak, akik szívesen játszanak képgenerálással</li>
-          <li>Zenészeknek, akik hangmintákat vagy teljes zenéket szeretnének megosztani</li>
-          <li>Kreatív alkotóknak, akik a saját portfóliójukat szeretnék publikálni</li>
-          <li>Fejlesztőknek, akik szeretnének saját SaaS appot indítani a jövőben</li>
+          <li>
+            Zenészeknek, akik hangmintákat vagy teljes zenéket szeretnének
+            megosztani
+          </li>
+          <li>
+            Kreatív alkotóknak, akik a saját portfóliójukat szeretnék publikálni
+          </li>
+          <li>
+            Fejlesztőknek, akik szeretnének saját SaaS appot indítani a jövőben
+          </li>
         </ul>
       </Section>
 
@@ -100,7 +132,8 @@ export default function AboutPage() {
           Kapcsolat
         </Heading>
         <Text>
-          Ha kérdésed van, vagy együttműködnél velünk, írj az alábbi email címre:
+          Ha kérdésed van, vagy együttműködnél velünk, írj az alábbi email
+          címre:
         </Text>
         <Text className="font-medium">📧 hello@yumekai.hu</Text>
       </Section>
