@@ -1,53 +1,53 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { PaperAirplaneIcon } from "@heroicons/react/24/solid"
-import { motion, AnimatePresence } from "framer-motion"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
+import { useEffect, useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { motion, AnimatePresence } from "framer-motion";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
 
-dayjs.extend(relativeTime)
+dayjs.extend(relativeTime);
 
 interface Comment {
-  id: string
-  text: string
-  created_at: string
-  user: { name: string; avatar?: string }
+  id: string;
+  text: string;
+  created_at: string;
+  user: { name: string; avatar?: string };
 }
 
 export default function CommentList({ postId }: { postId: string }) {
-  const [comments, setComments] = useState<Comment[]>([])
-  const [visible, setVisible] = useState(2)
-  const [text, setText] = useState("")
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [visible, setVisible] = useState(2);
+  const [text, setText] = useState("");
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/posts/${postId}/comments`)
-        if (!res.ok) return
-        const data = (await res.json()) as { comments: Comment[] }
-        setComments(data.comments)
+        const res = await fetch(`/api/posts/${postId}/comments`);
+        if (!res.ok) return;
+        const data = (await res.json()) as { comments: Comment[] };
+        setComments(data.comments);
       } catch {
         // ignore
       }
     }
-    load()
-  }, [postId])
+    load();
+  }, [postId]);
 
   async function submit() {
-    if (!text.trim() || text.length > 500) return
+    if (!text.trim() || text.length > 500) return;
     try {
       const res = await fetch(`/api/posts/${postId}/comments`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      })
-      if (!res.ok) return
-      const data = (await res.json()) as { comment: Comment }
-      setComments((c) => [...c, data.comment])
-      setVisible((v) => v + 1)
-      setText("")
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) return;
+      const data = (await res.json()) as { comment: Comment };
+      setComments((c) => [...c, data.comment]);
+      setVisible((v) => v + 1);
+      setText("");
     } catch {
       // ignore
     }
@@ -55,7 +55,9 @@ export default function CommentList({ postId }: { postId: string }) {
 
   return (
     <div className="mt-4">
-      <h4 className="mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400">Hozzászólások</h4>
+      <h4 className="mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400">
+        Hozzászólások
+      </h4>
       <div className="space-y-3">
         <AnimatePresence initial={false}>
           {comments.slice(0, visible).map((c) => (
@@ -71,13 +73,17 @@ export default function CommentList({ postId }: { postId: string }) {
                 {c.user.avatar ? (
                   <AvatarImage src={c.user.avatar} alt={c.user.name} />
                 ) : (
-                  <AvatarFallback>{c.user.name.slice(0,2).toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>
+                    {c.user.name.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 )}
               </Avatar>
               <div className="text-sm">
                 <p className="leading-none">
                   <span className="font-medium">{c.user.name}</span>{" "}
-                  <span className="text-xs text-gray-500">{dayjs(c.created_at).fromNow()}</span>
+                  <span className="text-xs text-gray-500">
+                    {dayjs(c.created_at).fromNow()}
+                  </span>
                 </p>
                 <p className="text-gray-700 dark:text-gray-300">{c.text}</p>
               </div>
@@ -109,5 +115,5 @@ export default function CommentList({ postId }: { postId: string }) {
         </button>
       </div>
     </div>
-  )
+  );
 }
