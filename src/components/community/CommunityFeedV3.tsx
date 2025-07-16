@@ -13,6 +13,8 @@ export interface FeedItem {
   type?: "image" | "music" | "prompt";
   url: string;
   created_at: string;
+  view_count?: number;
+  play_count?: number;
   user: {
     name: string | null;
     email: string;
