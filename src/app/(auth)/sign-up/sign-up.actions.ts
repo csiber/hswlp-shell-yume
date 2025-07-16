@@ -2,10 +2,12 @@
 
 import { createServerAction, ZSAError } from "zsa"
 import { getDB } from "@/db"
-import { userTable } from "@/db/schema"
+import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema"
+import { SIGN_UP_BONUS_CREDITS } from "@/constants"
 import { signUpSchema } from "@/schemas/signup.schema";
 import { hashPassword } from "@/utils/password-hasher";
 import { createSession, generateSessionToken, setSessionTokenCookie } from "@/utils/auth";
+import { logTransaction } from "@/utils/credits";
 import { eq } from "drizzle-orm";
 import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
 import { getIP } from "@/utils/get-IP";
@@ -45,7 +47,7 @@ export const signUpAction = createServerAction()
         // Hash the password
         const hashedPassword = await hashPassword({ password: input.password });
 
-        // Create the user
+        // Create the user with signup credits
         const [user] = await db.insert(userTable)
           .values({
             email: input.email,
@@ -54,8 +56,22 @@ export const signUpAction = createServerAction()
             passwordHash: hashedPassword,
             signUpIpAddress: await getIP(),
             emailVerified: new Date(),
+            currentCredits: SIGN_UP_BONUS_CREDITS,
+          lastCreditRefreshAt: new Date(),
           })
           .returning();
+
+        if (user) {
+          const expirationDate = new Date();
+          expirationDate.setMonth(expirationDate.getMonth() + 1);
+          await logTransaction({
+            userId: user.id,
+            amount: SIGN_UP_BONUS_CREDITS,
+            description: 'Signup bonus',
+            type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
+            expirationDate,
+          });
+        }
 
         if (!user || !user.email) {
           throw new ZSAError(
