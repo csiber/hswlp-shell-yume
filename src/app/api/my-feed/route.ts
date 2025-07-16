@@ -12,11 +12,11 @@ export async function GET() {
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
     SELECT u.id, u.title, u.type, u.created_at, u.url, u.r2_key,
-           u.view_count, u.play_count,
+           u.view_count, u.play_count, u.download_points,
            usr.firstName, usr.lastName, usr.email
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
-    WHERE u.visibility = 'public' OR u.visibility IS NULL
+
     ORDER BY u.created_at DESC
     LIMIT 50
   `).all<Record<string, string>>()
@@ -27,6 +27,7 @@ export async function GET() {
     title: string
     type: 'image' | 'music' | 'prompt'
     url: string
+    download_points: number
     created_at: string
     view_count: number
     play_count: number
@@ -51,6 +52,7 @@ export async function GET() {
       title: row.title,
       type: row.type as 'image' | 'music' | 'prompt',
       url: fileUrl,
+      download_points: Number(row.download_points ?? 2),
       created_at: new Date(row.created_at).toISOString(),
       view_count: Number(row.view_count ?? 0),
       play_count: Number(row.play_count ?? 0),
