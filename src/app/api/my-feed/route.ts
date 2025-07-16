@@ -16,6 +16,7 @@ export async function GET() {
            usr.firstName, usr.lastName, usr.email
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
+
     ORDER BY u.created_at DESC
     LIMIT 50
   `).all<Record<string, string>>()
