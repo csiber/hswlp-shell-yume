@@ -16,7 +16,6 @@ export async function GET() {
            usr.firstName, usr.lastName, usr.email
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
-
     ORDER BY u.created_at DESC
     LIMIT 50
   `).all<Record<string, string>>()
@@ -36,11 +35,12 @@ export async function GET() {
 
   for (const row of result.results || []) {
     let fileUrl: string
-    if (publicBase) {
+    if (publicBase && row.r2_key) {
       const base = publicBase.endsWith('/') ? publicBase : `${publicBase}/`
       fileUrl = `${base}${row.r2_key}`
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } else if (typeof (env.hswlp_r2 as any).createSignedUrl === 'function') {
+    else if (row.r2_key && typeof (env.hswlp_r2 as any).createSignedUrl === 'function') {
       fileUrl = await getSignedUrl(env.hswlp_r2, row.r2_key)
     } else {
       fileUrl = row.url
