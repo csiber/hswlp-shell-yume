@@ -30,13 +30,15 @@ export async function GET(
   }>()
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
-  const items = [] as {
-    id: string
-    type: 'image' | 'music' | 'prompt'
-    url: string
-    name: string
-    created_at: string
-  }[]
+const items = [] as {
+  id: string
+  type: 'image' | 'music' | 'prompt'
+  url: string
+  name: string
+  created_at: string
+  download_points: number
+}[]
+
 
   for (const row of uploads.results || []) {
     let fileUrl: string
