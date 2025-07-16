@@ -11,13 +11,14 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
-    SELECT id, title, type, created_at, url, r2_key,
-           view_count, play_count
-    FROM uploads
-    WHERE user_id = ?1
-    ORDER BY created_at DESC
+    SELECT u.id, u.title, u.type, u.created_at, u.url, u.r2_key,
+           u.view_count, u.play_count, u.download_points,
+           usr.firstName, usr.lastName, usr.email
+    FROM uploads u
+    JOIN user usr ON u.user_id = usr.id
+    ORDER BY u.created_at DESC
     LIMIT 50
-  `).bind(session.user.id).all<Record<string, string>>()
+  `).all<Record<string, string>>()
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
   const items = [] as {
@@ -25,6 +26,7 @@ export async function GET() {
     title: string
     type: 'image' | 'music' | 'prompt'
     url: string
+    download_points: number
     created_at: string
     view_count: number
     play_count: number
@@ -33,28 +35,30 @@ export async function GET() {
 
   for (const row of result.results || []) {
     let fileUrl: string
-    if (publicBase) {
+    if (publicBase && row.r2_key) {
       const base = publicBase.endsWith('/') ? publicBase : `${publicBase}/`
       fileUrl = `${base}${row.r2_key}`
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } else if (typeof (env.hswlp_r2 as any).createSignedUrl === 'function') {
+    else if (row.r2_key && typeof (env.hswlp_r2 as any).createSignedUrl === 'function') {
       fileUrl = await getSignedUrl(env.hswlp_r2, row.r2_key)
     } else {
       fileUrl = row.url
     }
 
-    const nameParts = [session.user.firstName, session.user.lastName].filter(Boolean)
+    const nameParts = [row.firstName, row.lastName].filter(Boolean)
     items.push({
       id: row.id,
       title: row.title,
       type: row.type as 'image' | 'music' | 'prompt',
       url: fileUrl,
+      download_points: Number(row.download_points ?? 2),
       created_at: new Date(row.created_at).toISOString(),
       view_count: Number(row.view_count ?? 0),
       play_count: Number(row.play_count ?? 0),
       user: {
-        name: nameParts.length ? nameParts.join(' ') : session.user.email,
-        email: session.user.email!,
+        name: nameParts.length ? nameParts.join(' ') : row.email,
+        email: row.email,
       },
     })
   }
