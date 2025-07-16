@@ -6,6 +6,7 @@ import { WebhookService } from '@/app/services/WebhookService'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
+import { parseBuffer } from 'music-metadata-browser'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -72,6 +73,28 @@ export async function POST(req: Request) {
   const key = `uploads/${session.user.id}/${id}.${ext}`
   const { env } = getCloudflareContext()
 
+  // Calculate download points based on metadata
+  let downloadPoints = 2
+  try {
+    if (type === 'music') {
+      const buffer = await file.arrayBuffer()
+      const meta = await parseBuffer(Buffer.from(buffer), mime)
+      const common = meta.common || {}
+      if (common.title || common.artist || common.album) downloadPoints++
+      if (common.picture && common.picture.length > 0) downloadPoints++
+      if (meta.format?.duration && meta.format.duration > 120 && mime === 'audio/mpeg') {
+        downloadPoints++
+      }
+    }
+    const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE user_id = ?1')
+      .bind(session.user.id)
+      .first<{ c: number }>()
+    if ((countRow?.c ?? 0) === 0) downloadPoints++
+  } catch (err) {
+    console.warn('Failed to calculate download points', err)
+  }
+  if (downloadPoints > 5) downloadPoints = 5
+
   let promptText: string | undefined
   if (type === 'prompt') {
     promptText = await file.text()
@@ -105,8 +128,8 @@ export async function POST(req: Request) {
     }
 
     await env.DB.prepare(
-      'INSERT INTO uploads (id, user_id, title, type, url, r2_key, credit_value) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
-    ).bind(id, session.user.id, title, type, url, key, creditValue).run()
+      'INSERT INTO uploads (id, user_id, title, type, url, r2_key, credit_value, download_points) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)'
+    ).bind(id, session.user.id, title, type, url, key, creditValue, downloadPoints).run()
 
     await updateUserCredits(session.user.id, creditValue)
     await logTransaction({
@@ -127,6 +150,7 @@ export async function POST(req: Request) {
       uploadId: id,
       url,
       message: 'Feltöltés sikeres!',
+      download_points: downloadPoints,
       awarded_credits: creditValue,
       total_credits: creditsRow?.currentCredits ?? null,
     })

@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { UserMiniCard } from '@/components/user-mini-card'
+import { Download } from 'lucide-react'
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 
 type Upload = {
   id: string
@@ -12,6 +14,7 @@ type Upload = {
   url: string
   name: string
   created_at: string
+  download_points: number
 }
 
 interface Props {
@@ -23,6 +26,23 @@ interface Props {
 export default function ProfileClient({ user, uploads, currentUserId }: Props) {
   const [tab, setTab] = useState<'image' | 'music' | 'prompt'>('image')
   const filtered = uploads.filter((u) => u.type === tab)
+
+  async function downloadFile(item: Upload) {
+    try {
+      const res = await fetch(`/api/uploads/${item.id}/download`)
+      if (res.ok) {
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = item.name
+        a.click()
+        URL.revokeObjectURL(url)
+      }
+    } catch {
+      // ignore
+    }
+  }
 
   return (
     <div className="max-w-5xl mx-auto pb-10">
@@ -79,6 +99,18 @@ export default function ProfileClient({ user, uploads, currentUserId }: Props) {
               ) : (
                 <div className="p-3 border rounded bg-muted text-sm whitespace-pre-wrap">{u.name}</div>
               )}
+              <div className="mt-2 text-right">
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="icon" variant="ghost" onClick={() => downloadFile(u)}>
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{`Letöltés ${u.download_points} pontért`}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </motion.div>
           ))}
         </AnimatePresence>

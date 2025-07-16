@@ -9,9 +9,12 @@ interface UploadItem {
   type: 'image' | 'music' | 'prompt'
   title: string
   url: string
+  download_points: number
 }
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { Download } from 'lucide-react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import Image from 'next/image'
 
 export default function MyFilesPage() {
@@ -33,6 +36,27 @@ export default function MyFilesPage() {
         mutate()
       } else {
         toast.error('Hiba történt törlés közben')
+      }
+    } catch {
+      toast.error('Hálózati hiba történt')
+    }
+  }
+
+  const downloadFile = async (item: UploadItem) => {
+    try {
+      const res = await fetch(`/api/uploads/${item.id}/download`)
+      if (res.ok) {
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = item.title
+        a.click()
+        URL.revokeObjectURL(url)
+      } else if (res.status === 402) {
+        toast.error('Nincs elég kredit a letöltéshez')
+      } else {
+        toast.error('Letöltés sikertelen')
       }
     } catch {
       toast.error('Hálózati hiba történt')
@@ -67,7 +91,25 @@ export default function MyFilesPage() {
             )}
             <div className="p-2 flex justify-between items-center">
               <span className="text-sm">{item.title}</span>
-              <Button size="sm" variant="destructive" onClick={() => deleteFile(item.id)}>Törlés</Button>
+              <div className="flex items-center gap-2">
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => downloadFile(item)}
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {`Letöltés ${item.download_points} pontért`}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <Button size="sm" variant="destructive" onClick={() => deleteFile(item.id)}>Törlés</Button>
+              </div>
             </div>
           </div>
         ))}

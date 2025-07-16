@@ -10,6 +10,7 @@ interface ApiResponse {
     url: string
     name: string
     created_at: string
+    download_points: number
   }[]
 }
 

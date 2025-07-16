@@ -1,0 +1,1 @@
+ALTER TABLE uploads ADD COLUMN download_points INTEGER DEFAULT 2;
