@@ -27,6 +27,10 @@
      */
     "placement": { "mode": "smart" },
 
+    "triggers": {
+      "crons": ["0 0 1 * *"]
+    },
+
     /**
      * Bindings
      * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including

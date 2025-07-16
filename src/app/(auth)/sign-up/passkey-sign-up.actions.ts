@@ -4,7 +4,8 @@ import { createServerAction, ZSAError } from "zsa";
 import { z } from "zod";
 import { generatePasskeyRegistrationOptions, verifyPasskeyRegistration } from "@/utils/webauthn";
 import { getDB } from "@/db";
-import { userTable } from "@/db/schema";
+import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema";
+import { SIGN_UP_BONUS_CREDITS } from "@/constants";
 import { eq } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
 import { createSession, generateSessionToken, setSessionTokenCookie } from "@/utils/auth";
@@ -15,6 +16,7 @@ import { passkeyEmailSchema } from "@/schemas/passkey.schema";
 import ms from "ms";
 import { validateTurnstileToken } from "@/utils/validate-captcha";
 import { isTurnstileEnabled } from "@/flags";
+import { logTransaction } from "@/utils/credits";
 
 const PASSKEY_CHALLENGE_COOKIE_NAME = "passkey_challenge";
 const PASSKEY_USER_ID_COOKIE_NAME = "passkey_user_id";
@@ -57,8 +59,22 @@ export const startPasskeyRegistrationAction = createServerAction()
             lastName: input.lastName,
             signUpIpAddress: ipAddress,
             emailVerified: new Date(),
+            currentCredits: SIGN_UP_BONUS_CREDITS,
+            lastCreditRefreshAt: new Date(),
           })
           .returning();
+
+        if (user) {
+          const expirationDate = new Date();
+          expirationDate.setMonth(expirationDate.getMonth() + 1);
+          await logTransaction({
+            userId: user.id,
+            amount: SIGN_UP_BONUS_CREDITS,
+            description: 'Signup bonus',
+            type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
+            expirationDate,
+          });
+        }
 
         if (!user) {
           throw new ZSAError(
