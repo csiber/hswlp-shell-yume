@@ -210,7 +210,7 @@ export default function PostCard({
           {item.title}
         </p>
       )}
-      <div className="mt-auto flex justify-between items-center text-gray-500 relative">
+      <div className="mt-auto flex justify-between items-center text-gray-500">
         {item.type === "music" && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
             <span role="img" aria-label="plays">
@@ -227,14 +227,14 @@ export default function PostCard({
             {viewCount}
           </span>
         )}
-        <button
-          onClick={handleDownload}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <Download className="w-4 h-4" />
-          {item.download_points ?? 2}
-        </button>
-        <div className="absolute right-0 bottom-0">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <Download className="w-4 h-4" />
+            {item.download_points ?? 2}
+          </button>
           <LikeButton postId={item.id} />
         </div>
       </div>
