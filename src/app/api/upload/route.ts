@@ -3,6 +3,9 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { WebhookService } from '@/app/services/WebhookService'
+import { updateUserCredits, logTransaction } from '@/utils/credits'
+import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
+import { calculateUploadCredits } from '@/utils/upload-credits'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -33,6 +36,14 @@ export async function POST(req: Request) {
   const file = formData.get('file')
   const title = formData.get('title')
   const type = formData.get('type')
+  const promptField = formData.get('prompt')
+  const artist = formData.get('artist')
+  const album = formData.get('album')
+  const picture = formData.get('picture')
+  const linkedUploadId = formData.get('linked_upload_id')
+  const tags = formData.getAll('tags').flatMap((t) =>
+    typeof t === 'string' ? t.split(',').map((s) => s.trim()).filter(Boolean) : []
+  )
 
   if (!(file instanceof Blob) || typeof title !== 'string' || typeof type !== 'string') {
     return jsonResponse({ success: false, error: 'Invalid form data' }, { status: 400 })
@@ -61,10 +72,29 @@ export async function POST(req: Request) {
   const key = `uploads/${session.user.id}/${id}.${ext}`
   const { env } = getCloudflareContext()
 
+  let promptText: string | undefined
+  if (type === 'prompt') {
+    promptText = await file.text()
+  } else if (typeof promptField === 'string') {
+    promptText = promptField
+  }
+
   try {
     await env.hswlp_r2.put(key, file)
 
     const url = `/api/files/${id}` // helyi proxy link, védett!
+
+    const creditValue = calculateUploadCredits({
+      type: type as 'image' | 'music' | 'prompt',
+      title,
+      promptText,
+      artist: typeof artist === 'string' ? artist : undefined,
+      album: typeof album === 'string' ? album : undefined,
+      picture: typeof picture === 'string' ? picture : undefined,
+      tags,
+      linkedUploadId: typeof linkedUploadId === 'string' ? linkedUploadId : undefined,
+      hasR2: true,
+    })
 
     const exists = await env.DB.prepare(
       'SELECT id FROM uploads WHERE user_id = ?1 AND title = ?2 AND type = ?3 LIMIT 1'
@@ -75,12 +105,31 @@ export async function POST(req: Request) {
     }
 
     await env.DB.prepare(
-      'INSERT INTO uploads (id, user_id, title, type, url, r2_key) VALUES (?1, ?2, ?3, ?4, ?5, ?6)'
-    ).bind(id, session.user.id, title, type, url, key).run()
+      'INSERT INTO uploads (id, user_id, title, type, url, r2_key, credit_value) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
+    ).bind(id, session.user.id, title, type, url, key, creditValue).run()
+
+    await updateUserCredits(session.user.id, creditValue)
+    await logTransaction({
+      userId: session.user.id,
+      amount: creditValue,
+      description: `Upload reward (${type})`,
+      type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
+    })
+
+    const creditsRow = await env.DB.prepare('SELECT currentCredits FROM user WHERE id = ?1')
+      .bind(session.user.id)
+      .first<{ currentCredits: number }>()
 
     await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
 
-    return jsonResponse({ success: true, uploadId: id, url })
+    return jsonResponse({
+      success: true,
+      uploadId: id,
+      url,
+      message: 'Feltöltés sikeres!',
+      awarded_credits: creditValue,
+      total_credits: creditsRow?.currentCredits ?? null,
+    })
   } catch (err) {
     console.error(err)
     return jsonResponse({ success: false, error: 'Upload failed' }, { status: 500 })
