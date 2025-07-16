@@ -33,6 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
            usr.firstName, usr.lastName, usr.email
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
+    WHERE u.approved = 1 AND u.visibility = 'public'
     ORDER BY u.created_at DESC
     LIMIT 50
   `).all<Record<string, string>>()
