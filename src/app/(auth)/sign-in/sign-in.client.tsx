@@ -4,7 +4,13 @@ import { signInAction } from "./sign-in.actions";
 import { type SignInSchema, signInSchema } from "@/schemas/signin.schema";
 import { type ReactNode, useState } from "react";
 
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import SeparatorWithText from "@/components/separator-with-text";
@@ -16,7 +22,10 @@ import { useServerAction } from "zsa-react";
 import Link from "next/link";
 import SSOButtons from "../_components/sso-buttons";
 import { KeyIcon } from "lucide-react";
-import { generateAuthenticationOptionsAction, verifyAuthenticationAction } from "@/app/(settings)/settings/security/passkey-settings.actions";
+import {
+  generateAuthenticationOptionsAction,
+  verifyAuthenticationAction,
+} from "@/app/(settings)/settings/security/passkey-settings.actions";
 import { startAuthentication } from "@simplewebauthn/browser";
 
 interface SignInClientProps {
@@ -30,38 +39,51 @@ interface PasskeyAuthenticationButtonProps {
   redirectPath: string;
 }
 
-function PasskeyAuthenticationButton({ className, disabled, children, redirectPath }: PasskeyAuthenticationButtonProps) {
-  const { execute: generateOptions } = useServerAction(generateAuthenticationOptionsAction, {
-    onError: (error) => {
-      toast.dismiss();
-        toast.error(error.err?.message || "Nem sikerült lekérni a hitelesítési opciókat");
-    },
-  });
+function PasskeyAuthenticationButton({
+  className,
+  disabled,
+  children,
+  redirectPath,
+}: PasskeyAuthenticationButtonProps) {
+  const { execute: generateOptions } = useServerAction(
+    generateAuthenticationOptionsAction,
+    {
+      onError: (error) => {
+        toast.dismiss();
+        toast.error(
+          error.err?.message || "Nem sikerült lekérni a hitelesítési opciókat"
+        );
+      },
+    }
+  );
 
-  const { execute: verifyAuthentication } = useServerAction(verifyAuthenticationAction, {
-    onError: (error) => {
-      toast.dismiss();
+  const { execute: verifyAuthentication } = useServerAction(
+    verifyAuthenticationAction,
+    {
+      onError: (error) => {
+        toast.dismiss();
         toast.error(error.err?.message || "A hitelesítés nem sikerült");
-    },
-    onSuccess: () => {
-      toast.dismiss();
+      },
+      onSuccess: () => {
+        toast.dismiss();
         toast.success("Sikeres hitelesítés");
-      window.location.href = redirectPath;
-    },
-  });
+        window.location.href = redirectPath;
+      },
+    }
+  );
 
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const handleAuthenticate = async () => {
     try {
       setIsAuthenticating(true);
-        toast.loading("Hitelesítés passkey-jel...");
+      toast.loading("Hitelesítés passkey-jel...");
 
       // Get authentication options from the server
       const [options] = await generateOptions({});
 
       if (!options) {
-          throw new Error("Nem sikerült lekérni a hitelesítési opciókat");
+        throw new Error("Nem sikerült lekérni a hitelesítési opciókat");
       }
 
       // Start the authentication process in the browser
@@ -75,9 +97,9 @@ function PasskeyAuthenticationButton({ className, disabled, children, redirectPa
         challenge: options.challenge,
       });
     } catch (error) {
-        console.error("Passkey hitelesítési hiba:", error);
-        toast.dismiss();
-        toast.error("A hitelesítés nem sikerült");
+      console.error("Passkey hitelesítési hiba:", error);
+      toast.dismiss();
+      toast.error("A hitelesítés nem sikerült");
     } finally {
       setIsAuthenticating(false);
     }
@@ -89,7 +111,9 @@ function PasskeyAuthenticationButton({ className, disabled, children, redirectPa
       disabled={isAuthenticating || disabled}
       className={className}
     >
-      {isAuthenticating ? "Hitelesítés..." : children || "Bejelentkezés Passkey-jel"}
+      {isAuthenticating
+        ? "Hitelesítés..."
+        : children || "Bejelentkezés Passkey-jel"}
     </Button>
   );
 }
@@ -97,25 +121,25 @@ function PasskeyAuthenticationButton({ className, disabled, children, redirectPa
 const SignInPage = ({ redirectPath }: SignInClientProps) => {
   const { execute: signIn } = useServerAction(signInAction, {
     onError: (error) => {
-      toast.dismiss()
-      toast.error(error.err?.message)
+      toast.dismiss();
+      toast.error(error.err?.message);
     },
     onStart: () => {
-      toast.loading("Bejelentkezés folyamatban...")
+      toast.loading("Bejelentkezés folyamatban...");
     },
     onSuccess: () => {
-      toast.dismiss()
-      toast.success("Sikeres bejelentkezés")
+      toast.dismiss();
+      toast.success("Sikeres bejelentkezés");
       window.location.href = redirectPath;
-    }
-  })
+    },
+  });
   const form = useForm<SignInSchema>({
     resolver: zodResolver(signInSchema),
   });
 
   const onSubmit = async (data: SignInSchema) => {
-    signIn(data)
-  }
+    signIn(data);
+  };
 
   return (
     <div className="min-h-[90vh] flex flex-col items-center px-4 justify-center bg-background my-6 md:my-10">
@@ -125,8 +149,11 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
             Jelentkezz be a fiókodba
           </h2>
           <p className="mt-2 text-muted-foreground">
-            Or{" "}
-            <Link href={`/sign-up?redirect=${encodeURIComponent(redirectPath)}`} className="font-medium text-primary hover:text-primary/90 underline">
+            vagy{" "}
+            <Link
+              href={`/sign-up?redirect=${encodeURIComponent(redirectPath)}`}
+              className="font-medium text-primary hover:text-primary/90 underline"
+            >
               hozz létre új fiókot
             </Link>
           </p>
@@ -135,18 +162,24 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
         <div className="space-y-4">
           <SSOButtons isSignIn />
 
-          <PasskeyAuthenticationButton className="w-full" redirectPath={redirectPath}>
+          <PasskeyAuthenticationButton
+            className="w-full"
+            redirectPath={redirectPath}
+          >
             <KeyIcon className="w-5 h-5 mr-2" />
-              Bejelentkezés Passkey-jel
+            Bejelentkezés Passkey-jel
           </PasskeyAuthenticationButton>
         </div>
 
-          <SeparatorWithText>
-            <span className="uppercase text-muted-foreground">Vagy</span>
-          </SeparatorWithText>
+        <SeparatorWithText>
+          <span className="uppercase text-muted-foreground">Vagy</span>
+        </SeparatorWithText>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="mt-8 space-y-6"
+          >
             <FormField
               control={form.control}
               name="email"
@@ -173,7 +206,7 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
                   <FormControl>
                     <Input
                       type="password"
-                        placeholder="Jelszó"
+                      placeholder="Jelszó"
                       className="w-full px-3 py-2"
                       {...field}
                     />
@@ -183,22 +216,11 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
               )}
             />
 
-            <Button
-              type="submit"
-              className="w-full flex justify-center py-2.5"
-            >
-                Bejelentkezés jelszóval
+            <Button type="submit" className="w-full flex justify-center py-2.5">
+              Bejelentkezés jelszóval
             </Button>
           </form>
         </Form>
-      </div>
-
-      <div className="mt-6">
-        <p className="text-center text-sm text-muted-foreground">
-          <Link href="/forgot-password" className="font-medium text-primary hover:text-primary/90">
-              Elfelejtetted a jelszavad?
-          </Link>
-        </p>
       </div>
     </div>
   );

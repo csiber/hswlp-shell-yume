@@ -47,10 +47,17 @@ export async function GET() {
       const cookieStore = await cookies()
       cookieStore.set(GOOGLE_OAUTH_STATE_COOKIE_NAME, state, cookieOptions)
       cookieStore.set(GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME, codeVerifier, cookieOptions)
-    } catch (error) {
-      console.error('Error generating Google OAuth state and code verifier', error)
-      return redirect('/')
+   } catch (error) {
+  console.error('[Google OAuth] Failed to generate redirect URL', {
+    error,
+    env: {
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET
     }
+  });
+  return redirect('/');
+}
+
 
     return new Response(null, {
       status: 307,
