@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Home, FolderDown, ShieldCheck } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -72,6 +73,20 @@ export default function TopBar({}: TopBarProps) {
             <span className="sr-only">Fájljaim</span>
           </Link>
         </Button>
+
+        {user?.role === 'admin' && (
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+          >
+            <Link href="/moderation">
+              <CheckCircle2 className="size-5" />
+              <span className="sr-only">Moderáció</span>
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div className="text-center text-xs text-muted-foreground animate-fade-in">
