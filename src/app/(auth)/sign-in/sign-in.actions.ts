@@ -29,13 +29,6 @@ export const signInAction = createServerAction()
             );
           }
 
-          // Check if user has only Google SSO
-          if (!user.passwordHash && user.googleAccountId) {
-            throw new ZSAError(
-              "FORBIDDEN",
-              "Kérjük, jelentkezz be a Google-fiókoddal."
-            );
-          }
 
           if (!user.passwordHash) {
             throw new ZSAError(
