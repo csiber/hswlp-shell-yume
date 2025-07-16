@@ -12,6 +12,7 @@ export interface FeedItem {
   title: string;
   type?: "image" | "music" | "prompt";
   url: string;
+  download_points?: number;
   created_at: string;
   view_count?: number;
   play_count?: number;

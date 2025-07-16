@@ -10,6 +10,9 @@ import ImageLightbox from "@/components/ui/ImageLightbox";
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
+import { useSessionStore } from "@/state/session";
 import type { FeedItem } from "./CommunityFeedV3";
 
 dayjs.extend(relativeTime);
@@ -47,6 +50,30 @@ export default function PostCard({
   const [playCount, setPlayCount] = useState(item.play_count ?? 0);
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
+  const fetchSession = useSessionStore((s) => s.fetchSession);
+
+  const handleDownload = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/uploads/${item.id}/download`);
+      if (res.ok) {
+        toast.success("Letöltés indítása");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = item.title;
+        a.click();
+        URL.revokeObjectURL(url);
+        fetchSession?.();
+      } else if (res.status === 402) {
+        toast.error("Nincs elég kredit a letöltéshez");
+      } else {
+        toast.error("Letöltés sikertelen");
+      }
+    } catch {
+      toast.error("Hálózati hiba történt");
+    }
+  }, [item.id, item.title, fetchSession]);
 
   const handlePlay = useCallback(async () => {
     try {
@@ -200,6 +227,13 @@ export default function PostCard({
             {viewCount}
           </span>
         )}
+        <button
+          onClick={handleDownload}
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <Download className="w-4 h-4" />
+          {item.download_points ?? 2}
+        </button>
         <div className="absolute right-0 bottom-0">
           <LikeButton postId={item.id} />
         </div>
