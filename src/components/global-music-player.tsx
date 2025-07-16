@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Play, Pause, SkipForward, Heart, Download, Plus } from 'lucide-react'
+import { Play, Pause, SkipForward } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent } from '@/components/ui/sheet'
+import LikeButton from '@/components/community/LikeButton'
 
 interface Track {
   id: string
@@ -20,6 +21,12 @@ export default function GlobalMusicPlayer() {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [open, setOpen] = useState(false)
+  const [meta, setMeta] = useState<{
+    title: string | null
+    artist: string | null
+    album: string | null
+    picture: string | null
+  } | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   // zene betöltése
@@ -48,6 +55,18 @@ export default function GlobalMusicPlayer() {
       })
     }
   }, [currentIndex, queue, isPlaying])
+
+  // metaadatok betöltése
+  useEffect(() => {
+    const track = queue[currentIndex]
+    if (!track) return
+    fetch(`/api/music-meta?id=${track.id}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (data) setMeta(data)
+      })
+      .catch(() => {})
+  }, [currentIndex, queue])
 
 
   const togglePlay = () => {
@@ -93,9 +112,18 @@ export default function GlobalMusicPlayer() {
         onClick={() => setOpen(true)}
       >
         <div className="flex items-center min-w-0 gap-2">
-          <span className="text-lg">🎵</span>
+          {meta?.picture ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={meta.picture}
+              alt={meta.title || track.title}
+              className="h-8 w-8 rounded-md object-cover"
+            />
+          ) : (
+            <span className="text-lg">🎵</span>
+          )}
           <div className="min-w-0">
-            <div className="text-sm font-medium truncate" title={track.title}>{track.title}</div>
+            <div className="text-sm font-medium truncate" title={meta?.title || track.title}>{meta?.title || track.title}</div>
           </div>
         </div>
         <Button
@@ -112,29 +140,30 @@ export default function GlobalMusicPlayer() {
       <SheetContent side="bottom" className="p-4">
         <div className="flex items-center justify-between gap-4 pb-2">
           <div className="flex items-center min-w-0 gap-2">
-            <span className="text-lg">🎵</span>
+            {meta?.picture ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={meta.picture}
+                alt={meta.title || track.title}
+                className="h-12 w-12 rounded-md object-cover"
+              />
+            ) : (
+              <span className="text-lg">🎵</span>
+            )}
             <div className="min-w-0">
-              <div className="text-sm font-medium truncate" title={track.title}>{track.title}</div>
+              <div className="text-sm font-medium truncate" title={meta?.title || track.title}>{meta?.title || track.title}</div>
               <div className="text-xs text-muted-foreground truncate">
-                {(track.user.name || track.user.email)} · {new Date(track.created_at).toLocaleDateString()}
+                {meta?.artist || track.user.name || track.user.email} · {new Date(track.created_at).toLocaleDateString()}
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="icon" variant="ghost" className="hidden md:flex" disabled>
-              <Heart className="h-4 w-4" />
-            </Button>
-            <Button size="icon" variant="ghost" className="hidden md:flex" disabled>
-              <Plus className="h-4 w-4" />
-            </Button>
+            <LikeButton postId={track.id} />
             <Button size="icon" variant="ghost" onClick={togglePlay}>
               {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             </Button>
             <Button size="icon" variant="ghost" onClick={playNext} disabled={currentIndex >= queue.length - 1}>
               <SkipForward className="h-4 w-4" />
-            </Button>
-            <Button size="icon" variant="ghost" className="hidden md:flex" disabled>
-              <Download className="h-4 w-4" />
             </Button>
           </div>
         </div>
