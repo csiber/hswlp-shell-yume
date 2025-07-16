@@ -36,16 +36,17 @@ export default function PostCard({
       .slice(0, 2)
       .toUpperCase() || item.user.email.slice(0, 2).toUpperCase();
 
-  const [promptText, setPromptText] = useState<string | null>(null);
-  const [promptError, setPromptError] = useState<boolean>(false);
-  const [playCount, setPlayCount] = useState(item.play_count ?? 0);
-  const [viewCount, setViewCount] = useState(item.view_count ?? 0);
+  const [promptText, setPromptText] = useState<string | null>(null)
+  const [promptError, setPromptError] = useState<boolean>(false)
+  const [playCount, setPlayCount] = useState(item.play_count ?? 0)
+  const [viewCount, setViewCount] = useState(item.view_count ?? 0)
   const [meta, setMeta] = useState<{
-    title: string | null;
-    artist: string | null;
-    album: string | null;
-    picture: string | null;
-  } | null>(null);
+    title: string | null
+    artist: string | null
+    album: string | null
+    picture: string | null
+  } | null>(null)
+
 
   const handlePlay = useCallback(async () => {
     try {
@@ -87,24 +88,9 @@ export default function PostCard({
       fetch(`/api/music-meta?id=${item.id}`)
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data && typeof data === "object") {
-            const meta = data as {
-              title?: string;
-              artist?: string;
-              album?: string;
-              picture?: string;
-            };
-
-            setMeta({
-              title: meta.title ?? null,
-              artist: meta.artist ?? null,
-              album: meta.album ?? null,
-              picture: meta.picture ?? null,
-            });
-          }
+          if (data) setMeta(data)
         })
-
-        .catch(() => {});
+        .catch(() => {})
     }
   }, [item]);
 
