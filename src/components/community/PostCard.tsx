@@ -39,6 +39,12 @@ export default function PostCard({
   const [promptError, setPromptError] = useState<boolean>(false)
   const [playCount, setPlayCount] = useState(item.play_count ?? 0)
   const [viewCount, setViewCount] = useState(item.view_count ?? 0)
+  const [meta, setMeta] = useState<{
+    title: string | null
+    artist: string | null
+    album: string | null
+    picture: string | null
+  } | null>(null)
 
   const handlePlay = useCallback(async () => {
     try {
@@ -73,7 +79,12 @@ export default function PostCard({
     }
 
     if (item.type === "music") {
-      // music metadata parsing removed in lightweight build
+      fetch(`/api/music-meta?id=${item.id}`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data) setMeta(data)
+        })
+        .catch(() => {})
     }
   }, [item])
 
@@ -119,13 +130,22 @@ export default function PostCard({
         )}
         {item.type === "music" && (
           <div className="flex flex-col items-center gap-2">
+            {meta?.picture && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={meta.picture}
+                alt={meta.title || item.title}
+                className="w-full rounded-xl object-cover"
+              />
+            )}
             <div className="text-center text-sm">
-              <p>{item.title || "Ismeretlen szám"}</p>
+              <h3>{meta?.title || item.title || "Ismeretlen szám"}</h3>
+              {meta?.artist && <p>{meta.artist}</p>}
             </div>
             <MusicPlayer
               id={item.id}
               url={item.url}
-              title={item.title || "Ismeretlen szám"}
+              title={meta?.title || item.title || "Ismeretlen szám"}
               audioRef={audioRef}
               playingId={playingId}
               setPlayingId={setPlayingId}
