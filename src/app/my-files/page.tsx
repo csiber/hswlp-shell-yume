@@ -3,21 +3,34 @@
 'use client'
 
 import useSWR from 'swr'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 interface UploadItem {
   id: string
-  type: 'image' | 'music' | 'prompt'
+  category: 'image' | 'music' | 'prompt'
+  mime: string | null
   title: string
   url: string
   download_points: number
 }
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Download } from 'lucide-react'
+import {
+  Download,
+  File as FileIcon,
+  FileText,
+  Image as ImageIcon,
+  Music,
+  Video as VideoIcon,
+  Trash,
+} from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import MusicPlayer from '@/components/community/MusicPlayer'
 
 export default function MyFilesPage() {
   const [filter, setFilter] = useState<string | null>(null)
+  const [playingId, setPlayingId] = useState<string | null>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const query = filter ? `?type=${filter}` : ''
   const fetcher = (url: string) =>
     fetch(url).then((res) => res.json() as Promise<{ items: UploadItem[] }>)
@@ -73,44 +86,70 @@ export default function MyFilesPage() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {data?.items?.map((item) => (
-          <div key={item.id} className="border rounded-md overflow-hidden">
-            {item.type === 'image' ? (
-              <img
-                src={item.url || '/placeholder.png'}
-                alt={item.title}
-                className="w-full h-48 object-cover"
-              />
-            ) : item.type === 'music' ? (
-              <audio src={item.url} controls className="w-full" />
-            ) : (
-              <iframe src={item.url} className="w-full h-32" title={item.title} />
-            )}
-            <div className="p-2 flex justify-between items-center">
-              <span className="text-sm">{item.title}</span>
-              <div className="flex items-center gap-2">
-                <TooltipProvider delayDuration={200}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => downloadFile(item)}
-                      >
-                        <Download className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      {`Letöltés ${item.download_points} pontért`}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <Button size="sm" variant="destructive" onClick={() => deleteFile(item.id)}>Törlés</Button>
+        {data?.items?.map((item) => {
+          const isImage = item.mime?.startsWith('image/')
+          const isAudio = item.mime?.startsWith('audio/')
+          const isVideo = item.mime?.startsWith('video/')
+          const isText = item.mime === 'text/plain'
+
+          const icon = isImage
+            ? <ImageIcon className="w-4 h-4" />
+            : isAudio
+            ? <Music className="w-4 h-4" />
+            : isVideo
+            ? <VideoIcon className="w-4 h-4" />
+            : isText
+            ? <FileText className="w-4 h-4" />
+            : <FileIcon className="w-4 h-4" />
+
+          return (
+            <Card key={item.id} className="overflow-hidden shadow rounded">
+              {isImage && (
+                <img src={item.url} alt={item.title} className="w-full h-48 object-cover" />
+              )}
+              {isAudio && (
+                <div className="p-2">
+                  <MusicPlayer
+                    id={item.id}
+                    url={item.url}
+                    title={item.title}
+                    audioRef={audioRef}
+                    playingId={playingId}
+                    setPlayingId={setPlayingId}
+                  />
+                </div>
+              )}
+              {isVideo && (
+                <video src={item.url} controls className="w-full h-48 object-cover" />
+              )}
+              <div className="p-2 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  {icon}
+                  <span className="text-sm truncate" title={item.title}>{item.title}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TooltipProvider delayDuration={200}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button size="icon" variant="ghost" onClick={() => downloadFile(item)}>
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {`Letöltés ${item.download_points} pontért`}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <Button size="icon" variant="ghost" onClick={() => deleteFile(item.id)}>
+                    <Trash className="w-4 h-4 text-red-500" />
+                  </Button>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </Card>
+          )
+        })}
       </div>
+      <audio ref={audioRef} hidden />
     </main>
   )
 }

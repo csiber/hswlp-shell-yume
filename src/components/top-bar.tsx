@@ -74,6 +74,20 @@ export default function TopBar({}: TopBarProps) {
             <span className="sr-only">Fájljaim</span>
           </Link>
         </Button>
+
+        {user?.role === 'admin' && (
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+          >
+            <Link href="/moderation">
+              <CheckCircle2 className="size-5" />
+              <span className="sr-only">Moderáció</span>
+            </Link>
+          </Button>
+        )}
       </div>
 
       <div className="text-center animate-fade-in">
