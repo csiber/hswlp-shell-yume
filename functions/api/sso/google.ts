@@ -12,7 +12,6 @@ interface Env {
 }
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
-  // mostantól env.NEXTJS_ENV hibamentes lesz
 
   try {
     const state = generateState();
@@ -34,7 +33,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     ]);
 
     const isProd = env.NEXTJS_ENV === "production";
-    const maxAge = Math.floor(ms("10 minutes") / 1000);
+    const maxAge = Math.floor(ms("110 minutes") / 1000);
     const cookieOptions = `Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge};${isProd ? " Secure" : ""}`;
 
     const headers = new Headers();
@@ -51,3 +50,4 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     });
   }
 };
+

@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import dayjs from "dayjs"
-import relativeTime from "dayjs/plugin/relativeTime"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import MusicPlayer from "./MusicPlayer"
-import PromptBox from "./PromptBox"
-import ImageLightbox from "@/components/ui/ImageLightbox"
-import { useEffect, useState } from "react"
-import { useCallback } from "react"
-import LikeButton from "./LikeButton"
-import CommentList from "./CommentList"
-import type { FeedItem } from "./CommunityFeedV3"
+import { motion } from "framer-motion";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import MusicPlayer from "./MusicPlayer";
+import PromptBox from "./PromptBox";
+import ImageLightbox from "@/components/ui/ImageLightbox";
+import { useEffect, useState } from "react";
+import { useCallback } from "react";
+import LikeButton from "./LikeButton";
+import CommentList from "./CommentList";
+import type { FeedItem } from "./CommunityFeedV3";
 
-dayjs.extend(relativeTime)
+dayjs.extend(relativeTime);
 
 interface PostCardProps {
-  item: FeedItem
-  audioRef: React.RefObject<HTMLAudioElement | null>
-  playingId: string | null
-  setPlayingId: (id: string | null) => void
+  item: FeedItem;
+  audioRef: React.RefObject<HTMLAudioElement | null>;
+  playingId: string | null;
+  setPlayingId: (id: string | null) => void;
 }
 
 export default function PostCard({
@@ -29,64 +29,84 @@ export default function PostCard({
   setPlayingId,
 }: PostCardProps) {
   const initials =
-    item.user.name?.split(" ")
+    item.user.name
+      ?.split(" ")
       .map((n) => n[0])
       .join("")
       .slice(0, 2)
-      .toUpperCase() || item.user.email.slice(0, 2).toUpperCase()
+      .toUpperCase() || item.user.email.slice(0, 2).toUpperCase();
 
-  const [promptText, setPromptText] = useState<string | null>(null)
-  const [promptError, setPromptError] = useState<boolean>(false)
-  const [playCount, setPlayCount] = useState(item.play_count ?? 0)
-  const [viewCount, setViewCount] = useState(item.view_count ?? 0)
+  const [promptText, setPromptText] = useState<string | null>(null);
+  const [promptError, setPromptError] = useState<boolean>(false);
+  const [playCount, setPlayCount] = useState(item.play_count ?? 0);
+  const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [meta, setMeta] = useState<{
-    title: string | null
-    artist: string | null
-    album: string | null
-    picture: string | null
-  } | null>(null)
+    title: string | null;
+    artist: string | null;
+    album: string | null;
+    picture: string | null;
+  } | null>(null);
 
   const handlePlay = useCallback(async () => {
     try {
-      const res = await fetch(`/api/uploads/${item.id}/play`, { method: 'POST' })
+      const res = await fetch(`/api/uploads/${item.id}/play`, {
+        method: "POST",
+      });
       if (res.ok) {
-        const data = (await res.json()) as { play_count?: number }
-        setPlayCount(data.play_count ?? (playCount + 1))
+        const data = (await res.json()) as { play_count?: number };
+        setPlayCount(data.play_count ?? playCount + 1);
       }
     } catch {
-      setPlayCount((c) => c + 1)
+      setPlayCount((c) => c + 1);
     }
-  }, [item.id, playCount])
+  }, [item.id, playCount]);
 
   const handleView = useCallback(async () => {
     try {
-      const res = await fetch(`/api/uploads/${item.id}/view`, { method: 'POST' })
+      const res = await fetch(`/api/uploads/${item.id}/view`, {
+        method: "POST",
+      });
       if (res.ok) {
-        const data = (await res.json()) as { view_count?: number }
-        setViewCount(data.view_count ?? (viewCount + 1))
+        const data = (await res.json()) as { view_count?: number };
+        setViewCount(data.view_count ?? viewCount + 1);
       }
     } catch {
-      setViewCount((c) => c + 1)
+      setViewCount((c) => c + 1);
     }
-  }, [item.id, viewCount])
+  }, [item.id, viewCount]);
 
   useEffect(() => {
     if (item.type === "prompt") {
       fetch(item.url)
         .then((res) => res.text())
         .then((txt) => setPromptText(txt))
-        .catch(() => setPromptError(true))
+        .catch(() => setPromptError(true));
     }
 
     if (item.type === "music") {
       fetch(`/api/music-meta?id=${item.id}`)
         .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data) setMeta(data)
+          if (data && typeof data === "object") {
+            const meta = data as {
+              title?: string;
+              artist?: string;
+              album?: string;
+              picture?: string;
+            };
+
+            setMeta({
+              title: meta.title ?? null,
+              artist: meta.artist ?? null,
+              album: meta.album ?? null,
+              picture: meta.picture ?? null,
+            });
+          }
         })
-        .catch(() => {})
+
+        .catch(() => {});
     }
-  }, [item])
+  }, [item]);
 
   return (
     <motion.div
@@ -99,7 +119,10 @@ export default function PostCard({
       <div className="mb-3 flex items-center gap-3">
         <Avatar className="h-12 w-12">
           {item.user.avatar_url && (
-            <AvatarImage src={item.user.avatar_url} alt={item.user.name || item.user.email} />
+            <AvatarImage
+              src={item.user.avatar_url}
+              alt={item.user.name || item.user.email}
+            />
           )}
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
@@ -109,7 +132,11 @@ export default function PostCard({
               {item.user.name || item.user.email}
             </span>
             <span className="text-muted-foreground">
-              {item.type === 'music' ? '🎵' : item.type === 'prompt' ? '💬' : '🖼'}
+              {item.type === "music"
+                ? "🎵"
+                : item.type === "prompt"
+                ? "💬"
+                : "🖼"}
             </span>
           </div>
           <span className="text-xs text-gray-500">
@@ -165,14 +192,20 @@ export default function PostCard({
         </p>
       )}
       <div className="mt-auto flex justify-between items-center text-gray-500 relative">
-        {item.type === 'music' && (
+        {item.type === "music" && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span role="img" aria-label="plays">🎧</span> {playCount}
+            <span role="img" aria-label="plays">
+              🎧
+            </span>{" "}
+            {playCount}
           </span>
         )}
-        {item.type === 'image' && (
+        {item.type === "image" && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span role="img" aria-label="views">👁️</span> {viewCount}
+            <span role="img" aria-label="views">
+              👁️
+            </span>{" "}
+            {viewCount}
           </span>
         )}
         <div className="absolute right-0 bottom-0">
@@ -181,6 +214,5 @@ export default function PostCard({
       </div>
       <CommentList postId={item.id} />
     </motion.div>
-  )
+  );
 }
-
