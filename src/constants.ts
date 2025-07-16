@@ -13,8 +13,6 @@ export const MAX_SESSIONS_PER_USER = 5;
 export const MAX_TEAMS_CREATED_PER_USER = 3;
 export const MAX_TEAMS_JOINED_PER_USER = 10;
 export const SESSION_COOKIE_NAME = "session";
-export const GOOGLE_OAUTH_STATE_COOKIE_NAME = "google-oauth-state";
-export const GOOGLE_OAUTH_CODE_VERIFIER_COOKIE_NAME = "google-oauth-code-verifier";
 
 export const CREDIT_PACKAGES = [
   { id: "package-1", credits: 500, price: 500 },

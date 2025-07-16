@@ -62,16 +62,6 @@ export const RATE_LIMITS = {
     limit: 15,
     windowInSeconds: Math.floor(ms("60 minutes") / 1000),
   },
-  GOOGLE_SSO_REQUEST: {
-    identifier: "google-sso-request",
-    limit: 15,
-    windowInSeconds: Math.floor(ms("60 minutes") / 1000),
-  },
-  GOOGLE_SSO_CALLBACK: {
-    identifier: "google-sso-callback",
-    limit: 15,
-    windowInSeconds: Math.floor(ms("60 minutes") / 1000),
-  },
   SIGN_UP: {
     identifier: "sign-up",
     limit: 3,

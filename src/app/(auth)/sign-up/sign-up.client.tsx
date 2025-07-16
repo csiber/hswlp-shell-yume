@@ -18,7 +18,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import Link from "next/link";
-import SSOButtons from "../_components/sso-buttons";
 import { useState } from "react";
 import { startRegistration } from "@simplewebauthn/browser";
 import { KeyIcon } from 'lucide-react'
@@ -129,8 +128,6 @@ const SignUpPage = ({ redirectPath }: SignUpClientProps) => {
         </div>
 
         <div className="space-y-4">
-          <SSOButtons />
-
           <Button
             className="w-full"
             onClick={() => setIsPasskeyModalOpen(true)}
