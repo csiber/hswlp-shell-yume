@@ -24,9 +24,9 @@ export async function GET(
   }
 
   const uploads = await env.DB.prepare(
-    'SELECT id, title, type, url, r2_key, created_at FROM uploads WHERE user_id = ?1 ORDER BY created_at DESC'
+    'SELECT id, title, type, url, r2_key, created_at, download_points FROM uploads WHERE user_id = ?1 ORDER BY created_at DESC'
   ).bind(id).all<{
-    id: string; title: string; type: string; url: string; r2_key: string; created_at: string
+    id: string; title: string; type: string; url: string; r2_key: string; created_at: string; download_points: number | null
   }>()
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
@@ -55,6 +55,7 @@ export async function GET(
       url: fileUrl,
       name: row.title,
       created_at: new Date(row.created_at).toISOString(),
+      download_points: row.download_points ?? 2,
     })
   }
 

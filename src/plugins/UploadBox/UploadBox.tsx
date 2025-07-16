@@ -18,6 +18,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
   const [dragging, setDragging] = useState(false)
   const [isPending, startTransition] = useTransition()
   const [showSuccess, setShowSuccess] = useState(false)
+  const [downloadPoints, setDownloadPoints] = useState<number | null>(null)
 
   useEffect(() => {
     if (!showSuccess) return
@@ -48,10 +49,12 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       try {
         const res = await fetch("/api/upload", { method: "POST", body: form })
         if (!res.ok) throw new Error("failed")
+        const data = await res.json() as { download_points?: number }
         setFile(null)
         setTitle("")
         if (fileInputRef.current) fileInputRef.current.value = ""
         setShowSuccess(true)
+        setDownloadPoints(data.download_points ?? null)
         toast.success("Sikeres feltöltés")
         if (onSuccess) onSuccess()
       } catch {
@@ -92,7 +95,9 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
           />
         </div>
         {showSuccess && (
-          <p className="text-center text-sm text-green-600">Sikeres feltöltés</p>
+          <p className="text-center text-sm text-green-600">
+            Sikeres feltöltés{downloadPoints !== null ? ` – a fájl értéke: ${downloadPoints} pont` : ''}
+          </p>
         )}
       </CardContent>
       <CardFooter>
