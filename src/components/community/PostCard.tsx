@@ -7,8 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
-import { useEffect, useState } from "react";
-import { useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
 import type { FeedItem } from "./CommunityFeedV3";
@@ -21,6 +20,13 @@ interface PostCardProps {
   playingId: string | null;
   setPlayingId: (id: string | null) => void;
 }
+
+type MusicMeta = {
+  title: string | null;
+  artist: string | null;
+  album: string | null;
+  picture: string | null;
+};
 
 export default function PostCard({
   item,
@@ -36,17 +42,11 @@ export default function PostCard({
       .slice(0, 2)
       .toUpperCase() || item.user.email.slice(0, 2).toUpperCase();
 
-  const [promptText, setPromptText] = useState<string | null>(null)
-  const [promptError, setPromptError] = useState<boolean>(false)
-  const [playCount, setPlayCount] = useState(item.play_count ?? 0)
-  const [viewCount, setViewCount] = useState(item.view_count ?? 0)
-  const [meta, setMeta] = useState<{
-    title: string | null
-    artist: string | null
-    album: string | null
-    picture: string | null
-  } | null>(null)
-
+  const [promptText, setPromptText] = useState<string | null>(null);
+  const [promptError, setPromptError] = useState<boolean>(false);
+  const [playCount, setPlayCount] = useState(item.play_count ?? 0);
+  const [viewCount, setViewCount] = useState(item.view_count ?? 0);
+  const [meta, setMeta] = useState<MusicMeta | null>(null);
 
   const handlePlay = useCallback(async () => {
     try {
@@ -87,10 +87,18 @@ export default function PostCard({
     if (item.type === "music") {
       fetch(`/api/music-meta?id=${item.id}`)
         .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data) setMeta(data)
+        .then((rawData) => {
+          if (rawData && typeof rawData === "object") {
+            const data = rawData as Partial<MusicMeta>;
+            setMeta({
+              title: data.title ?? null,
+              artist: data.artist ?? null,
+              album: data.album ?? null,
+              picture: data.picture ?? null,
+            });
+          }
         })
-        .catch(() => {})
+        .catch(() => {});
     }
   }, [item]);
 
@@ -133,7 +141,6 @@ export default function PostCard({
       <div className="mb-2">
         {item.type === "image" && (
           <ImageLightbox src={item.url} alt={item.title} onOpen={handleView}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={item.url}
               alt={item.title}
@@ -144,7 +151,6 @@ export default function PostCard({
         {item.type === "music" && (
           <div className="flex flex-col items-center gap-2">
             {meta?.picture && (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={meta.picture}
                 alt={meta.title || item.title}
