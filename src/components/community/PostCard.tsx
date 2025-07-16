@@ -8,7 +8,7 @@ import MusicPlayer from "./MusicPlayer"
 import PromptBox from "./PromptBox"
 import ImageLightbox from "@/components/ui/ImageLightbox"
 import { useEffect, useState } from "react"
-import { ShareIcon } from "@heroicons/react/24/outline"
+import { useCallback } from "react"
 import LikeButton from "./LikeButton"
 import CommentList from "./CommentList"
 import type { FeedItem } from "./CommunityFeedV3"
@@ -37,6 +37,32 @@ export default function PostCard({
 
   const [promptText, setPromptText] = useState<string | null>(null)
   const [promptError, setPromptError] = useState<boolean>(false)
+  const [playCount, setPlayCount] = useState(item.play_count ?? 0)
+  const [viewCount, setViewCount] = useState(item.view_count ?? 0)
+
+  const handlePlay = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/uploads/${item.id}/play`, { method: 'POST' })
+      if (res.ok) {
+        const data = (await res.json()) as { play_count?: number }
+        setPlayCount(data.play_count ?? (playCount + 1))
+      }
+    } catch {
+      setPlayCount((c) => c + 1)
+    }
+  }, [item.id, playCount])
+
+  const handleView = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/uploads/${item.id}/view`, { method: 'POST' })
+      if (res.ok) {
+        const data = (await res.json()) as { view_count?: number }
+        setViewCount(data.view_count ?? (viewCount + 1))
+      }
+    } catch {
+      setViewCount((c) => c + 1)
+    }
+  }, [item.id, viewCount])
 
   useEffect(() => {
     if (item.type === "prompt") {
@@ -82,7 +108,7 @@ export default function PostCard({
       </div>
       <div className="mb-2">
         {item.type === "image" && (
-          <ImageLightbox src={item.url} alt={item.title}>
+          <ImageLightbox src={item.url} alt={item.title} onOpen={handleView}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={item.url}
@@ -103,6 +129,7 @@ export default function PostCard({
               audioRef={audioRef}
               playingId={playingId}
               setPlayingId={setPlayingId}
+              onPlay={handlePlay}
             />
           </div>
         )}
@@ -117,10 +144,17 @@ export default function PostCard({
           {item.title}
         </p>
       )}
-      <div className="mt-auto flex justify-between text-gray-500 relative">
-        <button className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800">
-          <ShareIcon className="h-5 w-5" /> Share
-        </button>
+      <div className="mt-auto flex justify-between items-center text-gray-500 relative">
+        {item.type === 'music' && (
+          <span className="flex items-center gap-1 text-sm text-muted-foreground">
+            <span role="img" aria-label="plays">🎧</span> {playCount}
+          </span>
+        )}
+        {item.type === 'image' && (
+          <span className="flex items-center gap-1 text-sm text-muted-foreground">
+            <span role="img" aria-label="views">👁️</span> {viewCount}
+          </span>
+        )}
         <div className="absolute right-0 bottom-0">
           <LikeButton postId={item.id} />
         </div>

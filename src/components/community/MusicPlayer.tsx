@@ -13,6 +13,7 @@ interface Props {
   audioRef: React.RefObject<HTMLAudioElement | null>
   playingId: string | null
   setPlayingId: (id: string | null) => void
+  onPlay?: () => void
 }
 
 export default function MusicPlayer({
@@ -22,6 +23,7 @@ export default function MusicPlayer({
   audioRef,
   playingId,
   setPlayingId,
+  onPlay,
 }: Props) {
   const isPlaying = playingId === id
 
@@ -37,6 +39,7 @@ export default function MusicPlayer({
       audio.src = url
       audio.play().catch(() => undefined)
       setPlayingId(id)
+      onPlay?.()
     }
   }
 

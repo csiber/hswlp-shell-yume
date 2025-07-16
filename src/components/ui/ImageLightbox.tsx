@@ -8,13 +8,20 @@ interface ImageLightboxProps {
   src: string
   alt?: string
   children: React.ReactNode
+  onOpen?: () => void
 }
 
-export default function ImageLightbox({ src, alt, children }: ImageLightboxProps) {
+export default function ImageLightbox({ src, alt, children, onOpen }: ImageLightboxProps) {
   const [open, setOpen] = useState(false)
   return (
     <>
-      <div onClick={() => setOpen(true)} className="cursor-zoom-in">
+      <div
+        onClick={() => {
+          setOpen(true)
+          onOpen?.()
+        }}
+        className="cursor-zoom-in"
+      >
         {children}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>

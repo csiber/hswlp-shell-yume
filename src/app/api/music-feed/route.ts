@@ -5,6 +5,7 @@ export async function GET() {
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
     SELECT u.id, u.title, u.type, u.created_at,
+           u.view_count, u.play_count,
            usr.firstName, usr.lastName, usr.email
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
@@ -19,6 +20,8 @@ export async function GET() {
     type: 'music',
     url: `/api/files/${row.id}`,
     created_at: new Date(row.created_at).toISOString(),
+    view_count: Number(row.view_count ?? 0),
+    play_count: Number(row.play_count ?? 0),
     user: {
       name: [row.firstName, row.lastName].filter(Boolean).join(' ') || null,
       email: row.email,

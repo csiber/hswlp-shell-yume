@@ -11,7 +11,8 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
-    SELECT id, title, type, created_at, url, r2_key
+    SELECT id, title, type, created_at, url, r2_key,
+           view_count, play_count
     FROM uploads
     WHERE user_id = ?1
     ORDER BY created_at DESC
@@ -25,6 +26,8 @@ export async function GET() {
     type: 'image' | 'music' | 'prompt'
     url: string
     created_at: string
+    view_count: number
+    play_count: number
     user: { name: string | null; email: string }
   }[]
 
@@ -47,6 +50,8 @@ export async function GET() {
       type: row.type as 'image' | 'music' | 'prompt',
       url: fileUrl,
       created_at: new Date(row.created_at).toISOString(),
+      view_count: Number(row.view_count ?? 0),
+      play_count: Number(row.play_count ?? 0),
       user: {
         name: nameParts.length ? nameParts.join(' ') : session.user.email,
         email: session.user.email!,

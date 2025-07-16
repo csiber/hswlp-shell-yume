@@ -25,6 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const result = await env.DB.prepare(`
     SELECT u.id, u.title, u.type, u.created_at, u.url, u.r2_key,
+           u.view_count, u.play_count,
            usr.firstName, usr.lastName, usr.email
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
@@ -57,6 +58,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       type: row.type as FeedItem['type'],
       url: fileUrl,
       created_at: new Date(row.created_at).toISOString(),
+      view_count: Number(row.view_count ?? 0),
+      play_count: Number(row.play_count ?? 0),
       user: {
         name: nameParts.length ? nameParts.join(' ') : null,
         email: row.email,
