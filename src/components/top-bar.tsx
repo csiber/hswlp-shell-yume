@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Home, FolderDown } from "lucide-react";
+import { Home, FolderDown, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -79,6 +79,18 @@ export default function TopBar({}: TopBarProps) {
       </div>
 
       <div className="flex items-center gap-3">
+        <Button
+          asChild
+          variant="ghost"
+          size="icon"
+          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+        >
+          <Link href="/rules">
+            <ShieldCheck className="size-5" />
+            <span className="sr-only">Szabályzat</span>
+          </Link>
+        </Button>
+
         <ThemeSwitcher />
 
         <div className="flex flex-col items-center">
