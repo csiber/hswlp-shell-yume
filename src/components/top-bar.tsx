@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Home } from "lucide-react";
+import { Home, FolderDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge"; // 🆕
+import { motion } from "framer-motion";
 import { useSessionStore } from "@/state/session";
 import useSignOut from "@/hooks/useSignOut";
 import ThemeSwitcher from "@/plugins/ShellLayout/ThemeSwitcher";
@@ -57,6 +58,18 @@ export default function TopBar({}: TopBarProps) {
           <Link href="/dashboard">
             <Home className="size-5" />
             <span className="sr-only">Kezdőlap</span>
+          </Link>
+        </Button>
+
+        <Button
+          asChild
+          variant="ghost"
+          size="icon"
+          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+        >
+          <Link href="/my-files">
+            <FolderDown className="size-5" />
+            <span className="sr-only">Fájljaim</span>
           </Link>
         </Button>
       </div>
@@ -112,7 +125,9 @@ export default function TopBar({}: TopBarProps) {
               {/* 🟢 Kredit badge itt */}
               {user?.currentCredits != null && (
                 <Badge variant="secondary" className="mt-1 text-[10px]">
-                  {user.currentCredits} kredit
+                  <motion.span key={user.currentCredits} initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+                    {user.currentCredits} kredit
+                  </motion.span>
                 </Badge>
               )}
             </>

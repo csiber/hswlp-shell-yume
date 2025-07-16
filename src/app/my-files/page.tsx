@@ -15,7 +15,6 @@ import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { Download } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import Image from 'next/image'
 
 export default function MyFilesPage() {
   const [filter, setFilter] = useState<string | null>(null)
@@ -46,6 +45,7 @@ export default function MyFilesPage() {
     try {
       const res = await fetch(`/api/uploads/${item.id}/download`)
       if (res.ok) {
+        toast.success('Letöltés indítása')
         const blob = await res.blob()
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
@@ -76,14 +76,11 @@ export default function MyFilesPage() {
         {data?.items?.map((item) => (
           <div key={item.id} className="border rounded-md overflow-hidden">
             {item.type === 'image' ? (
-              <div className="relative w-full h-48">
-                <Image
-                  src={item.url || '/placeholder.png'}
-                  alt={item.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
+              <img
+                src={item.url || '/placeholder.png'}
+                alt={item.title}
+                className="w-full h-48 object-cover"
+              />
             ) : item.type === 'music' ? (
               <audio src={item.url} controls className="w-full" />
             ) : (
