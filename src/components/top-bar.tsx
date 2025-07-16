@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge"; // 🆕
 import { useSessionStore } from "@/state/session";
 import useSignOut from "@/hooks/useSignOut";
 import ThemeSwitcher from "@/plugins/ShellLayout/ThemeSwitcher";
+import LogoIcon from "@/components/logo-icon";
 
 interface TopBarProps {
   logo?: "hswlp" | "sociala";
@@ -45,9 +46,9 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
       <div className="flex items-center gap-2">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight transition-transform hover:scale-105"
+          className="transition-transform hover:scale-105"
         >
-          {logo === "sociala" ? "Yumekai" : "Yumekai"}
+          <LogoIcon className="h-8 w-8" />
         </Link>
 
         <Button
