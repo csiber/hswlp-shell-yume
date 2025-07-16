@@ -101,6 +101,7 @@ export const CREDIT_TRANSACTION_TYPE = {
   USAGE: 'USAGE',
   MONTHLY_REFRESH: 'MONTHLY_REFRESH',
   UPLOAD_REWARD: 'UPLOAD_REWARD',
+  SIGN_UP_BONUS: 'SIGN_UP_BONUS',
 } as const;
 
 export const creditTransactionTypeTuple = Object.values(CREDIT_TRANSACTION_TYPE) as [string, ...string[]];
