@@ -24,7 +24,7 @@ interface TopBarProps {
   logo?: "hswlp" | "sociala";
 }
 
-export default function TopBar({ logo = "hswlp" }: TopBarProps) {
+export default function TopBar({}: TopBarProps) {
   const { session, isLoading } = useSessionStore();
   const { signOut } = useSignOut();
   const router = useRouter();
@@ -44,10 +44,7 @@ export default function TopBar({ logo = "hswlp" }: TopBarProps) {
   return (
     <div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900">
       <div className="flex items-center gap-2">
-        <Link
-          href="/"
-          className="transition-transform hover:scale-105"
-        >
+        <Link href="/" className="transition-transform hover:scale-105">
           <LogoIcon className="h-8 w-8" />
         </Link>
 
