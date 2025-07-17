@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import MusicPlayer from '@/components/community/MusicPlayer'
+import { formatTitle, guessMetaFromFilename } from '@/utils/music'
 
 export default function MyFilesPage() {
   const [filter, setFilter] = useState<string | null>(null)
@@ -189,7 +190,9 @@ function MusicPreview({
     (u: string): Promise<MusicMeta | null> =>
       fetch(u).then((res) => (res.ok ? (res.json() as Promise<MusicMeta>) : null))
   )
-  const displayTitle = formatTitle(data?.title || title)
+  const fallback = guessMetaFromFilename(title)
+  const displayTitle = formatTitle(data?.title || fallback.title)
+  const displayArtist = data?.artist || fallback.artist
   return (
     <div className="p-2 flex flex-col items-center gap-2 w-full">
       {data?.picture && (
@@ -197,7 +200,7 @@ function MusicPreview({
       )}
       <div className="text-center text-sm">
         <h3>{displayTitle}</h3>
-        {data?.artist && <p>{data.artist}</p>}
+        {displayArtist && <p>{displayArtist}</p>}
       </div>
       <MusicPlayer
         id={id}
@@ -211,9 +214,6 @@ function MusicPreview({
   )
 }
 
-function formatTitle(name: string) {
-  return name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim()
-}
 
 function PromptPreview({ url }: { url: string }) {
   const { data } = useSWR<string>(url, (u: string) => fetch(u).then((r) => r.text()))
