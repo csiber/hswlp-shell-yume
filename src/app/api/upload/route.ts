@@ -7,6 +7,7 @@ import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
 import { parseBuffer } from 'music-metadata-browser'
+import { formatTitle } from '@/utils/music'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -24,6 +25,27 @@ function extFromMime(mime: string): string {
     'text/markdown': 'md',
   }
   return map[mime] || 'bin'
+}
+
+async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
+  const url = env.NSFW_CHECK_URL
+  const key = env.NSFW_CHECK_KEY
+  if (!url || !key) return false
+  try {
+    const fd = new FormData()
+    fd.append('image', file, 'img')
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'api-key': key },
+      body: fd,
+    })
+    if (!res.ok) return false
+    const data = (await res.json()) as { nsfw_score?: number }
+    return (data.nsfw_score ?? 0) >= 0.5
+  } catch (err) {
+    console.warn('NSFW check failed', err)
+    return false
+  }
 }
 
 export async function POST(req: Request) {
@@ -68,17 +90,45 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'MIME mismatch' }, { status: 400 })
   }
 
+  const { env } = getCloudflareContext()
+
+  let meta: Awaited<ReturnType<typeof parseBuffer>> | null = null
+  let arrayBuffer: ArrayBuffer | null = null
+  if (type === 'music') {
+    try {
+      arrayBuffer = await file.arrayBuffer()
+      meta = await parseBuffer(Buffer.from(arrayBuffer), mime)
+    } catch (err) {
+      console.warn('Failed to parse music metadata', err)
+    }
+  }
+
+  let finalTitle = title
+  if (type === 'music' && meta) {
+    const common = meta.common || {}
+    const t = common.title ? formatTitle(common.title) : formatTitle(title)
+    finalTitle = common.artist ? `${common.artist} - ${t}` : t
+  }
+  if (type === 'music' && !meta) {
+    finalTitle = formatTitle(title)
+  }
+
+  if (type === 'image' && !title.trim()) {
+    return jsonResponse({ success: false, error: 'Title required' }, { status: 400 })
+  }
+
+  if (type === 'image' && await isNsfwImage(file, env)) {
+    return jsonResponse({ success: false, error: 'NSFW content detected' }, { status: 400 })
+  }
+
   const ext = extFromMime(mime)
   const id = uuidv4()
   const key = `uploads/${session.user.id}/${id}.${ext}`
-  const { env } = getCloudflareContext()
 
   // Calculate download points based on metadata
   let downloadPoints = 2
   try {
-    if (type === 'music') {
-      const buffer = await file.arrayBuffer()
-      const meta = await parseBuffer(Buffer.from(buffer), mime)
+    if (type === 'music' && meta) {
       const common = meta.common || {}
       if (common.title || common.artist || common.album) downloadPoints++
       if (common.picture && common.picture.length > 0) downloadPoints++
@@ -109,7 +159,7 @@ export async function POST(req: Request) {
 
     const creditValue = calculateUploadCredits({
       type: type as 'image' | 'music' | 'prompt',
-      title,
+      title: finalTitle,
       promptText,
       artist: typeof artist === 'string' ? artist : undefined,
       album: typeof album === 'string' ? album : undefined,
@@ -121,7 +171,7 @@ export async function POST(req: Request) {
 
     const exists = await env.DB.prepare(
       'SELECT id FROM uploads WHERE user_id = ?1 AND title = ?2 AND type = ?3 LIMIT 1'
-    ).bind(session.user.id, title, type).first<string>()
+    ).bind(session.user.id, finalTitle, type).first<string>()
 
     if (exists) {
       return jsonResponse({ success: false, error: 'Duplicate upload' }, { status: 400 })
@@ -129,7 +179,7 @@ export async function POST(req: Request) {
 
     await env.DB.prepare(
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)'
-    ).bind(id, session.user.id, title, type, mime, url, key, creditValue, downloadPoints).run()
+    ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints).run()
 
     await updateUserCredits(session.user.id, creditValue)
     await logTransaction({

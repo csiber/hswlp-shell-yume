@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { parseBlob } from "music-metadata-browser";
+import { formatTitle } from "@/utils/music";
 import {
   Card,
   CardContent,
@@ -31,8 +33,31 @@ function detectType(file: File): "image" | "music" | "prompt" {
 
 export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [titles, setTitles] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
+
+  const prepareTitles = async (files: FileList) => {
+    const entries: Record<string, string> = {}
+    for (const file of Array.from(files)) {
+      const type = detectType(file)
+      if (type === 'image') {
+        entries[file.name] = ''
+      } else if (type === 'music') {
+        try {
+          const meta = await parseBlob(file)
+          const common = meta.common || {}
+          const t = common.title ? formatTitle(common.title) : formatTitle(file.name)
+          entries[file.name] = common.artist ? `${common.artist} - ${t}` : t
+        } catch {
+          entries[file.name] = formatTitle(file.name)
+        }
+      } else {
+        entries[file.name] = formatTitle(file.name)
+      }
+    }
+    setTitles(entries)
+  }
 
   const handleUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) {
@@ -44,9 +69,14 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     let success = false;
     for (const file of Array.from(selectedFiles)) {
       const formData = new FormData();
-      formData.append("title", file.name);
-      formData.append("type", detectType(file));
-      formData.append("file", file);
+      const title = titles[file.name] ?? formatTitle(file.name)
+      if (detectType(file) === 'image' && !title.trim()) {
+        toast.error(`Adj címet a képnek: ${file.name}`)
+        continue
+      }
+      formData.append('title', title)
+      formData.append('type', detectType(file))
+      formData.append('file', file)
 
       try {
         const res = await fetch("/api/upload", {
@@ -67,12 +97,16 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
 
     setLoading(false);
     setSelectedFiles(null);
+    setTitles({});
     if (success && onUpload) onUpload();
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
-    setSelectedFiles(e.dataTransfer.files);
+    if (e.dataTransfer.files) {
+      setSelectedFiles(e.dataTransfer.files);
+      await prepareTitles(e.dataTransfer.files);
+    }
     dropRef.current?.classList.remove("dragover");
   };
 
@@ -107,7 +141,12 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                 type="file"
                 multiple
                 className="hidden"
-                onChange={(e) => setSelectedFiles(e.target.files)}
+                onChange={async (e) => {
+                  if (e.target.files) {
+                    setSelectedFiles(e.target.files)
+                    await prepareTitles(e.target.files)
+                  }
+                }}
               />
             </label>
           </p>
@@ -131,7 +170,21 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                     ) : (
                       <FileIcon className="h-4 w-4" />
                     )}
-                    <span className="truncate max-w-[120px]">{file.name}</span>
+                    {isImage ? (
+                      <input
+                        type="text"
+                        placeholder="Kép címe"
+                        className="border rounded px-1 text-sm flex-1"
+                        value={titles[file.name] ?? ''}
+                        onChange={(e) =>
+                          setTitles({ ...titles, [file.name]: e.target.value })
+                        }
+                      />
+                    ) : (
+                      <span className="truncate max-w-[120px]">
+                        {titles[file.name] || formatTitle(file.name)}
+                      </span>
+                    )}
                   </div>
                   {isImage && (
                     <img
