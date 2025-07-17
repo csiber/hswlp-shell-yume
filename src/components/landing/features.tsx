@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 
 const features = [
-  "AI-alapú generálás: képek, szövegek, zene",
-  "Sablon alapú projektindítás (portfólió, galéria, blog)",
-  "Egy kattintásos kiadás Cloudflare Pages-re",
-  "Saját domain + tárhely csatolás",
-  "Közösségi visszajelzések, szavazások",
-  "Beépített kreditrendszer és piactér",
+  "Zenék, képek, promtok – egyetlen platformon",
+  "Feltöltés, értékelés, komment – közösségi alkotás",
+  "Valós idejű feed és globális zenelejátszó",
+  "Kredit alapú rendszer, jutalmazott aktivitás",
+  "Személyes gyűjtemények, lejátszási listák",
+  "Beépített piactér – adj el vagy vásárolj tartalmakat",
 ];
 
 export default function Features() {
@@ -23,7 +23,7 @@ export default function Features() {
           transition={{ duration: 0.6 }}
           className="text-3xl sm:text-4xl font-extrabold mb-8"
         >
-          Minden, amire egy kreatívnak szüksége lehet
+          Egy kreatív játszótér az AI és a közösség határán
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -32,8 +32,9 @@ export default function Features() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-zinc-600 mb-12 max-w-2xl mx-auto dark:text-zinc-400"
         >
-          A Yumekaira egy helyre hozza össze az AI-t, a design-t és a webet. Nem kell
-          többé máshol regisztrálnod, ha alkotni szeretnél.
+          A Yumekai segít, hogy ne csak alkoss, hanem visszajelzést is kapj,
+          közösségbe kerülj, és akár bevételt is szerezz. A kreativitás itt nem
+          magányos műfaj.
         </motion.p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
