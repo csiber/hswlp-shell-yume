@@ -20,7 +20,7 @@ export default function CommunityFeed() {
       try {
         const res = await fetch("/api/community-feed");
         if (!res.ok) throw new Error("failed");
-        const data = await res.json();
+        const data = (await res.json()) as { items?: CommunityPreview[] } | CommunityPreview[];
         const arr = Array.isArray(data) ? data : data.items;
         if (Array.isArray(arr)) {
           setPosts(arr.slice(0, 5) as CommunityPreview[]);
