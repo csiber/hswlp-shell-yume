@@ -21,7 +21,8 @@ interface MusicMeta {
   picture: string | null
 }
 
-const fetcher = (url: string) => fetch(url).then(res => res.json())
+const fetcher = (url: string) =>
+  fetch(url).then(res => res.json() as Promise<{ items: UploadItem[] }>)
 
 export default function ModerationClient() {
   const { data, mutate } = useSWR<{ items: UploadItem[] }>('/api/moderation', fetcher)
@@ -133,7 +134,7 @@ function ImagePreview({ url, alt }: { url: string; alt: string }) {
 }
 
 function PromptPreview({ url }: { url: string }) {
-  const { data } = useSWR<string>(url, u => fetch(u).then(r => r.text()))
+  const { data } = useSWR<string>(url, (u: string) => fetch(u).then(r => r.text()))
   if (!data) return <div className="text-sm p-2">Betöltés...</div>
   const lines = data.split(/\r?\n/)
   const truncated = lines.slice(0, 20).join('\n')
@@ -157,7 +158,8 @@ function PromptPreview({ url }: { url: string }) {
 function MusicPreview({ id, url, title }: { id: string; url: string; title: string }) {
   const { data } = useSWR<MusicMeta | null>(
     `/api/music-meta?id=${id}`,
-    u => fetch(u).then(res => (res.ok ? res.json() : null))
+    (u: string): Promise<MusicMeta | null> =>
+      fetch(u).then(res => (res.ok ? (res.json() as Promise<MusicMeta>) : null))
   )
   const displayTitle = formatTitle(data?.title || title)
   return (
