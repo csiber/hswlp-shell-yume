@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import type { Route } from "next";
-import type { NavMainItem } from "./app-sidebar";
+import type { NavMainItem } from "./_app-sidebar";
 
 type Props = {
   items: NavMainItem[];

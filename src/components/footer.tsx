@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SiX as XIcon } from "@icons-pack/react-simple-icons";
+import { SiX as FacebookIcon } from "@icons-pack/react-simple-icons";
 import ThemeSwitch from "@/components/theme-switch";
 import { SITE_NAME } from "@/constants";
 
@@ -45,13 +45,13 @@ export function Footer() {
               </h3>
               <div className="flex items-center space-x-4">
                 <a
-                  href="https://x.com/LubomirGeorg"
+                  href="https://facebook.com/csiber"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-foreground"
                 >
-                  <XIcon className="h-5 w-5" />
-                  <span className="sr-only">X</span>
+                  <FacebookIcon className="h-5 w-5" />
+                  <span className="sr-only">Facebook</span>
                 </a>
               </div>
             </div>

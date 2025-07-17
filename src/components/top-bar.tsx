@@ -21,6 +21,7 @@ import useSignOut from "@/hooks/useSignOut";
 import ThemeSwitcher from "@/plugins/ShellLayout/ThemeSwitcher";
 import LogoIcon from "@/components/logo-icon";
 import useOnlineCount from "@/hooks/useOnlineCount";
+import { CheckCircle2 } from "lucide-react";
 
 interface TopBarProps {
   logo?: "hswlp" | "sociala";
@@ -75,7 +76,7 @@ export default function TopBar({}: TopBarProps) {
           </Link>
         </Button>
 
-        {user?.role === 'admin' && (
+        {user?.role === "admin" && (
           <Button
             asChild
             variant="ghost"
@@ -156,7 +157,11 @@ export default function TopBar({}: TopBarProps) {
               {/* 🟢 Kredit badge itt */}
               {user?.currentCredits != null && (
                 <Badge variant="secondary" className="mt-1 text-[10px]">
-                  <motion.span key={user.currentCredits} initial={{ scale: 0.8 }} animate={{ scale: 1 }}>
+                  <motion.span
+                    key={user.currentCredits}
+                    initial={{ scale: 0.8 }}
+                    animate={{ scale: 1 }}
+                  >
                     {user.currentCredits} kredit
                   </motion.span>
                 </Badge>

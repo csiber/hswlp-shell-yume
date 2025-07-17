@@ -1,11 +1,6 @@
-"use client"
+"use client";
 
-import {
-  Folder,
-  Forward,
-  MoreHorizontal,
-  Trash2,
-} from "lucide-react"
+import { Folder, Forward, MoreHorizontal, Trash2 } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -13,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -22,17 +17,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import type { NavItem } from "./app-sidebar"
+} from "@/components/ui/sidebar";
+import type { NavItem } from "./_app-sidebar";
 
 type Props = {
-  projects: NavItem[]
-}
+  projects: NavItem[];
+};
 
-export function NavProjects({
-  projects,
-}: Props) {
-  const { isMobile } = useSidebar()
+export function NavProjects({ projects }: Props) {
+  const { isMobile } = useSidebar();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -83,5 +76,5 @@ export function NavProjects({
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
