@@ -1,106 +1,87 @@
 "use client";
 
-import { useState } from "react";
-import clsx from "clsx";
+import { useEffect, useState } from "react";
 
-const tabs = ["Népszerű", "Legújabb", "Követettek"];
+interface CommunityPreview {
+  id: string;
+  title: string;
+  image_url: string;
+  created_at: string;
+  author: string;
+  points?: number;
+}
 
-const posts = [
+const fallbackPosts: CommunityPreview[] = [
   {
-    id: 1,
+    id: "1",
     title: "Elindítottam az első AI portfólió oldalam!",
     author: "Noemi.art",
-    date: "2025.07.10.",
-    comments: 12,
-    votes: 187,
+    created_at: "2025-07-10",
+    image_url: "/favicon-96x96.png",
+    points: 187,
   },
   {
-    id: 2,
+    id: "2",
     title: "ComfyUI mobilról? Kipróbáltam és működik!",
     author: "aki_chan",
-    date: "2025.07.09.",
-    comments: 8,
-    votes: 102,
+    created_at: "2025-07-09",
+    image_url: "/favicon-96x96.png",
+    points: 102,
   },
   {
-    id: 3,
+    id: "3",
     title: "Zenészek figyelem: AI dallamgenerátor Yumekairában!",
     author: "mididev",
-    date: "2025.07.08.",
-    comments: 21,
-    votes: 231,
+    created_at: "2025-07-08",
+    image_url: "/favicon-96x96.png",
+    points: 231,
   },
 ];
 
 export default function CommunityFeed() {
-  const [activeTab, setActiveTab] = useState("Népszerű");
+  const [items, setItems] = useState<CommunityPreview[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/community-feed");
+        if (!res.ok) throw new Error("failed");
+        const data = await res.json();
+        const arr = Array.isArray(data) ? data : data.items;
+        if (Array.isArray(arr)) setItems(arr as CommunityPreview[]);
+      } catch {
+        // ignore errors
+      }
+    }
+    load();
+  }, []);
+
+  const list = items.length > 0 ? items : fallbackPosts;
 
   return (
     <section className="bg-[#0c0c1f] text-white py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div className="md:col-span-2">
-          <div className="flex gap-6 border-b border-zinc-700 pb-4 mb-6">
-            {tabs.map((tab) => (
-              <button
-                key={tab}
-                className={clsx(
-                  "text-sm font-medium pb-1 border-b-2 transition-all",
-                  activeTab === tab
-                    ? "border-indigo-500 text-indigo-400"
-                    : "border-transparent text-zinc-400 hover:text-white"
-                )}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab}
-              </button>
-            ))}
-          </div>
-
-          <div className="space-y-4">
-            {posts.map((post) => (
-              <div
-                key={post.id}
-                className="bg-[#111122] rounded-xl p-5 border border-zinc-800 shadow-sm hover:shadow-lg transition"
-              >
-                <div className="text-sm text-zinc-500 flex justify-between">
-                  <span>
-                    by <strong className="text-white">{post.author}</strong>
-                  </span>
-                  <span>
-                    {post.date} • {post.comments} hozzászólás
-                  </span>
-                </div>
-                <div className="mt-2 text-lg font-semibold text-white">
-                  {post.title}
-                </div>
-                <div className="mt-3 text-indigo-400 text-sm">
-                  ▲ {post.votes}
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          {list.map((post) => (
+            <article key={post.id} className="space-y-2">
+              <img
+                src={post.image_url}
+                alt={post.title}
+                className="w-full rounded-lg"
+              />
+              <h3 className="text-sm font-semibold">{post.title}</h3>
+              <p className="text-xs text-zinc-400">
+                {post.author} •{' '}
+                <time dateTime={post.created_at}>
+                  {new Date(post.created_at).toLocaleDateString("hu-HU")}
+                </time>
+              </p>
+              {typeof post.points === "number" && (
+                <p className="text-xs text-indigo-400">▲ {post.points}</p>
+              )}
+            </article>
+          ))}
         </div>
-
-        <aside className="hidden md:block">
-          <div className="mb-6">
-            <input
-              type="text"
-              placeholder="Keresés..."
-              className="w-full px-4 py-2 rounded-lg bg-zinc-900 text-white placeholder-zinc-500 border border-zinc-700 focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <h4 className="text-sm font-semibold text-zinc-400 mb-2">
-              Friss bejegyzések
-            </h4>
-            <ul className="space-y-2 text-sm text-zinc-300">
-              <li>🎨 LaraZine – Portfólió sablon tippek</li>
-              <li>🎧 RinMusic – AI Lo-fi hangok exportja</li>
-              <li>🖼 AIShoujo – Vektoros stílus kimenetek</li>
-            </ul>
-          </div>
-        </aside>
       </div>
     </section>
   );
