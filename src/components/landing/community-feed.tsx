@@ -5,41 +5,15 @@ import { useEffect, useState } from "react";
 interface CommunityPreview {
   id: string;
   title: string;
+  author: string;
   image_url: string;
   created_at: string;
-  author: string;
   points?: number;
 }
 
-const fallbackPosts: CommunityPreview[] = [
-  {
-    id: "1",
-    title: "Elindítottam az első AI portfólió oldalam!",
-    author: "Noemi.art",
-    created_at: "2025-07-10",
-    image_url: "/favicon-96x96.png",
-    points: 187,
-  },
-  {
-    id: "2",
-    title: "ComfyUI mobilról? Kipróbáltam és működik!",
-    author: "aki_chan",
-    created_at: "2025-07-09",
-    image_url: "/favicon-96x96.png",
-    points: 102,
-  },
-  {
-    id: "3",
-    title: "Zenészek figyelem: AI dallamgenerátor Yumekairában!",
-    author: "mididev",
-    created_at: "2025-07-08",
-    image_url: "/favicon-96x96.png",
-    points: 231,
-  },
-];
-
 export default function CommunityFeed() {
-  const [items, setItems] = useState<CommunityPreview[]>([]);
+  const [posts, setPosts] = useState<CommunityPreview[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
@@ -48,37 +22,53 @@ export default function CommunityFeed() {
         if (!res.ok) throw new Error("failed");
         const data = await res.json();
         const arr = Array.isArray(data) ? data : data.items;
-        if (Array.isArray(arr)) setItems(arr as CommunityPreview[]);
-      } catch {
-        // ignore errors
+        if (Array.isArray(arr)) {
+          setPosts(arr.slice(0, 5) as CommunityPreview[]);
+        }
+      } catch (err) {
+        console.warn("Unable to load community feed", err);
+        setPosts([]);
+      } finally {
+        setLoading(false);
       }
     }
     load();
   }, []);
 
-  const list = items.length > 0 ? items : fallbackPosts;
+  if (loading) {
+    return (
+      <section className="bg-[#0c0c1f] text-white py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p>Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <section className="bg-[#0c0c1f] text-white py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p>Nincs elérhető közösségi tartalom</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-[#0c0c1f] text-white py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          {list.map((post) => (
-            <article key={post.id} className="space-y-2">
-              <img
-                src={post.image_url}
-                alt={post.title}
-                className="w-full rounded-lg"
-              />
-              <h3 className="text-sm font-semibold">{post.title}</h3>
-              <p className="text-xs text-zinc-400">
-                {post.author} •{' '}
-                <time dateTime={post.created_at}>
-                  {new Date(post.created_at).toLocaleDateString("hu-HU")}
-                </time>
-              </p>
-              {typeof post.points === "number" && (
-                <p className="text-xs text-indigo-400">▲ {post.points}</p>
-              )}
+          {posts.map((post) => (
+            <article key={post.id} className="rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-zinc-800">
+              <img src={post.image_url} alt={post.title} className="w-full h-48 object-cover" />
+              <div className="p-4">
+                <h3 className="text-white text-sm font-semibold">{post.title}</h3>
+                <p className="text-zinc-400 text-xs mt-1">
+                  {post.author} • <time dateTime={post.created_at}>{new Date(post.created_at).toLocaleDateString("hu-HU")}</time>
+                </p>
+                <p className="text-indigo-400 text-xs mt-1">⭐ {post.points ?? 2} pont</p>
+              </div>
             </article>
           ))}
         </div>
