@@ -11,9 +11,12 @@ interface UploadItem {
   title: string
   url: string
   download_points: number
+  approved: number
 }
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import ImageLightbox from '@/components/ui/ImageLightbox'
+import { cn } from '@/utils/cn'
 import { toast } from 'sonner'
 import {
   Download,
@@ -85,71 +88,151 @@ export default function MyFilesPage() {
         <Button variant={filter === 'prompt' ? 'default' : 'outline'} onClick={() => setFilter('prompt')}>Promptek</Button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {data?.items?.map((item) => {
-          const isImage = item.mime?.startsWith('image/')
-          const isAudio = item.mime?.startsWith('audio/')
-          const isVideo = item.mime?.startsWith('video/')
-          const isText = item.mime === 'text/plain'
-
-          const icon = isImage
-            ? <ImageIcon className="w-4 h-4" />
-            : isAudio
-            ? <Music className="w-4 h-4" />
-            : isVideo
-            ? <VideoIcon className="w-4 h-4" />
-            : isText
-            ? <FileText className="w-4 h-4" />
-            : <FileIcon className="w-4 h-4" />
-
-          return (
-            <Card key={item.id} className="overflow-hidden shadow rounded">
-              {isImage && (
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {data?.items?.map((item) => (
+          <Card
+            key={item.id}
+            className={cn(
+              'relative overflow-hidden shadow rounded',
+              !item.approved && 'ring-2 ring-yellow-500'
+            )}
+          >
+            {!item.approved && (
+              <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
+                Moderációra vár
+              </span>
+            )}
+            {item.mime?.startsWith('image/') && (
+              <ImageLightbox src={item.url} alt={item.title}>
                 <img src={item.url} alt={item.title} className="w-full h-48 object-cover" />
-              )}
-              {isAudio && (
-                <div className="p-2">
-                  <MusicPlayer
-                    id={item.id}
-                    url={item.url}
-                    title={item.title}
-                    audioRef={audioRef}
-                    playingId={playingId}
-                    setPlayingId={setPlayingId}
-                  />
-                </div>
-              )}
-              {isVideo && (
-                <video src={item.url} controls className="w-full h-48 object-cover" />
-              )}
-              <div className="p-2 flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                  {icon}
-                  <span className="text-sm truncate" title={item.title}>{item.title}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <TooltipProvider delayDuration={200}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button size="icon" variant="ghost" onClick={() => downloadFile(item)}>
-                          <Download className="w-4 h-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {`Letöltés ${item.download_points} pontért`}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  <Button size="icon" variant="ghost" onClick={() => deleteFile(item.id)}>
-                    <Trash className="w-4 h-4 text-red-500" />
-                  </Button>
-                </div>
+              </ImageLightbox>
+            )}
+            {item.mime?.startsWith('audio/') && (
+              <MusicPreview
+                id={item.id}
+                url={item.url}
+                title={item.title}
+                audioRef={audioRef}
+                playingId={playingId}
+                setPlayingId={setPlayingId}
+              />
+            )}
+            {item.mime === 'text/plain' && <PromptPreview url={item.url} />}
+            {item.mime?.startsWith('video/') && (
+              <video src={item.url} controls className="w-full h-48 object-cover" />
+            )}
+            <div className="p-2 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                {item.mime?.startsWith('image/') ? (
+                  <ImageIcon className="w-4 h-4" />
+                ) : item.mime?.startsWith('audio/') ? (
+                  <Music className="w-4 h-4" />
+                ) : item.mime?.startsWith('video/') ? (
+                  <VideoIcon className="w-4 h-4" />
+                ) : item.mime === 'text/plain' ? (
+                  <FileText className="w-4 h-4" />
+                ) : (
+                  <FileIcon className="w-4 h-4" />
+                )}
+                <span className="text-sm truncate" title={item.title}>{item.title}</span>
               </div>
-            </Card>
-          )
-        })}
+              <div className="flex items-center gap-2">
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button size="icon" variant="ghost" onClick={() => downloadFile(item)}>
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {`Letöltés ${item.download_points} pontért`}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <Button size="icon" variant="ghost" onClick={() => deleteFile(item.id)}>
+                  <Trash className="w-4 h-4 text-red-500" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
       <audio ref={audioRef} hidden />
     </main>
+  )
+}
+
+interface MusicMeta {
+  title: string | null
+  artist: string | null
+  album: string | null
+  picture: string | null
+}
+
+function MusicPreview({
+  id,
+  url,
+  title,
+  audioRef,
+  playingId,
+  setPlayingId,
+}: {
+  id: string
+  url: string
+  title: string
+  audioRef: React.RefObject<HTMLAudioElement | null>
+  playingId: string | null
+  setPlayingId: (id: string | null) => void
+}) {
+  const { data } = useSWR<MusicMeta | null>(
+    `/api/music-meta?id=${id}`,
+    (u: string): Promise<MusicMeta | null> =>
+      fetch(u).then((res) => (res.ok ? (res.json() as Promise<MusicMeta>) : null))
+  )
+  const displayTitle = formatTitle(data?.title || title)
+  return (
+    <div className="p-2 flex flex-col items-center gap-2 w-full">
+      {data?.picture && (
+        <img src={data.picture} alt={displayTitle} className="w-full aspect-square object-contain rounded" />
+      )}
+      <div className="text-center text-sm">
+        <h3>{displayTitle}</h3>
+        {data?.artist && <p>{data.artist}</p>}
+      </div>
+      <MusicPlayer
+        id={id}
+        url={url}
+        title={displayTitle}
+        audioRef={audioRef}
+        playingId={playingId}
+        setPlayingId={setPlayingId}
+      />
+    </div>
+  )
+}
+
+function formatTitle(name: string) {
+  return name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim()
+}
+
+function PromptPreview({ url }: { url: string }) {
+  const { data } = useSWR<string>(url, (u: string) => fetch(u).then((r) => r.text()))
+  if (!data) return <div className="text-sm p-2">Betöltés...</div>
+  const lines = data.split(/\r?\n/)
+  const truncated = lines.slice(0, 20).join('\n')
+  const hasMore = lines.length > 20
+  return (
+    <div className="w-full p-2 flex flex-col items-start">
+      <pre className="w-full flex-1 whitespace-pre-wrap text-xs bg-zinc-900 rounded p-2 max-h-40 overflow-y-auto">
+        {hasMore ? `${truncated}\n...` : truncated}
+      </pre>
+      {hasMore && (
+        <Button asChild size="sm" className="mt-2">
+          <a href={url} target="_blank" rel="noopener noreferrer">
+            Megnyitás
+          </a>
+        </Button>
+      )}
+    </div>
   )
 }

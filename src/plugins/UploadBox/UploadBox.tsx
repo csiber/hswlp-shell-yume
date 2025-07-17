@@ -55,7 +55,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         if (fileInputRef.current) fileInputRef.current.value = ""
         setShowSuccess(true)
         setDownloadPoints(data.download_points ?? null)
-        toast.success("Sikeres feltöltés")
+        toast.success("Sikeres feltöltés, moderációra vár")
         if (onSuccess) onSuccess()
       } catch {
         toast.error("Feltöltés sikertelen")
@@ -96,7 +96,8 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         </div>
         {showSuccess && (
           <p className="text-center text-sm text-green-600">
-            Sikeres feltöltés{downloadPoints !== null ? ` – a fájl értéke: ${downloadPoints} pont` : ''}
+            Sikeres feltöltés – moderációra vár
+            {downloadPoints !== null ? ` – a fájl értéke: ${downloadPoints} pont` : ''}
           </p>
         )}
       </CardContent>
