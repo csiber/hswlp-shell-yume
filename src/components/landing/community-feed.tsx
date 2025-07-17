@@ -37,7 +37,7 @@ export default function CommunityFeed() {
 
   if (loading) {
     return (
-      <section className="bg-[#0c0c1f] text-white py-24">
+      <section className="bg-gray-50 text-gray-900 py-24 dark:bg-[#0c0c1f] dark:text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p>Loading...</p>
         </div>
@@ -47,7 +47,7 @@ export default function CommunityFeed() {
 
   if (posts.length === 0) {
     return (
-      <section className="bg-[#0c0c1f] text-white py-24">
+      <section className="bg-gray-50 text-gray-900 py-24 dark:bg-[#0c0c1f] dark:text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p>Nincs elérhető közösségi tartalom</p>
         </div>
@@ -56,18 +56,18 @@ export default function CommunityFeed() {
   }
 
   return (
-    <section className="bg-[#0c0c1f] text-white py-24">
+    <section className="bg-gray-50 text-gray-900 py-24 dark:bg-[#0c0c1f] dark:text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {posts.map((post) => (
-            <article key={post.id} className="rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-zinc-800">
+            <article key={post.id} className="rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-zinc-200 dark:border-zinc-800">
               <img src={post.image_url} alt={post.title} className="w-full h-48 object-cover" />
               <div className="p-4">
-                <h3 className="text-white text-sm font-semibold">{post.title}</h3>
-                <p className="text-zinc-400 text-xs mt-1">
+                <h3 className="text-gray-900 text-sm font-semibold dark:text-white">{post.title}</h3>
+                <p className="text-zinc-500 text-xs mt-1 dark:text-zinc-400">
                   {post.author} • <time dateTime={post.created_at}>{new Date(post.created_at).toLocaleDateString("hu-HU")}</time>
                 </p>
-                <p className="text-indigo-400 text-xs mt-1">⭐ {post.points ?? 2} pont</p>
+                <p className="text-indigo-600 text-xs mt-1 dark:text-indigo-400">⭐ {post.points ?? 2} pont</p>
               </div>
             </article>
           ))}

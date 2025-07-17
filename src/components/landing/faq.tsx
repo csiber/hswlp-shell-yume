@@ -27,7 +27,7 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <section className="bg-[#0e111f] text-white py-24">
+    <section className="bg-gray-100 text-gray-900 py-24 dark:bg-[#0e111f] dark:text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-center mb-12">
           Gyakori kérdések
@@ -38,7 +38,7 @@ export default function FAQ() {
             return (
               <div
                 key={i}
-                className="border border-zinc-700 rounded-xl p-5 bg-zinc-900 cursor-pointer"
+                className="border border-zinc-300 rounded-xl p-5 bg-white cursor-pointer dark:border-zinc-700 dark:bg-zinc-900"
                 onClick={() => setOpenIndex(isOpen ? null : i)}
               >
                 <div className="flex justify-between items-center">
@@ -50,7 +50,7 @@ export default function FAQ() {
                     )}
                   />
                 </div>
-                {isOpen && <p className="mt-4 text-zinc-300">{faq.a}</p>}
+                {isOpen && <p className="mt-4 text-zinc-700 dark:text-zinc-300">{faq.a}</p>}
               </div>
             );
           })}
