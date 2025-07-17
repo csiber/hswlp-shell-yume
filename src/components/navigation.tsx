@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Route } from "next";
-import { Menu, ComponentIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -15,6 +14,7 @@ import { SITE_NAME } from "@/constants";
 import { useSessionStore } from "@/state/session";
 import { useNavStore } from "@/state/nav";
 import LogoIcon from "@/components/logo-icon";
+import { Menu } from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -59,7 +59,7 @@ export function Navigation() {
   };
 
   return (
-    <nav className="bg-muted/60 dark:bg-muted/30 shadow dark:shadow-xl z-10">
+    <nav className="bg-muted/60 backdrop-blur-m dark:bg-muted/30 shadow dark:shadow-xl z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo és név */}
@@ -67,7 +67,7 @@ export function Navigation() {
             href="/"
             className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary"
           >
-            <LogoIcon className="w-6 h-6 md:w-7 md:h-7" />
+            <LogoIcon className="w-6 h-6 md:w-7 md:h-7 dark:fill-yellow-400 fill-yellow-600" />
             {SITE_NAME}
           </Link>
 
