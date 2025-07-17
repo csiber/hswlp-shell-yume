@@ -6,20 +6,24 @@ import clsx from "clsx";
 
 const faqs = [
   {
-    q: "Mit tud a Yumekaira?",
-    a: "Egy AI-alapú kreatív platform, ahol weboldalakat, képeket, szövegeket és zenei projekteket indíthatsz el pár kattintással.",
+    q: "Mi az a Yumekai?",
+    a: "Egy kreatív megosztó oldal, ahol képeket, zenéket és promptokat oszthatsz meg másokkal, vagy inspirálódhatsz mások tartalmaiból.",
   },
   {
-    q: "Kell hozzá technikai tudás?",
-    a: "Nem. A felületet úgy terveztük, hogy kezdők is elindulhassanak, de fejlesztőknek is van mélyebb hozzáférés (pl. custom kód, API).",
+    q: "Kik használhatják?",
+    a: "Bárki, aki érdeklődik a mesterséges intelligencia, zene vagy vizuális művészetek iránt. A platform nyitott mind kezdők, mind haladók számára.",
+  },
+  {
+    q: "Milyen tartalmakat tölthetek fel?",
+    a: "Jelenleg képeket, zenei fájlokat és AI promptokat. Minden feltöltést moderálunk, hogy biztonságos és inspiráló közösség maradjon.",
   },
   {
     q: "Ingyenes a használata?",
-    a: "Van ingyenes kezdőcsomag, de a prémium funkciókhoz kredites rendszer tartozik (pl. generálás, domain, exportálás).",
+    a: "A Yumekai használata teljesen ingyenes. Később lesznek kreditalapú funkciók, de a böngészés és feltöltés továbbra is szabadon elérhető marad.",
   },
   {
-    q: "Milyen AI-modellek vannak benne?",
-    a: "ComfyUI (kép), Workers AI (szöveg, zene), és saját kisebb modellek. A lista folyamatosan bővül.",
+    q: "Hogyan kezdjek neki?",
+    a: "Regisztrálj egy fiókot, majd máris feltölthetsz, kedvelhetsz vagy menthetsz tartalmakat saját listádba. Nincs szükség technikai tudásra.",
   },
 ];
 
@@ -50,7 +54,11 @@ export default function FAQ() {
                     )}
                   />
                 </div>
-                {isOpen && <p className="mt-4 text-zinc-700 dark:text-zinc-300">{faq.a}</p>}
+                {isOpen && (
+                  <p className="mt-4 text-zinc-700 dark:text-zinc-300">
+                    {faq.a}
+                  </p>
+                )}
               </div>
             );
           })}
