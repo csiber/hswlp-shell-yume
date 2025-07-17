@@ -3,7 +3,7 @@
 'use client'
 
 import useSWR from 'swr'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 interface UploadItem {
   id: string
   category: 'image' | 'music' | 'prompt'
@@ -33,6 +33,7 @@ import MusicPlayer from '@/components/community/MusicPlayer'
 export default function MyFilesPage() {
   const [filter, setFilter] = useState<string | null>(null)
   const [playingId, setPlayingId] = useState<string | null>(null)
+  const [showApprovedNotice, setShowApprovedNotice] = useState(false)
   const audioRef = useRef<HTMLAudioElement>(null)
   const query = filter ? `?type=${filter}` : ''
   const fetcher = (url: string) =>
@@ -42,6 +43,21 @@ export default function MyFilesPage() {
     `/api/my-files${query}`,
     fetcher
   )
+
+  useEffect(() => {
+    if (!data?.items) return
+    const newlyApproved = data.items.some(
+      (it) => it.approved === 1 && !localStorage.getItem(`approved_${it.id}`)
+    )
+    if (newlyApproved) {
+      setShowApprovedNotice(true)
+      data.items.forEach((it) => {
+        if (it.approved === 1) {
+          localStorage.setItem(`approved_${it.id}`, '1')
+        }
+      })
+    }
+  }, [data])
 
   const deleteFile = async (id: string) => {
     try {
@@ -81,6 +97,11 @@ export default function MyFilesPage() {
 
   return (
     <main className="p-6 max-w-6xl mx-auto">
+      {showApprovedNotice && (
+        <div className="mb-4 rounded-md bg-amber-400 text-black p-4 shadow-md animate-fade-in">
+          Gratulálunk! Feltöltésed jóvá lett hagyva.
+        </div>
+      )}
       <div className="mb-4 flex gap-3">
         <Button variant={filter === null ? 'default' : 'outline'} onClick={() => setFilter(null)}>Összes</Button>
         <Button variant={filter === 'image' ? 'default' : 'outline'} onClick={() => setFilter('image')}>Képek</Button>

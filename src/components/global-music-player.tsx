@@ -30,6 +30,11 @@ export default function GlobalMusicPlayer() {
   const [open, setOpen] = useState(false);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const formatTime = (t: number) => {
+    const m = Math.floor(t / 60);
+    const s = Math.floor(t % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  };
 
   useEffect(() => {
     fetch("/api/music-feed")
@@ -111,6 +116,7 @@ export default function GlobalMusicPlayer() {
   if (!queue.length) return null;
 
   const track = queue[currentIndex];
+  const progress = duration ? Math.min((currentTime / duration) * 100, 100) : 0;
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -196,19 +202,31 @@ export default function GlobalMusicPlayer() {
             </Button>
           </div>
         </div>
-        <input
-          type="range"
-          min={0}
-          max={duration || 0}
-          step={0.1}
-          value={currentTime}
-          onChange={(e) => {
-            const time = Number(e.target.value);
-            if (audioRef.current) audioRef.current.currentTime = time;
-            setCurrentTime(time);
-          }}
-          className="w-full h-1 bg-muted rounded-lg appearance-none cursor-pointer"
-        />
+        <div className="flex items-center gap-2">
+          <span className="text-xs w-10 text-right tabular-nums">
+            {formatTime(currentTime)}
+          </span>
+          <input
+            type="range"
+            min={0}
+            max={duration || 0}
+            step={0.1}
+            value={currentTime}
+            onChange={(e) => {
+              const time = Number(e.target.value);
+              if (audioRef.current) audioRef.current.currentTime = time;
+              setCurrentTime(time);
+            }}
+            onClick={(e) => e.stopPropagation()}
+            className="flex-1 h-1 bg-muted rounded-lg appearance-none cursor-pointer"
+            style={{
+              background: `linear-gradient(to right, hsl(var(--primary)) ${progress}%, hsl(var(--muted)) ${progress}%)`,
+            }}
+          />
+          <span className="text-xs w-10 tabular-nums">
+            {formatTime(Math.max(duration - currentTime, 0))}
+          </span>
+        </div>
       </SheetContent>
       <audio
         ref={audioRef}
