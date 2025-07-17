@@ -134,8 +134,9 @@ export default function PostCard({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
+      whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
-      className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4"
+      className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
     >
       <div className="mb-3 flex items-center gap-3">
         <Avatar className="h-12 w-12">
