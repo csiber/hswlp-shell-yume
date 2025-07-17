@@ -21,7 +21,6 @@ type NavItem = {
   href: Route;
 };
 
-// Akciógombok jobbra: csak bejelentkezés gomb, ha nincs session
 const ActionButtons = () => {
   const { session, isLoading } = useSessionStore();
   const { setIsOpen } = useNavStore();
@@ -36,13 +35,11 @@ const ActionButtons = () => {
   );
 };
 
-// Teljes navigációs komponens
 export function Navigation() {
   const pathname = usePathname() ?? "";
   const { session, isLoading } = useSessionStore();
   const { isOpen, setIsOpen } = useNavStore();
 
-  // Menüelemek dinamikusan session alapján
   const navItems: NavItem[] = [
     { name: "Főoldal", href: "/" },
     ...(session
@@ -53,25 +50,23 @@ export function Navigation() {
       : []),
   ];
 
-  // Aktív link meghatározása
   const isActiveLink = (href: string) => {
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
-    <nav className="bg-muted/60 backdrop-blur-m dark:bg-muted/30 shadow dark:shadow-xl z-10">
+    <nav className="bg-background/70 ring-1 ring-border dark:bg-muted/30 backdrop-blur-md shadow-sm dark:shadow-lg z-50 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo és név */}
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary"
+            className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary transition-colors"
           >
             <LogoIcon className="w-6 h-6 md:w-7 md:h-7 dark:fill-yellow-400 fill-yellow-600" />
             {SITE_NAME}
           </Link>
 
-          {/* Desktop navigáció */}
+          {/* Desktop */}
           <div className="hidden md:flex items-center gap-6">
             <div className="flex gap-2">
               {isLoading
@@ -83,9 +78,9 @@ export function Navigation() {
                       key={item.name}
                       href={item.href}
                       className={cn(
-                        "text-sm font-medium px-3 h-16 flex items-center no-underline transition-colors relative text-muted-foreground hover:text-foreground",
+                        "text-sm font-medium px-3 h-16 flex items-center no-underline relative text-muted-foreground hover:text-foreground transition-colors duration-200",
                         isActiveLink(item.href) &&
-                          "text-foreground after:absolute after:left-0 after:bottom-0 after:h-0.5 after:w-full after:bg-foreground"
+                          "text-foreground after:absolute after:left-3 after:bottom-2 after:h-[2px] after:w-[calc(100%-1.5rem)] after:bg-primary after:rounded-full after:transition-all after:duration-300"
                       )}
                     >
                       {item.name}
@@ -95,7 +90,7 @@ export function Navigation() {
             <ActionButtons />
           </div>
 
-          {/* Mobilmenü (hamburger) */}
+          {/* Mobile */}
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -105,8 +100,11 @@ export function Navigation() {
                 </Button>
               </SheetTrigger>
 
-              <SheetContent side="right" className="w-[240px] sm:w-[300px]">
-                <div className="mt-6 space-y-2">
+              <SheetContent
+                side="right"
+                className="w-[240px] sm:w-[300px] px-4 py-6 bg-background/80 backdrop-blur-md ring-1 ring-border dark:bg-muted/40"
+              >
+                <div className="space-y-4">
                   {isLoading ? (
                     Array(3)
                       .fill(0)
@@ -121,14 +119,15 @@ export function Navigation() {
                           href={item.href}
                           onClick={() => setIsOpen(false)}
                           className={cn(
-                            "block px-3 py-2 text-base font-medium no-underline transition-colors rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50",
-                            isActiveLink(item.href) && "text-foreground"
+                            "block px-4 py-2 text-base font-medium rounded-md no-underline transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                            isActiveLink(item.href) &&
+                              "text-foreground bg-muted/30"
                           )}
                         >
                           {item.name}
                         </Link>
                       ))}
-                      <div className="px-3 pt-4">
+                      <div className="pt-6">
                         <ActionButtons />
                       </div>
                     </>
