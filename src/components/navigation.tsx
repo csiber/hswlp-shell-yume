@@ -14,6 +14,7 @@ import { SITE_NAME } from "@/constants";
 
 import { useSessionStore } from "@/state/session";
 import { useNavStore } from "@/state/nav";
+import LogoIcon from "@/components/logo-icon";
 
 type NavItem = {
   name: string;
@@ -66,7 +67,7 @@ export function Navigation() {
             href="/"
             className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary"
           >
-            <ComponentIcon className="w-6 h-6 md:w-7 md:h-7" />
+            <LogoIcon className="w-6 h-6 md:w-7 md:h-7" />
             {SITE_NAME}
           </Link>
 
