@@ -14,7 +14,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section className="bg-[#0b0e1a] text-white py-24">
+    <section className="bg-gray-50 text-gray-900 py-24 dark:bg-[#0b0e1a] dark:text-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -30,7 +30,7 @@ export default function Features() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="text-zinc-400 mb-12 max-w-2xl mx-auto"
+          className="text-zinc-600 mb-12 max-w-2xl mx-auto dark:text-zinc-400"
         >
           A Yumekaira egy helyre hozza össze az AI-t, a design-t és a webet. Nem kell
           többé máshol regisztrálnod, ha alkotni szeretnél.
