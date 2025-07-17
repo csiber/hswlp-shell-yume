@@ -6,6 +6,7 @@ import ImageLightbox from '@/components/ui/ImageLightbox'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { toast } from 'sonner'
 import { Check, X, Image as ImageIcon, Music, FileText } from 'lucide-react'
+import { formatTitle, guessMetaFromFilename } from '@/utils/music'
 
 interface UploadItem {
   id: string
@@ -161,7 +162,11 @@ function MusicPreview({ id, url, title }: { id: string; url: string; title: stri
     (u: string): Promise<MusicMeta | null> =>
       fetch(u).then(res => (res.ok ? (res.json() as Promise<MusicMeta>) : null))
   )
-  const displayTitle = formatTitle(data?.title || title)
+
+  const fallback = guessMetaFromFilename(title)
+  const displayTitle = formatTitle(data?.title || fallback.title)
+  const displayArtist = data?.artist || fallback.artist
+
   return (
     <div className="p-2 flex flex-col items-center gap-2 w-full">
       {data?.picture && (
@@ -169,14 +174,10 @@ function MusicPreview({ id, url, title }: { id: string; url: string; title: stri
       )}
       <div className="text-center text-sm">
         <h3>{displayTitle}</h3>
-        {data?.artist && <p>{data.artist}</p>}
+        {displayArtist && <p>{displayArtist}</p>}
       </div>
       <audio src={url} controls className="w-full" />
     </div>
   )
-}
-
-function formatTitle(name: string) {
-  return name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ').trim()
 }
 

@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { parseBuffer } from 'music-metadata-browser'
 import { NextRequest } from 'next/server'
+import { guessMetaFromFilename } from '@/utils/music'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -13,8 +14,8 @@ export async function GET(req: NextRequest) {
 
   const { env } = getCloudflareContext()
   const row = await env.DB.prepare(
-    'SELECT r2_key FROM uploads WHERE id = ?1 LIMIT 1'
-  ).bind(id).first<{ r2_key: string }>()
+    'SELECT r2_key, title FROM uploads WHERE id = ?1 LIMIT 1'
+  ).bind(id).first<{ r2_key: string; title: string }>()
 
   if (!row?.r2_key) {
     return new Response('Not found', { status: 404 })
@@ -35,14 +36,21 @@ export async function GET(req: NextRequest) {
       const mime = pic.format || 'image/jpeg'
       picture = `data:${mime};base64,${Buffer.from(pic.data).toString('base64')}`
     }
+    const fallback = guessMetaFromFilename(row.title)
     return jsonResponse({
-      title: common.title ?? null,
-      artist: common.artist ?? null,
+      title: common.title ?? fallback.title ?? null,
+      artist: common.artist ?? fallback.artist ?? null,
       album: common.album ?? null,
       picture,
     })
   } catch (err) {
     console.error(err)
-    return jsonResponse({ error: 'Metadata parse failed' }, { status: 500 })
+    const fallback = guessMetaFromFilename(row.title)
+    return jsonResponse({
+      title: fallback.title,
+      artist: fallback.artist,
+      album: null,
+      picture: null,
+    })
   }
 }
