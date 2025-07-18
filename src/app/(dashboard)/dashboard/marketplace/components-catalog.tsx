@@ -1,5 +1,3 @@
-import { NavUser } from "@/components/nav-user";
-
 interface MarketplaceComponent {
   id: string;
   name: string;
@@ -14,14 +12,6 @@ interface MarketplaceComponent {
 const highlightPost = () => console.log("highlightPost called");
 
 export const COMPONENTS: MarketplaceComponent[] = [
-  {
-    id: "nav-user",
-    name: "Felhasználói menü",
-    description: "Avatarral és műveletekkel ellátott felhasználói menü",
-    credits: 10,
-    containerClass: "w-[300px]",
-    preview: () => <NavUser />,
-  },
   {
     id: "highlight-post",
     name: "Poszt kiemelés",
