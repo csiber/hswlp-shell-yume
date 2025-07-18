@@ -91,7 +91,8 @@ export default function ProfileClient({ user, uploads, currentUserId }: Props) {
           {filtered.map((u) => (
             <motion.div key={u.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {u.type === 'image' ? (
-                <Image src={u.url} alt={u.name} width={300} height={300} className="h-48 w-full object-cover rounded" />
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img src={u.url} alt={u.name} className="h-48 w-full object-cover rounded" />
               ) : u.type === 'music' ? (
                 <audio controls className="w-full">
                   <source src={u.url} />
