@@ -54,6 +54,7 @@ export async function getUserFromDB(userId: string) {
       uploadBanReason: true,
       uploadLimitMb: true,
       usedStorageMb: true,
+      emojiReactionsEnabled: true,
       profileFrameEnabled: true,
     },
   });

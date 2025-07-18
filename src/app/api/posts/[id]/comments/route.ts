@@ -25,6 +25,7 @@ export async function GET(
 ) {
   const { id: uploadId } = await params
   const { env } = getCloudflareContext()
+  const session = await getSessionFromCookie()
   const rows = await env.DB.prepare(
     `SELECT c.id, c.content, c.created_at, u.nickname, u.email, u.avatar
      FROM comments c
@@ -32,15 +33,41 @@ export async function GET(
      WHERE c.upload_id = ?1
      ORDER BY c.created_at ASC`
   ).bind(uploadId).all<CommentRow>()
-  const comments = (rows.results || []).map(row => ({
-    id: row.id,
-    text: row.content,
-    created_at: new Date(row.created_at).toISOString(),
-    user: {
-      name: row.nickname || row.email,
-      avatar: row.avatar ?? undefined,
-    },
-  }))
+  const comments = [] as {
+    id: string
+    text: string
+    created_at: string
+    user: { name: string; avatar?: string }
+    reactions: { emoji: string; count: number; reacted: boolean }[]
+  }[]
+
+  for (const row of rows.results || []) {
+    const reactionRows = await env.DB.prepare(
+      'SELECT emoji, COUNT(*) as count FROM comment_reactions WHERE comment_id = ?1 GROUP BY emoji'
+    ).bind(row.id).all<{ emoji: string; count: number }>()
+    let userRows: { emoji: string }[] = []
+    if (session?.user?.id) {
+      const r = await env.DB.prepare(
+        'SELECT emoji FROM comment_reactions WHERE comment_id = ?1 AND user_id = ?2'
+      ).bind(row.id, session.user.id).all<{ emoji: string }>()
+      userRows = r.results || []
+    }
+    const reactions = (reactionRows.results || []).map(r => ({
+      emoji: r.emoji,
+      count: r.count,
+      reacted: userRows.some(u => u.emoji === r.emoji)
+    }))
+    comments.push({
+      id: row.id,
+      text: row.content,
+      created_at: new Date(row.created_at).toISOString(),
+      user: {
+        name: row.nickname || row.email,
+        avatar: row.avatar ?? undefined,
+      },
+      reactions
+    })
+  }
   return jsonResponse({ comments })
 }
 
