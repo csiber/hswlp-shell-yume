@@ -7,5 +7,9 @@ export default async function MarketplaceLayout({ children }: { children: React.
   if (!session) {
     redirect("/");
   }
-  return <ShellLayout center={<div className="p-6 w-full">{children}</div>} />;
+  return (
+    <ShellLayout>
+      <div className="p-6 w-full">{children}</div>
+    </ShellLayout>
+  );
 }
