@@ -32,7 +32,7 @@ interface TeamPageProps {
 // TODO Test the removal process
 export async function generateMetadata({ params }: TeamPageProps) {
   const { teamSlug } = await params;
-  const db = getDB();
+  const db = await getDB();
 
   const team = await db.query.teamTable.findFirst({
     where: eq(teamTable.slug, teamSlug),
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: TeamPageProps) {
 
 export default async function TeamDashboardPage({ params }: TeamPageProps) {
   const { teamSlug } = await params;
-  const db = getDB();
+  const db = await getDB();
 
   // Find the team by slug
   const team = await db.query.teamTable.findFirst({

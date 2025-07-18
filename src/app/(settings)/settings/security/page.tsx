@@ -22,7 +22,7 @@ export default async function SecurityPage() {
     return redirect("/sign-in");
   }
 
-  const db = getDB();
+  const db = await getDB();
   const passkeys = await db
     .select()
     .from(passKeyCredentialTable)

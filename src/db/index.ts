@@ -6,12 +6,12 @@ import * as schema from "./schema";
 
 export let db: DrizzleD1Database<typeof schema> | null = null;
 
-export const getDB = () => {
+export const getDB = async () => {
   if (db) {
     return db;
   }
 
-  const { env } = getCloudflareContext();
+  const { env } = await getCloudflareContext({ async: true });
 
   if (!env.NEXT_TAG_CACHE_D1) {
     throw new Error("D1 database not found");

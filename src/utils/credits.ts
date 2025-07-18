@@ -26,7 +26,7 @@ function shouldRefreshCredits(session: KVSession, currentTime: Date): boolean {
 }
 
 async function processExpiredCredits(userId: string, currentTime: Date) {
-  const db = getDB();
+  const db = await getDB();
   // Find all expired transactions that haven't been processed and have remaining credits
   // Order by type to process MONTHLY_REFRESH first, then by creation date
   const expiredTransactions = await db.query.creditTransactionTable.findMany({
@@ -71,7 +71,7 @@ async function processExpiredCredits(userId: string, currentTime: Date) {
 }
 
 export async function updateUserCredits(userId: string, creditsToAdd: number) {
-  const db = getDB();
+  const db = await getDB();
   await db
     .update(userTable)
     .set({
@@ -84,7 +84,7 @@ export async function updateUserCredits(userId: string, creditsToAdd: number) {
 }
 
 async function updateLastRefreshDate(userId: string, date: Date) {
-  const db = getDB();
+  const db = await getDB();
   await db
     .update(userTable)
     .set({
@@ -108,7 +108,7 @@ export async function logTransaction({
   expirationDate?: Date;
   paymentIntentId?: string;
 }) {
-  const db = getDB();
+  const db = await getDB();
   await db.insert(creditTransactionTable).values({
     userId,
     amount,
@@ -126,7 +126,7 @@ export async function addFreeMonthlyCreditsIfNeeded(session: KVSession): Promise
   // Check if it's been at least a month since last refresh
   if (shouldRefreshCredits(session, currentTime)) {
     // Double check the last refresh date from the database to prevent race conditions
-    const db = getDB();
+    const db = await getDB();
     const user = await db.query.userTable.findFirst({
       where: eq(userTable.id, session.userId),
       columns: {
@@ -174,7 +174,7 @@ export async function addFreeMonthlyCreditsIfNeeded(session: KVSession): Promise
 }
 
 export async function hasEnoughCredits({ userId, requiredCredits }: { userId: string; requiredCredits: number }) {
-  const user = await getDB().query.userTable.findFirst({
+  const user = await (await getDB()).query.userTable.findFirst({
     where: eq(userTable.id, userId),
     columns: {
       currentCredits: true,
@@ -186,7 +186,7 @@ export async function hasEnoughCredits({ userId, requiredCredits }: { userId: st
 }
 
 export async function consumeCredits({ userId, amount, description }: { userId: string; amount: number; description: string }) {
-  const db = getDB();
+  const db = await getDB();
 
   // First check if user has enough credits
   const user = await db.query.userTable.findFirst({
@@ -284,7 +284,7 @@ export async function getCreditTransactions({
   page?: number;
   limit?: number;
 }) {
-  const db = getDB();
+  const db = await getDB();
   const transactions = await db.query.creditTransactionTable.findMany({
     where: eq(creditTransactionTable.userId, userId),
     orderBy: [desc(creditTransactionTable.createdAt)],
@@ -314,7 +314,7 @@ export async function getCreditTransactions({
 }
 
 export async function getUserPurchasedItems(userId: string) {
-  const db = getDB();
+  const db = await getDB();
   const purchasedItems = await db.query.purchasedItemsTable.findMany({
     where: eq(purchasedItemsTable.userId, userId),
   });

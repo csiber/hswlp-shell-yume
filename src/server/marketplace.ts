@@ -8,13 +8,13 @@ import { updateAllSessionsOfUser } from "@/utils/kv-session";
 import { COMPONENTS } from "@/app/(dashboard)/dashboard/marketplace/components-catalog";
 
 export async function updateUserField(userId: string, field: keyof typeof userTable._.columns, value: unknown) {
-  const db = getDB();
+  const db = await getDB();
   await db.update(userTable).set({ [field]: value } as Record<string, unknown>).where(eq(userTable.id, userId));
   await updateAllSessionsOfUser(userId);
 }
 
 export async function activateHighlightPost(userId: string, postId: string) {
-  const db = getDB();
+  const db = await getDB();
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   await db.insert(highlightedPostsTable).values({
     id: `hlp_${createId()}`,
@@ -27,7 +27,7 @@ export async function activateHighlightPost(userId: string, postId: string) {
 export async function applyDailySurpriseReward(userId: string): Promise<string> {
   const rewards = ["points", "bonus_frame", "badge_unlocked"] as const;
   const choice = rewards[Math.floor(Math.random() * rewards.length)];
-  const db = getDB();
+  const db = await getDB();
 
   if (choice === "points") {
     await db.update(userTable)
@@ -48,7 +48,7 @@ interface ActivationOptions {
 }
 
 export async function activateMarketplaceComponent(componentId: string, userId: string, options: ActivationOptions = {}) {
-  const db = getDB();
+  const db = await getDB();
 
   const existing = await db.query.marketplaceActivationsTable.findFirst({
     where: and(eq(marketplaceActivationsTable.userId, userId), eq(marketplaceActivationsTable.componentId, componentId)),
@@ -107,7 +107,7 @@ export function getComponentCredits(componentId: string): number {
 }
 
 export async function getUserActiveComponents(userId: string) {
-  const db = getDB();
+  const db = await getDB();
   const acts = await db.query.marketplaceActivationsTable.findMany({
     where: eq(marketplaceActivationsTable.userId, userId),
     columns: { componentId: true },

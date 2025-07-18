@@ -33,7 +33,7 @@ const getSessionLength = () => {
  */
 
 export async function getUserFromDB(userId: string) {
-  const db = getDB();
+  const db = await getDB();
   return await db.query.userTable.findFirst({
     where: eq(userTable.id, userId),
     columns: {
@@ -84,7 +84,7 @@ interface CreateSessionParams extends Pick<CreateKVSessionParams, "authenticatio
 }
 
 export async function getUserTeamsWithPermissions(userId: string) {
-  const db = getDB();
+  const db = await getDB();
 
   // Get user's team memberships
   const userTeamMemberships = await db.query.teamMembershipTable.findMany({

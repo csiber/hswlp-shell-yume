@@ -20,7 +20,7 @@ export const signUpAction = createServerAction()
   .handler(async ({ input }) => {
     return withRateLimit(
       async () => {
-        const db = getDB();
+        const db = await getDB();
 
         if (await isTurnstileEnabled() && input.captchaToken) {
           const success = await validateTurnstileToken(input.captchaToken)
