@@ -212,12 +212,13 @@ export const highlightedPostsTable = sqliteTable("highlighted_posts", {
 });
 
 export const marketplaceActivationsTable = sqliteTable("marketplace_activations", {
-  id: text().primaryKey().$defaultFn(() => `mact_${createId()}`).notNull(),
-  userId: text().notNull().references(() => userTable.id),
-  componentId: text().notNull(),
-  activatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
-  metadata: text(),
+  id: text("id").primaryKey(),
+  user_id: text("user_id"),
+  component_id: text("component_id"),
+  metadata: text("metadata"),
+  activated_at: text("activated_at").default(sql`CURRENT_TIMESTAMP`)
 });
+
 
 
 // System-defined roles - these are always available

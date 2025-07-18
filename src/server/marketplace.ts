@@ -7,9 +7,16 @@ import { consumeCredits } from "@/utils/credits";
 import { updateAllSessionsOfUser } from "@/utils/kv-session";
 import { COMPONENTS } from "@/app/(dashboard)/dashboard/marketplace/components-catalog";
 
-export async function updateUserField(userId: string, field: keyof typeof userTable._.columns, value: unknown) {
+export async function updateUserField(
+  userId: string,
+  field: keyof typeof userTable._.columns,
+  value: unknown
+) {
   const db = await getDB();
-  await db.update(userTable).set({ [field]: value } as Record<string, unknown>).where(eq(userTable.id, userId));
+  await db
+    .update(userTable)
+    .set({ [field]: value } as Record<string, unknown>)
+    .where(eq(userTable.id, userId));
   await updateAllSessionsOfUser(userId);
 }
 
@@ -30,7 +37,8 @@ export async function applyDailySurpriseReward(userId: string): Promise<string> 
   const db = await getDB();
 
   if (choice === "points") {
-    await db.update(userTable)
+    await db
+      .update(userTable)
       .set({ points: sql`${userTable.points} + 10` })
       .where(eq(userTable.id, userId));
   } else if (choice === "bonus_frame") {
@@ -47,13 +55,25 @@ interface ActivationOptions {
   selectedAvatarStyle?: string;
 }
 
-export async function activateMarketplaceComponent(componentId: string, userId: string, options: ActivationOptions = {}) {
+export async function activateMarketplaceComponent(
+  componentId: string,
+  userId: string,
+  options: ActivationOptions = {}
+) {
   const db = await getDB();
 
-  const existing = await db.query.marketplaceActivationsTable.findFirst({
-    where: and(eq(marketplaceActivationsTable.userId, userId), eq(marketplaceActivationsTable.componentId, componentId)),
-  });
-  if (existing) {
+  const existing = await db
+    .select()
+    .from(marketplaceActivationsTable)
+    .where(
+      and(
+        eq(marketplaceActivationsTable.user_id, userId),
+        eq(marketplaceActivationsTable.component_id, componentId)
+      )
+    )
+    .limit(1);
+
+  if (existing.length > 0) {
     throw new Error("Component already active");
   }
 
@@ -91,26 +111,32 @@ export async function activateMarketplaceComponent(componentId: string, userId: 
       throw new Error("Unknown component");
   }
 
-  await db.insert(marketplaceActivationsTable).values({
-    id: `mact_${createId()}`,
-    userId,
-    componentId,
-    metadata: Object.keys(metadata).length ? JSON.stringify(metadata) : undefined,
-  });
+await db.insert(marketplaceActivationsTable).values({
+  id: `mact_${createId()}`,
+  user_id: userId,
+  component_id: componentId,
+  metadata: Object.keys(metadata).length ? JSON.stringify(metadata) : undefined,
+});
 
-  await consumeCredits({ userId, amount: getComponentCredits(componentId), description: `Activate ${componentId}` });
+
+  await consumeCredits({
+    userId,
+    amount: getComponentCredits(componentId),
+    description: `Activate ${componentId}`,
+  });
 }
 
 export function getComponentCredits(componentId: string): number {
-  const component = COMPONENTS.find(c => c.id === componentId);
+  const component = COMPONENTS.find((c) => c.id === componentId);
   return component?.credits ?? 0;
 }
 
 export async function getUserActiveComponents(userId: string) {
   const db = await getDB();
-  const acts = await db.query.marketplaceActivationsTable.findMany({
-    where: eq(marketplaceActivationsTable.userId, userId),
-    columns: { componentId: true },
-  });
-  return new Set(acts.map(a => a.componentId));
+  const acts = await db
+    .select({ componentId: marketplaceActivationsTable.component_id })
+    .from(marketplaceActivationsTable)
+    .where(eq(marketplaceActivationsTable.user_id, userId));
+
+  return new Set(acts.map((a) => a.componentId));
 }
