@@ -75,7 +75,6 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     if (!sessionUser?.id) return
     mutateQuota().catch((err) => console.warn('Failed to refresh quota', err))
   }, [sessionUser?.id, mutateQuota])
-
   const usedMb = Number(quota?.used ?? sessionUser?.usedStorageMb ?? 0)
   const limitMb = Number(quota?.limit ?? sessionUser?.uploadLimitMb ?? 0)
   const percent =

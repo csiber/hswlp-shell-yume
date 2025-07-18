@@ -104,7 +104,10 @@ export async function POST(req: Request) {
 
   const fileSizeMb = file.size / (1024 * 1024)
   if ((session.user.usedStorageMb ?? 0) + fileSizeMb > (session.user.uploadLimitMb ?? 0)) {
-    throw new Error('Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.')
+    return jsonResponse(
+      { success: false, error: 'Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.' },
+      { status: 403 }
+    )
   }
 
   let meta: Awaited<ReturnType<typeof parseBuffer>> | null = null
