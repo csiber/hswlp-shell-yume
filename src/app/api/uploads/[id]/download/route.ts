@@ -1,9 +1,10 @@
 import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { consumeCredits } from '@/utils/credits'
+import { consumeCredits, addCredits } from '@/utils/credits'
 import { jsonResponse } from '@/utils/api'
 import { ALBUM_PRICING_MODE, ALBUM_GROUP_CREDITS } from '@/constants'
 import { NextRequest } from 'next/server'
+import { v4 as uuidv4 } from 'uuid'
 
 interface RouteContext<T> { params: Promise<T> }
 
@@ -61,6 +62,22 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
   await env.DB.prepare('UPDATE uploads SET download_count = COALESCE(download_count,0) + 1 WHERE id = ?1')
     .bind(id)
     .run()
+
+  if (!alreadyDownloaded && row.user_id !== session.user.id) {
+    const existing = await env.DB.prepare('SELECT id FROM upload_rewards WHERE upload_id = ?1 AND viewer_id = ?2 AND event = ?3')
+      .bind(id, session.user.id, 'download')
+      .first<{ id: string }>()
+    if (!existing) {
+      const reward = 0.5
+      await env.DB.prepare('INSERT INTO upload_rewards (id, upload_id, uploader_id, viewer_id, event, points_awarded) VALUES (?1, ?2, ?3, ?4, ?5, ?6)')
+        .bind(uuidv4(), id, row.user_id, session.user.id, 'download', reward)
+        .run()
+      await addCredits({ userId: row.user_id, amount: reward, description: 'Reward from download' })
+      await env.DB.prepare('UPDATE uploads SET total_generated_points = COALESCE(total_generated_points,0) + ?2 WHERE id = ?1')
+        .bind(id, reward)
+        .run()
+    }
+  }
 
   return new Response(object.body, {
     status: 200,

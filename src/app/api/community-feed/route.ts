@@ -23,7 +23,7 @@ export async function GET() {
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
     SELECT u.id, u.title, u.url, u.r2_key, u.created_at, u.download_points,
-           usr.firstName, usr.lastName, usr.email,
+           usr.nickname, usr.email,
            COUNT(f.id) AS favorites
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
@@ -40,7 +40,7 @@ export async function GET() {
 
   const albumRows = await env.DB.prepare(`
     SELECT a.id as album_id, a.name as album_name, a.created_at as album_created,
-           usr.firstName, usr.lastName, usr.email,
+           usr.nickname, usr.email,
            up.r2_key
     FROM albums a
     JOIN uploads up ON up.album_id = a.id
@@ -66,7 +66,7 @@ export async function GET() {
       fileUrl = row.url
     }
 
-    const name = [row.firstName, row.lastName].filter(Boolean).join(' ') || row.email
+    const name = row.nickname || row.email
 
     items.push({
       id: row.id,
@@ -92,7 +92,7 @@ export async function GET() {
       fileUrl = row.r2_key
     }
 
-    const name = [row.firstName, row.lastName].filter(Boolean).join(' ') || row.email
+    const name = row.nickname || row.email
     const existing = albumMap[row.album_id]
     if (existing) {
       existing.images.push(fileUrl)

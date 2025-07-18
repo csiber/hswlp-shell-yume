@@ -14,8 +14,7 @@ interface CommentRow {
   id: string
   content: string
   created_at: string
-  firstName: string | null
-  lastName: string | null
+  nickname: string | null
   email: string
   avatar: string | null
 }
@@ -27,7 +26,7 @@ export async function GET(
   const { id: uploadId } = await params
   const { env } = getCloudflareContext()
   const rows = await env.DB.prepare(
-    `SELECT c.id, c.content, c.created_at, u.firstName, u.lastName, u.email, u.avatar
+    `SELECT c.id, c.content, c.created_at, u.nickname, u.email, u.avatar
      FROM comments c
      LEFT JOIN user u ON c.user_id = u.id
      WHERE c.upload_id = ?1
@@ -38,7 +37,7 @@ export async function GET(
     text: row.content,
     created_at: new Date(row.created_at).toISOString(),
     user: {
-      name: [row.firstName, row.lastName].filter(Boolean).join(' ') || row.email,
+      name: row.nickname || row.email,
       avatar: row.avatar ?? undefined,
     },
   }))
@@ -71,7 +70,7 @@ export async function POST(
       text: text.trim(),
       created_at: new Date().toISOString(),
       user: {
-        name: [session.user.firstName, session.user.lastName].filter(Boolean).join(' ') || session.user.email,
+        name: session.user.nickname || session.user.email,
         avatar: session.user.avatar ?? undefined,
       },
     },

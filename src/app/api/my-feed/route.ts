@@ -13,7 +13,7 @@ export async function GET() {
   const result = await env.DB.prepare(`
     SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
            u.view_count, u.play_count, u.download_points,
-           usr.firstName, usr.lastName, usr.email
+          usr.nickname, usr.email
     FROM uploads u
     JOIN user usr ON u.user_id = usr.id
     WHERE u.approved = 1 AND u.visibility = 'public'
@@ -48,7 +48,7 @@ export async function GET() {
       fileUrl = row.url
     }
 
-    const nameParts = [row.firstName, row.lastName].filter(Boolean)
+    const displayName = row.nickname || `Anon${row.id?.slice(-4)}`
     items.push({
       id: row.id,
       title: row.title,
@@ -60,7 +60,7 @@ export async function GET() {
       view_count: Number(row.view_count ?? 0),
       play_count: Number(row.play_count ?? 0),
       user: {
-        name: nameParts.length ? nameParts.join(' ') : row.email,
+        name: displayName,
         email: row.email,
       },
     })

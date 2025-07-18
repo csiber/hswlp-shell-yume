@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text, index } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, index, real } from "drizzle-orm/sqlite-core";
 import { relations, sql } from "drizzle-orm";
 import { type InferSelectModel } from "drizzle-orm";
 
@@ -30,6 +30,9 @@ export const userTable = sqliteTable("user", {
   lastName: text({
     length: 255,
   }),
+  nickname: text({
+    length: 255,
+  }).notNull().unique(),
   email: text({
     length: 255,
   }).unique(),
@@ -59,6 +62,7 @@ export const userTable = sqliteTable("user", {
   }),
 }, (table) => ([
   index('email_idx').on(table.email),
+  index('nickname_idx').on(table.nickname),
   index('google_account_id_idx').on(table.googleAccountId),
   index('role_idx').on(table.role),
 ]));
@@ -163,6 +167,18 @@ export const purchasedItemsTable = sqliteTable("purchased_item", {
   // Composite index for checking if a user owns a specific item of a specific type
   index('purchased_item_user_item_idx').on(table.userId, table.itemType, table.itemId),
 ]));
+
+export const uploadRewardTable = sqliteTable("upload_rewards", {
+  id: text().primaryKey().$defaultFn(() => `urw_${createId()}`).notNull(),
+  uploadId: text().notNull(),
+  uploaderId: text().notNull(),
+  viewerId: text().notNull(),
+  event: text({ length: 20 }).notNull(),
+  pointsAwarded: real().notNull(),
+  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+}, (table) => [
+  index('upload_rewards_upload_viewer_event_idx').on(table.uploadId, table.viewerId, table.event),
+]);
 
 
 // System-defined roles - these are always available
@@ -344,3 +360,4 @@ export type Team = InferSelectModel<typeof teamTable>;
 export type TeamMembership = InferSelectModel<typeof teamMembershipTable>;
 export type TeamRole = InferSelectModel<typeof teamRoleTable>;
 export type TeamInvitation = InferSelectModel<typeof teamInvitationTable>;
+export type UploadReward = InferSelectModel<typeof uploadRewardTable>;
