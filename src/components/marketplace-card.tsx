@@ -5,6 +5,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import PurchaseButton from "@/components/purchase-button"
 import type { PURCHASABLE_ITEM_TYPE } from "@/db/schema"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 import { COMPONENTS } from "@/app/(dashboard)/dashboard/marketplace/components-catalog"
 
 interface MarketplaceCardProps {
@@ -43,13 +45,25 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
           {component.preview()}
         </div>
       </CardContent>
-      <CardFooter className="mt-4 flex justify-end">
-        {!isPurchased && (
+      <CardFooter className="mt-4 flex justify-end gap-2">
+        {!isPurchased ? (
           <PurchaseButton
             itemId={id}
             itemType={ITEM_TYPE}
             itemName={name}
           />
+        ) : (
+          component.onActivate && (
+            <Button
+              onClick={() => {
+                component.onActivate!()
+                toast.success("Aktiválva")
+              }}
+              variant="secondary"
+            >
+              Aktiválás
+            </Button>
+          )
         )}
       </CardFooter>
     </Card>
