@@ -26,10 +26,10 @@ export default function ThemeSwitcher() {
       onClick={toggleTheme}
       className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
     >
-      {resolvedTheme === "dark" ? (
-        <Sun className="size-5" />
+      {resolvedTheme === "light" ? (
+        <Sun className="size-5 animate-spin-slow" />
       ) : (
-        <Moon className="size-5" />
+        <Moon className="size-5 animate-sway" />
       )}
     </Button>
   )
