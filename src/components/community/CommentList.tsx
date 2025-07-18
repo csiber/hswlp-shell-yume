@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSessionStore } from "@/state/session";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import { PaperAirplaneIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { motion, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -106,6 +106,17 @@ export default function CommentList({ postId }: { postId: string }) {
     sendReaction(commentId, emoji, reacted);
   }
 
+  async function deleteComment(commentId: string) {
+    if (!confirm('Biztosan törlöd a hozzászólást?')) return;
+    try {
+      const res = await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
+      if (!res.ok) return;
+      setComments(cs => cs.filter(c => c.id !== commentId));
+    } catch {
+      // ignore
+    }
+  }
+
   async function submit() {
     if (!text.trim() || text.length > 500) return;
     try {
@@ -156,7 +167,17 @@ export default function CommentList({ postId }: { postId: string }) {
                     {dayjs(c.created_at).fromNow()}
                   </span>
                 </p>
-                <p className="text-gray-700 dark:text-gray-300">{c.text}</p>
+                <p className="text-gray-700 dark:text-gray-300">
+                  {c.text}
+                  {session?.user?.role === 'admin' && (
+                    <button
+                      onClick={() => deleteComment(c.id)}
+                      className="ml-1 text-red-500 hover:text-red-600"
+                    >
+                      <XMarkIcon className="inline h-4 w-4" />
+                    </button>
+                  )}
+                </p>
                 <div className="mt-1 flex items-center gap-1 text-xs">
                   {c.reactions.map((r) => (
                     <button
@@ -209,6 +230,12 @@ export default function CommentList({ postId }: { postId: string }) {
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              submit();
+            }
+          }}
           placeholder="Írj hozzászólást..."
           className="w-full rounded-md border border-gray-300 bg-white dark:bg-zinc-800 p-2 pr-8 text-sm focus:outline-none"
           maxLength={500}
