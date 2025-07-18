@@ -50,7 +50,8 @@ async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
 }
 
 export async function POST(req: Request) {
-  const session = await getSessionFromCookie()
+  try {
+    const session = await getSessionFromCookie()
 
   if (!session?.user?.id) {
     return jsonResponse({ success: false, error: 'Unauthorized' }, { status: 401 })
@@ -131,9 +132,9 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'Title required' }, { status: 400 })
   }
 
-  if (type === 'image' && await isNsfwImage(file, env)) {
-    return jsonResponse({ success: false, error: 'NSFW content detected' }, { status: 400 })
-  }
+    if (type === 'image' && await isNsfwImage(file, env)) {
+      return jsonResponse({ success: false, error: 'NSFW content detected' }, { status: 400 })
+    }
 
   if (albumId) {
     const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE album_id = ?1')
@@ -186,7 +187,6 @@ export async function POST(req: Request) {
     promptText = promptField
   }
 
-  try {
     await env.hswlp_r2.put(key, file)
 
     const url = `/api/files/${id}` // helyi proxy link, védett!
@@ -245,7 +245,7 @@ export async function POST(req: Request) {
       total_credits: creditsRow?.currentCredits ?? null,
     })
   } catch (err) {
-    console.error(err)
-    return jsonResponse({ success: false, error: 'Upload failed' }, { status: 500 })
+    console.error('Error handling /api/upload:', err)
+    return jsonResponse({ success: false, error: 'Server error' }, { status: 500 })
   }
 }
