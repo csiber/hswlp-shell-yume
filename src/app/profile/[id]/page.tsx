@@ -3,7 +3,14 @@ import { getSessionFromCookie } from '@/utils/auth'
 import ProfileClient from './profile-client'
 
 interface ApiResponse {
-  user: { id: string; name: string; email: string; avatar?: string | null; credits: number }
+  user: {
+    id: string
+    name: string
+    email: string
+    avatar?: string | null
+    credits: number
+    profileFrameEnabled: boolean
+  }
   uploads: {
     id: string
     type: 'image' | 'music' | 'prompt'
