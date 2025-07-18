@@ -14,9 +14,49 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { format, isPast } from "date-fns";
+import { isPast } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useTransactionStore } from "@/state/transaction";
+
+const TRANSACTION_TYPE_LABELS: Record<string, string> = {
+  PURCHASE: "Vásárlás",
+  USAGE: "Felhasználás",
+  MONTHLY_REFRESH: "Havi frissítés",
+  UPLOAD_REWARD: "Feltöltési jutalom",
+  SIGN_UP_BONUS: "Regisztrációs bónusz",
+};
+
+const UPLOAD_REWARD_ITEM_LABELS: Record<string, string> = {
+  image: "kép",
+  music: "zene",
+  prompt: "prompt",
+  video: "videó",
+};
+
+const huDateFormat: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString("hu-HU", huDateFormat);
+}
+
+function localizeTransactionType(type: string) {
+  return TRANSACTION_TYPE_LABELS[type] ?? type.toLowerCase().replace("_", " ");
+}
+
+function localizeDescription(description: string) {
+  const uploadRewardRegex = /^Upload reward \((.+)\)$/i;
+  const match = description.match(uploadRewardRegex);
+  if (match) {
+    const item = match[1].toLowerCase();
+    const itemHu = UPLOAD_REWARD_ITEM_LABELS[item] ?? item;
+    return `Feltöltési jutalom (${itemHu})`;
+  }
+  return description;
+}
 
 type TransactionData = Awaited<ReturnType<typeof getTransactions>>
 
@@ -87,10 +127,10 @@ export function TransactionHistory() {
                 {Boolean(data?.transactions.length && data?.transactions.length > 0) ? data?.transactions.map((transaction) => (
                   <TableRow key={transaction.id}>
                     <TableCell>
-                      {format(new Date(transaction.createdAt), "MMM d, yyyy")}
+                      {formatDate(new Date(transaction.createdAt))}
                     </TableCell>
                     <TableCell className="capitalize">
-                      {transaction.type.toLowerCase().replace("_", " ")}
+                      {localizeTransactionType(transaction.type)}
                     </TableCell>
                     <TableCell
                       className={
@@ -102,10 +142,10 @@ export function TransactionHistory() {
                       }
                     >
                       {transaction.type === "USAGE" ? "-" : "+"}
-                      {Math.abs(transaction.amount)}
+                      {Math.abs(transaction.amount)} pont
                     </TableCell>
                     <TableCell>
-                      {transaction.description}
+                      {localizeDescription(transaction.description)}
                       {transaction.type !== "USAGE" && transaction.expirationDate && (
                         <Badge
                           variant="secondary"
@@ -115,7 +155,7 @@ export function TransactionHistory() {
                             }`}
                         >
                           {isTransactionExpired(transaction) ? "Lejárt: " : "Lejárat: "}
-                          {format(new Date(transaction.expirationDate), "MMM d, yyyy")}
+                          {formatDate(new Date(transaction.expirationDate))}
                         </Badge>
                       )}
                     </TableCell>
@@ -139,15 +179,15 @@ export function TransactionHistory() {
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">
-                  {format(new Date(transaction.createdAt), "MMM d, yyyy")}
+                  {formatDate(new Date(transaction.createdAt))}
                 </span>
                 <span className="capitalize text-sm">
-                  {transaction.type.toLowerCase().replace("_", " ")}
+                  {localizeTransactionType(transaction.type)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-medium">
-                  {transaction.description}
+                  {localizeDescription(transaction.description)}
                 </span>
                 <span
                   className={
@@ -159,7 +199,7 @@ export function TransactionHistory() {
                   }
                 >
                   {transaction.type === "USAGE" ? "-" : "+"}
-                  {Math.abs(transaction.amount)}
+                  {Math.abs(transaction.amount)} pont
                 </span>
               </div>
               {transaction.type !== "USAGE" && transaction.expirationDate && (
@@ -171,7 +211,7 @@ export function TransactionHistory() {
                     }`}
                 >
                   {isTransactionExpired(transaction) ? "Lejárt: " : "Lejárat: "}
-                  {format(new Date(transaction.expirationDate), "MMM d, yyyy")}
+                  {formatDate(new Date(transaction.expirationDate))}
                 </Badge>
               )}
             </div>
