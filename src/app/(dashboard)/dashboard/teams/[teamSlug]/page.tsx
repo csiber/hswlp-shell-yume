@@ -20,7 +20,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDate } from "@/utils/format-date";
+import { formatDateLongHu } from "@/utils/format-date";
+import { translateRole } from "@/utils/translate-role";
 import { RemoveMemberButton } from "@/components/teams/remove-member-button";
 
 interface TeamPageProps {
@@ -40,13 +41,13 @@ export async function generateMetadata({ params }: TeamPageProps) {
 
   if (!team) {
     return {
-      title: "Team Not Found",
+      title: "Csapat nem található",
     };
   }
 
   return {
-    title: `${team.name} - Dashboard`,
-    description: team.description || `Team dashboard for ${team.name}`,
+    title: `${team.name} - Vezérlőpult`,
+    description: team.description || `Csapat vezérlőpultja: ${team.name}`,
   };
 }
 
@@ -80,7 +81,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
           items={[
             {
               href: "/dashboard",
-              label: "Dashboard"
+              label: "Vezérlőpult"
             },
             {
               href: "/dashboard/teams",
@@ -118,7 +119,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
         items={[
           {
             href: "/dashboard",
-            label: "Dashboard"
+            label: "Vezérlőpult"
           },
           {
             href: "/dashboard/teams",
@@ -175,14 +176,14 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
             <div className="p-6 border rounded-lg bg-card flex flex-col">
               <span className="text-sm font-medium text-muted-foreground">Szereped</span>
               <span className="text-2xl font-bold capitalize">
-                {teamSession?.teams?.find(t => t.id === team.id)?.role.name || "Member"}
+                {translateRole(teamSession?.teams?.find(t => t.id === team.id)?.role.name || "tag")}
               </span>
             </div>
 
             <div className="p-6 border rounded-lg bg-card flex flex-col">
               <span className="text-sm font-medium text-muted-foreground">Létrehozva</span>
               <span className="text-2xl font-bold">
-                {new Date(team.createdAt).toLocaleDateString()}
+                {formatDateLongHu(team.createdAt)}
               </span>
             </div>
           </div>
@@ -232,11 +233,11 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
                       </TableCell>
                       <TableCell>{member.user.email}</TableCell>
                       <TableCell className="capitalize">
-                        {member.roleName}
+                        {translateRole(member.roleName)}
                       </TableCell>
                       <TableCell>
                         {member.joinedAt !== null
-                          ? formatDate(member.joinedAt)
+                          ? formatDateLongHu(member.joinedAt)
                           : 'Nincs csatlakozva'}
                       </TableCell>
                       <TableCell>

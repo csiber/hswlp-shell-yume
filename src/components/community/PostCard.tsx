@@ -140,6 +140,11 @@ export default function PostCard({
       transition={{ duration: 0.3 }}
       className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
     >
+      {item.pinned && (
+        <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
+          📌 Rögzített
+        </span>
+      )}
       <div className="mb-3 flex items-center gap-3">
         <Avatar className="h-12 w-12">
           {item.user.avatar_url && (

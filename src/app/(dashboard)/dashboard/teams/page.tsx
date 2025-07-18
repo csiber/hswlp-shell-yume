@@ -14,6 +14,7 @@ import {
 import { PlusIcon, Users } from "lucide-react";
 import type { Route } from "next";
 import { PendingInvitations } from "./pending-invitations";
+import { translateRole } from "@/utils/translate-role";
 
 export const metadata = {
   title: "Csapataim",
@@ -126,7 +127,7 @@ export default async function TeamsIndexPage() {
                       {team.role && (
                         <CardDescription>
                           Szereped:{" "}
-                          <span className="capitalize">{team.role.name}</span>
+                          <span className="capitalize">{translateRole(team.role.name)}</span>
                         </CardDescription>
                       )}
                     </div>

@@ -55,7 +55,7 @@ export function TeamSwitcher({
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeTeam?.name || "No Team"}
+                  {activeTeam?.name || "Nincs csapat"}
                 </span>
                 <span className="truncate text-xs">{activeTeam?.plan || "Válassz csapatot"}</span>
               </div>
@@ -69,7 +69,7 @@ export function TeamSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Teams
+              Csapatok
             </DropdownMenuLabel>
             {teams.length > 0 ? (
               teams.map((team, index) => (

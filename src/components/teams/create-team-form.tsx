@@ -14,9 +14,9 @@ import { useServerAction } from "zsa-react";
 import { createTeamAction } from "@/actions/team-actions";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Team name is required").max(100, "Team name is too long"),
-  description: z.string().max(1000, "Description is too long").optional(),
-  avatarUrl: z.string().url("Invalid URL").max(600, "URL is too long").optional().or(z.literal("")),
+  name: z.string().min(1, "A csapat neve kötelező").max(100, "A csapat neve túl hosszú"),
+  description: z.string().max(1000, "A leírás túl hosszú").optional(),
+  avatarUrl: z.string().url("Érvénytelen URL").max(600, "Az URL túl hosszú").optional().or(z.literal("")),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -27,14 +27,14 @@ export function CreateTeamForm() {
   const { execute: createTeam } = useServerAction(createTeamAction, {
     onError: (error) => {
       toast.dismiss();
-      toast.error(error.err?.message || "Failed to create team");
+      toast.error(error.err?.message || "Nem sikerült létrehozni a csapatot");
     },
     onStart: () => {
-      toast.loading("Creating team...");
+      toast.loading("Csapat létrehozása...");
     },
     onSuccess: (result) => {
       toast.dismiss();
-      toast.success("Team created successfully");
+      toast.success("A csapat sikeresen létrejött");
       router.push(`/dashboard/teams/${result.data.data.slug}` as Route);
       router.refresh();
     }
@@ -67,12 +67,12 @@ export function CreateTeamForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Team Name</FormLabel>
+              <FormLabel>Csapat neve</FormLabel>
               <FormControl>
-                <Input placeholder="Enter team name" {...field} />
+                <Input placeholder="Add meg a csapat nevét" {...field} />
               </FormControl>
               <FormDescription>
-                A unique name for your team
+                Egyedi név a csapatod számára
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -84,16 +84,16 @@ export function CreateTeamForm() {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Leírás</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Enter a brief description of your team"
+                  placeholder="Adj egy rövid leírást a csapatodról"
                   {...field}
                   value={field.value || ""}
                 />
               </FormControl>
               <FormDescription>
-                Optional description of your team&apos;s purpose
+                Opcionális leírás a csapat céljáról
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -101,7 +101,7 @@ export function CreateTeamForm() {
         />
 
         <Button type="submit" className="w-full">
-          Create Team
+          Csapat létrehozása
         </Button>
       </form>
     </Form>
