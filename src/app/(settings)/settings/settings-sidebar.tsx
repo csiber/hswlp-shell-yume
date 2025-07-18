@@ -29,17 +29,17 @@ interface SidebarNavItem {
 
 const sidebarNavItems: SidebarNavItem[] = [
   {
-    title: "Profile",
+    title: "Profil",
     href: "/settings",
     icon: User,
   },
   {
-    title: "Security",
+    title: "Biztonság",
     href: "/settings/security",
     icon: Lock,
   },
   {
-    title: "Sessions",
+    title: "Munkamenetek",
     href: "/settings/sessions",
     icon: Smartphone,
   },

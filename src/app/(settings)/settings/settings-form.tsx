@@ -33,11 +33,11 @@ export function SettingsForm() {
       toast.error(error.err?.message)
     },
     onStart: () => {
-      toast.loading("Signing you in...")
+      toast.loading("Adatok mentése...")
     },
     onSuccess: () => {
       toast.dismiss()
-      toast.success("Signed in successfully")
+      toast.success("Sikeres mentés")
       router.refresh()
     }
   })
@@ -99,9 +99,9 @@ export function SettingsForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Profile Settings</CardTitle>
+        <CardTitle>Profil beállítások</CardTitle>
         <CardDescription>
-          Update your personal information and contact details.
+          Személyes adataid és elérhetőségeid frissítése.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -113,7 +113,7 @@ export function SettingsForm() {
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>First Name</FormLabel>
+                    <FormLabel>Keresztnév</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -126,7 +126,7 @@ export function SettingsForm() {
                 name="lastName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Last Name</FormLabel>
+                    <FormLabel>Vezetéknév</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -138,7 +138,7 @@ export function SettingsForm() {
 
 
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>E-mail cím</FormLabel>
               <FormControl>
                 <Input
                   type="email"
@@ -147,14 +147,14 @@ export function SettingsForm() {
                 />
               </FormControl>
               <FormDescription>
-                This is the email you use to sign in.
+                Ez az a e-mail cím, amellyel bejelentkezel.
               </FormDescription>
               <FormMessage />
             </FormItem>
 
             <div className="flex justify-end">
               <Button type="submit">
-                Save changes
+                Változtatások mentése
               </Button>
             </div>
           </form>

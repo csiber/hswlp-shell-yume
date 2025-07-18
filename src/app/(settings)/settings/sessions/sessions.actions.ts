@@ -21,8 +21,8 @@ export const getSessionsAction = createServerAction()
       async () => {
         const session = await requireVerifiedEmail();
 
-        if (!session?.user?.id) {
-          throw new ZSAError("NOT_AUTHORIZED", "Unauthorized");
+          if (!session?.user?.id) {
+            throw new ZSAError("NOT_AUTHORIZED", "Nincs jogosultság");
         }
 
         const sessionIds = await getAllSessionIdsOfUser(session.user.id);
@@ -83,11 +83,11 @@ export const deleteSessionAction = createServerAction()
       async () => {
         const session = await getSessionFromCookie();
 
-        if (!session) {
-          throw new ZSAError(
-            "NOT_AUTHORIZED",
-            "Not authenticated"
-          );
+          if (!session) {
+            throw new ZSAError(
+              "NOT_AUTHORIZED",
+              "Nincs bejelentkezve"
+            );
         }
 
         await deleteKVSession(input.sessionId, session.user.id);
