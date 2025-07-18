@@ -48,14 +48,20 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
 
   const fetchQuota = async (u: string) => {
     try {
+      // Refresh session to ensure latest quota values
+      await fetch('/api/get-session', { credentials: 'include' })
       const res = await fetch(u, { credentials: 'include' })
       if (!res.ok) throw new Error('failed')
-      return (await res.json()) as { used: number; limit: number }
+      const data = (await res.json()) as { used?: unknown; limit?: unknown }
+      return {
+        used: Number(data.used) || 0,
+        limit: Number(data.limit) || 0,
+      }
     } catch (err) {
       console.warn('Failed to fetch quota', err)
       return {
-        used: sessionUser?.usedStorageMb ?? 0,
-        limit: sessionUser?.uploadLimitMb ?? 0,
+        used: Number(sessionUser?.usedStorageMb) || 0,
+        limit: Number(sessionUser?.uploadLimitMb) || 0,
       }
     }
   }
@@ -66,10 +72,9 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   )
 
   useEffect(() => {
-    if (sessionUser?.id) {
-      mutateQuota().catch((err) => console.warn('Failed to refresh quota', err))
-    }
-  }, [sessionUser?.id])
+    if (!sessionUser?.id) return
+    mutateQuota().catch((err) => console.warn('Failed to refresh quota', err))
+  }, [sessionUser?.id, mutateQuota])
   const usedMb = Number(quota?.used ?? sessionUser?.usedStorageMb ?? 0)
   const limitMb = Number(quota?.limit ?? sessionUser?.uploadLimitMb ?? 0)
   const percent =
