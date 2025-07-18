@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/hu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
@@ -16,6 +17,7 @@ import { useSessionStore } from "@/state/session";
 import type { FeedItem } from "./CommunityFeedV3";
 
 dayjs.extend(relativeTime);
+dayjs.locale("hu");
 
 interface PostCardProps {
   item: FeedItem;

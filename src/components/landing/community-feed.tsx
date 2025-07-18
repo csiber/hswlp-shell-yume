@@ -39,7 +39,7 @@ export default function CommunityFeed() {
     return (
       <section className="bg-gray-50 text-gray-900 py-24 dark:bg-[#0c0c1f] dark:text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p>Loading...</p>
+          <p>Betöltés...</p>
         </div>
       </section>
     );
