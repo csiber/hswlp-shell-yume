@@ -7,7 +7,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
-import Image from 'next/image'
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
@@ -171,7 +170,8 @@ export default function PostCard({
         {item.type === "image" && (
           <ImageLightbox src={item.url} alt={item.title} onOpen={handleView}>
             <div className="relative w-full h-48">
-              <Image src={item.url} alt={item.title} fill className="object-cover rounded-xl" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.url} alt={item.title} className="object-cover rounded-xl w-full h-full" />
             </div>
           </ImageLightbox>
         )}
@@ -179,11 +179,11 @@ export default function PostCard({
           <div className="flex flex-col items-center gap-2">
             {meta?.picture && (
               <div className="relative w-full h-48">
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={meta.picture}
                   alt={meta.title || item.title}
-                  fill
-                  className="object-cover rounded-xl"
+                  className="object-cover rounded-xl w-full h-full"
                 />
               </div>
             )}

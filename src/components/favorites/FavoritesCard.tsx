@@ -1,5 +1,4 @@
 "use client"
-import Image from 'next/image'
 import { Heart } from 'lucide-react'
 import ImageLightbox from '@/components/ui/ImageLightbox'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
@@ -30,7 +29,8 @@ export default function FavoritesCard({ item, onRemove }: { item: FavoriteItem; 
       </TooltipProvider>
       {item.mime?.startsWith('image/') && (
         <ImageLightbox src={item.url} alt={item.title}>
-          <Image src={item.url} alt={item.title} width={400} height={400} className="h-48 w-full object-cover" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={item.url} alt={item.title} className="h-48 w-full object-cover" />
         </ImageLightbox>
       )}
       {item.mime?.startsWith('audio/') && (

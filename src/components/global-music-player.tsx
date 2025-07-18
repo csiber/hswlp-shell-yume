@@ -5,7 +5,6 @@ import { Play, Pause, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import LikeButton from "@/components/community/LikeButton";
-import Image from 'next/image'
 
 interface Track {
   id: string;
@@ -127,7 +126,8 @@ export default function GlobalMusicPlayer() {
       >
         <div className="flex items-center min-w-0 gap-2">
           {meta?.picture ? (
-            <Image
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
               src={meta.picture}
               alt={meta.title || track.title}
               width={32}
@@ -165,7 +165,8 @@ export default function GlobalMusicPlayer() {
         <div className="flex items-center justify-between gap-4 pb-2">
           <div className="flex items-center min-w-0 gap-2">
             {meta?.picture ? (
-              <Image
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
                 src={meta.picture}
                 alt={meta.title || track.title}
                 width={48}
