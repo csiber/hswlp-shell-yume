@@ -4,6 +4,7 @@ import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { WebhookService } from '@/app/services/WebhookService'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
+import { updateAllSessionsOfUser } from '@/utils/kv-session'
 import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
 import { parseBuffer } from 'music-metadata-browser'
@@ -99,6 +100,11 @@ export async function POST(req: Request) {
   }
 
   const { env } = getCloudflareContext()
+
+  const fileSizeMb = file.size / (1024 * 1024)
+  if ((session.user.usedStorageMb ?? 0) + fileSizeMb > (session.user.uploadLimitMb ?? 0)) {
+    throw new Error('Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.')
+  }
 
   let meta: Awaited<ReturnType<typeof parseBuffer>> | null = null
   let arrayBuffer: ArrayBuffer | null = null
@@ -208,6 +214,11 @@ export async function POST(req: Request) {
     await env.DB.prepare(
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
     ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
+
+    await env.DB.prepare(
+      'UPDATE user SET used_storage_mb = COALESCE(used_storage_mb,0) + ?1 WHERE id = ?2'
+    ).bind(fileSizeMb, session.user.id).run()
+    await updateAllSessionsOfUser(session.user.id)
 
     await updateUserCredits(session.user.id, creditValue)
     await logTransaction({
