@@ -33,6 +33,9 @@ export const userTable = sqliteTable("user", {
   nickname: text({
     length: 255,
   }).notNull().unique(),
+  nicknameUpdatedAt: integer({
+    mode: "timestamp",
+  }),
   email: text({
     length: 255,
   }).unique(),

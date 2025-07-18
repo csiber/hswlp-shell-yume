@@ -63,7 +63,7 @@ export interface KVSession {
  * IF YOU MAKE ANY CHANGES TO THE KVSESSION TYPE ABOVE, YOU NEED TO INCREMENT THIS VERSION.
  * THIS IS HOW WE TRACK WHEN WE NEED TO UPDATE THE SESSIONS IN THE KV STORE.
  */
-export const CURRENT_SESSION_VERSION = 3;
+export const CURRENT_SESSION_VERSION = 4;
 
 export async function getKV() {
   const { env } = getCloudflareContext();
@@ -162,6 +162,10 @@ export async function getKVSession(sessionId: string, userId: string): Promise<K
 
   if (session?.user?.lastCreditRefreshAt) {
     session.user.lastCreditRefreshAt = new Date(session.user.lastCreditRefreshAt);
+  }
+
+  if (session?.user?.nicknameUpdatedAt) {
+    session.user.nicknameUpdatedAt = new Date(session.user.nicknameUpdatedAt);
   }
 
   if (session?.user?.emailVerified) {

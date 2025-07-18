@@ -15,11 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { updateUserProfileAction } from "./settings.actions";
 import { useEffect } from "react";
 import { useSessionStore } from "@/state/session";
-import { userSettingsSchema } from "@/schemas/settings.schema";
-import { useServerAction } from "zsa-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
@@ -27,31 +24,16 @@ import { useRouter } from "next/navigation";
 export function SettingsForm() {
   const router = useRouter()
 
-  const { execute: updateUserProfile } = useServerAction(updateUserProfileAction, {
-    onError: (error) => {
-      toast.dismiss()
-      toast.error(error.err?.message)
-    },
-    onStart: () => {
-      toast.loading("Adatok mentése...")
-    },
-    onSuccess: () => {
-      toast.dismiss()
-      toast.success("Sikeres mentés")
-      router.refresh()
-    }
-  })
-
   const { session, isLoading } = useSessionStore();
-  const form = useForm<z.infer<typeof userSettingsSchema>>({
-    resolver: zodResolver(userSettingsSchema)
+  const nicknameSchema = z.object({
+    nickname: z.string().min(3).max(20).regex(/^[a-zA-Z0-9_-]{3,20}$/)
+  })
+  const form = useForm<z.infer<typeof nicknameSchema>>({
+    resolver: zodResolver(nicknameSchema)
   });
 
   useEffect(() => {
-    form.reset({
-      firstName: session?.user.firstName ?? '',
-      lastName: session?.user.lastName ?? '',
-    });
+    form.reset({ nickname: session?.user.nickname ?? '' })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session])
 
@@ -92,8 +74,35 @@ export function SettingsForm() {
     );
   }
 
-  async function onSubmit(values: z.infer<typeof userSettingsSchema>) {
-    updateUserProfile(values)
+  const canChangeNickname =
+    (session.user.currentCredits ?? 0) >= 50 &&
+    (!session.user.nicknameUpdatedAt ||
+      (Date.now() - new Date(session.user.nicknameUpdatedAt).getTime()) / (1000 * 60 * 60 * 24) > 30)
+
+  async function onSubmit(values: z.infer<typeof nicknameSchema>) {
+    if (!canChangeNickname) {
+      toast.error('Not enough credits to change nickname.')
+      return
+    }
+    toast.loading('Adatok mentése...')
+    try {
+      const res = await fetch('/api/user/update', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values)
+      })
+      const data = await res.json()
+      toast.dismiss()
+      if (res.ok && data.success) {
+        toast.success('Sikeres mentés')
+        router.refresh()
+      } else {
+        toast.error(data.error || 'Hiba történt')
+      }
+    } catch {
+      toast.dismiss()
+      toast.error('Hálózati hiba')
+    }
   }
 
   return (
@@ -108,33 +117,32 @@ export function SettingsForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="firstName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Keresztnév</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="lastName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Vezetéknév</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="space-y-2">
+                <FormLabel>Keresztnév</FormLabel>
+                <Input disabled value={session.user.firstName ?? ''} />
+              </div>
+              <div className="space-y-2">
+                <FormLabel>Vezetéknév</FormLabel>
+                <Input disabled value={session.user.lastName ?? ''} />
+              </div>
             </div>
+
+            <FormField
+              control={form.control}
+              name="nickname"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Felhasználónév / Nicknév</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    50 kreditbe kerül és 30 naponta egyszer módosítható.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
 
             <FormItem>
@@ -153,7 +161,7 @@ export function SettingsForm() {
             </FormItem>
 
             <div className="flex justify-end">
-              <Button type="submit">
+              <Button type="submit" disabled={!canChangeNickname}>
                 Változtatások mentése
               </Button>
             </div>
