@@ -28,6 +28,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { useSessionStore } from "@/state/session"
+import { translateRole } from "@/utils/translate-role"
 
 export type NavItem = {
   title: string
@@ -69,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           // TODO Get the actual logo when we implement team avatars
           logo: Building2,
           // Default plan - you might want to add plan data to your team structure
-          plan: team.role.name || "Member"
+          plan: translateRole(team.role.name || "member")
         };
       });
 

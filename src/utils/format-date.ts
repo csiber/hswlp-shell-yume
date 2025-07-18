@@ -43,3 +43,12 @@ export function formatDateHu(date: Date | string): string {
     minute: '2-digit',
   });
 }
+
+export function formatDateLongHu(date: Date | string): string {
+  const d = date instanceof Date ? date : new Date(date);
+  return d.toLocaleDateString('hu-HU', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
