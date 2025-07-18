@@ -14,10 +14,14 @@ export default function ShellLayout({ children }: ShellLayoutProps) {
     <SidebarProvider>
       <div className="flex h-full w-full flex-col">
         <TopBar />
-        <div className="flex flex-1">
-          <LeftSidebar />
-          <main className="flex-1">{children}</main>
-          <RightSidebar />
+        <div className="grid flex-1 grid-cols-12">
+          <div className="col-span-2">
+            <LeftSidebar />
+          </div>
+          <main className="col-span-8">{children}</main>
+          <div className="hidden lg:block lg:col-span-2">
+            <RightSidebar />
+          </div>
         </div>
       </div>
     </SidebarProvider>
