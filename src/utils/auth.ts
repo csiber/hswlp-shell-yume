@@ -52,6 +52,8 @@ export async function getUserFromDB(userId: string) {
       nicknameUpdatedAt: true,
       uploadBanUntil: true,
       uploadBanReason: true,
+      uploadLimitMb: true,
+      usedStorageMb: true,
     },
   });
 }
