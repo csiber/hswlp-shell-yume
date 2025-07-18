@@ -17,15 +17,15 @@ export default async function BillingPage() {
         items={[
           {
             href: "/dashboard",
-            label: "Dashboard"
+            label: "Dashboard",
           },
           {
             href: "/dashboard/billing",
-            label: "Billing"
-          }
+            label: "Billing",
+          },
         ]}
       />
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+      <div className="flex flex-1 flex-col gap-4 p-4 pt-0 w-full">
         <CreditPackages />
         <div className="mt-4">
           <TransactionHistory />
