@@ -71,7 +71,7 @@ export const userTable = sqliteTable("user", {
   emojiReactionsEnabled: integer().default(0).notNull(),
   points: integer().default(0),
   bonusFrame: integer().default(0),
-  badgeUnlocked: integer().default(0).notNull(),
+  badgeUnlocked: integer("badge_unlocked").default(0),
   uploadBanUntil: integer({
     mode: "timestamp",
   }),
