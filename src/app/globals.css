@@ -117,3 +117,38 @@
 .animate-fade-in {
   animation: fade-in 0.5s ease-out both;
 }
+
+@keyframes glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0px #facc15);
+  }
+  50% {
+    filter: drop-shadow(0 0 6px #facc15);
+  }
+}
+
+.animate-glow {
+  animation: glow 1.6s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+.animate-sway {
+  animation: sway 2.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin 4s linear infinite;
+  }
+}
