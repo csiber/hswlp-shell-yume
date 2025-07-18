@@ -16,8 +16,12 @@ export default async function MarketplacePage() {
       <PageHeader
         items={[
           {
+            href: "/dashboard",
+            label: "Dashboard",
+          },
+          {
             href: "/dashboard/marketplace",
-            label: "Marketplace",
+            label: "Vásártér",
           },
         ]}
       />
@@ -25,14 +29,14 @@ export default async function MarketplacePage() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold mt-4">Vásártér</h1>
           <p className="text-muted-foreground mt-2">
-            Purchase and use our premium components using your credits
+            Vásárolj és használd prémium termékeinket kreditjeid felhasználásával
           </p>
         </div>
 
         <Alert
           color="warning"
-          title="Demo Template Feature"
-          description="This marketplace page demonstrates how to implement a credit-based billing system in your SaaS application. Feel free to use this as a starting point and customize it for your specific needs."
+          title="Demo funkció"
+          description="Ez az oldal bemutatja, hogyan valósítható meg a kredit alapú fizetés. Saját igényeid szerint továbbfejlesztheted."
           className="mb-6"
         />
 

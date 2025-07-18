@@ -54,8 +54,12 @@ export default async function TeamsIndexPage() {
       <PageHeader
         items={[
           {
+            href: "/dashboard",
+            label: "Dashboard"
+          },
+          {
             href: "/dashboard/teams",
-            label: "Teams"
+            label: "Csapatok"
           }
         ]}
       />

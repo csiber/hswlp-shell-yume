@@ -79,8 +79,12 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
         <PageHeader
           items={[
             {
+              href: "/dashboard",
+              label: "Dashboard"
+            },
+            {
               href: "/dashboard/teams",
-              label: "Teams"
+              label: "Csapatok"
             }
           ]}
         />
@@ -113,8 +117,12 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
       <PageHeader
         items={[
           {
+            href: "/dashboard",
+            label: "Dashboard"
+          },
+          {
             href: "/dashboard/teams",
-            label: "Teams"
+            label: "Csapatok"
           },
           {
             href: `/dashboard/teams/${teamSlug}`,
@@ -160,19 +168,19 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
           {/* Quick stats */}
           <div className="col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-6 border rounded-lg bg-card flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground">Team Credits</span>
+              <span className="text-sm font-medium text-muted-foreground">Csapat kreditek</span>
               <span className="text-2xl font-bold">{team.creditBalance || 0}</span>
             </div>
 
             <div className="p-6 border rounded-lg bg-card flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground">Your Role</span>
+              <span className="text-sm font-medium text-muted-foreground">Szereped</span>
               <span className="text-2xl font-bold capitalize">
                 {teamSession?.teams?.find(t => t.id === team.id)?.role.name || "Member"}
               </span>
             </div>
 
             <div className="p-6 border rounded-lg bg-card flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground">Created</span>
+              <span className="text-sm font-medium text-muted-foreground">Létrehozva</span>
               <span className="text-2xl font-bold">
                 {new Date(team.createdAt).toLocaleDateString()}
               </span>
@@ -185,7 +193,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
 
           {/* Team Members Table */}
           <div className="col-span-3 border rounded-lg p-6 bg-card">
-            <h2 className="text-xl font-semibold mb-4">Team Members</h2>
+            <h2 className="text-xl font-semibold mb-4">Csapattagok</h2>
 
             <Table>
               <TableHeader>
@@ -229,7 +237,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
                       <TableCell>
                         {member.joinedAt !== null
                           ? formatDate(member.joinedAt)
-                          : 'Not joined'}
+                          : 'Nincs csatlakozva'}
                       </TableCell>
                       <TableCell>
                         {member.isActive

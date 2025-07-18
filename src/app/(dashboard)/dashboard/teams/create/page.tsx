@@ -21,6 +21,10 @@ export default async function CreateTeamPage() {
       <PageHeader
         items={[
           {
+            href: "/dashboard",
+            label: "Dashboard"
+          },
+          {
             href: "/dashboard/teams",
             label: "Csapatok"
           },
