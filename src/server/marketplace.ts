@@ -64,18 +64,11 @@ export async function activateMarketplaceComponent(
 
   const component = COMPONENTS.find(c => c.id === componentId);
 
-  const existing = await db
-    .select()
-    .from(marketplaceActivationsTable)
-    .where(
-      and(
-        eq(marketplaceActivationsTable.user_id, userId),
-        eq(marketplaceActivationsTable.component_id, componentId)
-      )
-    )
-    .limit(1);
 
-  if (existing.length > 0) {
+  const existing = await db.query.marketplaceActivationsTable.findFirst({
+    where: and(eq(marketplaceActivationsTable.userId, userId), eq(marketplaceActivationsTable.componentId, componentId)),
+  });
+  if (existing) {
     throw new Error("Component already active");
   }
 
@@ -113,7 +106,7 @@ export async function activateMarketplaceComponent(
       if (component?.props && typeof component.props.addMb === 'number') {
         await db
           .update(userTable)
-          .set({ upload_limit_mb: sql`${userTable.upload_limit_mb} + ${component.props.addMb}` })
+          .set({ uploadLimitMb: sql`${userTable.uploadLimitMb} + ${component.props.addMb}` })
           .where(eq(userTable.id, userId));
         await updateAllSessionsOfUser(userId);
       }

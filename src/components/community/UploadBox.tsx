@@ -22,6 +22,8 @@ import AudioWaveform from "@/components/AudioWaveform";
 import "./UploadBox.css";
 import { useSessionStore } from "@/state/session";
 import UploadBanAlert from "@/components/UploadBanAlert";
+import useSWR from 'swr'
+import { Progress } from "@/components/ui/progress";
 
 function detectType(file: File): "image" | "music" | "prompt" {
   if (file.type.startsWith("image/")) return "image";
@@ -42,6 +44,11 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [albumId, setAlbumId] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
+  const { data: quota, mutate: mutateQuota } = useSWR<{ used: number; limit: number }>(
+    '/api/storage-quota',
+    (u: string) => fetch(u).then(res => res.json() as Promise<{ used: number; limit: number }>)
+  );
+  const percent = quota?.limit ? (quota.used / quota.limit) * 100 : 0;
 
   if (uploadBanUntil && new Date(uploadBanUntil) > new Date()) {
     return <UploadBanAlert />;
@@ -125,6 +132,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         if (res.ok && data.success) {
           success = true;
           toast.success(`Feltöltve: ${file.name}`);
+          await mutateQuota();
         } else {
           toast.error(data.error || `Hiba a(z) ${file.name} feltöltésekor`);
         }
@@ -138,7 +146,10 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     setTitles({});
     setAlbumId(null);
     setAlbumName(null);
-    if (success && onUpload) onUpload();
+    if (success) {
+      await mutateQuota();
+      if (onUpload) onUpload();
+    }
   };
 
   const handleDrop = async (e: React.DragEvent) => {
@@ -245,11 +256,24 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
             })}
           </ul>
         )}
+        {quota && (
+          <>
+            <Progress className="mt-2" value={percent} />
+            <p className="text-xs text-muted-foreground text-center mt-1">
+              {Math.round(quota.used)} MB / {quota.limit} MB
+            </p>
+            {percent >= 100 && (
+              <p className="mt-2 text-center text-sm animate-pulse">
+                👉 Több tárhelyre van szükséged? Vásárolj a Marketplace-en!
+              </p>
+            )}
+          </>
+        )}
       </CardContent>
       <CardFooter className="flex justify-end">
         <button
           onClick={handleUpload}
-          disabled={loading}
+          disabled={loading || percent >= 100}
           className={clsx(
             "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
             loading
