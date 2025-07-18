@@ -68,10 +68,10 @@ export const userTable = sqliteTable("user", {
   custom_avatar_unlocked: integer().default(0),
   selectedAvatarStyle: text(),
   pinnedPostId: text(),
-  emojiReactionsEnabled: integer().default(0),
+  emojiReactionsEnabled: integer().default(0).notNull(),
   points: integer().default(0),
   bonusFrame: integer().default(0),
-  badgeUnlocked: integer().default(0),
+  badgeUnlocked: integer().default(0).notNull(),
   uploadBanUntil: integer({
     mode: "timestamp",
   }),
