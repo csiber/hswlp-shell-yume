@@ -4,6 +4,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { consumeCredits } from '@/utils/credits'
 import { jsonResponse } from '@/utils/api'
 import { withRateLimit } from '@/utils/with-rate-limit'
+import { createHash } from 'crypto'
 
 export async function PUT(req: NextRequest, context: { params: { id: string } }) {
   const session = await getSessionFromCookie()
@@ -17,31 +18,42 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
   return withRateLimit(async () => {
     const { id } = context.params
 
-    const row = await env.DB.prepare('SELECT user_id, title, description, tags, note FROM uploads WHERE id = ?1')
+    const row = await env.DB.prepare('SELECT user_id, title, description, tags, note, created_at, moderation_status FROM uploads WHERE id = ?1')
       .bind(id)
-      .first<{ user_id: string; title: string | null; description: string | null; tags: string | null; note: string | null }>()
+      .first<{ user_id: string; title: string | null; description: string | null; tags: string | null; note: string | null; created_at: string; moderation_status: string | null }>()
 
     if (!row || row.user_id !== session.user.id) {
       return jsonResponse({ success: false, error: 'Not found' }, { status: 404 })
     }
 
+    const createdAt = new Date(row.created_at)
+    const editableWindow = 1000 * 60 * 60
+    const isFreeEdit = Date.now() - createdAt.getTime() < editableWindow
+
     let cost = 0
-    if (body.title !== undefined && body.title !== row.title) cost += 1
-    if (body.description !== undefined && body.description !== row.description) cost += 2
-    if (body.tags !== undefined && body.tags !== row.tags) cost += 1
+    const changedTitle = body.title !== undefined && body.title !== row.title
+    const changedDescription = body.description !== undefined && body.description !== row.description
+    const changedTags = body.tags !== undefined && body.tags !== row.tags
+
+    if (!isFreeEdit) {
+      if (changedTitle) cost += 1
+      if (changedDescription) cost += 2
+      if (changedTags) cost += 1
+    }
 
     const updates: { field: string; oldValue: string | null; newValue: string | null }[] = []
-    if (body.title !== undefined && body.title !== row.title) {
-      updates.push({ field: 'title', oldValue: row.title, newValue: body.title })
+    if (changedTitle) {
+      updates.push({ field: 'title', oldValue: row.title, newValue: body.title! })
     }
-    if (body.description !== undefined && body.description !== row.description) {
-      updates.push({ field: 'description', oldValue: row.description, newValue: body.description })
+    if (changedDescription) {
+      updates.push({ field: 'description', oldValue: row.description, newValue: body.description! })
     }
-    if (body.tags !== undefined && body.tags !== row.tags) {
-      updates.push({ field: 'tags', oldValue: row.tags, newValue: body.tags })
+    if (changedTags) {
+      updates.push({ field: 'tags', oldValue: row.tags, newValue: body.tags! })
     }
-    if (body.note !== undefined && body.note !== row.note) {
-      updates.push({ field: 'note', oldValue: row.note, newValue: body.note })
+    const changedNote = body.note !== undefined && body.note !== row.note
+    if (changedNote) {
+      updates.push({ field: 'note', oldValue: row.note, newValue: body.note! })
     }
 
     if (cost > 0) {
@@ -52,16 +64,28 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
       }
     }
 
+    const newModeration = (changedDescription || changedTags) ? 'pending' : row.moderation_status
     await env.DB.prepare(
-      'UPDATE uploads SET title = COALESCE(?2,title), description = ?3, tags = ?4, note = ?5 WHERE id = ?1'
-    ).bind(id, body.title, body.description, body.tags, body.note).run()
+      'UPDATE uploads SET title = COALESCE(?2,title), description = ?3, tags = ?4, note = ?5, moderation_status = ?6 WHERE id = ?1'
+    ).bind(id, body.title, body.description, body.tags, body.note, newModeration).run()
+
+    const latest = await env.DB.prepare('SELECT title, description, tags FROM uploads WHERE id = ?1')
+      .bind(id)
+      .first<{ title: string | null; description: string | null; tags: string | null }>()
+
+    const input = `${latest?.title ?? ''}|${latest?.description ?? ''}|${latest?.tags ?? ''}`
+    const hash = createHash('sha256').update(input).digest('hex')
 
     for (const update of updates) {
       await env.DB.prepare(
-        'INSERT INTO upload_edits (upload_id, user_id, field, old_value, new_value) VALUES (?1, ?2, ?3, ?4, ?5)'
-      ).bind(id, session.user.id, update.field, update.oldValue, update.newValue).run()
+        'INSERT INTO upload_edits (upload_id, user_id, field, old_value, new_value, hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6)'
+      ).bind(id, session.user.id, update.field, update.oldValue, update.newValue, hash).run()
     }
 
-    return jsonResponse({ success: true, cost })
+    const meta = await env.DB.prepare(
+      'SELECT MAX(created_at) as last_edit_at, COUNT(*) as edit_count FROM upload_edits WHERE upload_id = ?1'
+    ).bind(id).first<{ last_edit_at: string | null; edit_count: number | null }>()
+
+    return jsonResponse({ success: true, cost, last_edit_at: meta?.last_edit_at ?? null, edit_count: meta?.edit_count ?? 0 })
   }, { identifier: 'upload-edit', limit: 10, windowInSeconds: 60, userIdentifier: session.user.id })
 }
