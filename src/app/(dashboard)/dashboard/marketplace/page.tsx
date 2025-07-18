@@ -2,13 +2,11 @@ import { Alert } from "@heroui/react";
 import { COMPONENTS } from "./components-catalog";
 import { MarketplaceCard } from "@/components/marketplace-card";
 import { getSessionFromCookie } from "@/utils/auth";
-import { getUserPurchasedItems } from "@/utils/credits";
+import { getUserActiveComponents } from "@/server/marketplace";
 
 export default async function MarketplacePage() {
   const session = await getSessionFromCookie();
-  const purchasedItems = session
-    ? await getUserPurchasedItems(session.userId)
-    : new Set();
+  const activeComponents = session ? await getUserActiveComponents(session.userId) : new Set();
 
   return (
     <>
@@ -37,7 +35,7 @@ export default async function MarketplacePage() {
               description={component.description}
               credits={component.credits}
               containerClass={component.containerClass}
-              isPurchased={purchasedItems.has(`COMPONENT:${component.id}`)}
+              isActive={activeComponents.has(component.id)}
             />
           ))}
         </div>

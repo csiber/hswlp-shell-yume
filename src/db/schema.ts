@@ -63,6 +63,15 @@ export const userTable = sqliteTable("user", {
   lastCreditRefreshAt: integer({
     mode: "timestamp",
   }),
+  // Marketplace feature flags
+  profileFrameEnabled: integer().default(0),
+  customAvatarUnlocked: integer().default(0),
+  selectedAvatarStyle: text(),
+  pinnedPostId: text(),
+  emojiReactionsEnabled: integer().default(0),
+  points: integer().default(0),
+  bonusFrame: integer().default(0),
+  badgeUnlocked: integer().default(0),
 }, (table) => ([
   index('email_idx').on(table.email),
   index('nickname_idx').on(table.nickname),
@@ -182,6 +191,29 @@ export const uploadRewardTable = sqliteTable("upload_rewards", {
 }, (table) => [
   index('upload_rewards_upload_viewer_event_idx').on(table.uploadId, table.viewerId, table.event),
 ]);
+
+
+export const postsTable = sqliteTable("posts", {
+  id: text().primaryKey().$defaultFn(() => `post_${createId()}`).notNull(),
+  userId: text().notNull().references(() => userTable.id),
+  content: text().notNull(),
+  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+});
+
+export const highlightedPostsTable = sqliteTable("highlighted_posts", {
+  id: text().primaryKey().$defaultFn(() => `hlp_${createId()}`).notNull(),
+  postId: text().notNull().references(() => postsTable.id),
+  userId: text().notNull().references(() => userTable.id),
+  expiresAt: integer({ mode: "timestamp" }).notNull(),
+});
+
+export const marketplaceActivationsTable = sqliteTable("marketplace_activations", {
+  id: text().primaryKey().$defaultFn(() => `mact_${createId()}`).notNull(),
+  userId: text().notNull().references(() => userTable.id),
+  componentId: text().notNull(),
+  activatedAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+  metadata: text(),
+});
 
 
 // System-defined roles - these are always available
@@ -364,3 +396,6 @@ export type TeamMembership = InferSelectModel<typeof teamMembershipTable>;
 export type TeamRole = InferSelectModel<typeof teamRoleTable>;
 export type TeamInvitation = InferSelectModel<typeof teamInvitationTable>;
 export type UploadReward = InferSelectModel<typeof uploadRewardTable>;
+export type Post = InferSelectModel<typeof postsTable>;
+export type HighlightedPost = InferSelectModel<typeof highlightedPostsTable>;
+export type MarketplaceActivation = InferSelectModel<typeof marketplaceActivationsTable>;
