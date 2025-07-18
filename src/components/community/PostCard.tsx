@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
+import Image from 'next/image'
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
@@ -169,21 +170,22 @@ export default function PostCard({
       <div className="mb-2">
         {item.type === "image" && (
           <ImageLightbox src={item.url} alt={item.title} onOpen={handleView}>
-            <img
-              src={item.url}
-              alt={item.title}
-              className="w-full rounded-xl object-cover"
-            />
+            <div className="relative w-full h-48">
+              <Image src={item.url} alt={item.title} fill className="object-cover rounded-xl" />
+            </div>
           </ImageLightbox>
         )}
         {item.type === "music" && (
           <div className="flex flex-col items-center gap-2">
             {meta?.picture && (
-              <img
-                src={meta.picture}
-                alt={meta.title || item.title}
-                className="w-full rounded-xl object-cover"
-              />
+              <div className="relative w-full h-48">
+                <Image
+                  src={meta.picture}
+                  alt={meta.title || item.title}
+                  fill
+                  className="object-cover rounded-xl"
+                />
+              </div>
             )}
             <div className="text-center text-sm">
               <h3>{meta?.title || item.title || "Ismeretlen szám"}</h3>
