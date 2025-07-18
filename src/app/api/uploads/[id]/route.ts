@@ -1,20 +1,22 @@
+import { NextRequest } from 'next/server'
 import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { consumeCredits } from '@/utils/credits'
 import { jsonResponse } from '@/utils/api'
-import { NextRequest } from 'next/server'
 
-interface RouteContext<T> { params: T }
-
-export async function PUT(req: NextRequest, { params }: RouteContext<{ id: string }>) {
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
   const session = await getSessionFromCookie()
   if (!session?.user?.id) {
     return jsonResponse({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
+
   const { env } = getCloudflareContext()
   const body = await req.json() as { title?: string; description?: string; tags?: string; note?: string }
+
+  const { id } = context.params
+
   const row = await env.DB.prepare('SELECT user_id, title, description, tags FROM uploads WHERE id = ?1')
-    .bind(params.id)
+    .bind(id)
     .first<{ user_id: string; title: string | null; description: string | null; tags: string | null }>()
 
   if (!row || row.user_id !== session.user.id) {
@@ -36,7 +38,7 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
 
   await env.DB.prepare(
     'UPDATE uploads SET title = COALESCE(?2,title), description = ?3, tags = ?4, note = ?5 WHERE id = ?1'
-  ).bind(params.id, body.title, body.description, body.tags, body.note).run()
+  ).bind(id, body.title, body.description, body.tags, body.note).run()
 
   return jsonResponse({ success: true, cost })
 }
