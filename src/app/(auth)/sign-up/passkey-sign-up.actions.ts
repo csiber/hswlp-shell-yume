@@ -3,6 +3,7 @@
 import { createServerAction, ZSAError } from "zsa";
 import { z } from "zod";
 import { generatePasskeyRegistrationOptions, verifyPasskeyRegistration } from "@/utils/webauthn";
+import { createId } from "@paralleldrive/cuid2";
 import { getDB } from "@/db";
 import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema";
 import { SIGN_UP_BONUS_CREDITS } from "@/constants";
@@ -52,8 +53,11 @@ export const startPasskeyRegistrationAction = createServerAction()
 
         const ipAddress = await getIP();
 
+        const nickname = `anon_${createId().slice(0, 8)}`;
+
         const [user] = await db.insert(userTable)
           .values({
+            nickname,
             email: input.email,
             firstName: input.firstName,
             lastName: input.lastName,

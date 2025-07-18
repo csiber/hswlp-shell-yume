@@ -5,8 +5,9 @@ import Image from 'next/image'
 interface Creator { id: string; nickname: string; avatar?: string | null; points: number }
 
 export default function TopCreatorsCard() {
-  const fetcher = (url: string) => fetch(url).then(r => r.json())
-  const { data } = useSWR<{ creators: Creator[] }>('/api/top/creators?days=7', fetcher)
+  const fetcher = (url: string): Promise<{ creators: Creator[] }> =>
+    fetch(url).then(r => r.json())
+  const { data } = useSWR('/api/top/creators?days=7', fetcher)
   if (!data) return null
   return (
     <div className="p-4 border rounded-md">
