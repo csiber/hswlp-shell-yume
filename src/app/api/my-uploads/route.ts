@@ -10,7 +10,7 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(
-    'SELECT id, title, type, url FROM uploads WHERE user_id = ? ORDER BY created_at DESC'
+    'SELECT id, title, type, url, created_at FROM uploads WHERE user_id = ? ORDER BY created_at DESC'
   ).bind(session.user.id).all<Record<string, string>>()
 
   return jsonResponse({ uploads: result.results || [] })
