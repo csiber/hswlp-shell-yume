@@ -80,7 +80,7 @@ export default async function BaseLayout({
   const session = await getSessionFromCookie();
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className} pb-[80px]`}>
         <NextTopLoader
           initialPosition={0.15}
           shadow="0 0 10px #000, 0 0 5px #000"
