@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 import PostCard from "./PostCard";
 import SkeletonPost from "./SkeletonPost";
 import UploadBox from "./UploadBox";
-import FeedStats from "./FeedStats";
+import FeedStats, { type FeedFilter } from "./FeedStats";
 
 export interface FeedItem {
   id: string;
@@ -30,6 +30,7 @@ export default function CommunityFeedV3({
   const [visible, setVisible] = useState(10);
   const [loading, setLoading] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FeedFilter>("all");
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const { ref: loadMoreRef, inView } = useInView();
@@ -96,7 +97,14 @@ export default function CommunityFeedV3({
     }
   }, [inView, visible, items.length]);
 
-  const visibleItems = items.slice(0, visible);
+  useEffect(() => {
+    setVisible(10);
+  }, [filter]);
+
+  const filteredItems = items.filter((it) =>
+    filter === "all" ? true : it.type === filter
+  );
+  const visibleItems = filteredItems.slice(0, visible);
 
   const stats = {
     total: items.length,
@@ -115,6 +123,8 @@ export default function CommunityFeedV3({
           images={stats.images}
           music={stats.music}
           prompts={stats.prompts}
+          filter={filter}
+          onFilterChange={setFilter}
         />
       )}
 
