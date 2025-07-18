@@ -49,6 +49,7 @@ export async function getUserFromDB(userId: string) {
       updatedAt: true,
       currentCredits: true,
       lastCreditRefreshAt: true,
+      nicknameUpdatedAt: true,
     },
   });
 }
