@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { toast } from 'sonner'
-import { Check, X, Image as ImageIcon, Music, FileText } from 'lucide-react'
+import { Check, X, Ban, Image as ImageIcon, Music, FileText } from 'lucide-react'
 import { formatTitle, guessMetaFromFilename } from '@/utils/music'
 
 interface UploadItem {
@@ -46,6 +46,20 @@ export default function ModerationClient() {
     } else toast.error('Hiba történt')
   }
 
+  const punish = async (id: string) => {
+    const reason = prompt('Szankció indoka:')
+    if (!reason) return
+    const res = await fetch(`/api/moderation/${id}/punish`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reason })
+    })
+    if (res.ok) {
+      toast.success('Szankcionálva')
+      mutate()
+    } else toast.error('Hiba történt')
+  }
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       {data?.items?.map(item => (
@@ -54,6 +68,7 @@ export default function ModerationClient() {
           item={item}
           onApprove={() => approve(item.id)}
           onReject={() => reject(item.id)}
+          onPunish={() => punish(item.id)}
         />
       ))}
     </div>
@@ -64,10 +79,12 @@ function ModerationCard({
   item,
   onApprove,
   onReject,
+  onPunish,
 }: {
   item: UploadItem
   onApprove: () => void
   onReject: () => void
+  onPunish: () => void
 }) {
   return (
     <Card className="relative flex flex-col">
@@ -118,6 +135,20 @@ function ModerationCard({
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Elutasítás</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  onClick={onPunish}
+                  className="bg-zinc-800 hover:bg-orange-600 text-white"
+                >
+                  <Ban className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Szankcionálás</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
