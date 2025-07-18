@@ -88,10 +88,10 @@ export async function activateMarketplaceComponent(
       metadata.postId = options.postId;
       break;
     case "profile-frame":
-      await updateUserField(userId, "profileFrameEnabled", 1);
+      await updateUserField(userId, "profile_frame_enabled", 1);
       break;
     case "custom-avatar":
-      await updateUserField(userId, "customAvatarUnlocked", 1);
+      await updateUserField(userId, "custom_avatar_unlocked", 1);
       if (options.selectedAvatarStyle) {
         await updateUserField(userId, "selectedAvatarStyle", options.selectedAvatarStyle);
         metadata.selected = options.selectedAvatarStyle;
