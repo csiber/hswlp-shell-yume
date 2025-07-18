@@ -39,11 +39,21 @@ export default function LikeButton({ postId }: Props) {
       if (liked) {
         const res = await fetch(`/api/posts/${postId}/unlike`, { method: "DELETE" })
         if (!res.ok) return
+        await fetch('/api/favorite', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ upload_id: postId }),
+        })
         setLiked(false)
         setCount((c) => c - 1)
       } else {
         const res = await fetch(`/api/posts/${postId}/like`, { method: "POST" })
         if (!res.ok) return
+        await fetch('/api/favorite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ upload_id: postId }),
+        })
         setLiked(true)
         setCount((c) => c + 1)
       }
