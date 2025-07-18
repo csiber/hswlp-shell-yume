@@ -14,6 +14,7 @@ interface MusicCardProps {
   title: string
   onDownload: () => void
   onDelete: () => void
+  editTrigger?: React.ReactNode
 }
 
 interface MusicMeta {
@@ -23,7 +24,7 @@ interface MusicMeta {
   picture: string | null
 }
 
-export default function MusicCard({ id, url, title, onDownload, onDelete }: MusicCardProps) {
+export default function MusicCard({ id, url, title, onDownload, onDelete, editTrigger }: MusicCardProps) {
   const { data } = useSWR<MusicMeta | null>(
     `/api/music-meta?id=${id}`,
     (u: string): Promise<MusicMeta | null> =>
@@ -50,6 +51,7 @@ export default function MusicCard({ id, url, title, onDownload, onDelete }: Musi
         <Button variant="ghost" size="icon" onClick={onDownload}>
           <Download className="w-4 h-4" />
         </Button>
+        {editTrigger}
         <Button variant="ghost" size="icon" onClick={onDelete}>
           <Trash className="w-4 h-4" />
         </Button>

@@ -1,0 +1,3 @@
+ALTER TABLE uploads ADD COLUMN description TEXT;
+ALTER TABLE uploads ADD COLUMN tags TEXT;
+ALTER TABLE uploads ADD COLUMN note TEXT;

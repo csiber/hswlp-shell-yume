@@ -11,6 +11,7 @@ import AlbumCard from "./AlbumCard";
 export interface FeedItem {
   id: string;
   title: string;
+  tags?: string | null;
   type?: "image" | "music" | "prompt";
   url: string;
   download_points?: number;
