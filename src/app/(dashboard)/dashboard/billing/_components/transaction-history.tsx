@@ -50,7 +50,7 @@ export function TransactionHistory() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Transaction History</CardTitle>
+          <CardTitle>Tranzakciók</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -68,7 +68,7 @@ export function TransactionHistory() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Transaction History</CardTitle>
+        <CardTitle>Tranzakciók</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Desktop Table View */}
@@ -77,10 +77,10 @@ export function TransactionHistory() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Description</TableHead>
+                  <TableHead>Dátum</TableHead>
+                  <TableHead>Típus</TableHead>
+                  <TableHead>Összeg</TableHead>
+                  <TableHead>Leírás</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -114,7 +114,7 @@ export function TransactionHistory() {
                             : "bg-muted"
                             }`}
                         >
-                          {isTransactionExpired(transaction) ? "Expired: " : "Expires: "}
+                          {isTransactionExpired(transaction) ? "Lejárt: " : "Lejárat: "}
                           {format(new Date(transaction.expirationDate), "MMM d, yyyy")}
                         </Badge>
                       )}
@@ -122,7 +122,7 @@ export function TransactionHistory() {
                   </TableRow>
                 )) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">No transactions found</TableCell>
+                    <TableCell colSpan={4} className="h-24 text-center">Nincs tranzakció</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -170,14 +170,14 @@ export function TransactionHistory() {
                     : "bg-muted"
                     }`}
                 >
-                  {isTransactionExpired(transaction) ? "Expired: " : "Expires: "}
+                  {isTransactionExpired(transaction) ? "Lejárt: " : "Lejárat: "}
                   {format(new Date(transaction.expirationDate), "MMM d, yyyy")}
                 </Badge>
               )}
             </div>
           )) : (
             <div className="text-center py-8 text-muted-foreground">
-              No transactions found
+              Nincs tranzakció
             </div>
           )}
         </div>
@@ -193,7 +193,7 @@ export function TransactionHistory() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-sm text-muted-foreground">
-              Page {page} of {data?.pagination.pages ?? 1}
+              Oldal {page} / {data?.pagination.pages ?? 1}
             </span>
             <Button
               variant="outline"

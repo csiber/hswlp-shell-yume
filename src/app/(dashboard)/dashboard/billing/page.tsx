@@ -21,11 +21,11 @@ export default async function BillingPage() {
           },
           {
             href: "/dashboard/billing",
-            label: "Billing",
+            label: "Számlázás",
           },
         ]}
       />
-      <div className="flex flex-1 flex-col gap-4 p-4 pt-0 w-full">
+      <div className="container mx-auto px-5 pb-12">
         <CreditPackages />
         <div className="mt-4">
           <TransactionHistory />

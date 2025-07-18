@@ -43,8 +43,7 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
           {component.preview()}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between mt-4">
-        <div className="text-md lg:text-2xl font-bold">{credits} kredit</div>
+      <CardFooter className="mt-4 flex justify-end">
         {!isPurchased && (
           <PurchaseButton
             itemId={id}

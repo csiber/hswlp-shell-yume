@@ -37,8 +37,8 @@ const demoTeams: Team[] = [
 export const COMPONENTS: MarketplaceComponent[] = [
   {
     id: "team-switcher",
-    name: "Team Switcher",
-    description: "A sleek dropdown menu for switching between teams with custom logos and plans",
+    name: "Csapatváltó modul",
+    description: "Gyors csapatválasztó lenyíló menü saját logóval és csomaggal",
     credits: 4,
     containerClass: "w-[300px]",
     preview: () => {
@@ -51,15 +51,15 @@ export const COMPONENTS: MarketplaceComponent[] = [
   },
   {
     id: "theme-switch",
-    name: "Theme Switch",
-    description: "An animated theme switcher with system, light, and dark mode options",
+    name: "Téma váltó",
+    description: "Animált sötét/világos mód kapcsoló",
     credits: 4,
     preview: () => <ThemeSwitch />,
   },
   {
     id: "separator-with-text",
-    name: "Separator With Text",
-    description: "A clean separator component with customizable text and styling",
+    name: "Szöveges elválasztó",
+    description: "Egyszerű vonal szöveggel, testre szabható stílussal",
     credits: 3,
     containerClass: "w-full",
     preview: () => (
@@ -70,16 +70,16 @@ export const COMPONENTS: MarketplaceComponent[] = [
   },
   {
     id: "nav-user",
-    name: "User Navigation Dropdown",
-    description: "A professional user navigation dropdown with avatar, user info, and action items",
+    name: "Felhasználói menü",
+    description: "Avatarral és műveletekkel ellátott felhasználói menü",
     credits: 10,
     containerClass: "w-[300px]",
     preview: () => <NavUser />,
   },
   {
     id: "page-header",
-    name: "Page Header with Breadcrumbs",
-    description: "A responsive page header with collapsible sidebar trigger and breadcrumb navigation",
+    name: "Oldal fejléce",
+    description: "Reszponzív fejléc összehajtható oldalsávval és kenyérmorzsákkal",
     credits: 12,
     containerClass: "w-full",
     preview: () => (
@@ -93,8 +93,8 @@ export const COMPONENTS: MarketplaceComponent[] = [
   },
   {
     id: 'button',
-    name: "Button",
-    description: "A button component with customizable text and styling",
+    name: "Gomb",
+    description: "Stílusos gomb komponens egyedi felirattal",
     credits: 8,
     containerClass: "w-full flex justify-center",
     preview: () => <Button>Click me</Button>,
