@@ -17,5 +17,10 @@ export default async function DashboardLayout({
     return redirect("/");
   }
 
-  return <ShellLayout center={<FeedCenter />}>{children}</ShellLayout>;
+  return (
+    <ShellLayout>
+      <FeedCenter />
+      {children}
+    </ShellLayout>
+  );
 }
