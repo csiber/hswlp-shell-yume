@@ -44,16 +44,29 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [albumId, setAlbumId] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
+  const sessionUser = useSessionStore((s) => s.session?.user)
+
+  const fetchQuota = async (u: string) => {
+    try {
+      const res = await fetch(u, { credentials: 'include' })
+      if (!res.ok) throw new Error('failed')
+      return (await res.json()) as { used: number; limit: number }
+    } catch (err) {
+      console.warn('Failed to fetch quota', err)
+      return {
+        used: sessionUser?.usedStorageMb ?? 0,
+        limit: sessionUser?.uploadLimitMb ?? 0,
+      }
+    }
+  }
+
   const { data: quota, mutate: mutateQuota } = useSWR<{ used: number; limit: number }>(
     '/api/storage-quota',
-    (u: string) =>
-      fetch(u).then((res) =>
-        res.json() as Promise<{ used: number; limit: number }>
-      )
+    fetchQuota
   )
 
-  const usedMb = Number(quota?.used ?? 0)
-  const limitMb = Number(quota?.limit ?? 0)
+  const usedMb = Number(quota?.used ?? sessionUser?.usedStorageMb ?? 0)
+  const limitMb = Number(quota?.limit ?? sessionUser?.uploadLimitMb ?? 0)
   const percent =
     Number.isFinite(usedMb) && Number.isFinite(limitMb) && limitMb > 0
       ? (usedMb / limitMb) * 100
