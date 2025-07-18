@@ -2,6 +2,7 @@ import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { consumeCredits } from '@/utils/credits'
 import { jsonResponse } from '@/utils/api'
+import { ALBUM_PRICING_MODE, ALBUM_GROUP_CREDITS } from '@/constants'
 import { NextRequest } from 'next/server'
 
 interface RouteContext<T> { params: Promise<T> }
@@ -15,14 +16,24 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
   const { env } = getCloudflareContext()
   const { id } = await params
   const row = await env.DB.prepare(
-    'SELECT r2_key, download_points, user_id, type FROM uploads WHERE id = ?1 LIMIT 1'
-  ).bind(id).first<{ r2_key: string; download_points: number | null; user_id: string; type: string }>()
+    'SELECT r2_key, download_points, user_id, type, album_id FROM uploads WHERE id = ?1 LIMIT 1'
+  ).bind(id).first<{ r2_key: string; download_points: number | null; user_id: string; type: string; album_id: string | null }>()
 
   if (!row) {
     return new Response('Not found', { status: 404 })
   }
 
-  const points = row.download_points ?? 2
+  let points = row.download_points ?? 2
+  if (row.album_id && ALBUM_PRICING_MODE === 'grouped') {
+    const albumDownloaded = await env.DB.prepare(
+      'SELECT d.id FROM downloads d JOIN uploads u ON d.upload_id = u.id WHERE d.user_id = ?1 AND u.album_id = ?2 LIMIT 1'
+    ).bind(session.user.id, row.album_id).first<{ id: string }>()
+    if (albumDownloaded) {
+      points = 0
+    } else {
+      points = ALBUM_GROUP_CREDITS
+    }
+  }
   const already = await env.DB.prepare(
     'SELECT id FROM downloads WHERE user_id = ?1 AND upload_id = ?2 LIMIT 1'
   ).bind(session.user.id, id).first<{ id: string }>()

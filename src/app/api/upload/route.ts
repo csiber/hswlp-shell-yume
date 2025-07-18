@@ -62,11 +62,15 @@ export async function POST(req: Request) {
   const promptField = formData.get('prompt')
   const artist = formData.get('artist')
   const album = formData.get('album')
+  const albumIdField = formData.get('album_id')
+  const albumNameField = formData.get('album_name')
   const picture = formData.get('picture')
   const linkedUploadId = formData.get('linked_upload_id')
   const tags = formData.getAll('tags').flatMap((t) =>
     typeof t === 'string' ? t.split(',').map((s) => s.trim()).filter(Boolean) : []
   )
+  const albumId = typeof albumIdField === 'string' ? albumIdField : null
+  const albumName = typeof albumNameField === 'string' ? albumNameField.trim() : null
 
   if (!(file instanceof Blob) || typeof title !== 'string' || typeof type !== 'string') {
     return jsonResponse({ success: false, error: 'Invalid form data' }, { status: 400 })
@@ -119,6 +123,26 @@ export async function POST(req: Request) {
 
   if (type === 'image' && await isNsfwImage(file, env)) {
     return jsonResponse({ success: false, error: 'NSFW content detected' }, { status: 400 })
+  }
+
+  if (albumId) {
+    const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE album_id = ?1')
+      .bind(albumId)
+      .first<{ c: number }>()
+    if ((countRow?.c ?? 0) >= 10) {
+      return jsonResponse({ success: false, error: 'Album limit reached' }, { status: 400 })
+    }
+    const existsAlbum = await env.DB.prepare('SELECT id FROM albums WHERE id = ?1 LIMIT 1')
+      .bind(albumId)
+      .first<{ id: string }>()
+    if (!existsAlbum) {
+      if (!albumName) {
+        return jsonResponse({ success: false, error: 'Album name required' }, { status: 400 })
+      }
+      await env.DB.prepare(
+        'INSERT INTO albums (id, name, user_id) VALUES (?1, ?2, ?3)'
+      ).bind(albumId, albumName, session.user.id).run()
+    }
   }
 
   const ext = extFromMime(mime)
@@ -178,8 +202,8 @@ export async function POST(req: Request) {
     }
 
     await env.DB.prepare(
-      'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)'
-    ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints).run()
+      'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)'
+    ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null).run()
 
     await updateUserCredits(session.user.id, creditValue)
     await logTransaction({
@@ -198,6 +222,7 @@ export async function POST(req: Request) {
     return jsonResponse({
       success: true,
       uploadId: id,
+      album_id: albumId ?? undefined,
       url,
       message: 'Feltöltés sikeres!',
       download_points: downloadPoints,
