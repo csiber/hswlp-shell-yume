@@ -203,6 +203,7 @@ export default function PostCard({
         {item.type === "prompt" && (
           <PromptBox
             text={promptError ? "A prompt nem olvasható" : promptText || ""}
+            lines={5}
           />
         )}
       </div>
