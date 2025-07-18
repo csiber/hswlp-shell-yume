@@ -58,6 +58,10 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
     return new Response('File not found', { status: 404 })
   }
 
+  await env.DB.prepare('UPDATE uploads SET download_count = COALESCE(download_count,0) + 1 WHERE id = ?1')
+    .bind(id)
+    .run()
+
   return new Response(object.body, {
     status: 200,
     headers: {
