@@ -19,6 +19,7 @@ interface UploadItem {
   download_count: number
   play_count: number
   locked: number
+  total_generated_points: number
 }
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -197,6 +198,9 @@ export default function MyFilesPage() {
                 <Play className="w-3 h-3" /> {item.play_count}
                 {item.locked ? <Lock className="w-3 h-3 text-red-500" /> : null}
               </div>
+              <div className="px-1 pb-1 text-xs text-muted-foreground">
+                Eddig {item.total_generated_points.toFixed(1)} pontot hozott
+              </div>
             </div>
           ) : (
             <Card
@@ -287,6 +291,9 @@ export default function MyFilesPage() {
               <Download className="w-3 h-3" /> {item.download_count}
               {item.mime?.startsWith('audio/') && <><Play className="w-3 h-3" /> {item.play_count}</>}
               {item.locked ? <Lock className="w-3 h-3 text-red-500" /> : null}
+            </div>
+            <div className="px-2 pb-2 text-xs text-muted-foreground">
+              Eddig {item.total_generated_points.toFixed(1)} pontot hozott
             </div>
           </Card>
         ))}

@@ -265,6 +265,16 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
   return updatedUser?.currentCredits ?? 0;
 }
 
+export async function addCredits({ userId, amount, description }: { userId: string; amount: number; description: string }) {
+  await updateUserCredits(userId, amount);
+  await logTransaction({
+    userId,
+    amount,
+    description,
+    type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
+  });
+}
+
 export async function getCreditTransactions({
   userId,
   page = 1,

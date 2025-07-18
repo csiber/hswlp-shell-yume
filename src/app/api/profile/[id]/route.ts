@@ -14,9 +14,9 @@ export async function GET(
   const { id } = await params
   const { env } = getCloudflareContext()
   const user = await env.DB.prepare(
-    'SELECT id, firstName, lastName, email, avatar, currentCredits FROM user WHERE id = ?1 LIMIT 1'
+    'SELECT id, nickname, email, avatar, currentCredits FROM user WHERE id = ?1 LIMIT 1'
   ).bind(id).first<{
-    id: string; firstName: string | null; lastName: string | null; email: string; avatar: string | null; currentCredits: number | null
+    id: string; nickname: string | null; email: string; avatar: string | null; currentCredits: number | null
   }>()
 
   if (!user) {
@@ -62,11 +62,11 @@ const items = [] as {
     })
   }
 
-  const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ')
+  const displayName = user.nickname || `Anon${user.id.slice(-4)}`
   return jsonResponse({
     user: {
       id: user.id,
-      name: fullName || user.email,
+      name: displayName,
       email: user.email,
       avatar: user.avatar,
       credits: user.currentCredits ?? 0,

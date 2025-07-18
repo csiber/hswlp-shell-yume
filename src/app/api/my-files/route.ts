@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   const result = await env.DB.prepare(`
     SELECT id, title, description, tags, note, type AS category, mime, url,
            download_points, approved,
-           view_count, download_count, play_count, locked
+           view_count, download_count, play_count, locked, total_generated_points
     FROM uploads
     WHERE user_id = ?1 ${filter}
     ORDER BY rowid DESC
@@ -40,6 +40,7 @@ export async function GET(req: NextRequest) {
     download_count: number | null;
     play_count: number | null;
     locked: number | null;
+    total_generated_points: number | null;
   }>()
 
   return Response.json({ success: true, items: result.results })

@@ -41,6 +41,7 @@ export async function getUserFromDB(userId: string) {
       email: true,
       firstName: true,
       lastName: true,
+      nickname: true,
       role: true,
       emailVerified: true,
       avatar: true,
@@ -214,7 +215,7 @@ async function validateSessionToken(token: string, userId: string): Promise<Sess
     }
 
     // Update the user initials
-    updatedSession.user.initials = getInitials(`${updatedSession.user.firstName} ${updatedSession.user.lastName}`);
+    updatedSession.user.initials = getInitials(updatedSession.user.nickname);
 
     return updatedSession;
   }
@@ -231,7 +232,7 @@ async function validateSessionToken(token: string, userId: string): Promise<Sess
   }
 
   // Update the user initials
-  session.user.initials = getInitials(`${session.user.firstName} ${session.user.lastName}`);
+  session.user.initials = getInitials(session.user.nickname);
 
   // Return the user data directly from the session
   return session;
