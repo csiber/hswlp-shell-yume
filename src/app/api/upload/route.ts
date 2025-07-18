@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { getSessionFromCookie } from '@/utils/auth'
+import { getSessionFromCookie, getUserFromDB } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { WebhookService } from '@/app/services/WebhookService'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
@@ -61,6 +61,8 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'Feltöltés ideiglenesen letiltva' }, { status: 403 })
   }
 
+  const freshUser = await getUserFromDB(session.user.id)
+
   const formData = await req.formData()
   const file = formData.get('file')
   const title = formData.get('title')
@@ -103,11 +105,10 @@ export async function POST(req: Request) {
   const { env } = getCloudflareContext()
 
   const fileSizeMb = file.size / (1024 * 1024)
-  if ((session.user.usedStorageMb ?? 0) + fileSizeMb > (session.user.uploadLimitMb ?? 0)) {
-    return jsonResponse(
-      { success: false, error: 'Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.' },
-      { status: 403 }
-    )
+  const usedStorageMb = Number(freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0)
+  const uploadLimitMb = Number(freshUser?.uploadLimitMb ?? session.user.uploadLimitMb ?? 0)
+  if (usedStorageMb + fileSizeMb > uploadLimitMb) {
+    throw new Error('Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.')
   }
 
   let meta: Awaited<ReturnType<typeof parseBuffer>> | null = null
