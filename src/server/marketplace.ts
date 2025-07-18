@@ -42,9 +42,9 @@ export async function applyDailySurpriseReward(userId: string): Promise<string> 
       .set({ points: sql`${userTable.points} + 10` })
       .where(eq(userTable.id, userId));
   } else if (choice === "bonus_frame") {
-    await updateUserField(userId, "bonusFrame", 1);
+    await updateUserField(userId, "profile_frame_enabled", 1);
   } else if (choice === "badge_unlocked") {
-    await updateUserField(userId, "badgeUnlocked", 1);
+    await updateUserField(userId, "badge_unlocked", 1);
   }
 
   return choice;
@@ -93,17 +93,17 @@ export async function activateMarketplaceComponent(
     case "custom-avatar":
       await updateUserField(userId, "custom_avatar_unlocked", 1);
       if (options.selectedAvatarStyle) {
-        await updateUserField(userId, "selectedAvatarStyle", options.selectedAvatarStyle);
+        await updateUserField(userId, "selected_avatar_style", options.selectedAvatarStyle);
         metadata.selected = options.selectedAvatarStyle;
       }
       break;
     case "pin-post":
       if (!options.postId) throw new Error("postId required");
-      await updateUserField(userId, "pinnedPostId", options.postId);
+      await updateUserField(userId, "pinned_post_id", options.postId);
       metadata.postId = options.postId;
       break;
     case "emoji-reactions":
-      await updateUserField(userId, "emojiReactionsEnabled", 1);
+      await updateUserField(userId, "emoji_reactions_enabled", 1);
       break;
     case "daily-surprise":
       const reward = await applyDailySurpriseReward(userId);
@@ -113,7 +113,7 @@ export async function activateMarketplaceComponent(
       if (component?.props && typeof component.props.addMb === 'number') {
         await db
           .update(userTable)
-          .set({ uploadLimitMb: sql`${userTable.uploadLimitMb} + ${component.props.addMb}` })
+          .set({ upload_limit_mb: sql`${userTable.upload_limit_mb} + ${component.props.addMb}` })
           .where(eq(userTable.id, userId));
         await updateAllSessionsOfUser(userId);
       }
@@ -122,13 +122,12 @@ export async function activateMarketplaceComponent(
       throw new Error("Unknown component");
   }
 
-await db.insert(marketplaceActivationsTable).values({
-  id: `mact_${createId()}`,
-  user_id: userId,
-  component_id: componentId,
-  metadata: Object.keys(metadata).length ? JSON.stringify(metadata) : undefined,
-});
-
+  await db.insert(marketplaceActivationsTable).values({
+    id: `mact_${createId()}`,
+    user_id: userId,
+    component_id: componentId,
+    metadata: Object.keys(metadata).length ? JSON.stringify(metadata) : undefined,
+  });
 
   await consumeCredits({
     userId,
