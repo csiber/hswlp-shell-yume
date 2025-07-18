@@ -5,6 +5,7 @@ import { consumeCredits } from '@/utils/credits'
 import { jsonResponse } from '@/utils/api'
 import { withRateLimit } from '@/utils/with-rate-limit'
 import { createHash } from 'crypto'
+import { v4 as uuidv4 } from 'uuid'
 
 interface RouteContext<T> { params: Promise<T> }
 
@@ -22,12 +23,15 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
     const { id } = await params
 
 
-    const row = await env.DB.prepare('SELECT user_id, title, description, tags, note, created_at, moderation_status FROM uploads WHERE id = ?1')
+    const row = await env.DB.prepare('SELECT user_id, title, description, tags, note, created_at, moderation_status, locked FROM uploads WHERE id = ?1')
       .bind(id)
-      .first<{ user_id: string; title: string | null; description: string | null; tags: string | null; note: string | null; created_at: string; moderation_status: string | null }>()
+      .first<{ user_id: string; title: string | null; description: string | null; tags: string | null; note: string | null; created_at: string; moderation_status: string | null; locked: number | null }>()
 
     if (!row || row.user_id !== session.user.id) {
       return jsonResponse({ success: false, error: 'Not found' }, { status: 404 })
+    }
+    if (row.locked) {
+      return jsonResponse({ success: false, error: 'This file is locked and cannot be edited.' }, { status: 403 })
     }
 
     const createdAt = new Date(row.created_at)
@@ -60,12 +64,28 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
       updates.push({ field: 'note', oldValue: row.note, newValue: body.note! })
     }
 
+
     if (cost > 0) {
       try {
         await consumeCredits({ userId: session.user.id, amount: cost, description: 'Upload edit' })
       } catch {
         return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
       }
+    }
+
+    const hasChanges = changedTitle || changedDescription || changedTags || changedNote
+    if (hasChanges) {
+      await env.DB.prepare(
+        'INSERT INTO upload_versions (id, upload_id, user_id, title, description, tags, note) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
+      ).bind(
+        uuidv4(),
+        id,
+        session.user.id,
+        row.title,
+        row.description,
+        row.tags,
+        row.note
+      ).run()
     }
 
     const newModeration = (changedDescription || changedTags) ? 'pending' : row.moderation_status

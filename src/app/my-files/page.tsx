@@ -15,6 +15,10 @@ interface UploadItem {
   url: string
   download_points: number
   approved: number
+  view_count: number
+  download_count: number
+  play_count: number
+  locked: number
 }
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -27,6 +31,9 @@ import { toast } from 'sonner'
 import { useSessionStore } from '@/state/session'
 import {
   Download,
+  Eye,
+  Play,
+  Lock,
   File as FileIcon,
   FileText,
   Image as ImageIcon,
@@ -184,6 +191,12 @@ export default function MyFilesPage() {
                   {item.tags}
                 </div>
               )}
+              <div className="px-1 pb-1 text-xs text-muted-foreground flex gap-2 items-center">
+                <Eye className="w-3 h-3" /> {item.view_count}
+                <Download className="w-3 h-3" /> {item.download_count}
+                <Play className="w-3 h-3" /> {item.play_count}
+                {item.locked ? <Lock className="w-3 h-3 text-red-500" /> : null}
+              </div>
             </div>
           ) : (
             <Card
@@ -269,6 +282,12 @@ export default function MyFilesPage() {
                 {item.tags}
               </div>
             )}
+            <div className="px-2 pb-2 text-xs text-muted-foreground flex gap-2 items-center">
+              <Eye className="w-3 h-3" /> {item.view_count}
+              <Download className="w-3 h-3" /> {item.download_count}
+              {item.mime?.startsWith('audio/') && <><Play className="w-3 h-3" /> {item.play_count}</>}
+              {item.locked ? <Lock className="w-3 h-3 text-red-500" /> : null}
+            </div>
           </Card>
         ))}
       </div>
