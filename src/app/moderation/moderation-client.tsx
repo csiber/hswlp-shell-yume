@@ -1,9 +1,9 @@
 "use client"
+/* eslint-disable @next/next/no-img-element */
 import useSWR from 'swr'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
-import Image from 'next/image'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { toast } from 'sonner'
 import { Check, X, Image as ImageIcon, Music, FileText } from 'lucide-react'
@@ -130,7 +130,7 @@ function ImagePreview({ url, alt }: { url: string; alt: string }) {
   return (
     <ImageLightbox src={url} alt={alt}>
       <div className="w-full h-full aspect-square flex items-center justify-center relative">
-        <Image src={url} alt={alt} fill className="object-contain" />
+        <img src={url} alt={alt} className="object-contain w-full h-full" />
       </div>
     </ImageLightbox>
   )
@@ -173,7 +173,11 @@ function MusicPreview({ id, url, title }: { id: string; url: string; title: stri
     <div className="p-2 flex flex-col items-center gap-2 w-full">
       {data?.picture && (
         <div className="relative w-full aspect-square">
-          <Image src={data.picture} alt={displayTitle} fill className="object-contain rounded" />
+          <img
+            src={data.picture}
+            alt={displayTitle}
+            className="object-contain rounded w-full h-full"
+          />
         </div>
       )}
       <div className="text-center text-sm">
