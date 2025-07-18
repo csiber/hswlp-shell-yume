@@ -13,7 +13,7 @@ export default function ShellLayout({ children }: ShellLayoutProps) {
       <div className="flex h-full w-full flex-col">
         <TopBar />
         <div className="grid flex-1 grid-cols-12">
-          <main className="col-span-8">{children}</main>
+          <main className="col-span-12">{children}</main>
         </div>
       </div>
     </SidebarProvider>
