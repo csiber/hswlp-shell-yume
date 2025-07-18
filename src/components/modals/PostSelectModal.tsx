@@ -30,7 +30,11 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch("/api/user/posts");
+        const token = localStorage.getItem("auth_token");
+        const res = await fetch("/api/user/posts", {
+          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
         if (res.ok) {
           const data = (await res.json()) as { posts: Post[] };
           setPosts(data.posts);
