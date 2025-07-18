@@ -3,7 +3,6 @@
 import useSWR from 'swr'
 import { Button } from '@/components/ui/button'
 import { Download, Trash } from 'lucide-react'
-import Image from 'next/image'
 import { formatTitle, guessMetaFromFilename } from '@/utils/music'
 
 const PLACEHOLDER =
@@ -38,10 +37,10 @@ export default function MusicCard({ id, url, title, onDownload, onDelete, editTr
 
   return (
     <div className="border-2 border-yellow-400 rounded-md p-3 flex flex-col gap-2">
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={data?.picture || PLACEHOLDER}
         alt={displayTitle}
-        fill
         className="object-cover rounded-md relative w-full h-40"
       />
       <div className="text-sm font-semibold truncate">{displayTitle}</div>

@@ -1,12 +1,12 @@
 "use client";
-import Image from 'next/image'
 
 export default function AlbumCard({ album }: { album: { id: string; name: string; images: string[]; author: string } }) {
   return (
     <div className="p-2 border rounded shadow relative">
       <div className="relative h-32">
-        {album.images.slice(0,3).map((img,i)=>(
-          <Image
+        {album.images.slice(0,3).map((img, i) => (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
             key={i}
             src={img}
             alt={album.name}
