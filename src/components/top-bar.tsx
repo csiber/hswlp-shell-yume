@@ -22,6 +22,12 @@ import ThemeSwitcher from "@/plugins/ShellLayout/ThemeSwitcher";
 import LogoIcon from "@/components/logo-icon";
 import useOnlineCount from "@/hooks/useOnlineCount";
 import { CheckCircle2 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface TopBarProps {
   logo?: "hswlp" | "sociala";
@@ -52,64 +58,109 @@ export default function TopBar({}: TopBarProps) {
           <LogoIcon className="h-8 w-8" />
         </Link>
 
-        <Button
-          asChild
-          variant="ghost"
-          size="icon"
-          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
-        >
-          <Link href="/dashboard">
-            <Home className="size-5" />
-            <span className="sr-only">Kezdőlap</span>
-          </Link>
-        </Button>
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/dashboard">
+                  <Home className="size-5" />
+                  <span className="sr-only">Kezdőlap</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Főoldal</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
-        <Button
-          asChild
-          variant="ghost"
-          size="icon"
-          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
-        >
-          <Link href="/my-files">
-            <FolderDown className="size-5" />
-            <span className="sr-only">Fájljaim</span>
-          </Link>
-        </Button>
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/my-files">
+                  <FolderDown className="size-5" />
+                  <span className="sr-only">Fájljaim</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Feltöltéseim</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         {user?.role === "admin" && (
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
-          >
-            <Link href="/moderation">
-              <CheckCircle2 className="size-5" />
-              <span className="sr-only">Moderáció</span>
-            </Link>
-          </Button>
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  asChild
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                >
+                  <Link href="/moderation">
+                    <CheckCircle2 className="size-5" />
+                    <span className="sr-only">Moderáció</span>
+                  </Link>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>Moderáció</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         )}
       </div>
 
       <div className="text-center animate-fade-in">
-        <Button variant="ghost" size="icon">
-          <Users className="w-5 h-5" />
-          <span className="text-xs ml-1">{onlineCount}</span>
-        </Button>
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Users className="w-5 h-5" />
+                <span className="text-xs ml-1">{onlineCount}</span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Csapatok</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <div className="flex items-center gap-3">
-        <Button
-          asChild
-          variant="ghost"
-          size="icon"
-          className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
-        >
-          <Link href="/rules">
-            <ShieldCheck className="size-5" />
-            <span className="sr-only">Szabályzat</span>
-          </Link>
-        </Button>
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/rules">
+                  <ShieldCheck className="size-5" />
+                  <span className="sr-only">Szabályzat</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Szabályzat</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         <ThemeSwitcher />
 
