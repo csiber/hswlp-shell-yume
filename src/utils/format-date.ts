@@ -33,3 +33,14 @@ export function formatDateTime(date: Date | number | string): string {
     hour12: true
   });
 }
+
+export function formatDateHu(date: Date | string): string {
+  const d = date instanceof Date ? date : new Date(date);
+  return d.toLocaleString('hu-HU', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}

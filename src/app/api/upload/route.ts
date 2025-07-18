@@ -55,6 +55,10 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
 
+  if (session.user.uploadBanUntil && new Date(session.user.uploadBanUntil) > new Date()) {
+    return jsonResponse({ success: false, error: 'Feltöltés ideiglenesen letiltva' }, { status: 403 })
+  }
+
   const formData = await req.formData()
   const file = formData.get('file')
   const title = formData.get('title')

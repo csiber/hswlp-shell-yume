@@ -72,6 +72,10 @@ export const userTable = sqliteTable("user", {
   points: integer().default(0),
   bonusFrame: integer().default(0),
   badgeUnlocked: integer().default(0),
+  uploadBanUntil: integer({
+    mode: "timestamp",
+  }),
+  uploadBanReason: text(),
 }, (table) => ([
   index('email_idx').on(table.email),
   index('nickname_idx').on(table.nickname),

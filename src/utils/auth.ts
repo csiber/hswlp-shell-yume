@@ -50,6 +50,8 @@ export async function getUserFromDB(userId: string) {
       currentCredits: true,
       lastCreditRefreshAt: true,
       nicknameUpdatedAt: true,
+      uploadBanUntil: true,
+      uploadBanReason: true,
     },
   });
 }

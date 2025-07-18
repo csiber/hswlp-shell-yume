@@ -22,7 +22,8 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   await env.DB.prepare('INSERT INTO user_punishments (id, user_id, reason, until) VALUES (?1, ?2, ?3, ?4)')
     .bind(uuidv4(), upload.user_id, reason, until).run()
 
-  await env.DB.prepare('UPDATE user SET upload_ban_until = ?1 WHERE id = ?2').bind(until, upload.user_id).run()
+  await env.DB.prepare('UPDATE user SET upload_ban_until = ?1, upload_ban_reason = ?2 WHERE id = ?3')
+    .bind(until, reason, upload.user_id).run()
 
   try {
     await consumeCredits({ userId: upload.user_id, amount: PUNISHMENT_CREDIT_LOSS, description: 'Moderation punishment' })
