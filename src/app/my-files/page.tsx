@@ -31,6 +31,7 @@ import EditUploadDialog from '@/components/myfiles/EditUploadDialog'
 import { cn } from '@/utils/cn'
 import { toast } from 'sonner'
 import { useSessionStore } from '@/state/session'
+import UploadBanAlert from '@/components/UploadBanAlert'
 import {
   Download,
   Eye,
@@ -147,6 +148,7 @@ export default function MyFilesPage() {
 
   return (
     <main className="p-6 max-w-6xl mx-auto">
+      <UploadBanAlert />
       {showApprovedNotice && (
         <div className="mb-4 rounded-md bg-amber-400 text-black p-4 shadow-md animate-fade-in">
           Gratulálunk! Feltöltésed jóvá lett hagyva.

@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import AudioWaveform from "@/components/AudioWaveform";
 import "./UploadBox.css";
+import { useSessionStore } from "@/state/session";
+import UploadBanAlert from "@/components/UploadBanAlert";
 
 function detectType(file: File): "image" | "music" | "prompt" {
   if (file.type.startsWith("image/")) return "image";
@@ -39,6 +41,11 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [albumName, setAlbumName] = useState<string | null>(null);
   const [albumId, setAlbumId] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+  const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
+
+  if (uploadBanUntil && new Date(uploadBanUntil) > new Date()) {
+    return <UploadBanAlert />;
+  }
 
   const prepareTitles = async (files: FileList) => {
     const entries: Record<string, string> = {}
