@@ -3,7 +3,7 @@
 'use client'
 
 import useSWR from 'swr'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 interface UploadItem {
   id: string
   category: 'image' | 'music' | 'prompt'
@@ -16,6 +16,7 @@ interface UploadItem {
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
+import MusicCard from '@/components/MusicCard'
 import { cn } from '@/utils/cn'
 import { toast } from 'sonner'
 import {
@@ -28,14 +29,11 @@ import {
   Trash,
 } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import MusicPlayer from '@/components/community/MusicPlayer'
-import { formatTitle, guessMetaFromFilename } from '@/utils/music'
+
 
 export default function MyFilesPage() {
   const [filter, setFilter] = useState<string | null>(null)
-  const [playingId, setPlayingId] = useState<string | null>(null)
   const [showApprovedNotice, setShowApprovedNotice] = useState(false)
-  const audioRef = useRef<HTMLAudioElement>(null)
   const query = filter ? `?type=${filter}` : ''
   const fetcher = (url: string) =>
     fetch(url).then((res) => res.json() as Promise<{ items: UploadItem[] }>)
@@ -110,35 +108,53 @@ export default function MyFilesPage() {
         <Button variant={filter === 'prompt' ? 'default' : 'outline'} onClick={() => setFilter('prompt')}>Promptek</Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {data?.items?.map((item) => (
-          <Card
-            key={item.id}
-            className={cn(
-              'relative overflow-hidden shadow rounded',
-              !item.approved && 'ring-2 ring-yellow-500'
-            )}
-          >
-            {!item.approved && (
-              <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
-                Moderációra vár
-              </span>
-            )}
-            {item.mime?.startsWith('image/') && (
-              <ImageLightbox src={item.url} alt={item.title}>
-                <img src={item.url} alt={item.title} className="w-full h-48 object-cover" />
-              </ImageLightbox>
-            )}
-            {item.mime?.startsWith('audio/') && (
-              <MusicPreview
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {data?.items?.map((item) =>
+          item.mime?.startsWith('audio/') ? (
+            <div
+              key={item.id}
+              className={cn(
+                'relative',
+                !item.approved && 'ring-2 ring-yellow-500 rounded-md'
+              )}
+            >
+              {!item.approved && (
+                <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
+                  Moderációra vár
+                </span>
+              )}
+              <MusicCard
                 id={item.id}
                 url={item.url}
                 title={item.title}
-                audioRef={audioRef}
-                playingId={playingId}
-                setPlayingId={setPlayingId}
+                onDownload={() => downloadFile(item)}
+                onDelete={() => deleteFile(item.id)}
               />
-            )}
+            </div>
+          ) : (
+            <Card
+              key={item.id}
+              className={cn(
+                'relative overflow-hidden shadow rounded',
+                !item.approved && 'ring-2 ring-yellow-500'
+              )}
+            >
+              {!item.approved && (
+                <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
+                  Moderációra vár
+                </span>
+              )}
+              {item.mime?.startsWith('image/') && (
+                <ImageLightbox src={item.url} alt={item.title}>
+                  <div className="aspect-[3/4] w-full overflow-hidden rounded-md">
+                    <img
+                      src={item.url}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </ImageLightbox>
+              )}
             {item.mime === 'text/plain' && <PromptPreview url={item.url} />}
             {item.mime?.startsWith('video/') && (
               <video src={item.url} controls className="w-full h-48 object-cover" />
@@ -179,59 +195,7 @@ export default function MyFilesPage() {
           </Card>
         ))}
       </div>
-      <audio ref={audioRef} hidden />
     </main>
-  )
-}
-
-interface MusicMeta {
-  title: string | null
-  artist: string | null
-  album: string | null
-  picture: string | null
-}
-
-function MusicPreview({
-  id,
-  url,
-  title,
-  audioRef,
-  playingId,
-  setPlayingId,
-}: {
-  id: string
-  url: string
-  title: string
-  audioRef: React.RefObject<HTMLAudioElement | null>
-  playingId: string | null
-  setPlayingId: (id: string | null) => void
-}) {
-  const { data } = useSWR<MusicMeta | null>(
-    `/api/music-meta?id=${id}`,
-    (u: string): Promise<MusicMeta | null> =>
-      fetch(u).then((res) => (res.ok ? (res.json() as Promise<MusicMeta>) : null))
-  )
-  const fallback = guessMetaFromFilename(title)
-  const displayTitle = formatTitle(data?.title || fallback.title)
-  const displayArtist = data?.artist || fallback.artist
-  return (
-    <div className="p-2 flex flex-col items-center gap-2 w-full">
-      {data?.picture && (
-        <img src={data.picture} alt={displayTitle} className="w-full aspect-square object-contain rounded" />
-      )}
-      <div className="text-center text-sm">
-        <h3>{displayTitle}</h3>
-        {displayArtist && <p>{displayArtist}</p>}
-      </div>
-      <MusicPlayer
-        id={id}
-        url={url}
-        title={displayTitle}
-        audioRef={audioRef}
-        playingId={playingId}
-        setPlayingId={setPlayingId}
-      />
-    </div>
   )
 }
 
