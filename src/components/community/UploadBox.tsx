@@ -48,8 +48,6 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
 
   const fetchQuota = async (u: string) => {
     try {
-      // Refresh session to ensure latest quota values
-      await fetch('/api/get-session', { credentials: 'include' })
       const res = await fetch(u, { credentials: 'include' })
       if (!res.ok) throw new Error('failed')
       const data = (await res.json()) as { used?: unknown; limit?: unknown }
@@ -66,8 +64,11 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     }
   }
 
-  const { data: quota, mutate: mutateQuota } = useSWR<{ used: number; limit: number }>(
-    '/api/storage-quota',
+  const {
+    data: quota,
+    mutate: mutateQuota,
+  } = useSWR<{ used: number; limit: number }>(
+    sessionUser ? '/api/storage-quota' : null,
     fetchQuota
   )
 
@@ -288,7 +289,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
             })}
           </ul>
         )}
-        {quota && (
+        {sessionUser && (
           <>
             <Progress className="mt-2" value={percent} />
             <p className="text-xs text-muted-foreground text-center mt-1">

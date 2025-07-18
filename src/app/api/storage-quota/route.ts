@@ -8,8 +8,12 @@ export async function GET() {
   }
   const user = await getUserFromDB(session.user.id)
 
-  return jsonResponse({
-    used: user?.usedStorageMb ?? session.user.usedStorageMb ?? 0,
-    limit: user?.uploadLimitMb ?? session.user.uploadLimitMb ?? 0,
-  })
+  const used = Number(
+    user?.usedStorageMb ?? session.user.usedStorageMb ?? 0
+  )
+  const limit = Number(
+    user?.uploadLimitMb ?? session.user.uploadLimitMb ?? 0
+  )
+
+  return jsonResponse({ used, limit })
 }
