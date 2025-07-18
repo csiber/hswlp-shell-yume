@@ -2,11 +2,8 @@
 
 import * as React from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import PurchaseButton from "@/components/purchase-button"
-import type { PURCHASABLE_ITEM_TYPE } from "@/db/schema"
+import ActivateButton from "@/components/activate-button"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
 import { COMPONENTS } from "@/app/(dashboard)/dashboard/marketplace/components-catalog"
 
 interface MarketplaceCardProps {
@@ -15,12 +12,10 @@ interface MarketplaceCardProps {
   description: string
   credits: number
   containerClass?: string
-  isPurchased: boolean
+  isActive: boolean
 }
 
-const ITEM_TYPE = 'COMPONENT' as const satisfies keyof typeof PURCHASABLE_ITEM_TYPE;
-
-export function MarketplaceCard({ id, name, description, credits, containerClass, isPurchased }: MarketplaceCardProps) {
+export function MarketplaceCard({ id, name, description, credits, containerClass, isActive }: MarketplaceCardProps) {
   const component = COMPONENTS.find(c => c.id === id);
   if (!component) return null;
 
@@ -34,9 +29,6 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{name}</CardTitle>
-          {isPurchased && (
-            <Badge variant="secondary">Megvásárolva</Badge>
-          )}
         </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
@@ -46,24 +38,10 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
         </div>
       </CardContent>
       <CardFooter className="mt-4 flex justify-end gap-2">
-        {!isPurchased ? (
-          <PurchaseButton
-            itemId={id}
-            itemType={ITEM_TYPE}
-            itemName={name}
-          />
+        {isActive ? (
+          <Badge variant="secondary">Már aktív</Badge>
         ) : (
-          component.onActivate && (
-            <Button
-              onClick={() => {
-                component.onActivate!()
-                toast.success("Aktiválva")
-              }}
-              variant="secondary"
-            >
-              Aktiválás
-            </Button>
-          )
+          <ActivateButton componentId={id} componentName={name} />
         )}
       </CardFooter>
     </Card>
