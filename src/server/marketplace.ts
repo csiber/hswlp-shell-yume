@@ -62,6 +62,8 @@ export async function activateMarketplaceComponent(
 ) {
   const db = await getDB();
 
+  const component = COMPONENTS.find(c => c.id === componentId);
+
   const existing = await db
     .select()
     .from(marketplaceActivationsTable)
@@ -106,6 +108,15 @@ export async function activateMarketplaceComponent(
     case "daily-surprise":
       const reward = await applyDailySurpriseReward(userId);
       metadata.reward = reward;
+      break;
+    case "storage-upgrade":
+      if (component?.props && typeof component.props.addMb === 'number') {
+        await db
+          .update(userTable)
+          .set({ uploadLimitMb: sql`${userTable.uploadLimitMb} + ${component.props.addMb}` })
+          .where(eq(userTable.id, userId));
+        await updateAllSessionsOfUser(userId);
+      }
       break;
     default:
       throw new Error("Unknown component");

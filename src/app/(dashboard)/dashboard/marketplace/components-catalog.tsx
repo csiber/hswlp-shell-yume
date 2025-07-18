@@ -5,6 +5,8 @@ interface MarketplaceComponent {
   credits: number;
   containerClass?: string;
   preview: () => React.ReactNode;
+  type?: string;
+  props?: Record<string, unknown>;
 }
 
 export const COMPONENTS: MarketplaceComponent[] = [
@@ -56,5 +58,14 @@ export const COMPONENTS: MarketplaceComponent[] = [
       "Véletlenszerűen kapsz egy kis extrát: pl. kis keret, 10 pont vagy ritkán badge.",
     credits: 60,
     preview: () => <div className="h-8 w-20 bg-green-200 rounded" />,
+  },
+  {
+    id: "storage-upgrade-500",
+    type: "storage-upgrade",
+    name: "+500 MB tárhely",
+    description: "További 500 MB feltöltési keret.",
+    credits: 100,
+    preview: () => <div className="h-8 w-20 bg-purple-200 rounded" />,
+    props: { addMb: 500 },
   },
 ];

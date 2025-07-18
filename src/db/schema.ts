@@ -76,6 +76,8 @@ export const userTable = sqliteTable("user", {
     mode: "timestamp",
   }),
   uploadBanReason: text(),
+  uploadLimitMb: integer().default(100),
+  usedStorageMb: integer().default(0),
 }, (table) => ([
   index('email_idx').on(table.email),
   index('nickname_idx').on(table.nickname),
