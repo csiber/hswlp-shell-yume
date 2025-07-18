@@ -57,7 +57,7 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
         {loading ? (
           <p>Betöltés...</p>
         ) : posts.length === 0 ? (
-          <p>Még nincs feltöltött posztod a kiemeléshez.</p>
+          <p>Nincs feltöltött posztod.</p>
         ) : (
           <div className="grid max-h-[60vh] grid-cols-1 gap-3 overflow-y-auto">
             {posts.map((post) => (

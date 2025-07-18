@@ -23,6 +23,7 @@ export interface FeedItem {
     email: string;
     avatar_url?: string | null;
   };
+  pinned?: boolean;
 }
 
 export interface AlbumItem {
@@ -86,11 +87,13 @@ export default function CommunityFeedV3({
             : detect(it.url),
       }));
 
-      arr.sort(
+      const pinned = arr.filter((i) => i.pinned)
+      const others = arr.filter((i) => !i.pinned)
+      others.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-      setItems(arr);
+      )
+      setItems([...pinned, ...others])
       setVisible(10);
     } catch (err) {
       console.warn("Hiba a feed betöltésekor", err);
