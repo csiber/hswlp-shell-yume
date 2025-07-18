@@ -5,6 +5,7 @@ import { getDB } from "@/db"
 import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema"
 import { SIGN_UP_BONUS_CREDITS } from "@/constants"
 import { signUpSchema } from "@/schemas/signup.schema";
+import { createId } from "@paralleldrive/cuid2";
 import { hashPassword } from "@/utils/password-hasher";
 import { createSession, generateSessionToken, setSessionTokenCookie } from "@/utils/auth";
 import { logTransaction } from "@/utils/credits";
@@ -48,8 +49,11 @@ export const signUpAction = createServerAction()
         const hashedPassword = await hashPassword({ password: input.password });
 
         // Create the user with signup credits
+        const nickname = `anon_${createId().slice(0, 8)}`;
+
         const [user] = await db.insert(userTable)
           .values({
+            nickname,
             email: input.email,
             firstName: input.firstName,
             lastName: input.lastName,
