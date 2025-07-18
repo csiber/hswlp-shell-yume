@@ -18,8 +18,8 @@ export const updateUserProfileAction = createServerAction()
         const session = await requireVerifiedEmail();
         const db = getDB();
 
-        if (!session?.user?.id) {
-          throw new ZSAError("NOT_AUTHORIZED", "Unauthorized");
+          if (!session?.user?.id) {
+            throw new ZSAError("NOT_AUTHORIZED", "Nincs jogosultság");
         }
 
         try {
@@ -37,7 +37,7 @@ export const updateUserProfileAction = createServerAction()
           console.error(error)
           throw new ZSAError(
             "INTERNAL_SERVER_ERROR",
-            "Failed to update profile"
+              "A profil frissítése nem sikerült"
           );
         }
       },

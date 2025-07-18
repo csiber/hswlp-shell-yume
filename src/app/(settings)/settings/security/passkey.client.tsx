@@ -37,7 +37,7 @@ function PasskeyRegistrationButton({ email, className, onSuccess }: PasskeyRegis
       const [options] = await generateRegistrationOptionsAction({ email });
 
       if (!options) {
-        throw new Error("Failed to get registration options");
+          throw new Error("Nem sikerült lekérni a regisztrációs beállításokat");
       }
 
       // Start the registration process in the browser
@@ -52,12 +52,12 @@ function PasskeyRegistrationButton({ email, className, onSuccess }: PasskeyRegis
         challenge: options.challenge,
       });
 
-      toast.success("Passkey registered successfully");
+        toast.success("Sikeres passkulcs-regisztráció");
       onSuccess?.();
       router.refresh();
     } catch (error) {
-      console.error("Passkey registration error:", error);
-      toast.error("Failed to register passkey");
+        console.error("Passkey registration error:", error);
+        toast.error("Nem sikerült regisztrálni a passkulcsot");
     } finally {
       setIsRegistering(false);
     }
@@ -69,7 +69,7 @@ function PasskeyRegistrationButton({ email, className, onSuccess }: PasskeyRegis
       disabled={isRegistering}
       className={className}
     >
-      {isRegistering ? "Registering..." : "Register Passkey"}
+        {isRegistering ? "Regisztráció..." : "Passkulcs regisztrálása"}
     </Button>
   );
 }
@@ -95,7 +95,7 @@ export function PasskeysList({ passkeys, currentPasskeyId, email }: PasskeysList
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
   const { execute: deletePasskey } = useServerAction(deletePasskeyAction, {
     onSuccess: () => {
-      toast.success("Passkey deleted");
+        toast.success("Passkulcs törölve");
       dialogCloseRef.current?.click();
       router.refresh();
     }
@@ -108,9 +108,9 @@ export function PasskeysList({ passkeys, currentPasskeyId, email }: PasskeysList
     <div className="space-y-6">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold">Passkeys</h2>
+          <h2 className="text-lg font-semibold">Passkulcsok</h2>
           <p className="text-sm text-muted-foreground">
-            Manage your passkeys for passwordless authentication.
+            Kezeld a jelszó nélküli bejelentkezéshez használt passkulcsaidat.
           </p>
         </div>
         {email && (
@@ -129,16 +129,16 @@ export function PasskeysList({ passkeys, currentPasskeyId, email }: PasskeysList
                 <div className="space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                     <CardTitle className="flex flex-wrap items-center gap-2 text-base">
-                      {passkey.aaguid && (PASSKEY_AUTHENTICATOR_IDS as Record<string, string>)[passkey.aaguid] || "Unknown Authenticator App"}
-                      {isCurrentPasskey(passkey) && <Badge>Current Passkey</Badge>}
+                      {passkey.aaguid && (PASSKEY_AUTHENTICATOR_IDS as Record<string, string>)[passkey.aaguid] || "Ismeretlen hitelesítő alkalmazás"}
+                      {isCurrentPasskey(passkey) && <Badge>Aktív passkulcs</Badge>}
                     </CardTitle>
                     <div className="text-sm text-muted-foreground whitespace-nowrap">
-                      · {formatDistanceToNow(passkey.createdAt)} ago
+                        · {formatDistanceToNow(passkey.createdAt)} ezelőtt
                     </div>
                   </div>
                   {passkey.parsedUserAgent && (
                     <CardDescription className="text-sm">
-                      {passkey.parsedUserAgent.browser.name ?? "Unknown browser"} {passkey.parsedUserAgent.browser.major ?? "Unknown version"} on {passkey.parsedUserAgent.device.vendor ?? "Unknown device"} {passkey.parsedUserAgent.device.model ?? "Unknown model"} {passkey.parsedUserAgent.device.type ?? "Unknown type"} ({passkey.parsedUserAgent.os.name ?? "Unknown OS"} {passkey.parsedUserAgent.os.version ?? "Unknown version"})
+                      {passkey.parsedUserAgent.browser.name ?? "Ismeretlen böngésző"} {passkey.parsedUserAgent.browser.major ?? "Ismeretlen verzió"} - {passkey.parsedUserAgent.device.vendor ?? "Ismeretlen eszköz"} {passkey.parsedUserAgent.device.model ?? "Ismeretlen modell"} {passkey.parsedUserAgent.device.type ?? "Ismeretlen típus"} ({passkey.parsedUserAgent.os.name ?? "Ismeretlen OS"} {passkey.parsedUserAgent.os.version ?? "Ismeretlen verzió"})
                     </CardDescription>
                   )}
                 </div>
@@ -146,25 +146,25 @@ export function PasskeysList({ passkeys, currentPasskeyId, email }: PasskeysList
                   {!isCurrentPasskey(passkey) && (
                     <Dialog>
                       <DialogTrigger asChild>
-                        <Button size="sm" variant="destructive" className="w-full sm:w-auto">Delete passkey</Button>
+                        <Button size="sm" variant="destructive" className="w-full sm:w-auto">Passkulcs törlése</Button>
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Delete passkey?</DialogTitle>
+                            <DialogTitle>Passkulcs törlése?</DialogTitle>
                           <DialogDescription>
-                            This will remove this passkey from your account. This action cannot be undone.
+                            Ez eltávolítja ezt a passkulcsot a fiókodból. A művelet nem vonható vissza.
                           </DialogDescription>
                         </DialogHeader>
                         <DialogFooter className="mt-6 sm:mt-0">
                           <DialogClose ref={dialogCloseRef} asChild>
-                            <Button variant="outline">Cancel</Button>
+                              <Button variant="outline">Mégse</Button>
                           </DialogClose>
                           <Button
                             variant="destructive"
                             className="mb-4 sm:mb-0"
                             onClick={() => deletePasskey({ credentialId: passkey.credentialId })}
                           >
-                            Delete passkey
+                            Passkulcs törlése
                           </Button>
                         </DialogFooter>
                       </DialogContent>
@@ -178,7 +178,7 @@ export function PasskeysList({ passkeys, currentPasskeyId, email }: PasskeysList
 
         {passkeys.length === 0 && (
           <div className="text-center text-muted-foreground">
-            No passkeys found. Add a passkey to enable passwordless authentication.
+            Nincs még passkulcsod. Adj hozzá egyet a jelszó nélküli bejelentkezéshez.
           </div>
         )}
       </div>

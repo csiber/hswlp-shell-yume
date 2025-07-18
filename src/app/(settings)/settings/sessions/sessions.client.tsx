@@ -36,7 +36,7 @@ export function SessionsClient({ sessions }: { sessions: SessionWithMeta[] }) {
   const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
   const { execute: deleteSession } = useServerAction(deleteSessionAction, {
     onSuccess: () => {
-      toast.success("Session deleted");
+      toast.success("Munkamenet törölve");
       dialogCloseRef.current?.click();
       router.refresh();
     }
@@ -52,46 +52,46 @@ export function SessionsClient({ sessions }: { sessions: SessionWithMeta[] }) {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
                   <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                     {session.city && session.country
-                      ? `${session.city}, ${regionNames.of(session.country)}`
-                      : session.country || "Unknown location"}
-                    {session.isCurrentSession && <Badge>Current Session</Badge>}
+                        ? `${session.city}, ${regionNames.of(session.country)}`
+                        : session.country || "Ismeretlen hely"}
+                      {session.isCurrentSession && <Badge>Aktuális munkamenet</Badge>}
                   </CardTitle>
                   {session?.authenticationType && (
-                    <Badge variant='outline'>
-                      Authenticated with {capitalize(session?.authenticationType ?? "password")?.replace("-", " ")}
-                    </Badge>
+                      <Badge variant='outline'>
+                        Hitelesítés: {capitalize(session?.authenticationType ?? "password")?.replace("-", " ")}
+                      </Badge>
                   )}
                   <div className="text-sm text-muted-foreground whitespace-nowrap">
-                    &nbsp;· &nbsp;{formatDistanceToNow(session.createdAt)} ago
+                      &nbsp;· &nbsp;{formatDistanceToNow(session.createdAt)} ezelőtt
                   </div>
                 </div>
                 <CardDescription className="text-sm">
-                  {session.parsedUserAgent?.browser.name ?? "Unknown browser"} {session.parsedUserAgent?.browser.major ?? "Unknown version"} on {session.parsedUserAgent?.device.vendor ?? "Unknown device"} {session.parsedUserAgent?.device.model ?? "Unknown model"} {session.parsedUserAgent?.device.type ?? "Unknown type"} ({session.parsedUserAgent?.os.name ?? "Unknown OS"} {session.parsedUserAgent?.os.version ?? "Unknown version"})
+                    {session.parsedUserAgent?.browser.name ?? "Ismeretlen böngésző"} {session.parsedUserAgent?.browser.major ?? "Ismeretlen verzió"} - {session.parsedUserAgent?.device.vendor ?? "Ismeretlen eszköz"} {session.parsedUserAgent?.device.model ?? "Ismeretlen modell"} {session.parsedUserAgent?.device.type ?? "Ismeretlen típus"} ({session.parsedUserAgent?.os.name ?? "Ismeretlen OS"} {session.parsedUserAgent?.os.version ?? "Ismeretlen verzió"})
                 </CardDescription>
               </div>
               <div>
                 {!session?.isCurrentSession && (
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button size="sm" variant="destructive" className="w-full sm:w-auto">Delete session</Button>
+                        <Button size="sm" variant="destructive" className="w-full sm:w-auto">Munkamenet törlése</Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                        <DialogTitle>Delete session?</DialogTitle>
+                          <DialogTitle>Munkamenet törlése?</DialogTitle>
                         <DialogDescription>
-                          This will sign out this device. This action cannot be undone.
+                          Ez kijelentkezteti ezt az eszközt. A művelet nem vonható vissza.
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter className="mt-6 sm:mt-0">
                         <DialogClose ref={dialogCloseRef} asChild>
-                          <Button variant="outline">Cancel</Button>
+                          <Button variant="outline">Mégse</Button>
                         </DialogClose>
                         <Button
                           variant="destructive"
                           className="mb-4 sm:mb-0"
                           onClick={() => deleteSession({ sessionId: session.id })}
                         >
-                          Delete session
+                          Munkamenet törlése
                         </Button>
                       </DialogFooter>
                     </DialogContent>

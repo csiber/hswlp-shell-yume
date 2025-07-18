@@ -5,8 +5,8 @@ import { getSessionsAction } from "./sessions.actions";
 import { redirect } from "next/navigation";
 
 export const metadata = {
-  title: "Sessions",
-  description: "Manage your active sessions",
+  title: "Munkamenetek",
+  description: "Aktív bejelentkezéseid kezelése",
 };
 
 export default async function SessionsPage() {

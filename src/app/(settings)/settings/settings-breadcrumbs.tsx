@@ -13,13 +13,13 @@ import { capitalize } from "@/utils/text";
 
 export function SettingsBreadcrumbs() {
   const segment = useSelectedLayoutSegment();
-  const pageTitle = segment ? capitalize(segment.replace(/-/g, ' ')) : 'Overview';
+  const pageTitle = segment ? capitalize(segment.replace(/-/g, ' ')) : 'Áttekintés';
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem className="hidden md:block">
-          <BreadcrumbLink href="/settings">Settings</BreadcrumbLink>
+          <BreadcrumbLink href="/settings">Beállítások</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator className="hidden md:block" />
         <BreadcrumbItem>
