@@ -24,7 +24,6 @@ interface UploadItem {
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
-import Image from 'next/image'
 import MusicCard from '@/components/MusicCard'
 import EditUploadDialog from '@/components/myfiles/EditUploadDialog'
 import { cn } from '@/utils/cn'
@@ -218,7 +217,8 @@ export default function MyFilesPage() {
               {item.mime?.startsWith('image/') && (
                 <ImageLightbox src={item.url} alt={item.title}>
                   <div className="aspect-[3/4] w-full overflow-hidden rounded-md relative">
-                    <Image src={item.url} alt={item.title} fill className="object-cover" />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={item.url} alt={item.title} className="object-cover w-full h-full" />
                   </div>
                 </ImageLightbox>
               )}
