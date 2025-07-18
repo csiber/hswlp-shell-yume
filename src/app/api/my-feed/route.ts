@@ -11,7 +11,7 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
-    SELECT u.id, u.title, u.type, u.created_at, u.url, u.r2_key,
+    SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
            u.view_count, u.play_count, u.download_points,
            usr.firstName, usr.lastName, usr.email
     FROM uploads u
@@ -25,6 +25,7 @@ export async function GET() {
   const items = [] as {
     id: string
     title: string
+    tags: string | null
     type: 'image' | 'music' | 'prompt'
     url: string
     download_points: number
@@ -51,6 +52,7 @@ export async function GET() {
     items.push({
       id: row.id,
       title: row.title,
+      tags: row.tags || null,
       type: row.type as 'image' | 'music' | 'prompt',
       url: fileUrl,
       download_points: Number(row.download_points ?? 2),

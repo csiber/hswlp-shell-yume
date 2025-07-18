@@ -9,6 +9,9 @@ interface UploadItem {
   category: 'image' | 'music' | 'prompt'
   mime: string | null
   title: string
+  description?: string | null
+  tags?: string | null
+  note?: string | null
   url: string
   download_points: number
   approved: number
@@ -17,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
 import MusicCard from '@/components/MusicCard'
+import EditUploadDialog from '@/components/myfiles/EditUploadDialog'
 import { cn } from '@/utils/cn'
 import { toast } from 'sonner'
 import { useSessionStore } from '@/state/session'
@@ -166,7 +170,19 @@ export default function MyFilesPage() {
                 title={item.title}
                 onDownload={() => downloadFile(item)}
                 onDelete={() => deleteFile(item.id)}
+                editTrigger={
+                  <EditUploadDialog
+                    upload={item}
+                    onSaved={mutate}
+                    trigger={<Button variant="ghost" size="icon">✏️</Button>}
+                  />
+                }
               />
+              {item.tags && (
+                <div className="px-1 pt-1 text-xs text-muted-foreground">
+                  {item.tags}
+                </div>
+              )}
             </div>
           ) : (
             <Card
@@ -237,11 +253,25 @@ export default function MyFilesPage() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
+                <EditUploadDialog
+                  upload={item}
+                  onSaved={mutate}
+                  trigger={
+                    <Button size="icon" variant="ghost">
+                      ✏️
+                    </Button>
+                  }
+                />
                 <Button size="icon" variant="ghost" onClick={() => deleteFile(item.id)}>
                   <Trash className="w-4 h-4 text-red-500" />
                 </Button>
               </div>
             </div>
+            {item.tags && (
+              <div className="px-2 pb-2 text-xs text-muted-foreground">
+                {item.tags}
+              </div>
+            )}
           </Card>
         ))}
       </div>

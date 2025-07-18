@@ -212,6 +212,9 @@ export default function PostCard({
           {item.title}
         </p>
       )}
+      {item.tags && (
+        <p className="mb-2 text-xs text-muted-foreground">{item.tags}</p>
+      )}
       <div className="mt-auto flex justify-between items-center text-gray-500">
         {item.type === "music" && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
