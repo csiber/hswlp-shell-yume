@@ -38,7 +38,7 @@ export const startPasskeyRegistrationAction = createServerAction()
           }
         }
 
-        const db = getDB();
+        const db = await getDB();
 
         const existingUser = await db.query.userTable.findFirst({
           where: eq(userTable.email, input.email),
@@ -160,7 +160,7 @@ export const completePasskeyRegistrationAction = createServerAction()
       });
 
       // Get user details for email verification
-      const db = getDB();
+      const db = await getDB();
       const user = await db.query.userTable.findFirst({
         where: eq(userTable.id, userId),
       });

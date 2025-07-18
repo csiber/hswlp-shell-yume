@@ -16,7 +16,7 @@ export const updateUserProfileAction = createServerAction()
     return withRateLimit(
       async () => {
         const session = await requireVerifiedEmail();
-        const db = getDB();
+        const db = await getDB();
 
           if (!session?.user?.id) {
             throw new ZSAError("NOT_AUTHORIZED", "Nincs jogosultság");

@@ -58,7 +58,7 @@ export const purchaseAction = createServerAction()
           );
         }
 
-        const db = getDB();
+        const db = await getDB();
 
         // Check if user already owns the item
         const existingPurchase = await db.query.purchasedItemsTable.findFirst({

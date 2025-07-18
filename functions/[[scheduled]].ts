@@ -7,7 +7,7 @@ import { lt, isNull, or, eq } from 'drizzle-orm'
 
 export const onScheduled = async () => {
   getCloudflareContext()
-  const db = getDB()
+  const db = await getDB()
 
   const now = new Date()
   const monthAgo = new Date(now)

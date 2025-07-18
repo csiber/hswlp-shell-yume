@@ -29,7 +29,7 @@ export const generateRegistrationOptionsAction = createServerAction()
       // Check if user is logged in and email is verified
       const session = await requireVerifiedEmail();
 
-      const db = getDB();
+      const db = await getDB();
       const user = await db.query.userTable.findFirst({
         where: eq(userTable.email, input.email),
       });
@@ -74,7 +74,7 @@ export const verifyRegistrationAction = createServerAction()
       // Check if user is logged in and email is verified
       const session = await requireVerifiedEmail();
 
-      const db = getDB();
+      const db = await getDB();
       const user = await db.query.userTable.findFirst({
         where: eq(userTable.email, input.email),
       });
@@ -118,7 +118,7 @@ export const deletePasskeyAction = createServerAction()
         );
       }
 
-      const db = getDB();
+      const db = await getDB();
 
       // Get all user's passkeys
       const passkeys = await db

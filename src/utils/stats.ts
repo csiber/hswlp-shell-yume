@@ -7,7 +7,7 @@ import { GITHUB_REPO_URL } from "@/constants";
 export async function getTotalUsers() {
   return withKVCache(
     async () => {
-      const db = getDB();
+      const db = await getDB();
 
       return await db.$count(userTable);
     },
