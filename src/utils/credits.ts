@@ -1,7 +1,7 @@
 import "server-only";
 import { eq, sql, desc, and, lt, isNull, gt, or, asc } from "drizzle-orm";
 import { getDB } from "@/db";
-import { userTable, creditTransactionTable, CREDIT_TRANSACTION_TYPE, purchasedItemsTable } from "@/db/schema";
+import { userTable, creditTransactionTable, teamMembershipTable, teamTable, CREDIT_TRANSACTION_TYPE, purchasedItemsTable } from "@/db/schema";
 import { updateAllSessionsOfUser, KVSession } from "./kv-session";
 import { CREDIT_PACKAGES, FREE_MONTHLY_CREDITS } from "@/constants";
 
@@ -23,6 +23,26 @@ function shouldRefreshCredits(session: KVSession, currentTime: Date): boolean {
 
   // Only refresh if we've passed the one month mark
   return currentTime >= oneMonthAfterLastRefresh;
+}
+
+async function updateTeamCredits(userId: string, amount: number) {
+  const db = await getDB();
+  const memberships = await db
+    .select({ teamId: teamMembershipTable.teamId })
+    .from(teamMembershipTable)
+    .where(
+      and(
+        eq(teamMembershipTable.userId, userId),
+        eq(teamMembershipTable.isActive, 1)
+      )
+    );
+
+  for (const { teamId } of memberships) {
+    await db
+      .update(teamTable)
+      .set({ creditBalance: sql`${teamTable.creditBalance} + ${amount}` })
+      .where(eq(teamTable.id, teamId));
+  }
 }
 
 async function processExpiredCredits(userId: string, currentTime: Date) {
@@ -78,6 +98,8 @@ export async function updateUserCredits(userId: string, creditsToAdd: number) {
       currentCredits: sql`${userTable.currentCredits} + ${creditsToAdd}`,
     })
     .where(eq(userTable.id, userId));
+
+  await updateTeamCredits(userId, creditsToAdd);
 
   // Update all KV sessions to reflect the new credit balance
   await updateAllSessionsOfUser(userId);
@@ -239,6 +261,8 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
       currentCredits: sql`${userTable.currentCredits} - ${amount}`,
     })
     .where(eq(userTable.id, userId));
+
+  await updateTeamCredits(userId, -amount);
 
   // Log the usage transaction
   await db.insert(creditTransactionTable).values({
