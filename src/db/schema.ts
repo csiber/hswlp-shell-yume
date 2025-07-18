@@ -64,8 +64,8 @@ export const userTable = sqliteTable("user", {
     mode: "timestamp",
   }),
   // Marketplace feature flags
-  profileFrameEnabled: integer().default(0),
-  customAvatarUnlocked: integer().default(0),
+  profile_frame_enabled: integer().default(0),
+  custom_avatar_unlocked: integer().default(0),
   selectedAvatarStyle: text(),
   pinnedPostId: text(),
   emojiReactionsEnabled: integer().default(0),

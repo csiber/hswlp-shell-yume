@@ -1,2 +1,2 @@
--- Add customAvatarUnlocked column if missing
-ALTER TABLE user ADD COLUMN IF NOT EXISTS customAvatarUnlocked INTEGER DEFAULT 0;
+-- Add custom_avatar_unlocked column if missing
+ALTER TABLE user ADD COLUMN IF NOT EXISTS custom_avatar_unlocked INTEGER DEFAULT 0;
