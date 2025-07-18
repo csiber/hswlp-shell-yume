@@ -1,6 +1,7 @@
 "use client"
 
 import { toast } from "sonner"
+import { Alert } from "@heroui/react"
 import ShinyButton from "@/components/ui/shiny-button"
 import { useServerAction } from "zsa-react"
 import { purchaseAction } from "@/app/(dashboard)/dashboard/marketplace/purchase.action"
@@ -10,9 +11,10 @@ import { useRouter } from "next/navigation"
 interface PurchaseButtonProps {
   itemId: string
   itemType: keyof typeof PURCHASABLE_ITEM_TYPE
+  itemName: string
 }
 
-export default function PurchaseButton({ itemId, itemType }: PurchaseButtonProps) {
+export default function PurchaseButton({ itemId, itemType, itemName }: PurchaseButtonProps) {
   const router = useRouter()
 
   const { execute: handlePurchase, isPending } = useServerAction(purchaseAction, {
@@ -25,7 +27,9 @@ export default function PurchaseButton({ itemId, itemType }: PurchaseButtonProps
     },
     onSuccess: () => {
       toast.dismiss()
-      toast.success("Sikeres vásárlás!")
+      toast.custom(
+        <Alert color="success" title="Sikeres vásárlás" description={`${itemName} hozzáadva`} />
+      )
     },
   })
 

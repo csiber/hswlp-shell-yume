@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
 import { cn } from '@/utils/cn'
 import { toast } from 'sonner'
+import { useSessionStore } from '@/state/session'
 import {
   Download,
   File as FileIcon,
@@ -44,6 +45,26 @@ export default function MyFilesPage() {
     `/api/my-files${query}`,
     fetcher
   )
+
+  const [downloaded, setDownloaded] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    const stored = localStorage.getItem('downloaded_files')
+    if (stored) {
+      setDownloaded(new Set(JSON.parse(stored)))
+    }
+  }, [])
+
+  const markDownloaded = (id: string) => {
+    setDownloaded(prev => {
+      const ns = new Set(prev)
+      ns.add(id)
+      localStorage.setItem('downloaded_files', JSON.stringify(Array.from(ns)))
+      return ns
+    })
+  }
+  const userCredits = useSessionStore((s) => s.session?.user?.currentCredits ?? 0)
+  const fetchSession = useSessionStore((s) => s.fetchSession)
 
   useEffect(() => {
     if (!data?.items) return
@@ -75,7 +96,24 @@ export default function MyFilesPage() {
   }
 
   const downloadFile = async (item: UploadItem) => {
+    if (userCredits < item.download_points) {
+      toast.error('Nincs elég kredit a letöltéshez')
+      return
+    }
     try {
+      const creditRes = await fetch('/api/credits/use', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: item.download_points, description: 'File download' }),
+      })
+
+      if (!creditRes.ok) {
+        toast.error('Nincs elég kredit a letöltéshez')
+        return
+      }
+
+      fetchSession?.()
+
       const res = await fetch(`/api/uploads/${item.id}/download`)
       if (res.ok) {
         toast.success('Letöltés indítása')
@@ -86,8 +124,7 @@ export default function MyFilesPage() {
         a.download = item.title
         a.click()
         URL.revokeObjectURL(url)
-      } else if (res.status === 402) {
-        toast.error('Nincs elég kredit a letöltéshez')
+        markDownloaded(item.id)
       } else {
         toast.error('Letöltés sikertelen')
       }
@@ -162,12 +199,25 @@ export default function MyFilesPage() {
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button size="icon" variant="ghost" onClick={() => downloadFile(item)}>
-                        <Download className="w-4 h-4" />
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => downloadFile(item)}
+                        disabled={userCredits < item.download_points || downloaded.has(item.id)}
+                      >
+                        {downloaded.has(item.id) ? (
+                          'Letöltve'
+                        ) : (
+                          <Download className="w-4 h-4" />
+                        )}
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      {`Letöltés ${item.download_points} pontért`}
+                      {downloaded.has(item.id)
+                        ? 'Már letöltve'
+                        : userCredits < item.download_points
+                        ? 'Nincs elég kredit a letöltéshez'
+                        : `Letöltés ${item.download_points} pontért`}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

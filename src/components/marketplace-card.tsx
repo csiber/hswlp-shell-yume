@@ -23,7 +23,12 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
   if (!component) return null;
 
   return (
-    <Card>
+    <Card className="relative">
+      {credits > 0 && (
+        <Badge className="absolute top-2 right-2 bg-yellow-400 text-black shadow-md">
+          {credits} pont
+        </Badge>
+      )}
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{name}</CardTitle>
@@ -44,6 +49,7 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
           <PurchaseButton
             itemId={id}
             itemType={ITEM_TYPE}
+            itemName={name}
           />
         )}
       </CardFooter>
