@@ -118,7 +118,7 @@ export function PendingInvitations() {
               <div>
                 <h3 className="font-medium">{invitation.team.name}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Invited by {invitation.invitedBy.firstName || ''} {invitation.invitedBy.lastName || ''}
+                  Meghívta {invitation.invitedBy.firstName || ''} {invitation.invitedBy.lastName || ''}
                 </p>
               </div>
             </div>
