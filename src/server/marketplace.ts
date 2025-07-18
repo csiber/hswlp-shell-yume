@@ -32,7 +32,7 @@ export async function activateHighlightPost(userId: string, postId: string) {
 }
 
 export async function applyDailySurpriseReward(userId: string): Promise<string> {
-  const rewards = ["points", "bonus_frame", "badge_unlocked"] as const;
+  const rewards = ["points", "bonusFrame", "badgeUnlocked"] as const;
   const choice = rewards[Math.floor(Math.random() * rewards.length)];
   const db = await getDB();
 
@@ -41,10 +41,10 @@ export async function applyDailySurpriseReward(userId: string): Promise<string> 
       .update(userTable)
       .set({ points: sql`${userTable.points} + 10` })
       .where(eq(userTable.id, userId));
-  } else if (choice === "bonus_frame") {
-    await updateUserField(userId, "profile_frame_enabled", 1);
-  } else if (choice === "badge_unlocked") {
-    await updateUserField(userId, "badge_unlocked", 1);
+  } else if (choice === "bonusFrame") {
+    await updateUserField(userId, "profileFrameEnabled", 1);
+  } else if (choice === "badgeUnlocked") {
+    await updateUserField(userId, "badgeUnlocked", 1);
   }
 
   return choice;
@@ -64,9 +64,8 @@ export async function activateMarketplaceComponent(
 
   const component = COMPONENTS.find(c => c.id === componentId);
 
-
   const existing = await db.query.marketplaceActivationsTable.findFirst({
-    where: and(eq(marketplaceActivationsTable.userId, userId), eq(marketplaceActivationsTable.componentId, componentId)),
+    where: and(eq(marketplaceActivationsTable.user_id, userId), eq(marketplaceActivationsTable.component_id, componentId)),
   });
   if (existing) {
     throw new Error("Component already active");
@@ -81,22 +80,22 @@ export async function activateMarketplaceComponent(
       metadata.postId = options.postId;
       break;
     case "profile-frame":
-      await updateUserField(userId, "profile_frame_enabled", 1);
+      await updateUserField(userId, "profileFrameEnabled", 1);
       break;
     case "custom-avatar":
-      await updateUserField(userId, "custom_avatar_unlocked", 1);
+      await updateUserField(userId, "customAvatarUnlocked", 1);
       if (options.selectedAvatarStyle) {
-        await updateUserField(userId, "selected_avatar_style", options.selectedAvatarStyle);
+        await updateUserField(userId, "selectedAvatarStyle", options.selectedAvatarStyle);
         metadata.selected = options.selectedAvatarStyle;
       }
       break;
     case "pin-post":
       if (!options.postId) throw new Error("postId required");
-      await updateUserField(userId, "pinned_post_id", options.postId);
+      await updateUserField(userId, "pinnedPostId", options.postId);
       metadata.postId = options.postId;
       break;
     case "emoji-reactions":
-      await updateUserField(userId, "emoji_reactions_enabled", 1);
+      await updateUserField(userId, "emojiReactionsEnabled", 1);
       break;
     case "daily-surprise":
       const reward = await applyDailySurpriseReward(userId);
