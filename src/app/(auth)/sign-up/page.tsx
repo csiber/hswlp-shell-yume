@@ -4,6 +4,8 @@ import SignUpClientComponent from "./sign-up.client";
 import { redirect } from "next/navigation";
 import { REDIRECT_AFTER_SIGN_IN } from "@/constants";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Regisztráció",
   description: "Új fiók létrehozása",

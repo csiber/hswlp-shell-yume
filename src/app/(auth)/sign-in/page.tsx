@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import SignInClientPage from "./sign-in.client";
 import { REDIRECT_AFTER_SIGN_IN } from "@/constants";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Bejelentkezés",
   description: "Lépj be a fiókodba",
