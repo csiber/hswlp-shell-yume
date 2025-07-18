@@ -15,6 +15,7 @@ interface MusicCardProps {
   onDownload: () => void
   onDelete: () => void
   editTrigger?: React.ReactNode
+  disabled?: boolean
 }
 
 interface MusicMeta {
@@ -24,7 +25,7 @@ interface MusicMeta {
   picture: string | null
 }
 
-export default function MusicCard({ id, url, title, onDownload, onDelete, editTrigger }: MusicCardProps) {
+export default function MusicCard({ id, url, title, onDownload, onDelete, editTrigger, disabled }: MusicCardProps) {
   const { data } = useSWR<MusicMeta | null>(
     `/api/music-meta?id=${id}`,
     (u: string): Promise<MusicMeta | null> =>
@@ -49,11 +50,11 @@ export default function MusicCard({ id, url, title, onDownload, onDelete, editTr
       )}
       <audio controls src={url} className="w-full" />
       <div className="flex justify-end gap-2">
-        <Button variant="ghost" size="icon" onClick={onDownload}>
+        <Button variant="ghost" size="icon" onClick={onDownload} disabled={disabled}>
           <Download className="w-4 h-4" />
         </Button>
         {editTrigger}
-        <Button variant="ghost" size="icon" onClick={onDelete}>
+        <Button variant="ghost" size="icon" onClick={onDelete} disabled={disabled}>
           <Trash className="w-4 h-4" />
         </Button>
       </div>

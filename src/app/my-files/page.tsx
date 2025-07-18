@@ -15,6 +15,8 @@ interface UploadItem {
   url: string
   download_points: number
   approved: number
+  moderation_status?: string | null
+  moderation_reason?: string | null
   view_count: number
   download_count: number
   play_count: number
@@ -164,12 +166,18 @@ export default function MyFilesPage() {
               key={item.id}
               className={cn(
                 'relative',
-                !item.approved && 'ring-2 ring-yellow-500 rounded-md'
+                !item.approved && 'ring-2 ring-yellow-500 rounded-md',
+                item.moderation_status === 'punished' && 'ring-2 ring-red-500 rounded-md opacity-60 pointer-events-none'
               )}
             >
               {!item.approved && (
                 <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
                   Moderációra vár
+                </span>
+              )}
+              {item.moderation_status === 'punished' && (
+                <span className="absolute bottom-2 left-2 right-2 bg-red-600 text-xs text-white px-2 py-1 rounded">
+                  Szankcionálva – {item.moderation_reason}
                 </span>
               )}
               <MusicCard
@@ -178,12 +186,17 @@ export default function MyFilesPage() {
                 title={item.title}
                 onDownload={() => downloadFile(item)}
                 onDelete={() => deleteFile(item.id)}
+                disabled={item.moderation_status === 'punished'}
                 editTrigger={
-                  <EditUploadDialog
-                    upload={item}
-                    onSaved={mutate}
-                    trigger={<Button variant="ghost" size="icon">✏️</Button>}
-                  />
+                  item.moderation_status === 'punished'
+                    ? undefined
+                    : (
+                        <EditUploadDialog
+                          upload={item}
+                          onSaved={mutate}
+                          trigger={<Button variant="ghost" size="icon">✏️</Button>}
+                        />
+                      )
                 }
               />
               {item.tags && (
@@ -206,12 +219,18 @@ export default function MyFilesPage() {
               key={item.id}
               className={cn(
                 'relative overflow-hidden shadow rounded',
-                !item.approved && 'ring-2 ring-yellow-500'
+                !item.approved && 'ring-2 ring-yellow-500',
+                item.moderation_status === 'punished' && 'ring-2 ring-red-500 opacity-60 pointer-events-none'
               )}
             >
               {!item.approved && (
                 <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
                   Moderációra vár
+                </span>
+              )}
+              {item.moderation_status === 'punished' && (
+                <span className="absolute bottom-2 left-2 right-2 bg-red-600 text-xs text-white px-2 py-1 rounded">
+                  Szankcionálva – {item.moderation_reason}
                 </span>
               )}
               {item.mime?.startsWith('image/') && (
@@ -249,7 +268,7 @@ export default function MyFilesPage() {
                         size="icon"
                         variant="ghost"
                         onClick={() => downloadFile(item)}
-                        disabled={userCredits < item.download_points || downloaded.has(item.id)}
+                        disabled={userCredits < item.download_points || downloaded.has(item.id) || item.moderation_status === 'punished'}
                       >
                         {downloaded.has(item.id) ? (
                           'Letöltve'
@@ -261,22 +280,26 @@ export default function MyFilesPage() {
                     <TooltipContent>
                       {downloaded.has(item.id)
                         ? 'Már letöltve'
+                        : item.moderation_status === 'punished'
+                        ? 'Szankcionált tartalom'
                         : userCredits < item.download_points
                         ? 'Nincs elég kredit a letöltéshez'
                         : `Letöltés ${item.download_points} pontért`}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <EditUploadDialog
-                  upload={item}
-                  onSaved={mutate}
-                  trigger={
-                    <Button size="icon" variant="ghost">
-                      ✏️
-                    </Button>
-                  }
-                />
-                <Button size="icon" variant="ghost" onClick={() => deleteFile(item.id)}>
+                {item.moderation_status !== 'punished' && (
+                  <EditUploadDialog
+                    upload={item}
+                    onSaved={mutate}
+                    trigger={
+                      <Button size="icon" variant="ghost">
+                        ✏️
+                      </Button>
+                    }
+                  />
+                )}
+                <Button size="icon" variant="ghost" onClick={() => deleteFile(item.id)} disabled={item.moderation_status === 'punished'}>
                   <Trash className="w-4 h-4 text-red-500" />
                 </Button>
               </div>

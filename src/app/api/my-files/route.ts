@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
   const result = await env.DB.prepare(`
     SELECT id, title, description, tags, note, type AS category, mime, url,
-           download_points, approved,
+           download_points, approved, moderation_status, moderation_reason,
            view_count, download_count, play_count, locked, total_generated_points
     FROM uploads
     WHERE user_id = ?1 ${filter}
@@ -36,6 +36,8 @@ export async function GET(req: NextRequest) {
     url: string;
     download_points: number | null;
     approved: number;
+    moderation_status: string | null;
+    moderation_reason: string | null;
     view_count: number | null;
     download_count: number | null;
     play_count: number | null;

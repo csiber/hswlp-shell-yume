@@ -30,3 +30,6 @@ export const REDIRECT_AFTER_SIGN_IN = "/dashboard" as Route;
 export const ALBUM_PRICING_MODE =
   (process.env.ALBUM_PRICING_MODE as 'grouped' | 'per-item') || 'grouped'
 export const ALBUM_GROUP_CREDITS = 3
+
+export const PUNISHMENT_CREDIT_LOSS = parseInt(process.env.PUNISHMENT_CREDIT_LOSS || '20', 10)
+export const UPLOAD_BAN_HOURS = parseInt(process.env.UPLOAD_BAN_HOURS || '24', 10)

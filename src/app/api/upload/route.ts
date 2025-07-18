@@ -202,8 +202,8 @@ export async function POST(req: Request) {
     }
 
     await env.DB.prepare(
-      'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)'
-    ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null).run()
+      'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
+    ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
 
     await updateUserCredits(session.user.id, creditValue)
     await logTransaction({

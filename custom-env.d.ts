@@ -6,4 +6,6 @@ interface CloudflareEnv {
   BREVO_API_KEY?: string;
   NSFW_CHECK_URL?: string;
   NSFW_CHECK_KEY?: string;
+  PUNISHMENT_CREDIT_LOSS?: string;
+  UPLOAD_BAN_HOURS?: string;
 }
