@@ -23,15 +23,24 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
   }
 
   const points = row.download_points ?? 2
-  try {
-    await consumeCredits({ userId: session.user.id, amount: points, description: 'File download' })
-  } catch {
-    return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
-  }
+  const already = await env.DB.prepare(
+    'SELECT id FROM downloads WHERE user_id = ?1 AND upload_id = ?2 LIMIT 1'
+  ).bind(session.user.id, id).first<{ id: string }>()
 
-  await env.DB.prepare(
-    'INSERT INTO downloads (user_id, upload_id) VALUES (?1, ?2)'
-  ).bind(session.user.id, id).run()
+  let alreadyDownloaded = false
+  if (!already) {
+    try {
+      await consumeCredits({ userId: session.user.id, amount: points, description: 'File download' })
+    } catch {
+      return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
+    }
+
+    await env.DB.prepare(
+      'INSERT INTO downloads (user_id, upload_id) VALUES (?1, ?2)'
+    ).bind(session.user.id, id).run()
+  } else {
+    alreadyDownloaded = true
+  }
 
   const object = await env.hswlp_r2.get(row.r2_key)
   if (!object?.body) {
@@ -43,7 +52,8 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
     headers: {
       'Content-Type': object.httpMetadata?.contentType || row.type.startsWith('audio/') ? 'audio/mpeg' : 'application/octet-stream',
       'Content-Disposition': `attachment; filename="${id}"`,
-      'Cache-Control': 'no-store'
+      'Cache-Control': 'no-store',
+      'X-Already-Downloaded': alreadyDownloaded ? '1' : '0'
     }
   })
 }
