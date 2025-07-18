@@ -152,3 +152,14 @@
     animation: spin 4s linear infinite;
   }
 }
+
+@layer components {
+  .avatar-ring {
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    padding: 2px;
+    background: linear-gradient(135deg, #ff00cc, #3333ff);
+    background-clip: padding-box;
+    box-shadow: 0 0 4px rgba(255, 0, 204, 0.5);
+  }
+}

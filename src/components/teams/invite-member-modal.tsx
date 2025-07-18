@@ -21,7 +21,10 @@ import {
 
 // Define the form schema with validation
 const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address").min(1, "Email is required")
+  email: z
+    .string()
+    .email("Kérjük, érvényes email címet adj meg")
+    .min(1, "Az email megadása kötelező")
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -46,15 +49,15 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
   const { execute } = useServerAction(inviteUserAction, {
     onError: (error) => {
       toast.dismiss();
-      toast.error(error.err?.message || "Failed to invite user");
+      toast.error(error.err?.message || "Nem sikerült meghívni a felhasználót");
       console.error("Invite error:", error);
     },
     onStart: () => {
-      toast.loading("Sending invitation...");
+      toast.loading("Meghívó küldése...");
     },
     onSuccess: () => {
       toast.dismiss();
-      toast.success("Invitation sent successfully");
+      toast.success("A meghívó sikeresen elküldve");
       form.reset();
 
       if (onInviteSuccess) {
@@ -84,7 +87,7 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Invite Team Member</DialogTitle>
+          <DialogTitle>Csapattag meghívása</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -94,7 +97,7 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>Email cím</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
@@ -110,12 +113,12 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
             <div className="flex justify-end gap-2 pt-2">
               <DialogClose asChild>
                 <Button type="button" variant="outline">
-                  Cancel
+                  Mégsem
                 </Button>
               </DialogClose>
 
               <Button type="submit">
-                Send Invitation
+                Meghívó küldése
               </Button>
             </div>
           </form>

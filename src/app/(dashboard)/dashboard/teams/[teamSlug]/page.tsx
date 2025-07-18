@@ -40,13 +40,13 @@ export async function generateMetadata({ params }: TeamPageProps) {
 
   if (!team) {
     return {
-      title: "Team Not Found",
+      title: "Csapat nem található",
     };
   }
 
   return {
-    title: `${team.name} - Dashboard`,
-    description: team.description || `Team dashboard for ${team.name}`,
+    title: `${team.name} - Vezérlőpult`,
+    description: team.description || `Csapat vezérlőpultja: ${team.name}`,
   };
 }
 
@@ -80,7 +80,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
           items={[
             {
               href: "/dashboard",
-              label: "Dashboard"
+              label: "Vezérlőpult"
             },
             {
               href: "/dashboard/teams",
@@ -118,7 +118,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
         items={[
           {
             href: "/dashboard",
-            label: "Dashboard"
+            label: "Vezérlőpult"
           },
           {
             href: "/dashboard/teams",
@@ -175,7 +175,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
             <div className="p-6 border rounded-lg bg-card flex flex-col">
               <span className="text-sm font-medium text-muted-foreground">Szereped</span>
               <span className="text-2xl font-bold capitalize">
-                {teamSession?.teams?.find(t => t.id === team.id)?.role.name || "Member"}
+                {teamSession?.teams?.find(t => t.id === team.id)?.role.name || "tag"}
               </span>
             </div>
 

@@ -14,9 +14,14 @@ export async function GET(
   const { id } = await params
   const { env } = getCloudflareContext()
   const user = await env.DB.prepare(
-    'SELECT id, nickname, email, avatar, currentCredits FROM user WHERE id = ?1 LIMIT 1'
+    'SELECT id, nickname, email, avatar, currentCredits, profile_frame_enabled FROM user WHERE id = ?1 LIMIT 1'
   ).bind(id).first<{
-    id: string; nickname: string | null; email: string; avatar: string | null; currentCredits: number | null
+    id: string
+    nickname: string | null
+    email: string
+    avatar: string | null
+    currentCredits: number | null
+    profile_frame_enabled: number | null
   }>()
 
   if (!user) {
@@ -70,6 +75,7 @@ const items = [] as {
       email: user.email,
       avatar: user.avatar,
       credits: user.currentCredits ?? 0,
+      profileFrameEnabled: !!user.profile_frame_enabled,
     },
     uploads: items,
   })
