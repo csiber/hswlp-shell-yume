@@ -22,7 +22,7 @@ export default async function CreateTeamPage() {
         items={[
           {
             href: "/dashboard",
-            label: "Dashboard"
+            label: "Vezérlőpult"
           },
           {
             href: "/dashboard/teams",
