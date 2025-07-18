@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid'
 import { parseBlob } from "music-metadata-browser";
 import { formatTitle } from "@/utils/music";
@@ -65,6 +65,11 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     fetchQuota
   )
 
+  useEffect(() => {
+    if (sessionUser?.id) {
+      mutateQuota().catch((err) => console.warn('Failed to refresh quota', err))
+    }
+  }, [sessionUser?.id])
   const usedMb = Number(quota?.used ?? sessionUser?.usedStorageMb ?? 0)
   const limitMb = Number(quota?.limit ?? sessionUser?.uploadLimitMb ?? 0)
   const percent =
