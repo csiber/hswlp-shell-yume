@@ -6,6 +6,7 @@ import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSessionStore } from "@/state/session"
 import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
 
 export function NavUser() {
   const { session, isLoading } = useSessionStore()
@@ -49,7 +50,12 @@ export function NavUser() {
           onClick={() => router.push("/profile")}
           className="h-16 hover:bg-secondary/70 dark:hover:bg-secondary/20"
         >
-          <Avatar className="h-10 w-10">
+          <Avatar
+            className={cn(
+              "h-10 w-10",
+              user.profileFrameEnabled ? "avatar-ring" : ""
+            )}
+          >
             <AvatarImage src={user.avatar ?? ""} alt={name} />
             <AvatarFallback>{initials}</AvatarFallback>
           </Avatar>

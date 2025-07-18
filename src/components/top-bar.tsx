@@ -36,6 +36,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface TopBarProps {
   logo?: "hswlp" | "sociala";
@@ -268,7 +269,12 @@ export default function TopBar({}: TopBarProps) {
                     size="icon"
                     className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 p-0"
                   >
-                    <Avatar className="h-8 w-8 transition-all hover:ring-2 hover:ring-indigo-500 dark:hover:ring-indigo-400">
+                    <Avatar
+                      className={cn(
+                        "h-8 w-8 transition-all hover:ring-2 hover:ring-indigo-500 dark:hover:ring-indigo-400",
+                        user?.profileFrameEnabled ? "avatar-ring" : ""
+                      )}
+                    >
                       <AvatarImage src={user?.avatar ?? ""} alt={displayName} />
                       <AvatarFallback>{initials}</AvatarFallback>
                     </Avatar>

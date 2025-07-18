@@ -19,7 +19,7 @@ import {
 } from "./kv-session";
 import { cache } from "react"
 import type { SessionValidationResult } from "@/types";
-import { SESSION_COOKIE_NAME } from "@/constants";
+import { SESSION_COOKIE_NAME, SITE_DOMAIN } from "@/constants";
 import { ZSAError } from "zsa";
 import { addFreeMonthlyCreditsIfNeeded } from "./credits";
 import { getInitials } from "./name-initials";
@@ -54,6 +54,8 @@ export async function getUserFromDB(userId: string) {
       uploadBanReason: true,
       uploadLimitMb: true,
       usedStorageMb: true,
+      emojiReactionsEnabled: true,
+      profileFrameEnabled: true,
     },
   });
 }
@@ -261,12 +263,17 @@ export async function setSessionTokenCookie({ token, userId, expiresAt }: SetSes
     secure: isProd,
     expires: expiresAt,
     path: "/",
+    domain: SITE_DOMAIN,
   });
 }
 
 export async function deleteSessionTokenCookie(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
+  cookieStore.set(SESSION_COOKIE_NAME, '', {
+    expires: new Date(0),
+    path: '/',
+    domain: SITE_DOMAIN,
+  });
 }
 
 /**

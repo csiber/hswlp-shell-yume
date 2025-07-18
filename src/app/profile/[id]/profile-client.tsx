@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { UserMiniCard } from '@/components/user-mini-card'
 import { Download } from 'lucide-react'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import { cn } from '@/lib/utils'
 
 type Upload = {
   id: string
@@ -18,7 +19,14 @@ type Upload = {
 }
 
 interface Props {
-  user: { id: string; name: string; email: string; avatar?: string | null; credits: number }
+  user: {
+    id: string
+    name: string
+    email: string
+    avatar?: string | null
+    credits: number
+    profileFrameEnabled?: boolean
+  }
   uploads: Upload[]
   currentUserId?: string
 }
@@ -55,17 +63,19 @@ export default function ProfileClient({ user, uploads, currentUserId }: Props) {
           className="h-48 w-full rounded-md object-cover"
         />
         <div className="absolute -bottom-8 right-4">
-          <Image
-            src={user.avatar ?? ''}
-            alt={user.name}
-            width={96}
-            height={96}
-            className="rounded-full border-4 border-background"
-          />
+          <div className={cn(user.id === currentUserId && user.profileFrameEnabled ? 'avatar-ring' : '')}>
+            <Image
+              src={user.avatar ?? ''}
+              alt={user.name}
+              width={96}
+              height={96}
+              className="rounded-full border-4 border-background"
+            />
+          </div>
         </div>
       </div>
       <div className="flex items-center justify-between mb-4">
-        <UserMiniCard user={user} />
+        <UserMiniCard user={user} currentUserId={currentUserId} />
         <Badge variant="secondary">{user.credits} kredit</Badge>
       </div>
       {currentUserId === user.id ? (
