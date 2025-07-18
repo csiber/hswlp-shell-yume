@@ -44,11 +44,33 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [albumId, setAlbumId] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
+  const sessionUser = useSessionStore((s) => s.session?.user)
+
+  const fetchQuota = async (u: string) => {
+    try {
+      const res = await fetch(u, { credentials: 'include' })
+      if (!res.ok) throw new Error('failed')
+      return (await res.json()) as { used: number; limit: number }
+    } catch (err) {
+      console.warn('Failed to fetch quota', err)
+      return {
+        used: sessionUser?.usedStorageMb ?? 0,
+        limit: sessionUser?.uploadLimitMb ?? 0,
+      }
+    }
+  }
+
   const { data: quota, mutate: mutateQuota } = useSWR<{ used: number; limit: number }>(
     '/api/storage-quota',
-    (u: string) => fetch(u).then(res => res.json() as Promise<{ used: number; limit: number }>)
-  );
-  const percent = quota?.limit ? (quota.used / quota.limit) * 100 : 0;
+    fetchQuota
+  )
+
+  const usedMb = Number(quota?.used ?? sessionUser?.usedStorageMb ?? 0)
+  const limitMb = Number(quota?.limit ?? sessionUser?.uploadLimitMb ?? 0)
+  const percent =
+    Number.isFinite(usedMb) && Number.isFinite(limitMb) && limitMb > 0
+      ? (usedMb / limitMb) * 100
+      : 0
 
   if (uploadBanUntil && new Date(uploadBanUntil) > new Date()) {
     return <UploadBanAlert />;
@@ -260,7 +282,9 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           <>
             <Progress className="mt-2" value={percent} />
             <p className="text-xs text-muted-foreground text-center mt-1">
-              {Math.round(quota.used)} MB / {quota.limit} MB
+              {`${
+                Number.isFinite(usedMb) ? Math.round(usedMb) : 0
+              } MB / ${Number.isFinite(limitMb) ? limitMb : 0} MB`}
             </p>
             {percent >= 100 && (
               <p className="mt-2 text-center text-sm animate-pulse">
