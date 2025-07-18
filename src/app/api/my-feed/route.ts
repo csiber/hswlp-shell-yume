@@ -10,6 +10,24 @@ export async function GET() {
   }
 
   const { env } = getCloudflareContext()
+
+  const pinnedRow = await env.DB.prepare(
+    'SELECT pinned_post_id FROM user WHERE id = ?1 LIMIT 1'
+  ).bind(session.user.id).first<{ pinned_post_id: string | null }>()
+
+  let pinnedItem: Record<string, string> | null = null
+  if (pinnedRow?.pinned_post_id) {
+    pinnedItem = await env.DB.prepare(`
+      SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
+             u.view_count, u.play_count, u.download_points,
+             usr.nickname, usr.email
+        FROM uploads u
+        JOIN user usr ON u.user_id = usr.id
+       WHERE u.id = ?1 AND u.approved = 1 AND u.visibility = 'public'
+       LIMIT 1
+    `).bind(pinnedRow.pinned_post_id).first<Record<string, string>>()
+  }
+
   const result = await env.DB.prepare(`
     SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
            u.view_count, u.play_count, u.download_points,
@@ -33,9 +51,17 @@ export async function GET() {
     view_count: number
     play_count: number
     user: { name: string | null; email: string }
+    pinned?: boolean
   }[]
 
-  for (const row of result.results || []) {
+  const rows = [...(result.results || [])]
+  if (pinnedItem) {
+    const idx = rows.findIndex(r => r.id === pinnedItem!.id)
+    if (idx !== -1) rows.splice(idx, 1)
+    rows.unshift(pinnedItem)
+  }
+
+  for (const row of rows) {
     let fileUrl: string
     if (publicBase && row.r2_key) {
       const base = publicBase.endsWith('/') ? publicBase : `${publicBase}/`
@@ -63,6 +89,7 @@ export async function GET() {
         name: displayName,
         email: row.email,
       },
+      pinned: row.id === pinnedRow?.pinned_post_id,
     })
   }
 

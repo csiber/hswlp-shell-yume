@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 
-interface Post {
-  id: string;
-  content: string;
-  created_at: string;
+interface Upload {
+  id: string
+  title: string
+  created_at: string
 }
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 }
 
 export default function PostSelectModal({ open, onOpenChange, onSelect }: Props) {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<Upload[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,10 +30,10 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch("/api/user/posts");
+        const res = await fetch("/api/my-uploads");
         if (res.ok) {
-          const data = (await res.json()) as { posts: Post[] };
-          setPosts(data.posts);
+          const data = (await res.json()) as { uploads: Upload[] }
+          setPosts(data.uploads)
         } else {
           setPosts([]);
         }
@@ -57,7 +57,7 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
         {loading ? (
           <p>Betöltés...</p>
         ) : posts.length === 0 ? (
-          <p>Még nincs feltöltött posztod a kiemeléshez.</p>
+          <p>Nincs feltöltött posztod.</p>
         ) : (
           <div className="grid max-h-[60vh] grid-cols-1 gap-3 overflow-y-auto">
             {posts.map((post) => (
@@ -66,7 +66,12 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
                 className="cursor-pointer hover:bg-muted"
                 onClick={() => onSelect(post.id)}
               >
-                <CardContent className="p-3 text-sm">{post.content}</CardContent>
+                <CardContent className="p-3 text-sm">
+                  <div className="font-medium">{post.title}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(post.created_at).toLocaleDateString()}
+                  </div>
+                </CardContent>
               </Card>
             ))}
           </div>
