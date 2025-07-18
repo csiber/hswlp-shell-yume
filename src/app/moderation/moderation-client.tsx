@@ -12,6 +12,7 @@ interface UploadItem {
   id: string
   title: string
   type: 'image' | 'music' | 'prompt'
+  mime: string | null
   url: string
 }
 
@@ -68,11 +69,11 @@ function ModerationCard({
   onReject: () => void
 }) {
   return (
-    <Card className="relative flex flex-col h-72">
+    <Card className="relative flex flex-col">
       <span className="absolute top-2 left-2 text-sm opacity-70">
         {item.type === 'image' ? (
           <ImageIcon className="w-4 h-4" />
-        ) : item.type === 'music' ? (
+        ) : item.type === 'music' || item.mime?.startsWith('audio/') ? (
           <Music className="w-4 h-4" />
         ) : (
           <FileText className="w-4 h-4" />
@@ -81,7 +82,7 @@ function ModerationCard({
       <div className="flex-1 flex items-center justify-center overflow-hidden">
         {item.type === 'image' && <ImagePreview url={item.url} alt={item.title} />}
         {item.type === 'prompt' && <PromptPreview url={item.url} />}
-        {item.type === 'music' && (
+        {(item.type === 'music' || item.mime?.startsWith('audio/')) && (
           <MusicPreview id={item.id} url={item.url} title={item.title} />
         )}
       </div>
@@ -176,7 +177,7 @@ function MusicPreview({ id, url, title }: { id: string; url: string; title: stri
         <h3>{displayTitle}</h3>
         {displayArtist && <p>{displayArtist}</p>}
       </div>
-      <audio src={url} controls className="w-full" />
+      <audio src={url} controls className="w-full mt-2" />
     </div>
   )
 }
