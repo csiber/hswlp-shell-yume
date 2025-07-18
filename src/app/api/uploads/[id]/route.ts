@@ -6,8 +6,10 @@ import { jsonResponse } from '@/utils/api'
 import { withRateLimit } from '@/utils/with-rate-limit'
 import { createHash } from 'crypto'
 
+interface RouteContext<T> { params: Promise<T> }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+
+export async function PUT(req: NextRequest, { params }: RouteContext<{ id: string }>) {
   const session = await getSessionFromCookie()
   if (!session?.user?.id) {
     return jsonResponse({ success: false, error: 'Unauthorized' }, { status: 401 })
@@ -17,7 +19,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   const body = await req.json() as { title?: string; description?: string; tags?: string; note?: string }
 
   return withRateLimit(async () => {
-    const { id } = params
+    const { id } = await params
 
 
     const row = await env.DB.prepare('SELECT user_id, title, description, tags, note, created_at, moderation_status FROM uploads WHERE id = ?1')
