@@ -11,6 +11,14 @@ export interface CommunityPreview {
   points?: number
 }
 
+export interface AlbumPreview {
+  id: string
+  name: string
+  images: string[]
+  created_at: string
+  author: string
+}
+
 export async function GET() {
   const { env } = getCloudflareContext()
   const result = await env.DB.prepare(`
@@ -30,8 +38,20 @@ export async function GET() {
     LIMIT 5
   `).all<Record<string, string>>()
 
+  const albumRows = await env.DB.prepare(`
+    SELECT a.id as album_id, a.name as album_name, a.created_at as album_created,
+           usr.firstName, usr.lastName, usr.email,
+           up.r2_key
+    FROM albums a
+    JOIN uploads up ON up.album_id = a.id
+    JOIN user usr ON a.user_id = usr.id
+    WHERE up.approved = 1 AND up.visibility = 'public' AND up.type = 'image'
+    ORDER BY a.created_at DESC
+  `).all<Record<string, string>>()
+
   const publicBase = process.env.R2_PUBLIC_BASE_URL
   const items: CommunityPreview[] = []
+  const albums: AlbumPreview[] = []
 
   for (const row of result.results || []) {
     let fileUrl: string
@@ -58,5 +78,35 @@ export async function GET() {
     })
   }
 
-  return jsonResponse({ items })
+  const albumMap: Record<string, AlbumPreview> = {}
+  for (const row of albumRows.results || []) {
+    let fileUrl: string
+    if (publicBase && row.r2_key) {
+      const base = publicBase.endsWith('/') ? publicBase : `${publicBase}/`
+      fileUrl = `${base}${row.r2_key}`
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    else if (row.r2_key && typeof (env.hswlp_r2 as any).createSignedUrl === 'function') {
+      fileUrl = await getSignedUrl(env.hswlp_r2, row.r2_key)
+    } else {
+      fileUrl = row.r2_key
+    }
+
+    const name = [row.firstName, row.lastName].filter(Boolean).join(' ') || row.email
+    const existing = albumMap[row.album_id]
+    if (existing) {
+      existing.images.push(fileUrl)
+    } else {
+      albumMap[row.album_id] = {
+        id: row.album_id,
+        name: row.album_name,
+        images: [fileUrl],
+        created_at: new Date(row.album_created).toISOString(),
+        author: name,
+      }
+    }
+  }
+  for (const a of Object.values(albumMap)) albums.push(a)
+
+  return jsonResponse({ items, albums })
 }

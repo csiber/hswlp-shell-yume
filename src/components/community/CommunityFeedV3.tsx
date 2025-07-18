@@ -6,6 +6,7 @@ import PostCard from "./PostCard";
 import SkeletonPost from "./SkeletonPost";
 import UploadBox from "./UploadBox";
 import FeedStats, { type FeedFilter } from "./FeedStats";
+import AlbumCard from "./AlbumCard";
 
 export interface FeedItem {
   id: string;
@@ -23,10 +24,19 @@ export interface FeedItem {
   };
 }
 
+export interface AlbumItem {
+  id: string;
+  name: string;
+  images: string[];
+  created_at: string;
+  author: string;
+}
+
 export default function CommunityFeedV3({
   endpoint = "/api/community-feed",
 }: { endpoint?: string } = {}) {
   const [items, setItems] = useState<FeedItem[]>([]);
+  const [albums, setAlbums] = useState<AlbumItem[]>([]);
   const [visible, setVisible] = useState(10);
   const [loading, setLoading] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
@@ -49,12 +59,16 @@ export default function CommunityFeedV3({
       const res = await fetch(endpoint);
       if (!res.ok) throw new Error("failed to load feed");
       const raw: unknown = await res.json();
-      type FeedResponse = { items?: FeedItem[] } | FeedItem[] | unknown;
+      type FeedResponse = { items?: FeedItem[]; albums?: AlbumItem[] } | unknown;
       const data = raw as FeedResponse;
       let arr: FeedItem[] = [];
-      if (Array.isArray(data)) arr = data;
+      if (Array.isArray(data)) arr = data as FeedItem[];
       else if (Array.isArray((data as { items?: unknown }).items))
-        arr = (data as { items?: FeedItem[] }).items as FeedItem[];
+        arr = (data as { items?: FeedItem[]; albums?: AlbumItem[] }).items as FeedItem[];
+      const alb = Array.isArray((data as { albums?: unknown }).albums)
+        ? ((data as { albums?: AlbumItem[] }).albums as AlbumItem[])
+        : [];
+      setAlbums(alb);
 
       const detect = (url: string): "image" | "music" | "prompt" => {
         const ext = url.split(".").pop()?.toLowerCase() || "";
@@ -152,6 +166,9 @@ export default function CommunityFeedV3({
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {albums.map((album) => (
+              <AlbumCard key={album.id} album={album} />
+            ))}
             {visibleItems.map((item) => (
               <div key={item.id} className="animate-fade-in">
                 <PostCard

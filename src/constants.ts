@@ -26,3 +26,7 @@ export const FREE_MONTHLY_CREDITS = CREDIT_PACKAGES[0].credits * 0.1;
 export const SIGN_UP_BONUS_CREDITS = 50;
 export const MAX_TRANSACTIONS_PER_PAGE = 10;
 export const REDIRECT_AFTER_SIGN_IN = "/dashboard" as Route;
+
+export const ALBUM_PRICING_MODE =
+  (process.env.ALBUM_PRICING_MODE as 'grouped' | 'per-item') || 'grouped'
+export const ALBUM_GROUP_CREDITS = 3

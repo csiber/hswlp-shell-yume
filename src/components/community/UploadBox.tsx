@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { v4 as uuidv4 } from 'uuid'
 import { parseBlob } from "music-metadata-browser";
 import { formatTitle } from "@/utils/music";
 import {
@@ -35,6 +36,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [titles, setTitles] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [albumName, setAlbumName] = useState<string | null>(null);
+  const [albumId, setAlbumId] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
 
   const prepareTitles = async (files: FileList) => {
@@ -65,18 +68,46 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
       return;
     }
 
+    if (selectedFiles.length > 10) {
+      toast.error("Legfeljebb 10 fájlt tölthetsz fel egyszerre");
+      return;
+    }
+
+    const isAlbum =
+      selectedFiles.length >= 2 &&
+      selectedFiles.length <= 10 &&
+      Array.from(selectedFiles).every((f) => detectType(f) === "image");
+
+    let currentAlbumId = albumId;
+    let currentAlbumName = albumName;
+    if (isAlbum && !currentAlbumId) {
+      const name = window.prompt("Album neve:")?.trim();
+      if (!name) {
+        toast.error("Album név kötelező");
+        return;
+      }
+      currentAlbumName = name;
+      currentAlbumId = `alb_${uuidv4()}`;
+      setAlbumId(currentAlbumId);
+      setAlbumName(currentAlbumName);
+    }
+
     setLoading(true);
     let success = false;
     for (const file of Array.from(selectedFiles)) {
       const formData = new FormData();
-      const title = titles[file.name] ?? formatTitle(file.name)
-      if (detectType(file) === 'image' && !title.trim()) {
-        toast.error(`Adj címet a képnek: ${file.name}`)
-        continue
+      const title = titles[file.name] ?? formatTitle(file.name);
+      if (detectType(file) === "image" && !title.trim()) {
+        toast.error(`Adj címet a képnek: ${file.name}`);
+        continue;
       }
-      formData.append('title', title)
-      formData.append('type', detectType(file))
-      formData.append('file', file)
+      formData.append("title", title);
+      formData.append("type", detectType(file));
+      formData.append("file", file);
+      if (isAlbum && currentAlbumId) {
+        formData.append("album_id", currentAlbumId);
+        if (currentAlbumName) formData.append("album_name", currentAlbumName);
+      }
 
       try {
         const res = await fetch("/api/upload", {
@@ -98,6 +129,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     setLoading(false);
     setSelectedFiles(null);
     setTitles({});
+    setAlbumId(null);
+    setAlbumName(null);
     if (success && onUpload) onUpload();
   };
 
