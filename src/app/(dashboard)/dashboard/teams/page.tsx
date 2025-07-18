@@ -3,10 +3,16 @@ import { getUserTeamsAction } from "@/actions/team-actions";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { PlusIcon, Users } from "lucide-react";
 import type { Route } from "next";
-import { PageHeader } from "@/components/page-header";
 import { PendingInvitations } from "./pending-invitations";
 
 export const metadata = {
@@ -51,23 +57,14 @@ export default async function TeamsIndexPage() {
 
   return (
     <>
-      <PageHeader
-        items={[
-          {
-            href: "/dashboard",
-            label: "Dashboard"
-          },
-          {
-            href: "/dashboard/teams",
-            label: "Csapatok"
-          }
-        ]}
-      />
+      <div className="h-4" /> {/* sorköz a fejléc helyett */}
       <div className="container mx-auto px-5 pb-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold">Csapataim</h1>
-            <p className="text-muted-foreground mt-2">Kezeld a csapataidat és együttműködéseidet</p>
+            <p className="text-muted-foreground mt-2">
+              Kezeld a csapataidat és együttműködéseidet
+            </p>
           </div>
           <Button asChild>
             <Link href={"/dashboard/teams/create" as Route}>
@@ -85,7 +82,8 @@ export default async function TeamsIndexPage() {
             <CardHeader>
               <CardTitle className="text-xl">Még nincs csapatod</CardTitle>
               <CardDescription>
-                A csapatok lehetővé teszik, hogy másokkal közösen dolgozz projekteken és megoszd az erőforrásokat.
+                A csapatok lehetővé teszik, hogy másokkal közösen dolgozz
+                projekteken és megoszd az erőforrásokat.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center py-8">
@@ -103,7 +101,10 @@ export default async function TeamsIndexPage() {
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {teams.map((team) => (
-              <Link key={team.id} href={`/dashboard/teams/${team.slug}` as Route}>
+              <Link
+                key={team.id}
+                href={`/dashboard/teams/${team.slug}` as Route}
+              >
                 <Card className="h-full transition-all hover:border-primary hover:shadow-md">
                   <CardHeader className="flex flex-row items-start gap-4">
                     {team.avatarUrl ? (
@@ -124,7 +125,8 @@ export default async function TeamsIndexPage() {
                       <CardTitle>{team.name}</CardTitle>
                       {team.role && (
                         <CardDescription>
-                          Szereped: <span className="capitalize">{team.role.name}</span>
+                          Szereped:{" "}
+                          <span className="capitalize">{team.role.name}</span>
                         </CardDescription>
                       )}
                     </div>
@@ -141,7 +143,9 @@ export default async function TeamsIndexPage() {
             <Link href={"/dashboard/teams/create" as Route}>
               <Card className="h-full border-dashed border-2 hover:border-primary transition-all">
                 <CardHeader className="text-center pt-8">
-                  <CardTitle className="text-xl">Új csapat létrehozása</CardTitle>
+                  <CardTitle className="text-xl">
+                    Új csapat létrehozása
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-center">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">

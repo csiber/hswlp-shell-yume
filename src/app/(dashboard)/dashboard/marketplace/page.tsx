@@ -1,4 +1,3 @@
-import { PageHeader } from "@/components/page-header";
 import { Alert } from "@heroui/react";
 import { COMPONENTS } from "./components-catalog";
 import { MarketplaceCard } from "@/components/marketplace-card";
@@ -13,23 +12,12 @@ export default async function MarketplacePage() {
 
   return (
     <>
-      <PageHeader
-        items={[
-          {
-            href: "/dashboard",
-            label: "Dashboard",
-          },
-          {
-            href: "/dashboard/marketplace",
-            label: "Vásártér",
-          },
-        ]}
-      />
       <div className="container mx-auto px-5 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mt-4">Vásártér</h1>
           <p className="text-muted-foreground mt-2">
-            Vásárolj és használd prémium termékeinket kreditjeid felhasználásával
+            Vásárolj és használd prémium termékeinket kreditjeid
+            felhasználásával
           </p>
         </div>
 
