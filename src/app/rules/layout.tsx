@@ -7,5 +7,9 @@ export default async function RulesLayout({ children }: { children: React.ReactN
   if (!session) {
     redirect("/");
   }
-  return <ShellLayout center={<div className="flex flex-1 items-center justify-center p-6">{children}</div>} />;
+  return (
+    <ShellLayout>
+      <div className="flex flex-1 items-center justify-center p-6">{children}</div>
+    </ShellLayout>
+  );
 }
