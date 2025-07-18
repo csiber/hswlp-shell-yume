@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Home, FolderDown, ShieldCheck, Users } from "lucide-react";
+import {
+  Home,
+  FolderDown,
+  ShieldCheck,
+  Users,
+  ShoppingCart,
+  CreditCard,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -96,6 +103,69 @@ export default function TopBar({}: TopBarProps) {
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p>Feltöltéseim</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/dashboard/marketplace">
+                  <ShoppingCart className="size-5" />
+                  <span className="sr-only">Piactér</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Piactér</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/dashboard/teams">
+                  <Users className="size-5" />
+                  <span className="sr-only">Csapatok</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Csapatok</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/dashboard/billing">
+                  <CreditCard className="size-5" />
+                  <span className="sr-only">Számlázás</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Számlázás</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
