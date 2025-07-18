@@ -219,7 +219,9 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                       </span>
                     )}
                   </div>
+                  {/* cannot convert to next/image */}
                   {isImage && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img
                       src={url}
                       alt="preview"

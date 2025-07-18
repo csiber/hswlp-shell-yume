@@ -1,13 +1,14 @@
 "use client";
+import Image from 'next/image'
 
-export default function LogoIcon(props: React.ComponentProps<"img">) {
+export default function LogoIcon({ className }: { className?: string }) {
   return (
-    <img
+    <Image
       src="/favicon.svg"
       alt="HSWLP logó"
       width={32}
       height={32}
-      {...props}
+      className={className}
     />
   );
 }
