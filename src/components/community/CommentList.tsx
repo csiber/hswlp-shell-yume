@@ -6,8 +6,10 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { motion, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/hu";
 
 dayjs.extend(relativeTime);
+dayjs.locale("hu");
 
 interface Comment {
   id: string;
