@@ -106,7 +106,7 @@ export default function CommunityFeedV3({
   };
 
   return (
-    <div className="max-w-screen-md mx-auto">
+    <div className="w-full px-4 sm:px-6 lg:px-8 xl:max-w-7xl xl:mx-auto">
       <UploadBox onUpload={loadFeed} />
 
       {!loading && items.length > 0 && (
@@ -119,7 +119,7 @@ export default function CommunityFeedV3({
       )}
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonPost key={i} />
           ))}
@@ -141,7 +141,7 @@ export default function CommunityFeedV3({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {visibleItems.map((item) => (
               <div key={item.id} className="animate-fade-in">
                 <PostCard
