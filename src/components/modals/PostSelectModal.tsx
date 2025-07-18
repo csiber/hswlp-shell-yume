@@ -30,7 +30,7 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
     async function load() {
       setLoading(true);
       try {
-        const res = await fetch("/api/user/posts");
+        const res = await fetch("/api/user/posts", { credentials: "include" });
         if (res.ok) {
           const data = (await res.json()) as { posts: Post[] };
           setPosts(data.posts);
