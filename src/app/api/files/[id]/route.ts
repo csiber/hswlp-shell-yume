@@ -1,5 +1,6 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { NextRequest } from "next/server"
+import { SITE_URL } from "@/constants"
 
 export async function GET(req: NextRequest) {
   const { env } = getCloudflareContext()
@@ -26,12 +27,13 @@ export async function GET(req: NextRequest) {
     .bind(id)
     .run()
 
+  const allowedOrigin = new URL(SITE_URL).origin
   return new Response(object.body, {
     status: 200,
     headers: {
       "Content-Type": object.httpMetadata?.contentType || "audio/mpeg",
       "Content-Disposition": 'inline; filename="audio.mp3"',
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": allowedOrigin,
       "Accept-Ranges": "bytes", // <--- ez fontos a seek és stream működéséhez
       "Cache-Control": "no-store",
     },
