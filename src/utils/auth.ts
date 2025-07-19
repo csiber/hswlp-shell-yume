@@ -8,6 +8,8 @@ import { getDB } from "@/db";
 import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import isProd from "@/utils/is-prod";
+
+// Felhasználói hitelesítés és session kezelés
 import {
   createKVSession,
   deleteKVSession,
@@ -64,6 +66,7 @@ const createId = init({
   length: 32,
 });
 
+// Egyedi azonosítóval generálunk session tokent
 export function generateSessionToken(): string {
   return createId();
 }

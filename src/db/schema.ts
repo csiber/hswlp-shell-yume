@@ -4,6 +4,8 @@ import { type InferSelectModel } from "drizzle-orm";
 
 import { createId } from '@paralleldrive/cuid2'
 
+// Az adatbázis teljes sémáját ebben a fájlban definiáljuk Drizzle ORM segítségével
+
 export const ROLES_ENUM = {
   ADMIN: 'admin',
   USER: 'user',
@@ -21,6 +23,7 @@ const commonColumns = {
   updateCounter: integer().default(0).$onUpdate(() => sql`updateCounter + 1`),
 }
 
+// Felhasználói tábla a rendszerhez
 export const userTable = sqliteTable("user", {
   ...commonColumns,
   id: text().primaryKey().$defaultFn(() => `usr_${createId()}`).notNull(),
@@ -127,6 +130,7 @@ export const CREDIT_TRANSACTION_TYPE = {
 
 export const creditTransactionTypeTuple = Object.values(CREDIT_TRANSACTION_TYPE) as [string, ...string[]];
 
+// Kredits tranzakciók naplózása
 export const creditTransactionTable = sqliteTable("credit_transaction", {
   ...commonColumns,
   id: text().primaryKey().$defaultFn(() => `ctxn_${createId()}`).notNull(),
