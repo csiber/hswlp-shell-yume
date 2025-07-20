@@ -163,3 +163,28 @@
     box-shadow: 0 0 4px rgba(255, 0, 204, 0.5);
   }
 }
+
+/* Mobile UI overrides */
+body.mobile-ui .image-card {
+  border-radius: 0;
+  width: 100%;
+}
+body.mobile-ui .desktop-only {
+  display: none;
+}
+body.mobile-ui button,
+body.mobile-ui textarea,
+body.mobile-ui input[type="text"],
+body.mobile-ui input[type="search"],
+body.mobile-ui input[type="email"],
+body.mobile-ui input[type="password"] {
+  min-height: 48px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+body.mobile-ui img {
+  width: 100%;
+  height: auto;
+}
