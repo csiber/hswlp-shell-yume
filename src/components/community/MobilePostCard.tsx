@@ -96,8 +96,14 @@ export default function MobilePostCard({
         .catch(() => {});
     }
     fetch(`/api/posts/${item.id}/comments`)
-      .then((r) => (r.ok ? r.json() : { comments: [] }))
-      .then((d) => setCommentCount((d.comments || []).length))
+      .then(async (r) =>
+        r.ok ? ((await r.json()) as { comments?: unknown[] }) : { comments: [] }
+      )
+      .then((data) =>
+        setCommentCount(
+          Array.isArray(data.comments) ? data.comments.length : 0
+        )
+      )
       .catch(() => {});
   }, [item]);
 
