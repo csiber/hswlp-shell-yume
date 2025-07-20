@@ -11,8 +11,9 @@ declare namespace Cloudflare {
 		EMAIL_REPLY_TO: "support@hswlp.hu";
 		NEXTJS_ENV: string;
 		hswlp_r2: R2Bucket;
-		DB: D1Database;
-		NEXT_TAG_CACHE_D1: D1Database;
+                DB: D1Database;
+                DB_GLOBAL: D1Database;
+                NEXT_TAG_CACHE_D1: D1Database;
 		WORKER_SELF_REFERENCE: Fetcher /* hswlp-shell-yumekai */;
 		ASSETS: Fetcher;
 	}
