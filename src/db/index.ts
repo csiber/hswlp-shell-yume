@@ -15,13 +15,16 @@ export const getDB = async () => {
 
   const { env } = await getCloudflareContext({ async: true });
 
+  // Elsősorban a DB_GLOBAL adatbázist használjuk, ha elérhető
+  const database = env.DB_GLOBAL ?? env.NEXT_TAG_CACHE_D1;
+
   // Ha a D1 adatbázis nincs beállítva, hibát dobunk
-  if (!env.NEXT_TAG_CACHE_D1) {
+  if (!database) {
     throw new Error("D1 database not found");
   }
 
   // Létrehozzuk a Drizzle ORM kapcsolatot a D1 adatbázissal
-  db = drizzle(env.NEXT_TAG_CACHE_D1, { schema, logger: true });
+  db = drizzle(database, { schema, logger: true });
 
   return db;
 };
