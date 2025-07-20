@@ -237,7 +237,7 @@ export default function CommentList({ postId }: { postId: string }) {
             }
           }}
           placeholder="Írj hozzászólást..."
-          className="w-full rounded-md border border-gray-300 bg-white dark:bg-zinc-800 p-2 pr-8 text-sm focus:outline-none"
+          className="w-full rounded-md border border-gray-300 bg-white dark:bg-zinc-800 p-3 pr-10 text-sm focus:outline-none min-h-[48px]"
           maxLength={500}
         />
         <button

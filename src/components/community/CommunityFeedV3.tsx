@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
 import PostCard from "./PostCard";
+import MobilePostCard from "./MobilePostCard";
+import useMobileMode from "@/hooks/useMobileMode";
 import SkeletonPost from "./SkeletonPost";
 import UploadBox from "./UploadBox";
 import FeedStats, { type FeedFilter } from "./FeedStats";
@@ -44,6 +46,7 @@ export default function CommunityFeedV3({
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<FeedFilter>("all");
   const audioRef = useRef<HTMLAudioElement>(null);
+  const isMobile = useMobileMode();
 
   const { ref: loadMoreRef, inView } = useInView();
 
@@ -175,12 +178,21 @@ export default function CommunityFeedV3({
             ))}
             {visibleItems.map((item) => (
               <div key={item.id} className="animate-fade-in">
-                <PostCard
-                  item={item}
-                  audioRef={audioRef}
-                  playingId={playingId}
-                  setPlayingId={setPlayingId}
-                />
+                {isMobile ? (
+                  <MobilePostCard
+                    item={item}
+                    audioRef={audioRef}
+                    playingId={playingId}
+                    setPlayingId={setPlayingId}
+                  />
+                ) : (
+                  <PostCard
+                    item={item}
+                    audioRef={audioRef}
+                    playingId={playingId}
+                    setPlayingId={setPlayingId}
+                  />
+                )}
               </div>
             ))}
           </div>
