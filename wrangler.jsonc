@@ -108,8 +108,8 @@
 ],
     "r2_buckets": [
     {
-      "bucket_name": "hswlp-r2",
-      "binding": "hswlp_r2"
+      "bucket_name": "yumekai-r2",
+      "binding": "yumekai_r2"
     }
   ]
   }
