@@ -24,12 +24,12 @@ export async function GET() {
   const { env } = getCloudflareContext()
   const dbUploads = getDb(env, 'uploads')
   const dbAlbums = getDb(env, 'albums')
+  const dbUsers = env.DB_GLOBAL
   const result = await dbUploads.prepare(`
     SELECT u.id, u.title, u.url, u.r2_key, u.created_at, u.download_points,
-           usr.nickname, usr.email,
+           u.user_id,
            COUNT(f.id) AS favorites
     FROM uploads u
-    JOIN user usr ON u.user_id = usr.id
     LEFT JOIN favorites f ON u.id = f.upload_id
     WHERE u.type = 'image'
       AND u.title IS NOT NULL
@@ -42,15 +42,25 @@ export async function GET() {
   `).all<Record<string, string>>()
 
   const albumRows = await dbAlbums.prepare(`
-    SELECT a.id as album_id, a.name as album_name, a.created_at as album_created,
-           usr.nickname, usr.email,
+    SELECT a.id as album_id, a.user_id, a.name as album_name, a.created_at as album_created,
            up.r2_key
     FROM albums a
     JOIN uploads up ON up.album_id = a.id
-    JOIN user usr ON a.user_id = usr.id
     WHERE up.approved = 1 AND up.visibility = 'public' AND up.type = 'image'
     ORDER BY a.created_at DESC
   `).all<Record<string, string>>()
+
+  const uploadUserIds = Array.from(new Set((result.results || []).map(r => r.user_id)))
+  const albumUserIds = Array.from(new Set((albumRows.results || []).map(r => r.user_id)))
+  const userIds = Array.from(new Set([...uploadUserIds, ...albumUserIds]))
+  const userMap: Record<string, { nickname: string | null; email: string }> = {}
+  for (const id of userIds) {
+    const u = await dbUsers
+      .prepare('SELECT nickname, email FROM user WHERE id = ?1')
+      .bind(id)
+      .first<{ nickname: string | null; email: string }>()
+    if (u) userMap[id] = { nickname: u.nickname ?? null, email: u.email }
+  }
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
   const items: CommunityPreview[] = []
@@ -69,7 +79,8 @@ export async function GET() {
       fileUrl = row.url
     }
 
-    const name = row.nickname || row.email
+    const u = userMap[row.user_id] || { nickname: null, email: '' }
+    const name = u.nickname || u.email
 
     items.push({
       id: row.id,
@@ -95,7 +106,8 @@ export async function GET() {
       fileUrl = row.r2_key
     }
 
-    const name = row.nickname || row.email
+    const u = userMap[row.user_id] || { nickname: null, email: '' }
+    const name = u.nickname || u.email
     const existing = albumMap[row.album_id]
     if (existing) {
       existing.images.push(fileUrl)

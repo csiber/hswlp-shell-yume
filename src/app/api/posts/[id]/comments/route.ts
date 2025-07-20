@@ -28,14 +28,24 @@ export async function GET(
   const { env } = getCloudflareContext()
   const dbComments = getDb(env, 'comments')
   const dbReactions = getDb(env, 'comment_reactions')
+  const dbUsers = env.DB_GLOBAL
   const session = await getSessionFromCookie()
   const rows = await dbComments.prepare(
-    `SELECT c.id, c.content, c.created_at, u.nickname, u.email, u.avatar
+    `SELECT c.id, c.user_id, c.content, c.created_at
      FROM comments c
-     LEFT JOIN user u ON c.user_id = u.id
      WHERE c.upload_id = ?1
      ORDER BY c.created_at ASC`
   ).bind(uploadId).all<CommentRow>()
+
+  const userIds = Array.from(new Set((rows.results || []).map(r => r.user_id)))
+  const userMap: Record<string, { nickname: string | null; email: string; avatar: string | null }> = {}
+  for (const id of userIds) {
+    const u = await dbUsers
+      .prepare('SELECT nickname, email, avatar FROM user WHERE id = ?1')
+      .bind(id)
+      .first<{ nickname: string | null; email: string; avatar: string | null }>()
+    if (u) userMap[id] = { nickname: u.nickname, email: u.email, avatar: u.avatar }
+  }
   const comments = [] as {
     id: string
     text: string
@@ -60,13 +70,14 @@ export async function GET(
       count: r.count,
       reacted: userRows.some(u => u.emoji === r.emoji)
     }))
+    const u = userMap[row.user_id] || { nickname: null, email: '', avatar: null }
     comments.push({
       id: row.id,
       text: row.content,
       created_at: new Date(row.created_at).toISOString(),
       user: {
-        name: row.nickname || row.email,
-        avatar: row.avatar ?? undefined,
+        name: u.nickname || u.email,
+        avatar: u.avatar ?? undefined,
       },
       reactions
     })

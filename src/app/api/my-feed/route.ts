@@ -12,7 +12,7 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
 
-  const dbUser = getDb(env, 'user')
+  const dbUser = env.DB_GLOBAL
   const dbUploads = getDb(env, 'uploads')
 
   const pinnedRow = await dbUser.prepare(
@@ -21,27 +21,41 @@ export async function GET() {
 
   let pinnedItem: Record<string, string> | null = null
   if (pinnedRow?.pinned_post_id) {
-    pinnedItem = await dbUploads.prepare(`
-      SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
-             u.view_count, u.play_count, u.download_points,
-             usr.nickname, usr.email
-        FROM uploads u
-        JOIN user usr ON u.user_id = usr.id
-       WHERE u.id = ?1 AND u.approved = 1 AND u.visibility = 'public'
-       LIMIT 1
-    `).bind(pinnedRow.pinned_post_id).first<Record<string, string>>()
+    const row = await dbUploads.prepare(
+      `SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
+              u.view_count, u.play_count, u.download_points, u.user_id
+         FROM uploads u
+        WHERE u.id = ?1 AND u.approved = 1 AND u.visibility = 'public'
+        LIMIT 1`
+    ).bind(pinnedRow.pinned_post_id).first<Record<string, string>>()
+    if (row) {
+      const user = await dbUser.prepare(
+        'SELECT nickname, email FROM user WHERE id = ?1'
+      ).bind(row.user_id).first<{ nickname: string | null; email: string }>()
+      if (user) {
+        pinnedItem = { ...row, nickname: user.nickname ?? null, email: user.email }
+      }
+    }
   }
 
-  const result = await dbUploads.prepare(`
-    SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
-           u.view_count, u.play_count, u.download_points,
-          usr.nickname, usr.email
-    FROM uploads u
-    JOIN user usr ON u.user_id = usr.id
-    WHERE u.approved = 1 AND u.visibility = 'public'
-    ORDER BY u.created_at DESC
-    LIMIT 50
-  `).all<Record<string, string>>()
+  const result = await dbUploads.prepare(
+    `SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
+            u.view_count, u.play_count, u.download_points, u.user_id
+       FROM uploads u
+      WHERE u.approved = 1 AND u.visibility = 'public'
+      ORDER BY u.created_at DESC
+      LIMIT 50`
+  ).all<Record<string, string>>()
+
+  const userIds = Array.from(new Set((result.results || []).map(r => r.user_id)))
+  const userMap: Record<string, { nickname: string | null; email: string }> = {}
+  for (const uid of userIds) {
+    const u = await dbUser
+      .prepare('SELECT nickname, email FROM user WHERE id = ?1')
+      .bind(uid)
+      .first<{ nickname: string | null; email: string }>()
+    if (u) userMap[uid] = { nickname: u.nickname ?? null, email: u.email }
+  }
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
   const items = [] as {
@@ -78,7 +92,8 @@ export async function GET() {
       fileUrl = row.url
     }
 
-    const displayName = row.nickname || `Anon${row.id?.slice(-4)}`
+    const u = userMap[row.user_id] || { nickname: null, email: '' }
+    const displayName = u.nickname || `Anon${row.id?.slice(-4)}`
     items.push({
       id: row.id,
       title: row.title,
@@ -91,7 +106,7 @@ export async function GET() {
       play_count: Number(row.play_count ?? 0),
       user: {
         name: displayName,
-        email: row.email,
+        email: u.email,
       },
       pinned: row.id === pinnedRow?.pinned_post_id,
     })
