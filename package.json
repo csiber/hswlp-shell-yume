@@ -13,7 +13,7 @@
     "deploy": "pnpm run opennext:build && opennextjs-cloudflare deploy",
     "preview": "pnpm run opennext:build && opennextjs-cloudflare preview",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
-    "db:generate": "drizzle-kit generate --name",
+    "db:generate": "node ./scripts/db/generate.mjs",
     "db:migrate:dev": "wrangler d1 migrations apply $(node scripts/get-db-name.mjs) --local",
     "d1:cache:clean": "wrangler d1 execute $(node scripts/get-db-name.mjs) --command \"DELETE FROM tags; DELETE FROM revalidations\" --remote",
     "list:kv": "wrangler kv key list --namespace-id=$(node scripts/get-kv-id.mjs) --remote | jq '[.[].name]' > kv.log",
