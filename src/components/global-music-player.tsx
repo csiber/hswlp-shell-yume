@@ -5,6 +5,7 @@ import { Play, Pause, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import LikeButton from "@/components/community/LikeButton";
+import { usePlayerStore } from "@/state/player";
 
 interface Track {
   id: string;
@@ -30,6 +31,7 @@ export default function GlobalMusicPlayer() {
   const [open, setOpen] = useState(false);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const setPlayerVisible = usePlayerStore((s) => s.setPlayerVisible);
   const formatTime = (t: number) => {
     const m = Math.floor(t / 60);
     const s = Math.floor(t % 60);
@@ -44,6 +46,16 @@ export default function GlobalMusicPlayer() {
       })
       .catch((err) => console.error("music-feed hiba:", err));
   }, []);
+
+  useEffect(() => {
+    const visible = queue.length > 0;
+    setPlayerVisible(visible);
+    document.body.dataset.playerVisible = visible ? "true" : "false";
+    return () => {
+      setPlayerVisible(false);
+      delete document.body.dataset.playerVisible;
+    };
+  }, [queue.length, setPlayerVisible]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -121,7 +133,7 @@ export default function GlobalMusicPlayer() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-2 flex items-center justify-between"
+        className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-2 flex items-center justify-between h-[72px]"
         onClick={() => setOpen(true)}
       >
         <div className="flex items-center min-w-0 gap-2">
