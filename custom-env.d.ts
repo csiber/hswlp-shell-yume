@@ -9,4 +9,5 @@ interface CloudflareEnv {
   PUNISHMENT_CREDIT_LOSS?: string;
   UPLOAD_BAN_HOURS?: string;
   JWT_SECRET?: string;
+  DB_GLOBAL: D1Database;
 }

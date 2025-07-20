@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
+import { getDb } from '@/lib/getDb'
 
 export async function GET() {
   const session = await getSessionFromCookie()
@@ -10,7 +11,8 @@ export async function GET() {
   }
 
   const { env } = getCloudflareContext()
-  const rows = await env.DB.prepare(`
+  const dbUploads = getDb(env, 'uploads')
+  const rows = await dbUploads.prepare(`
     SELECT up.id, up.title, up.type, up.mime, up.url, up.r2_key, f.created_at
     FROM uploads up
     JOIN favorites f ON f.upload_id = up.id

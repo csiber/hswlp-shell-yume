@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
+import { getDb } from '@/lib/getDb'
 
 export async function GET() {
   const session = await getSessionFromCookie()
@@ -9,7 +10,8 @@ export async function GET() {
   }
 
   const { env } = getCloudflareContext()
-  const result = await env.DB.prepare(
+  const db = getDb(env, 'uploads')
+  const result = await db.prepare(
     'SELECT id, title, type, url, created_at FROM uploads WHERE user_id = ? ORDER BY created_at DESC'
   ).bind(session.user.id).all<Record<string, string>>()
 

@@ -1,12 +1,14 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { NextRequest } from "next/server"
 import { SITE_URL } from "@/constants"
+import { getDb } from '@/lib/getDb'
 
 export async function GET(req: NextRequest) {
   const { env } = getCloudflareContext()
+  const db = getDb(env, 'uploads')
 
   const id = req.nextUrl.pathname.split("/").pop()!
-  const upload = await env.DB.prepare(
+  const upload = await db.prepare(
     'SELECT r2_key, type FROM uploads WHERE id = ?1 LIMIT 1'
   )
     .bind(id)
@@ -21,7 +23,7 @@ export async function GET(req: NextRequest) {
     return new Response("File not found", { status: 404 })
   }
 
-  await env.DB.prepare(
+  await db.prepare(
     'UPDATE uploads SET view_count = COALESCE(view_count,0) + 1 WHERE id = ?1'
   )
     .bind(id)

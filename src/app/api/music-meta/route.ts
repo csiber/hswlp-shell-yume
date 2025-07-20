@@ -3,6 +3,7 @@ import { jsonResponse } from '@/utils/api'
 import { parseBuffer } from 'music-metadata-browser'
 import { NextRequest } from 'next/server'
 import { guessMetaFromFilename } from '@/utils/music'
+import { getDb } from '@/lib/getDb'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -13,7 +14,8 @@ export async function GET(req: NextRequest) {
   }
 
   const { env } = getCloudflareContext()
-  const row = await env.DB.prepare(
+  const db = getDb(env, 'uploads')
+  const row = await db.prepare(
     'SELECT r2_key, title FROM uploads WHERE id = ?1 LIMIT 1'
   ).bind(id).first<{ r2_key: string; title: string }>()
 
