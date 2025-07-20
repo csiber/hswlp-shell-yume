@@ -14,7 +14,7 @@ export default function ShellMobile({ children }: { children?: React.ReactNode }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <main className="flex-1 overflow-x-hidden">{children}</main>
+      <main className="flex-1 overflow-x-hidden pb-24">{children}</main>
       <MobileNavBar />
       <FloatingUploadButton />
       <InstallPrompt />
