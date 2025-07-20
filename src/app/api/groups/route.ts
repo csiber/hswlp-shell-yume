@@ -1,11 +1,13 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
+import { getDb } from '@/lib/getDb'
 
 export async function GET() {
   const { env } = getCloudflareContext()
+  const db = getDb(env, 'groups')
   const session = await getSessionFromCookie()
-  const result = await env.DB.prepare(`
+  const result = await db.prepare(`
     SELECT g.id, g.slug, g.name, g.description, g.cover_url,
            CASE WHEN gm.id IS NULL THEN 0 ELSE 1 END as is_member
     FROM groups g

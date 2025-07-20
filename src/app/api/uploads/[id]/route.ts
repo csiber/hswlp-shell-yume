@@ -4,6 +4,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { consumeCredits } from '@/utils/credits'
 import { jsonResponse } from '@/utils/api'
 import { withRateLimit } from '@/utils/with-rate-limit'
+import { getDb } from '@/lib/getDb'
 import { createHash } from 'crypto'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -17,13 +18,15 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
   }
 
   const { env } = getCloudflareContext()
+  const db = getDb(env, 'uploads')
+  const dbEdits = getDb(env, 'upload_edits')
   const body = await req.json() as { title?: string; description?: string; tags?: string; note?: string }
 
   return withRateLimit(async () => {
     const { id } = await params
 
 
-    const row = await env.DB.prepare('SELECT user_id, title, description, tags, note, created_at, moderation_status, locked FROM uploads WHERE id = ?1')
+    const row = await db.prepare('SELECT user_id, title, description, tags, note, created_at, moderation_status, locked FROM uploads WHERE id = ?1')
       .bind(id)
       .first<{ user_id: string; title: string | null; description: string | null; tags: string | null; note: string | null; created_at: string; moderation_status: string | null; locked: number | null }>()
 
@@ -75,7 +78,7 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
 
     const hasChanges = changedTitle || changedDescription || changedTags || changedNote
     if (hasChanges) {
-      await env.DB.prepare(
+      await dbEdits.prepare(
         'INSERT INTO upload_versions (id, upload_id, user_id, title, description, tags, note) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)'
       ).bind(
         uuidv4(),
@@ -89,11 +92,11 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
     }
 
     const newModeration = (changedDescription || changedTags) ? 'pending' : row.moderation_status
-    await env.DB.prepare(
+    await db.prepare(
       'UPDATE uploads SET title = COALESCE(?2,title), description = ?3, tags = ?4, note = ?5, moderation_status = ?6 WHERE id = ?1'
     ).bind(id, body.title, body.description, body.tags, body.note, newModeration).run()
 
-    const latest = await env.DB.prepare('SELECT title, description, tags FROM uploads WHERE id = ?1')
+    const latest = await db.prepare('SELECT title, description, tags FROM uploads WHERE id = ?1')
       .bind(id)
       .first<{ title: string | null; description: string | null; tags: string | null }>()
 
@@ -101,12 +104,12 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
     const hash = createHash('sha256').update(input).digest('hex')
 
     for (const update of updates) {
-      await env.DB.prepare(
+      await dbEdits.prepare(
         'INSERT INTO upload_edits (upload_id, user_id, field, old_value, new_value, hash) VALUES (?1, ?2, ?3, ?4, ?5, ?6)'
       ).bind(id, session.user.id, update.field, update.oldValue, update.newValue, hash).run()
     }
 
-    const meta = await env.DB.prepare(
+    const meta = await dbEdits.prepare(
       'SELECT MAX(created_at) as last_edit_at, COUNT(*) as edit_count FROM upload_edits WHERE upload_id = ?1'
     ).bind(id).first<{ last_edit_at: string | null; edit_count: number | null }>()
 

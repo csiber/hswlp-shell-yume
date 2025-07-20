@@ -3,6 +3,7 @@ import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { NextRequest } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
+import { getDb } from '@/lib/getDb'
 
 interface RouteContext<T> {
   params: Promise<T>
@@ -14,13 +15,14 @@ export async function GET(
 ) {
   const { id: commentId } = await params
   const { env } = getCloudflareContext()
+  const db = getDb(env, 'comment_reactions')
   const session = await getSessionFromCookie()
-  const rows = await env.DB.prepare(
+  const rows = await db.prepare(
     'SELECT emoji, COUNT(*) as count FROM comment_reactions WHERE comment_id = ?1 GROUP BY emoji'
   ).bind(commentId).all<{ emoji: string; count: number }>()
   let userRows: { emoji: string }[] = []
   if (session?.user?.id) {
-    const res = await env.DB.prepare(
+    const res = await db.prepare(
       'SELECT emoji FROM comment_reactions WHERE comment_id = ?1 AND user_id = ?2'
     ).bind(commentId, session.user.id).all<{ emoji: string }>()
     userRows = res.results || []
@@ -47,8 +49,9 @@ export async function POST(
     return jsonResponse({ success: false }, { status: 400 })
   }
   const { env } = getCloudflareContext()
+  const db = getDb(env, 'comment_reactions')
   try {
-    await env.DB.prepare(
+    await db.prepare(
       'INSERT INTO comment_reactions (id, comment_id, user_id, emoji) VALUES (?1, ?2, ?3, ?4)'
     ).bind(`cre_${uuidv4()}`, commentId, session.user.id, emoji).run()
   } catch {
@@ -71,7 +74,8 @@ export async function DELETE(
     return jsonResponse({ success: false }, { status: 400 })
   }
   const { env } = getCloudflareContext()
-  await env.DB.prepare(
+  const db = getDb(env, 'comment_reactions')
+  await db.prepare(
     'DELETE FROM comment_reactions WHERE comment_id = ?1 AND user_id = ?2 AND emoji = ?3'
   ).bind(commentId, session.user.id, emoji).run()
   return jsonResponse({ success: true })

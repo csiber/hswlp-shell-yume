@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { getSessionFromCookie } from '@/utils/auth';
 import { jsonResponse } from '@/utils/api';
+import { getDb } from '@/lib/getDb';
 
 export async function GET() {
   const session = await getSessionFromCookie();
@@ -9,7 +10,8 @@ export async function GET() {
   }
 
   const { env } = getCloudflareContext();
-  const rows = await env.DB.prepare(
+  const db = getDb(env, 'posts');
+  const rows = await db.prepare(
     'SELECT id, content, created_at FROM posts WHERE user_id = ?1 ORDER BY created_at DESC LIMIT 25'
   )
     .bind(session.user.id)

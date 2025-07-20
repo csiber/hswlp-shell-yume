@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
+import { getDb } from '@/lib/getDb'
 
 export interface CommunityPreview {
   id: string
@@ -21,7 +22,9 @@ export interface AlbumPreview {
 
 export async function GET() {
   const { env } = getCloudflareContext()
-  const result = await env.DB.prepare(`
+  const dbUploads = getDb(env, 'uploads')
+  const dbAlbums = getDb(env, 'albums')
+  const result = await dbUploads.prepare(`
     SELECT u.id, u.title, u.url, u.r2_key, u.created_at, u.download_points,
            usr.nickname, usr.email,
            COUNT(f.id) AS favorites
@@ -38,7 +41,7 @@ export async function GET() {
     LIMIT 5
   `).all<Record<string, string>>()
 
-  const albumRows = await env.DB.prepare(`
+  const albumRows = await dbAlbums.prepare(`
     SELECT a.id as album_id, a.name as album_name, a.created_at as album_created,
            usr.nickname, usr.email,
            up.r2_key

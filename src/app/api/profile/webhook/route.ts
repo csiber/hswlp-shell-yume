@@ -1,5 +1,6 @@
 import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
+import { getDb } from '@/lib/getDb'
 
 export async function PUT(req: Request) {
   const { url } = await req.json() as { url: string }
@@ -9,7 +10,8 @@ export async function PUT(req: Request) {
   }
 
   const { env } = getCloudflareContext()
-  await env.DB.prepare(
+  const db = getDb(env, 'webhooks')
+  await db.prepare(
     'INSERT OR REPLACE INTO webhooks (id, user_id, url, enabled) VALUES (?1, ?2, ?3, 1)'
   ).bind(session.user.id, session.user.id, url).run()
 

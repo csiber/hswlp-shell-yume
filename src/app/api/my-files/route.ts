@@ -3,10 +3,12 @@
 import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { NextRequest } from 'next/server'
+import { getDb } from '@/lib/getDb'
 
 export async function GET(req: NextRequest) {
   const session = await getSessionFromCookie()
   const { env } = getCloudflareContext()
+  const db = getDb(env, 'uploads')
 
   if (!session?.user?.id) {
     return new Response('Unauthorized', { status: 401 })
@@ -18,7 +20,7 @@ export async function GET(req: NextRequest) {
   const allowedTypes = ['image', 'music', 'prompt']
   const filter = type && allowedTypes.includes(type) ? `AND type = '${type}'` : ''
 
-  const result = await env.DB.prepare(`
+  const result = await db.prepare(`
     SELECT id, title, description, tags, note, type AS category, mime, url,
            download_points, approved, moderation_status, moderation_reason,
            view_count, download_count, play_count, locked, total_generated_points

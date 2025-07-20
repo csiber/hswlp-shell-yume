@@ -1,9 +1,11 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
+import { getDb } from '@/lib/getDb'
 
 export async function GET() {
   const { env } = getCloudflareContext()
-  const result = await env.DB.prepare(`
+  const db = getDb(env, 'uploads')
+  const result = await db.prepare(`
     SELECT u.id, u.title, u.type, u.created_at,
            u.view_count, u.play_count,
            usr.firstName, usr.lastName, usr.email

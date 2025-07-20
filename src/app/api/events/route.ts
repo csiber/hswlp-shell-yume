@@ -1,9 +1,11 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
+import { getDb } from '@/lib/getDb'
 
 export async function GET() {
   const { env } = getCloudflareContext()
-  const result = await env.DB.prepare(
+  const db = getDb(env, 'events')
+  const result = await db.prepare(
     `SELECT id, title, slug, description, date, location, cover_url
      FROM events
      WHERE is_public = 1 AND date >= CURRENT_TIMESTAMP

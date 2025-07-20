@@ -3,6 +3,7 @@
 import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
+import { getDb } from '@/lib/getDb'
 
 export async function GET() {
   const session = await getSessionFromCookie()
@@ -11,8 +12,9 @@ export async function GET() {
   }
 
   const { env } = getCloudflareContext()
+  const db = getDb(env, 'deletions')
 
-  const result = await env.DB.prepare(`
+  const result = await db.prepare(`
     SELECT d.id, d.upload_id, d.deleted_at, u.title, u.type
     FROM deletions d
     LEFT JOIN uploads u ON d.upload_id = u.id

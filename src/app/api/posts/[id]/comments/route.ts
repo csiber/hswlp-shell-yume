@@ -3,6 +3,7 @@ import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { NextRequest } from 'next/server'
 import { init } from '@paralleldrive/cuid2'
+import { getDb } from '@/lib/getDb'
 
 interface RouteContext<T> {
   params: Promise<T>
@@ -25,8 +26,10 @@ export async function GET(
 ) {
   const { id: uploadId } = await params
   const { env } = getCloudflareContext()
+  const dbComments = getDb(env, 'comments')
+  const dbReactions = getDb(env, 'comment_reactions')
   const session = await getSessionFromCookie()
-  const rows = await env.DB.prepare(
+  const rows = await dbComments.prepare(
     `SELECT c.id, c.content, c.created_at, u.nickname, u.email, u.avatar
      FROM comments c
      LEFT JOIN user u ON c.user_id = u.id
@@ -42,12 +45,12 @@ export async function GET(
   }[]
 
   for (const row of rows.results || []) {
-    const reactionRows = await env.DB.prepare(
+    const reactionRows = await dbReactions.prepare(
       'SELECT emoji, COUNT(*) as count FROM comment_reactions WHERE comment_id = ?1 GROUP BY emoji'
     ).bind(row.id).all<{ emoji: string; count: number }>()
     let userRows: { emoji: string }[] = []
     if (session?.user?.id) {
-      const r = await env.DB.prepare(
+      const r = await dbReactions.prepare(
         'SELECT emoji FROM comment_reactions WHERE comment_id = ?1 AND user_id = ?2'
       ).bind(row.id, session.user.id).all<{ emoji: string }>()
       userRows = r.results || []
@@ -85,8 +88,9 @@ export async function POST(
     return jsonResponse({ success: false }, { status: 400 })
   }
   const { env } = getCloudflareContext()
+  const dbComments = getDb(env, 'comments')
   const id = `com_${createId()}`
-  await env.DB.prepare(
+  await dbComments.prepare(
     'INSERT INTO comments (id, upload_id, user_id, content) VALUES (?1, ?2, ?3, ?4)'
   ).bind(id, uploadId, session.user.id, text.trim()).run()
 

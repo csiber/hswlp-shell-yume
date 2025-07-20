@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
+import { getDb } from '@/lib/getDb'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie, getUserFromDB } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
@@ -103,6 +104,9 @@ export async function POST(req: Request) {
   }
 
   const { env } = getCloudflareContext()
+  const dbUploads = getDb(env, 'uploads')
+  const dbAlbums = getDb(env, 'albums')
+  const dbUser = getDb(env, 'user')
 
   const fileSizeMb = file.size / (1024 * 1024)
   const usedStorageMb = Number(freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0)
@@ -141,20 +145,20 @@ export async function POST(req: Request) {
     }
 
   if (albumId) {
-    const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE album_id = ?1')
+    const countRow = await dbUploads.prepare('SELECT COUNT(*) as c FROM uploads WHERE album_id = ?1')
       .bind(albumId)
       .first<{ c: number }>()
     if ((countRow?.c ?? 0) >= 10) {
       return jsonResponse({ success: false, error: 'Album limit reached' }, { status: 400 })
     }
-    const existsAlbum = await env.DB.prepare('SELECT id FROM albums WHERE id = ?1 LIMIT 1')
+    const existsAlbum = await dbAlbums.prepare('SELECT id FROM albums WHERE id = ?1 LIMIT 1')
       .bind(albumId)
       .first<{ id: string }>()
     if (!existsAlbum) {
       if (!albumName) {
         return jsonResponse({ success: false, error: 'Album name required' }, { status: 400 })
       }
-      await env.DB.prepare(
+      await dbAlbums.prepare(
         'INSERT INTO albums (id, name, user_id) VALUES (?1, ?2, ?3)'
       ).bind(albumId, albumName, session.user.id).run()
     }
@@ -175,7 +179,7 @@ export async function POST(req: Request) {
         downloadPoints++
       }
     }
-    const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE user_id = ?1')
+    const countRow = await dbUploads.prepare('SELECT COUNT(*) as c FROM uploads WHERE user_id = ?1')
       .bind(session.user.id)
       .first<{ c: number }>()
     if ((countRow?.c ?? 0) === 0) downloadPoints++
@@ -207,7 +211,7 @@ export async function POST(req: Request) {
       hasR2: true,
     })
 
-    const exists = await env.DB.prepare(
+    const exists = await dbUploads.prepare(
       'SELECT id FROM uploads WHERE user_id = ?1 AND title = ?2 AND type = ?3 LIMIT 1'
     ).bind(session.user.id, finalTitle, type).first<string>()
 
@@ -215,11 +219,11 @@ export async function POST(req: Request) {
       return jsonResponse({ success: false, error: 'Duplicate upload' }, { status: 400 })
     }
 
-    await env.DB.prepare(
+    await dbUploads.prepare(
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
     ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
 
-    await env.DB.prepare(
+    await dbUser.prepare(
       'UPDATE user SET used_storage_mb = COALESCE(used_storage_mb,0) + ?1 WHERE id = ?2'
     ).bind(fileSizeMb, session.user.id).run()
     await updateAllSessionsOfUser(session.user.id)
@@ -232,7 +236,7 @@ export async function POST(req: Request) {
       type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
     })
 
-    const creditsRow = await env.DB.prepare('SELECT currentCredits FROM user WHERE id = ?1')
+    const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')
       .bind(session.user.id)
       .first<{ currentCredits: number }>()
 
