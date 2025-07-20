@@ -39,7 +39,7 @@ import {
 import { cn } from "@/lib/utils";
 
 interface TopBarProps {
-  logo?: "hswlp" | "sociala";
+  logo?: "hswlp" | "yumekai";
 }
 
 export default function TopBar({}: TopBarProps) {
@@ -227,7 +227,7 @@ export default function TopBar({}: TopBarProps) {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Csapatok</p>
+              <p>Jelelengi látogatottság</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
