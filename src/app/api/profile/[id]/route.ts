@@ -14,7 +14,7 @@ export async function GET(
 ) {
   const { id } = await params
   const { env } = getCloudflareContext()
-  const dbUser = getDb(env, 'user')
+  const dbUser = env.DB_GLOBAL
   const dbUploads = getDb(env, 'uploads')
   const user = await dbUser.prepare(
     'SELECT id, nickname, email, avatar, currentCredits, profile_frame_enabled FROM user WHERE id = ?1 LIMIT 1'

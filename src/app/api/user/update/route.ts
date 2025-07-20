@@ -4,7 +4,6 @@ import { jsonResponse } from '@/utils/api'
 import { consumeCredits } from '@/utils/credits'
 import { updateAllSessionsOfUser } from '@/utils/kv-session'
 import { z } from 'zod'
-import { getDb } from '@/lib/getDb'
 
 const bodySchema = z.object({
   nickname: z.string().min(3).max(20).regex(/^[a-zA-Z0-9_-]{3,20}$/)
@@ -23,7 +22,7 @@ export async function PUT(req: Request) {
   const { nickname } = parse.data
 
   const { env } = getCloudflareContext()
-  const db = getDb(env, 'user')
+  const db = env.DB_GLOBAL
   const userRow = await db.prepare(
     'SELECT nickname, nickname_updated_at, currentCredits FROM user WHERE id = ?1'
   ).bind(session.user.id).first<{ nickname: string | null; nickname_updated_at: string | null; currentCredits: number | null }>()

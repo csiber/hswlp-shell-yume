@@ -21,22 +21,35 @@ export async function GET(req: NextRequest) {
   }
   const { env } = getCloudflareContext()
   const db = getDb(env, 'comments')
+  const dbUsers = env.DB_GLOBAL
   const rows = await db.prepare(
-    `SELECT c.id, c.content, c.created_at, u.firstName, u.lastName, u.email
+    `SELECT c.id, c.user_id, c.content, c.created_at
      FROM comments c
-     LEFT JOIN user u ON c.user_id = u.id
      WHERE c.upload_id = ?1
      ORDER BY c.created_at ASC`
   ).bind(uploadId).all<CommentRow>()
 
-  const comments = (rows.results || []).map(row => ({
-    id: row.id,
-    content: row.content,
-    created_at: new Date(row.created_at).toISOString(),
-    user: {
-      name: [row.firstName, row.lastName].filter(Boolean).join(' ') || row.email
+  const userIds = Array.from(new Set((rows.results || []).map(r => r.user_id)))
+  const userMap: Record<string, { firstName: string | null; lastName: string | null; email: string }> = {}
+  for (const id of userIds) {
+    const u = await dbUsers
+      .prepare('SELECT firstName, lastName, email FROM user WHERE id = ?1')
+      .bind(id)
+      .first<{ firstName: string | null; lastName: string | null; email: string }>()
+    if (u) userMap[id] = { firstName: u.firstName, lastName: u.lastName, email: u.email }
+  }
+
+  const comments = (rows.results || []).map(row => {
+    const u = userMap[row.user_id] || { firstName: null, lastName: null, email: '' }
+    return {
+      id: row.id,
+      content: row.content,
+      created_at: new Date(row.created_at).toISOString(),
+      user: {
+        name: [u.firstName, u.lastName].filter(Boolean).join(' ') || u.email
+      }
     }
-  }))
+  })
 
   return jsonResponse({ comments })
 }
