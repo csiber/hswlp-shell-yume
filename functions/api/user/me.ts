@@ -1,4 +1,4 @@
-import { getDB } from '@/db'
+import { getGlobalDB } from '@/db'
 import { userTable } from '@/db/schema'
 import { verifyJWT } from '@/utils/jwt'
 import { jsonResponse } from '@/utils/api'
@@ -18,7 +18,7 @@ export const onRequestGet = async (req: Request) => {
     if (!payload || typeof payload.sub !== 'string') {
       return jsonResponse({ user: null }, { status: 401 })
     }
-    const db = await getDB()
+    const db = await getGlobalDB()
     const user = await db.query.userTable.findFirst({ where: eq(userTable.id, payload.sub) })
     if (!user) return jsonResponse({ user: null }, { status: 404 })
 

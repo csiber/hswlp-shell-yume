@@ -1,4 +1,4 @@
-import { getDB } from '@/db'
+import { getGlobalDB } from '@/db'
 import { userTable } from '@/db/schema'
 import { hashPassword } from '@/utils/password-hasher'
 import { signJWT } from '@/utils/jwt'
@@ -13,7 +13,7 @@ export const onRequestPost = async (req: Request) => {
     if (!email || !password) {
       return jsonResponse({ error: 'Missing data' }, { status: 400 })
     }
-    const db = await getDB()
+    const db = await getGlobalDB()
 
     const existing = await db.query.userTable.findFirst({ where: eq(userTable.email, email) })
     if (existing) {
