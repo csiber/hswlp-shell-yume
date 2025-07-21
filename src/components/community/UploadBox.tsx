@@ -182,11 +182,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         }
         } catch (err) {
           if (axios.isAxiosError(err)) {
-            console.error('Axios hiba:', {
-              status: err.response?.status,
-              data: err.response?.data,
-              headers: err.response?.headers,
-            })
+            console.error('Axios hiba:', err.response?.status, err.response?.data)
+            console.error('Axios teljes válasz:', err.response)
           } else {
             console.error('Általános hiba:', err)
           }

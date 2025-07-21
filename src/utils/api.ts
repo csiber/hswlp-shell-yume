@@ -5,15 +5,23 @@ export interface JsonResponseOptions {
 
 export function jsonResponse(
   data: Record<string, unknown>,
-  options: JsonResponseOptions = {}
+  options: JsonResponseOptions = {},
 ) {
   const { status = 200, headers = {} } = options
 
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: {
-      "Content-Type": "application/json",
-      ...headers,
-    },
-  })
+  try {
+    return new Response(JSON.stringify(data), {
+      status,
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+    })
+  } catch (err) {
+    console.error('jsonResponse serialization error', err)
+    return new Response(
+      JSON.stringify({ success: false, error: 'Serialization error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } },
+    )
+  }
 }
