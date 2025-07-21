@@ -47,17 +47,19 @@ export default function MobilePostCard({
         a.click();
         URL.revokeObjectURL(url);
       }
-    } catch {
-      // ignore
-    }
+      } catch (e) {
+        console.error(e)
+        // ignore
+      }
   }, [item.id, item.title]);
 
   const handlePlay = useCallback(async () => {
     try {
       await fetch(`/api/uploads/${item.id}/play`, { method: "POST" });
-    } catch {
-      // ignore
-    }
+    } catch (e) {
+        console.error(e)
+        // ignore
+      }
   }, [item.id]);
 
   const handleView = useCallback(async () => {
@@ -67,9 +69,10 @@ export default function MobilePostCard({
         const data = (await res.json()) as { view_count?: number };
         setViewCount(data.view_count ?? viewCount + 1);
       }
-    } catch {
-      setViewCount((c) => c + 1);
-    }
+      } catch (e) {
+        console.error(e)
+        setViewCount((c) => c + 1);
+      }
   }, [item.id, viewCount]);
 
   useEffect(() => {

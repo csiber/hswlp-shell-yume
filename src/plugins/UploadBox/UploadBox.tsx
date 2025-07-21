@@ -57,7 +57,8 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         setDownloadPoints(data.download_points ?? null)
         toast.success("Sikeres feltöltés, moderációra vár")
         if (onSuccess) onSuccess()
-      } catch {
+      } catch (e) {
+        console.error(e)
         toast.error("Feltöltés sikertelen")
       }
     })

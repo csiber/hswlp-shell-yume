@@ -31,7 +31,9 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
 
   try {
     await consumeCredits({ userId: upload.user_id, amount: PUNISHMENT_CREDIT_LOSS, description: 'Moderation punishment' })
-  } catch {}
+  } catch (e) {
+    console.error(e)
+  }
 
   return new Response(JSON.stringify({ success: true }), {
     status: 200,

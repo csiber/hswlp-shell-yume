@@ -47,7 +47,8 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
   if (!already) {
     try {
       await consumeCredits({ userId: session.user.id, amount: points, description: 'File download' })
-    } catch {
+    } catch (e) {
+      console.error(e)
       return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
     }
 

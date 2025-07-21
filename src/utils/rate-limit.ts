@@ -37,7 +37,8 @@ function normalizeIP(ip: string): string {
       // For IPv4, return the address as-is without normalization
       return addr.toString();
     }
-  } catch {
+  } catch (e) {
+    console.error(e)
     // If parsing fails, return the original IP
     return ip;
   }

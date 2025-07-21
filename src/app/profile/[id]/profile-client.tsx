@@ -47,7 +47,8 @@ export default function ProfileClient({ user, uploads, currentUserId }: Props) {
         a.click()
         URL.revokeObjectURL(url)
       }
-    } catch {
+    } catch (e) {
+      console.error(e)
       // ignore
     }
   }

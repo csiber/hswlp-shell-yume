@@ -99,9 +99,10 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           const common = meta.common || {}
           const t = common.title ? formatTitle(common.title) : formatTitle(file.name)
           entries[file.name] = common.artist ? `${common.artist} - ${t}` : t
-        } catch {
-          entries[file.name] = formatTitle(file.name)
-        }
+          } catch (e) {
+            console.error(e)
+            entries[file.name] = formatTitle(file.name)
+          }
       } else {
         entries[file.name] = formatTitle(file.name)
       }
@@ -169,9 +170,10 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         } else {
           toast.error(data.error || `Hiba a(z) ${file.name} feltöltésekor`);
         }
-      } catch {
-        toast.error(`Hálózati hiba: ${file.name}`);
-      }
+        } catch (e) {
+          console.error(e)
+          toast.error(`Hálózati hiba: ${file.name}`);
+        }
     }
 
     setLoading(false);

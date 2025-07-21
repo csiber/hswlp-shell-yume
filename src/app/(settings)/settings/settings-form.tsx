@@ -99,7 +99,8 @@ export function SettingsForm() {
       } else {
         toast.error(data.error || 'Hiba történt')
       }
-    } catch {
+    } catch (e) {
+      console.error(e)
       toast.dismiss()
       toast.error('Hálózati hiba')
     }

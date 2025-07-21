@@ -37,7 +37,8 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
         } else {
           setPosts([]);
         }
-      } catch {
+      } catch (e) {
+        console.error(e)
         setPosts([]);
       } finally {
         setLoading(false);

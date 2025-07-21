@@ -20,7 +20,8 @@ export function useFavorite(initial: boolean, uploadId: string) {
         })
         if (res.ok) setFavorited(true)
       }
-    } catch {
+    } catch (e) {
+      console.error(e)
       // ignore errors
     }
   }

@@ -24,7 +24,8 @@ export default function GroupCard({ group }: { group: GroupItem }) {
         body: JSON.stringify({ group_id: group.id }),
       })
       if (res.ok) setJoined(true)
-    } catch {
+    } catch (e) {
+      console.error(e)
       // ignore
     }
   }

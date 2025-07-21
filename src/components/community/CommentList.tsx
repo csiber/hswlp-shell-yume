@@ -52,7 +52,8 @@ export default function CommentList({ postId }: { postId: string }) {
         if (!res.ok) return;
       const data = (await res.json()) as { comments: Comment[] };
       setComments(data.comments);
-      } catch {
+      } catch (e) {
+        console.error(e)
         // ignore
       }
     }
@@ -97,7 +98,8 @@ export default function CommentList({ postId }: { postId: string }) {
           }
         })
       );
-    } catch {
+    } catch (e) {
+      console.error(e)
       // ignore
     }
   }
@@ -112,7 +114,8 @@ export default function CommentList({ postId }: { postId: string }) {
       const res = await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
       if (!res.ok) return;
       setComments(cs => cs.filter(c => c.id !== commentId));
-    } catch {
+    } catch (e) {
+      console.error(e)
       // ignore
     }
   }
@@ -130,7 +133,8 @@ export default function CommentList({ postId }: { postId: string }) {
       setComments((c) => [...c, { ...data.comment, reactions: [] }]);
       setVisible((v) => v + 1);
       setText("");
-    } catch {
+    } catch (e) {
+      console.error(e)
       // ignore
     }
   }

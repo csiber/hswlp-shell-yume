@@ -103,7 +103,8 @@ export default function MyFilesPage() {
       } else {
         toast.error('Hiba történt törlés közben')
       }
-    } catch {
+    } catch (e) {
+      console.error(e)
       toast.error('Hálózati hiba történt')
     }
   }
@@ -141,7 +142,8 @@ export default function MyFilesPage() {
       } else {
         toast.error('Letöltés sikertelen')
       }
-    } catch {
+    } catch (e) {
+      console.error(e)
       toast.error('Hálózati hiba történt')
     }
   }
