@@ -1,6 +1,6 @@
 import "server-only";
 import { eq, sql, desc, and, lt, isNull, gt, or, asc } from "drizzle-orm";
-import { getDB } from "@/db";
+import { getGlobalDB } from "@/db";
 import { userTable, creditTransactionTable, teamMembershipTable, teamTable, CREDIT_TRANSACTION_TYPE, purchasedItemsTable } from "@/db/schema";
 import { updateAllSessionsOfUser, KVSession } from "./kv-session";
 import { CREDIT_PACKAGES, FREE_MONTHLY_CREDITS } from "@/constants";
@@ -30,7 +30,7 @@ function shouldRefreshCredits(session: KVSession, currentTime: Date): boolean {
 
 // A felhasználó csapatainak kredit egyenlegét is frissítjük
 async function updateTeamCredits(userId: string, amount: number) {
-  const db = await getDB();
+  const db = await getGlobalDB();
   const memberships = await db
     .select({ teamId: teamMembershipTable.teamId })
     .from(teamMembershipTable)
@@ -51,7 +51,7 @@ async function updateTeamCredits(userId: string, amount: number) {
 
 // Lejárt tranzakciók kezelése és a felhasználó egyenlegének frissítése
 async function processExpiredCredits(userId: string, currentTime: Date) {
-  const db = await getDB();
+  const db = await getGlobalDB();
   // Find all expired transactions that haven't been processed and have remaining credits
   // Order by type to process MONTHLY_REFRESH first, then by creation date
   const expiredTransactions = await db.query.creditTransactionTable.findMany({
@@ -97,7 +97,7 @@ async function processExpiredCredits(userId: string, currentTime: Date) {
 
 // Felhasználói kreditállomány növelése
 export async function updateUserCredits(userId: string, creditsToAdd: number) {
-  const db = await getDB();
+  const db = await getGlobalDB();
   await db
     .update(userTable)
     .set({
@@ -112,7 +112,7 @@ export async function updateUserCredits(userId: string, creditsToAdd: number) {
 }
 
 async function updateLastRefreshDate(userId: string, date: Date) {
-  const db = await getDB();
+  const db = await getGlobalDB();
   await db
     .update(userTable)
     .set({
@@ -136,7 +136,7 @@ export async function logTransaction({
   expirationDate?: Date;
   paymentIntentId?: string;
 }) {
-  const db = await getDB();
+  const db = await getGlobalDB();
   await db.insert(creditTransactionTable).values({
     userId,
     amount,
@@ -154,7 +154,7 @@ export async function addFreeMonthlyCreditsIfNeeded(session: KVSession): Promise
   // Check if it's been at least a month since last refresh
   if (shouldRefreshCredits(session, currentTime)) {
     // Double check the last refresh date from the database to prevent race conditions
-    const db = await getDB();
+    const db = await getGlobalDB();
     const user = await db.query.userTable.findFirst({
       where: eq(userTable.id, session.userId),
       columns: {
@@ -202,7 +202,7 @@ export async function addFreeMonthlyCreditsIfNeeded(session: KVSession): Promise
 }
 
 export async function hasEnoughCredits({ userId, requiredCredits }: { userId: string; requiredCredits: number }) {
-  const user = await (await getDB()).query.userTable.findFirst({
+  const user = await (await getGlobalDB()).query.userTable.findFirst({
     where: eq(userTable.id, userId),
     columns: {
       currentCredits: true,
@@ -214,7 +214,7 @@ export async function hasEnoughCredits({ userId, requiredCredits }: { userId: st
 }
 
 export async function consumeCredits({ userId, amount, description }: { userId: string; amount: number; description: string }) {
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // First check if user has enough credits
   const user = await db.query.userTable.findFirst({
@@ -314,7 +314,7 @@ export async function getCreditTransactions({
   page?: number;
   limit?: number;
 }) {
-  const db = await getDB();
+  const db = await getGlobalDB();
   const transactions = await db.query.creditTransactionTable.findMany({
     where: eq(creditTransactionTable.userId, userId),
     orderBy: [desc(creditTransactionTable.createdAt)],
@@ -344,7 +344,7 @@ export async function getCreditTransactions({
 }
 
 export async function getUserPurchasedItems(userId: string) {
-  const db = await getDB();
+  const db = await getGlobalDB();
   const purchasedItems = await db.query.purchasedItemsTable.findMany({
     where: eq(purchasedItemsTable.userId, userId),
   });
