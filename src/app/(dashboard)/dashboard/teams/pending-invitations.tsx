@@ -74,8 +74,8 @@ export function PendingInvitations() {
         // Refresh the page to show the new team
         router.refresh();
       }
-    } catch (e) {
-        console.error(e)
+    } catch (err) {
+        console.error(err)
         toast.error("Nem sikerült elfogadni a meghívást");
     } finally {
       setIsAccepting(prev => ({ ...prev, [token]: false }));

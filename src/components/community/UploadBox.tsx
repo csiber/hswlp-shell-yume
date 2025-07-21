@@ -101,8 +101,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           const common = meta.common || {}
           const t = common.title ? formatTitle(common.title) : formatTitle(file.name)
           entries[file.name] = common.artist ? `${common.artist} - ${t}` : t
-          } catch (e) {
-            console.error(e)
+          } catch (err) {
+            console.error(err)
             entries[file.name] = formatTitle(file.name)
           }
       } else {
@@ -180,8 +180,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         } else {
           toast.error(data.error || `Hiba a(z) ${file.name} feltöltésekor`);
         }
-        } catch (e) {
-          console.error(e)
+        } catch (err) {
+          console.error(err)
           toast.error(`Hálózati hiba: ${file.name}`);
         }
     }
