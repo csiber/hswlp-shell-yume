@@ -250,12 +250,12 @@ export async function POST(req: Request) {
         message: 'Feltöltés sikeres!',
         download_points: downloadPoints,
         awarded_credits: creditValue,
-        total_credits: Number(creditsRow?.currentCredits ?? 0),
+        total_credits: Number(creditsRow?.currentCredits || 0),
       },
       { status: 200 },
     )
   } catch (err) {
-    console.error('Upload API error', err)
+    console.error('Error handling /api/upload:', err, JSON.stringify(err, null, 2))
     return jsonResponse({ success: false, error: 'Server error' }, { status: 500 })
   }
 }
