@@ -13,11 +13,9 @@ const createId = init({ length: 32 })
 
 interface CommentRow {
   id: string
+  user_id: string
   content: string
   created_at: string
-  nickname: string | null
-  email: string
-  avatar: string | null
 }
 
 export async function GET(

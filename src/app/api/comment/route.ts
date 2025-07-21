@@ -7,11 +7,9 @@ import { getDb } from '@/lib/getDb'
 
 interface CommentRow {
   id: string
+  user_id: string
   content: string
   created_at: string
-  firstName: string | null
-  lastName: string | null
-  email: string
 }
 
 export async function GET(req: NextRequest) {
