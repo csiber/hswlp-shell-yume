@@ -1,10 +1,12 @@
 "use client"
 
-import { useState, useRef, useEffect, useTransition } from "react"
+import { useState, useRef, useEffect } from "react"
+import axios from "axios"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Progress } from "@/components/ui/progress"
 import { toast } from "sonner"
 
 interface UploadBoxProps {
@@ -16,7 +18,8 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
   const [file, setFile] = useState<File | null>(null)
   const [title, setTitle] = useState("")
   const [dragging, setDragging] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
   const [showSuccess, setShowSuccess] = useState(false)
   const [downloadPoints, setDownloadPoints] = useState<number | null>(null)
 
@@ -42,26 +45,38 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       toast.error("Hiányzó fájl vagy cím")
       return
     }
-    startTransition(async () => {
-      const form = new FormData()
-      form.append("file", file)
-      form.append("title", title)
-      try {
-        const res = await fetch("/api/upload", { method: "POST", body: form })
-        if (!res.ok) throw new Error("failed")
-        const data = await res.json() as { download_points?: number }
-        setFile(null)
-        setTitle("")
-        if (fileInputRef.current) fileInputRef.current.value = ""
-        setShowSuccess(true)
-        setDownloadPoints(data.download_points ?? null)
-        toast.success("Sikeres feltöltés, moderációra vár")
-        if (onSuccess) onSuccess()
-      } catch (e) {
-        console.error(e)
-        toast.error("Feltöltés sikertelen")
-      }
-    })
+    setUploading(true)
+    setUploadProgress(0)
+    const form = new FormData()
+    form.append("file", file)
+    form.append("title", title)
+    try {
+      const res = await axios.post("/api/upload", form, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (e) => {
+          if (e.total) {
+            const percent = Math.round((e.loaded * 100) / e.total)
+            setUploadProgress(percent)
+          }
+        },
+      })
+      const data = res.data as { download_points?: number }
+      setFile(null)
+      setTitle("")
+      if (fileInputRef.current) fileInputRef.current.value = ""
+      setShowSuccess(true)
+      setDownloadPoints(data.download_points ?? null)
+      toast.success("Sikeres feltöltés, moderációra vár")
+      if (onSuccess) onSuccess()
+    } catch (e) {
+      console.error(e)
+      toast.error("Feltöltés sikertelen")
+    } finally {
+      setUploading(false)
+      setUploadProgress(0)
+    }
   }
 
   return (
@@ -101,14 +116,22 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
             {downloadPoints !== null ? ` – a fájl értéke: ${downloadPoints} pont` : ''}
           </p>
         )}
+        {uploading && (
+          <>
+            <Progress value={uploadProgress} />
+            <p className="text-center text-sm text-muted-foreground">
+              {uploadProgress}%
+            </p>
+          </>
+        )}
       </CardContent>
       <CardFooter>
         <Button
           onClick={upload}
-          disabled={isPending}
+          disabled={uploading}
           className="w-full flex items-center justify-center"
         >
-          {isPending ? (
+          {uploading ? (
             <>
               <Spinner size="small" className="mr-2" /> Feltöltés...
             </>
