@@ -2,14 +2,16 @@ import { requireAdmin } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getDb } from '@/lib/getDb'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
+import { deriveSourceApp } from '@/utils/source-app'
 import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 
 interface RouteContext<T> { params: Promise<T> }
 
-export async function POST(_req: Request, { params }: RouteContext<{ id: string }>) {
+export async function POST(req: Request, { params }: RouteContext<{ id: string }>) {
   await requireAdmin()
   const { env } = getCloudflareContext()
   const db = getDb(env, 'uploads')
+  const sourceApp = deriveSourceApp(req.headers.get('host') ?? undefined)
   const { id } = await params
 
   const upload = await db
@@ -39,6 +41,7 @@ export async function POST(_req: Request, { params }: RouteContext<{ id: string 
           description: 'Upload reward (moderation)',
           type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
           paymentIntentId: id,
+          sourceApp,
         })
       }
     }

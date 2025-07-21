@@ -121,6 +121,7 @@ export function TransactionHistory() {
                   <TableHead>Típus</TableHead>
                   <TableHead>Összeg</TableHead>
                   <TableHead>Leírás</TableHead>
+                  <TableHead>Forrás</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -159,10 +160,11 @@ export function TransactionHistory() {
                         </Badge>
                       )}
                     </TableCell>
+                    <TableCell>{transaction.sourceApp ?? '-'}</TableCell>
                   </TableRow>
                 )) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">Nincs tranzakció</TableCell>
+                    <TableCell colSpan={5} className="h-24 text-center">Nincs tranzakció</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -213,6 +215,9 @@ export function TransactionHistory() {
                   {isTransactionExpired(transaction) ? "Lejárt: " : "Lejárat: "}
                   {formatDate(new Date(transaction.expirationDate))}
                 </Badge>
+              )}
+              {transaction.sourceApp && (
+                <span className="text-xs text-muted-foreground">{transaction.sourceApp}</span>
               )}
             </div>
           )) : (

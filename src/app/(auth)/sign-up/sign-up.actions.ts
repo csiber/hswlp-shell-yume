@@ -9,6 +9,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { hashPassword } from "@/utils/password-hasher";
 import { createSession, generateSessionToken, setSessionTokenCookie } from "@/utils/auth";
 import { logTransaction } from "@/utils/credits";
+import { getSourceAppFromHeaders } from "@/utils/source-app";
 import { eq } from "drizzle-orm";
 import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
 import { getIP } from "@/utils/get-IP";
@@ -21,6 +22,7 @@ export const signUpAction = createServerAction()
     return withRateLimit(
       async () => {
         const db = await getGlobalDB();
+        const sourceApp = await getSourceAppFromHeaders();
 
         if (await isTurnstileEnabled() && input.captchaToken) {
           const success = await validateTurnstileToken(input.captchaToken)
@@ -74,6 +76,7 @@ export const signUpAction = createServerAction()
             description: 'Signup bonus',
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
+            sourceApp,
           });
         }
 

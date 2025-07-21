@@ -5,6 +5,7 @@ import { getSessionFromCookie, getUserFromDB } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { WebhookService } from '@/app/services/WebhookService'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
+import { deriveSourceApp } from '@/utils/source-app'
 import { updateAllSessionsOfUser } from '@/utils/kv-session'
 import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
@@ -53,6 +54,7 @@ async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
 export async function POST(req: Request) {
   try {
     const session = await getSessionFromCookie()
+    const sourceApp = deriveSourceApp(req.headers.get('host') ?? undefined)
 
   if (!session?.user?.id) {
     return jsonResponse({ success: false, error: 'Unauthorized' }, { status: 401 })
@@ -234,6 +236,7 @@ export async function POST(req: Request) {
       amount: creditValue,
       description: `Upload reward (${type})`,
       type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
+      sourceApp,
     })
 
     const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')

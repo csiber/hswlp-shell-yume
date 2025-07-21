@@ -7,6 +7,7 @@ import {
   logTransaction,
   getCreditPackage,
 } from "@/utils/credits";
+import { getSourceAppFromHeaders } from "@/utils/source-app";
 import { CREDIT_TRANSACTION_TYPE } from "@/db/schema";
 import { getStripe } from "@/lib/stripe";
 import { MAX_TRANSACTIONS_PER_PAGE, CREDITS_EXPIRATION_YEARS } from "@/constants";
@@ -71,7 +72,6 @@ export async function createPaymentIntent({ packageId }: CreatePaymentIntentInpu
     if (!session) {
       throw new Error("Unauthorized");
     }
-
     try {
       const creditPackage = getCreditPackage(packageId);
       if (!creditPackage) {
@@ -106,6 +106,7 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
     if (!session) {
       throw new Error("Unauthorized");
     }
+    const sourceApp = await getSourceAppFromHeaders();
 
     try {
       const creditPackage = getCreditPackage(packageId);
@@ -137,7 +138,8 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
         description: `Purchased ${creditPackage.credits} credits`,
         type: CREDIT_TRANSACTION_TYPE.PURCHASE,
         expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} years`)),
-        paymentIntentId: paymentIntent?.id
+        paymentIntentId: paymentIntent?.id,
+        sourceApp,
       });
 
       return { success: true };

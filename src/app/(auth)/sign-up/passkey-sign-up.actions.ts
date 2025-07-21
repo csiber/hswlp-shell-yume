@@ -18,6 +18,7 @@ import ms from "ms";
 import { validateTurnstileToken } from "@/utils/validate-captcha";
 import { isTurnstileEnabled } from "@/flags";
 import { logTransaction } from "@/utils/credits";
+import { getSourceAppFromHeaders } from "@/utils/source-app";
 
 const PASSKEY_CHALLENGE_COOKIE_NAME = "passkey_challenge";
 const PASSKEY_USER_ID_COOKIE_NAME = "passkey_user_id";
@@ -52,6 +53,7 @@ export const startPasskeyRegistrationAction = createServerAction()
         }
 
         const ipAddress = await getIP();
+        const sourceApp = await getSourceAppFromHeaders();
 
         const nickname = `anon_${createId().slice(0, 8)}`;
 
@@ -77,6 +79,7 @@ export const startPasskeyRegistrationAction = createServerAction()
             description: 'Signup bonus',
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
+            sourceApp,
           });
         }
 

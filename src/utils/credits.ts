@@ -127,7 +127,8 @@ export async function logTransaction({
   description,
   type,
   expirationDate,
-  paymentIntentId
+  paymentIntentId,
+  sourceApp
 }: {
   userId: string;
   amount: number;
@@ -135,6 +136,7 @@ export async function logTransaction({
   type: keyof typeof CREDIT_TRANSACTION_TYPE;
   expirationDate?: Date;
   paymentIntentId?: string;
+  sourceApp?: string;
 }) {
   const db = await getGlobalDB();
   await db.insert(creditTransactionTable).values({
@@ -144,7 +146,8 @@ export async function logTransaction({
     type,
     description,
     expirationDate,
-    paymentIntentId
+    paymentIntentId,
+    sourceApp
   });
 }
 
