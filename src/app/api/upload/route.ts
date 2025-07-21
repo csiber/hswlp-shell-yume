@@ -240,31 +240,15 @@ export async function POST(req: Request) {
     }
     await updateAllSessionsOfUser(session.user.id)
 
-    try {
-      await updateUserCredits(session.user.id, creditValue)
-    } catch (creditErr) {
-      console.error('Failed to update credits', {
-        userId: session.user.id,
-        error: creditErr,
-        stack: creditErr instanceof Error ? creditErr.stack : undefined,
-      })
-    }
-    try {
-      await logTransaction({
-        userId: session.user.id,
-        amount: creditValue,
-        description: `Upload reward (${type})`,
-        type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
-        sourceApp,
-        source: 'yumekai',
-      })
-    } catch (logErr) {
-      console.error('Failed to log transaction', {
-        userId: session.user.id,
-        error: logErr,
-        stack: logErr instanceof Error ? logErr.stack : undefined,
-      })
-    }
+    await updateUserCredits(session.user.id, creditValue)
+    await logTransaction({
+      userId: session.user.id,
+      amount: creditValue,
+      description: `Upload reward (${type})`,
+      type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
+      sourceApp,
+      source: 'yumekai',
+    })
 
     const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')
       .bind(session.user.id)
