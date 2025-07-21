@@ -1,19 +1,19 @@
-import { getGlobalDB } from '@/db'
+import { drizzle } from 'drizzle-orm/d1'
 import { userTable } from '@/db/schema'
+import * as schema from '@/db/schema'
 import { hashPassword } from '@/utils/password-hasher'
 import { signJWT } from '@/utils/jwt'
 import { jsonResponse } from '@/utils/api'
-import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { createId } from '@paralleldrive/cuid2'
 import { eq } from 'drizzle-orm'
 
-export const onRequestPost = async (req: Request) => {
+export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env }) => {
   try {
-    const { email, password, firstName, lastName } = await req.json() as { email?: string; password?: string; firstName?: string; lastName?: string }
+    const { email, password, firstName, lastName } = await request.json() as { email?: string; password?: string; firstName?: string; lastName?: string }
     if (!email || !password) {
       return jsonResponse({ error: 'Missing data' }, { status: 400 })
     }
-    const db = await getGlobalDB()
+    const db = drizzle(env.DB_GLOBAL as D1Database, { schema })
 
     const existing = await db.query.userTable.findFirst({ where: eq(userTable.email, email) })
     if (existing) {
@@ -26,7 +26,6 @@ export const onRequestPost = async (req: Request) => {
       .values({ email, firstName, lastName, passwordHash, nickname, emailVerified: new Date() })
       .returning()
 
-    const { env } = getCloudflareContext()
     if (!env.JWT_SECRET) {
       return jsonResponse({ error: 'Server misconfiguration' }, { status: 500 })
     }

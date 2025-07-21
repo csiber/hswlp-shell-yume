@@ -1,19 +1,19 @@
-import { getGlobalDB } from '@/db'
+import { drizzle } from 'drizzle-orm/d1'
 import { userTable } from '@/db/schema'
+import * as schema from '@/db/schema'
 import { verifyPassword } from '@/utils/password-hasher'
 import { signJWT } from '@/utils/jwt'
 import { jsonResponse } from '@/utils/api'
-import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { eq } from 'drizzle-orm'
 
-export const onRequestPost = async (req: Request) => {
+export const onRequestPost: PagesFunction<CloudflareEnv> = async ({ request, env }) => {
   try {
-    const { email, password } = await req.json() as { email?: string; password?: string }
+    const { email, password } = await request.json() as { email?: string; password?: string }
     if (!email || !password) {
       return jsonResponse({ error: 'Missing credentials' }, { status: 400 })
     }
 
-    const db = await getGlobalDB()
+    const db = drizzle(env.DB_GLOBAL as D1Database, { schema })
     const [user] = await db.select().from(userTable).where(eq(userTable.email, email)).limit(1)
 
     if (!user || !user.passwordHash) {
@@ -25,7 +25,6 @@ export const onRequestPost = async (req: Request) => {
       return jsonResponse({ error: 'Invalid credentials' }, { status: 401 })
     }
 
-    const { env } = getCloudflareContext()
     if (!env.JWT_SECRET) {
       return jsonResponse({ error: 'Server misconfiguration' }, { status: 500 })
     }
