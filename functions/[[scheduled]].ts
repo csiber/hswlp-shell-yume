@@ -1,5 +1,5 @@
-import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { getGlobalDB } from '@/db'
+import { drizzle } from 'drizzle-orm/d1'
+import * as schema from '@/db/schema'
 import { userTable, CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS } from '@/constants'
@@ -7,9 +7,8 @@ import { lt, isNull, or, eq } from 'drizzle-orm'
 
 // Ütemezett Worker, amely havonta kreditet ad a kevésbé aktív felhasználóknak
 
-export const onScheduled = async () => {
-  getCloudflareContext()
-  const db = await getGlobalDB()
+export const onScheduled: ExportedHandlerScheduledHandler<CloudflareEnv> = async (controller, env, ctx) => {
+  const db = drizzle(env.DB_GLOBAL as D1Database, { schema })
 
   const now = new Date()
   const monthAgo = new Date(now)
