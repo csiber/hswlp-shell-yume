@@ -73,6 +73,9 @@ Ez feltölti a:
 - KV session kezelést
 - titkos kulcsokat (csak ha előtte beállítottad)
 
+> A Workerben a `NEXT_INC_CACHE_KV` nevű KV namespace tárolja a session- és cache adatokat. Ha hiányzik, hozd létre a Cloudflare felületen (`wrangler kv:namespace create NEXT_INC_CACHE_KV`).
+> Ha `wrangler dev --remote` módban futtatod, adj meg `preview_id` értéket is a `wrangler.jsonc` fájlban.
+
 ⚠️ **Fontos:** a `.env` fájlban szereplő titkos adatok nem kerülnek feltöltésre automatikusan. Ezeket így tudod megadni:
 
 ```bash
