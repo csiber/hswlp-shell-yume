@@ -76,6 +76,9 @@ Ez feltölti a:
 > A Workerben a `NEXT_INC_CACHE_KV` nevű KV namespace tárolja a session- és cache adatokat. Ha hiányzik, hozd létre a Cloudflare felületen (`wrangler kv:namespace create NEXT_INC_CACHE_KV`).
 > Ha `wrangler dev --remote` módban futtatod, adj meg `preview_id` értéket is a `wrangler.jsonc` fájlban.
 
+> Ha más `wrangler` parancsokat futtatsz (például `pnpm d1:cache:clean` vagy a KV törlése), a `--preview false` kapcsolót is add hozzá, mert a `preview_id` miatt különben hibát jelez.
+
+
 ⚠️ **Fontos:** a `.env` fájlban szereplő titkos adatok nem kerülnek feltöltésre automatikusan. Ezeket így tudod megadni:
 
 ```bash
