@@ -203,22 +203,22 @@ export async function createAndStoreSession(
   });
 }
 
-async function validateSessionToken(token: string, userId: string): Promise<SessionValidationResult | null> {
+async function validateSessionToken(token: string, userId: string, kvNamespace?: KVNamespace): Promise<SessionValidationResult | null> {
   const sessionId = await generateSessionId(token);
 
-  const session = await getKVSession(sessionId, userId);
+  const session = await getKVSession(sessionId, userId, kvNamespace);
 
   if (!session) return null;
 
   // If the session has expired, delete it and return null
   if (Date.now() >= session.expiresAt) {
-    await deleteKVSession(sessionId, userId);
+    await deleteKVSession(sessionId, userId, kvNamespace);
     return null;
   }
 
   // Check if session version needs to be updated
   if (!session.version || session.version !== CURRENT_SESSION_VERSION) {
-    const updatedSession = await updateKVSession(sessionId, userId, new Date(session.expiresAt));
+    const updatedSession = await updateKVSession(sessionId, userId, new Date(session.expiresAt), kvNamespace);
 
     if (!updatedSession) {
       return null;
@@ -248,8 +248,8 @@ async function validateSessionToken(token: string, userId: string): Promise<Sess
   return session;
 }
 
-export async function invalidateSession(sessionId: string, userId: string): Promise<void> {
-  await deleteKVSession(sessionId, userId);
+export async function invalidateSession(sessionId: string, userId: string, kvNamespace?: KVNamespace): Promise<void> {
+  await deleteKVSession(sessionId, userId, kvNamespace);
 }
 
 interface SetSessionTokenCookieParams {
@@ -280,9 +280,23 @@ export async function deleteSessionTokenCookie(): Promise<void> {
 /**
  * This function can only be called in a Server Components, Server Action or Route Handler
  */
-export const getSessionFromCookie = cache(async (): Promise<SessionValidationResult | null> => {
-  const cookieStore = await cookies();
-  const sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+function parseCookieValue(cookieHeader: string | null | undefined, name: string) {
+  if (!cookieHeader) return undefined;
+  return cookieHeader
+    .split(';')
+    .map(c => c.trim())
+    .find(c => c.startsWith(`${name}=`))
+    ?.slice(name.length + 1);
+}
+
+export const getSessionFromCookie = cache(async (cookieHeader?: string, kvNamespace?: KVNamespace): Promise<SessionValidationResult | null> => {
+  let sessionCookie: string | undefined;
+  if (cookieHeader !== undefined) {
+    sessionCookie = parseCookieValue(cookieHeader, SESSION_COOKIE_NAME);
+  } else {
+    const cookieStore = await cookies();
+    sessionCookie = cookieStore.get(SESSION_COOKIE_NAME)?.value;
+  }
 
   if (!sessionCookie) {
     return null;
@@ -294,7 +308,7 @@ export const getSessionFromCookie = cache(async (): Promise<SessionValidationRes
     return null;
   }
 
-  return validateSessionToken(decoded.token, decoded.userId);
+  return validateSessionToken(decoded.token, decoded.userId, kvNamespace);
 })
 
 export const requireVerifiedEmail = cache(async ({
