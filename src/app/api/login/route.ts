@@ -6,7 +6,7 @@ import { jsonResponse } from '@/utils/api'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { eq } from 'drizzle-orm'
 
-export const onRequestPost = async (req: Request) => {
+export const POST = async (req: Request) => {
   try {
     const { email, password } = await req.json() as { email?: string; password?: string }
     if (!email || !password) {
