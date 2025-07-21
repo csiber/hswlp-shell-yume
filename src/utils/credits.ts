@@ -128,7 +128,8 @@ export async function logTransaction({
   type,
   expirationDate,
   paymentIntentId,
-  sourceApp
+  sourceApp,
+  source
 }: {
   userId: string;
   amount: number;
@@ -137,6 +138,7 @@ export async function logTransaction({
   expirationDate?: Date;
   paymentIntentId?: string;
   sourceApp?: string;
+  source?: string;
 }) {
   const db = await getGlobalDB();
   await db.insert(creditTransactionTable).values({
@@ -147,7 +149,8 @@ export async function logTransaction({
     description,
     expirationDate,
     paymentIntentId,
-    sourceApp
+    sourceApp,
+    source
   });
 }
 
@@ -184,7 +187,8 @@ export async function addFreeMonthlyCreditsIfNeeded(session: KVSession): Promise
       amount: FREE_MONTHLY_CREDITS,
       description: 'Free monthly credits',
       type: CREDIT_TRANSACTION_TYPE.MONTHLY_REFRESH,
-      expirationDate
+      expirationDate,
+      source: 'yumekai'
     });
 
     // Update last refresh date
@@ -305,6 +309,7 @@ export async function addCredits({ userId, amount, description }: { userId: stri
     amount,
     description,
     type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
+    source: 'yumekai',
   });
 }
 

@@ -80,6 +80,7 @@ export const startPasskeyRegistrationAction = createServerAction()
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
             sourceApp,
+            source: 'yumekai',
           });
         }
 
