@@ -12,6 +12,7 @@ export async function GET() {
 
   const { env } = getCloudflareContext()
 
+  // uses DB_GLOBAL
   const dbUser = env.DB_GLOBAL
   const dbUploads = getDb(env, 'uploads')
 

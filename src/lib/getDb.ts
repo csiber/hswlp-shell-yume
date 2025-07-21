@@ -11,8 +11,15 @@ export const GLOBAL_TABLES = [
   "user",
 ] as const;
 
-export function getDb(env: CloudflareEnv, table: string): D1Database {
-  if (GLOBAL_TABLES.includes(table as (typeof GLOBAL_TABLES)[number])) {
+export function getDb(env: CloudflareEnv, table?: string): D1Database {
+  // Allow explicit binding selection by name
+  if (table === 'DB_GLOBAL') {
+    return env.DB_GLOBAL;
+  }
+  if (table === 'DB') {
+    return env.DB;
+  }
+  if (table && GLOBAL_TABLES.includes(table as (typeof GLOBAL_TABLES)[number])) {
     return env.DB_GLOBAL;
   }
   return env.DB;

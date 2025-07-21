@@ -5,6 +5,7 @@ import { getDb } from '@/lib/getDb'
 export async function GET() {
   const { env } = getCloudflareContext()
   const db = getDb(env, 'uploads')
+  // uses DB_GLOBAL
   const dbUsers = env.DB_GLOBAL
   const result = await db.prepare(
     `SELECT u.id, u.title, u.type, u.created_at,

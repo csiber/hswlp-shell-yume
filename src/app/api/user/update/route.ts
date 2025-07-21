@@ -22,6 +22,7 @@ export async function PUT(req: Request) {
   const { nickname } = parse.data
 
   const { env } = getCloudflareContext()
+  // uses DB_GLOBAL
   const db = env.DB_GLOBAL
   const userRow = await db.prepare(
     'SELECT nickname, nickname_updated_at, currentCredits FROM user WHERE id = ?1'

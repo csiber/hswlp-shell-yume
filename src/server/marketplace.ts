@@ -1,5 +1,5 @@
 import "server-only";
-import { getDB } from "@/db";
+import { getGlobalDB } from "@/db";
 import { highlightedPostsTable, marketplaceActivationsTable, userTable } from "@/db/schema";
 import { createId } from "@paralleldrive/cuid2";
 import { eq, and, sql } from "drizzle-orm";
@@ -12,7 +12,8 @@ export async function updateUserField(
   field: keyof typeof userTable._.columns,
   value: unknown
 ) {
-  const db = await getDB();
+  // uses DB_GLOBAL
+  const db = await getGlobalDB();
   await db
     .update(userTable)
     .set({ [field]: value } as Record<string, unknown>)
@@ -21,7 +22,8 @@ export async function updateUserField(
 }
 
 export async function activateHighlightPost(userId: string, postId: string) {
-  const db = await getDB();
+  // uses DB_GLOBAL
+  const db = await getGlobalDB();
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   await db.insert(highlightedPostsTable).values({
     id: `hlp_${createId()}`,
@@ -34,7 +36,8 @@ export async function activateHighlightPost(userId: string, postId: string) {
 export async function applyDailySurpriseReward(userId: string): Promise<string> {
   const rewards = ["points", "bonusFrame", "badgeUnlocked"] as const;
   const choice = rewards[Math.floor(Math.random() * rewards.length)];
-  const db = await getDB();
+  // uses DB_GLOBAL
+  const db = await getGlobalDB();
 
   if (choice === "points") {
     await db
@@ -60,7 +63,8 @@ export async function activateMarketplaceComponent(
   userId: string,
   options: ActivationOptions = {}
 ) {
-  const db = await getDB();
+  // uses DB_GLOBAL
+  const db = await getGlobalDB();
 
   const component = COMPONENTS.find(c => c.id === componentId);
 
@@ -134,7 +138,8 @@ export function getComponentCredits(componentId: string): number {
 }
 
 export async function getUserActiveComponents(userId: string) {
-  const db = await getDB();
+  // uses DB_GLOBAL
+  const db = await getGlobalDB();
   const acts = await db
     .select({ componentId: marketplaceActivationsTable.component_id })
     .from(marketplaceActivationsTable)

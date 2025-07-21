@@ -12,6 +12,7 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   const { env } = getCloudflareContext()
   const dbUploads = getDb(env, 'uploads')
   const dbUserPunishments = getDb(env, 'user_punishments')
+  // uses DB_GLOBAL
   const dbUsers = env.DB_GLOBAL
   const { id } = await params
   const { reason } = await req.json() as { reason: string }

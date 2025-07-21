@@ -11,8 +11,8 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   await requireAdmin()
   const { env } = getCloudflareContext()
   const db = getDb(env, 'uploads')
-  // verify that user table uses the expected binding and log it
-  const userDb = getDb(env, 'user')
+  // uses DB_GLOBAL
+  const userDb = getDb(env, 'DB_GLOBAL')
   console.log('approve /user binding', userDb === env.DB_GLOBAL ? 'DB_GLOBAL' : 'DB')
   const sourceApp = deriveSourceApp(req.headers.get('host') ?? undefined)
   const { id } = await params
@@ -29,7 +29,8 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
     if (upload.moderation_status === 'pending') {
       if ((upload.credit_value ?? 0) > 0) {
         try {
-          const dbGlobal = getDb(env, 'credit_transaction')
+          // uses DB_GLOBAL
+          const dbGlobal = getDb(env, 'DB_GLOBAL')
           const existing = await dbGlobal
             .prepare(
               'SELECT id FROM credit_transaction WHERE paymentIntentId = ?1 LIMIT 1'

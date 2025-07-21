@@ -109,7 +109,8 @@ export async function POST(req: Request) {
   const { env } = getCloudflareContext()
   const dbUploads = getDb(env, 'uploads')
   const dbAlbums = getDb(env, 'albums')
-  const dbUser = getDb(env, 'user')
+  // uses DB_GLOBAL
+  const dbUser = getDb(env, 'DB_GLOBAL')
 
   const fileSizeMb = file.size / (1024 * 1024)
   const usedStorageMb = Number(freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0)
