@@ -52,9 +52,10 @@ async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
 }
 
 export async function POST(req: Request) {
+  const { env } = getCloudflareContext()
   let session: Awaited<ReturnType<typeof getSessionFromCookie>> | null = null
   try {
-    session = await getSessionFromCookie()
+    session = await getSessionFromCookie(req.headers.get('cookie') ?? '', env.SESSION_KV)
     const sourceApp = deriveSourceApp(req.headers.get('host') ?? undefined)
 
   if (!session?.user?.id) {
@@ -106,7 +107,6 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'MIME mismatch' }, { status: 400 })
   }
 
-  const { env } = getCloudflareContext()
   const dbUploads = getDb(env, 'uploads')
   const dbAlbums = getDb(env, 'albums')
   // uses DB_GLOBAL

@@ -67,7 +67,10 @@ export interface KVSession {
  */
 export const CURRENT_SESSION_VERSION = 6;
 
-export async function getKV() {
+export async function getKV(override?: KVNamespace) {
+  if (override) {
+    return override;
+  }
   const { env } = getCloudflareContext();
   return env.NEXT_INC_CACHE_KV;
 }
@@ -84,11 +87,12 @@ export async function createKVSession({
   user,
   authenticationType,
   passkeyCredentialId,
-  teams
-}: CreateKVSessionParams): Promise<KVSession> {
+  teams,
+  kvNamespace
+}: CreateKVSessionParams & { kvNamespace?: KVNamespace }): Promise<KVSession> {
   const { cf } = getCloudflareContext();
   const headersList = await headers();
-  const kv = await getKV();
+  const kv = await getKV(kvNamespace);
 
   if (!kv) {
     throw new Error("Nem sikerült csatlakozni a KV tárhoz");
@@ -142,8 +146,8 @@ export async function createKVSession({
   return session;
 }
 
-export async function getKVSession(sessionId: string, userId: string): Promise<KVSession | null> {
-  const kv = await getKV();
+export async function getKVSession(sessionId: string, userId: string, kvNamespace?: KVNamespace): Promise<KVSession | null> {
+  const kv = await getKV(kvNamespace);
 
   if (!kv) {
     throw new Error("Nem sikerült csatlakozni a KV tárhoz");
@@ -181,8 +185,8 @@ export async function getKVSession(sessionId: string, userId: string): Promise<K
   return session;
 }
 
-export async function updateKVSession(sessionId: string, userId: string, expiresAt: Date): Promise<KVSession | null> {
-  const session = await getKVSession(sessionId, userId);
+export async function updateKVSession(sessionId: string, userId: string, expiresAt: Date, kvNamespace?: KVNamespace): Promise<KVSession | null> {
+  const session = await getKVSession(sessionId, userId, kvNamespace);
   if (!session) return null;
 
   const updatedUser = await getUserFromDB(userId);
@@ -202,7 +206,7 @@ export async function updateKVSession(sessionId: string, userId: string, expires
     teams: teamsWithPermissions
   };
 
-  const kv = await getKV();
+  const kv = await getKV(kvNamespace);
 
   if (!kv) {
     throw new Error("Nem sikerült csatlakozni a KV tárhoz");
@@ -219,11 +223,11 @@ export async function updateKVSession(sessionId: string, userId: string, expires
   return updatedSession;
 }
 
-export async function deleteKVSession(sessionId: string, userId: string): Promise<void> {
-  const session = await getKVSession(sessionId, userId);
+export async function deleteKVSession(sessionId: string, userId: string, kvNamespace?: KVNamespace): Promise<void> {
+  const session = await getKVSession(sessionId, userId, kvNamespace);
   if (!session) return;
 
-  const kv = await getKV();
+  const kv = await getKV(kvNamespace);
 
   if (!kv) {
     throw new Error("Nem sikerült csatlakozni a KV tárhoz");
@@ -232,8 +236,8 @@ export async function deleteKVSession(sessionId: string, userId: string): Promis
   await kv.delete(getSessionKey(userId, sessionId));
 }
 
-export async function getAllSessionIdsOfUser(userId: string) {
-  const kv = await getKV();
+export async function getAllSessionIdsOfUser(userId: string, kvNamespace?: KVNamespace) {
+  const kv = await getKV(kvNamespace);
 
   if (!kv) {
     throw new Error("Nem sikerült csatlakozni a KV tárhoz");
@@ -251,9 +255,9 @@ export async function getAllSessionIdsOfUser(userId: string) {
  * Update all sessions of a user. It can only be called in a server actions and api routes.
  * @param userId
  */
-export async function updateAllSessionsOfUser(userId: string) {
-  const sessions = await getAllSessionIdsOfUser(userId);
-  const kv = await getKV();
+export async function updateAllSessionsOfUser(userId: string, kvNamespace?: KVNamespace) {
+  const sessions = await getAllSessionIdsOfUser(userId, kvNamespace);
+  const kv = await getKV(kvNamespace);
 
   if (!kv) {
     throw new Error("Nem sikerült csatlakozni a KV tárhoz");
