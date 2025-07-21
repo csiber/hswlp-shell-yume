@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { parseBlob } from "music-metadata-browser";
 import { formatTitle } from "@/utils/music";
@@ -40,6 +41,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [titles, setTitles] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [albumName, setAlbumName] = useState<string | null>(null);
   const [albumId, setAlbumId] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
@@ -158,12 +160,20 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
       }
 
       try {
-        const res = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const data = (await res.json()) as { success: boolean; error?: string };
-        if (res.ok && data.success) {
+        setUploadProgress(0)
+        const res = await axios.post('/api/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              setUploadProgress(percent)
+            }
+          },
+        })
+        const data = res.data as { success: boolean; error?: string }
+        if (res.status >= 200 && res.status < 300 && data.success) {
           success = true;
           toast.success(`Feltöltve: ${file.name}`);
           await mutateQuota();
@@ -177,6 +187,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     }
 
     setLoading(false);
+    setUploadProgress(0);
     setSelectedFiles(null);
     setTitles({});
     setAlbumId(null);
@@ -290,6 +301,14 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
               );
             })}
           </ul>
+        )}
+        {loading && (
+          <>
+            <Progress className="mt-2" value={uploadProgress} />
+            <p className="text-xs text-muted-foreground text-center mt-1">
+              {uploadProgress}%
+            </p>
+          </>
         )}
         {sessionUser && (
           <>
