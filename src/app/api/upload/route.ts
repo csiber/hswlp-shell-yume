@@ -112,11 +112,34 @@ export async function POST(req: Request) {
   // uses DB_GLOBAL
   const dbUser = getDb(env, 'DB_GLOBAL')
 
-  const fileSizeMb = file.size / (1024 * 1024)
-  const usedStorageMb = Number(freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0)
-  const uploadLimitMb = Number(freshUser?.uploadLimitMb ?? session.user.uploadLimitMb ?? 0)
+  const fileSizeMb = Number(file.size) / (1024 * 1024)
+  const usedStorageMb = Number(
+    freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0,
+  )
+  const uploadLimitMb = Number(
+    freshUser?.uploadLimitMb ?? session.user.uploadLimitMb ?? 0,
+  )
+
+  if (!Number.isFinite(fileSizeMb)) {
+    return jsonResponse(
+      { success: false, error: 'Invalid file size' },
+      { status: 400 },
+    )
+  }
+  if (!Number.isFinite(usedStorageMb) || !Number.isFinite(uploadLimitMb)) {
+    return jsonResponse(
+      { success: false, error: 'Invalid storage info' },
+      { status: 400 },
+    )
+  }
   if (usedStorageMb + fileSizeMb > uploadLimitMb) {
-    throw new Error('Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.')
+    return jsonResponse(
+      {
+        success: false,
+        error: 'Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.',
+      },
+      { status: 400 },
+    )
   }
 
   let meta: Awaited<ReturnType<typeof parseBuffer>> | null = null
@@ -227,16 +250,22 @@ export async function POST(req: Request) {
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
     ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
 
-    const updateResult = await dbUser
-      .prepare(
-        'UPDATE user SET usedStorageMb = COALESCE(usedStorageMb,0) + ?1 WHERE id = ?2'
-      )
-      .bind(fileSizeMb, session.user.id)
-      .run()
-    if (updateResult.meta.changes === 0) {
-      console.error('Storage quota not updated', {
+    if (freshUser) {
+      const updateResult = await dbUser
+        .prepare(
+          'UPDATE user SET usedStorageMb = COALESCE(usedStorageMb,0) + ?1 WHERE id = ?2'
+        )
+        .bind(fileSizeMb, session.user.id)
+        .run()
+      if (updateResult.meta.changes === 0) {
+        console.error('Storage quota not updated', {
+          userId: session.user.id,
+          fileSizeMb,
+        })
+      }
+    } else {
+      console.error('User not found in DB_GLOBAL', {
         userId: session.user.id,
-        fileSizeMb,
       })
     }
     await updateAllSessionsOfUser(session.user.id)
