@@ -95,15 +95,18 @@
 "kv_namespaces": [
   {
     "binding": "SESSION_KV",
-    "id": "8d54a3027a4a409aaa8f1aaca9dc5171"
+    "id": "8d54a3027a4a409aaa8f1aaca9dc5171",
+    "preview_id": "8d54a3027a4a409aaa8f1aaca9dc5171"
   },
   {
     "binding": "NEXT_INC_CACHE_KV",
-    "id": "60d93d82ece44987aefed74b1ec420ef"
+    "id": "60d93d82ece44987aefed74b1ec420ef",
+    "preview_id": "60d93d82ece44987aefed74b1ec420ef"
   },
   {
     "binding": "PRESENCE_KV",
-    "id": "4be2a04ed91f4b5eb95219f0834861c5"
+    "id": "4be2a04ed91f4b5eb95219f0834861c5",
+    "preview_id": "4be2a04ed91f4b5eb95219f0834861c5"
   }
 ],
     "r2_buckets": [
