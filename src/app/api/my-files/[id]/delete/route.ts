@@ -24,7 +24,7 @@ export async function POST(req: NextRequest, { params }: any) {
     return new Response('Not found', { status: 404 })
   }
 
-  await env.hswlp_r2.delete(file.r2_key)
+  await env.yumekai_r2.delete(file.r2_key)
 
   await dbDeletions.prepare(
     'INSERT INTO deletions (user_id, upload_id, deleted_at) VALUES (?1, ?2, CURRENT_TIMESTAMP)'
