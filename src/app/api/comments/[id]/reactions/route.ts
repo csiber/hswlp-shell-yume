@@ -54,7 +54,8 @@ export async function POST(
     await db.prepare(
       'INSERT INTO comment_reactions (id, comment_id, user_id, emoji) VALUES (?1, ?2, ?3, ?4)'
     ).bind(`cre_${uuidv4()}`, commentId, session.user.id, emoji).run()
-  } catch {
+  } catch (e) {
+    console.error(e)
     // ignore duplicates
   }
   return jsonResponse({ success: true })

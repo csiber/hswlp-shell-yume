@@ -58,7 +58,8 @@ export async function PUT(req: Request) {
 
   try {
     await consumeCredits({ userId: session.user.id, amount: 50, description: 'Nickname change' })
-  } catch {
+  } catch (e) {
+    console.error(e)
     return jsonResponse({ success: false, error: 'Not enough credits to change nickname.' }, { status: 402 })
   }
 

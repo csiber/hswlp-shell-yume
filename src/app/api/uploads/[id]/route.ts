@@ -71,7 +71,8 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
     if (cost > 0) {
       try {
         await consumeCredits({ userId: session.user.id, amount: cost, description: 'Upload edit' })
-      } catch {
+      } catch (e) {
+        console.error(e)
         return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
       }
     }

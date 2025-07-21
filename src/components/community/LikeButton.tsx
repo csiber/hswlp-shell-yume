@@ -27,9 +27,10 @@ export default function LikeButton({ postId }: Props) {
         const data = (await res.json()) as { count: number; liked: boolean }
         setCount(data.count)
         setLiked(data.liked)
-      } catch {
-        // ignore
-      }
+        } catch (e) {
+          console.error(e)
+          // ignore
+        }
     }
     load()
   }, [postId])
@@ -57,9 +58,10 @@ export default function LikeButton({ postId }: Props) {
         setLiked(true)
         setCount((c) => c + 1)
       }
-    } catch {
-      // ignore
-    }
+      } catch (e) {
+        console.error(e)
+        // ignore
+      }
   }
 
   return (

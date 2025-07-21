@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
       description: description || 'Credit usage',
     })
     return jsonResponse({ success: true, remaining })
-  } catch {
+  } catch (e) {
+    console.error(e)
     return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
   }
 }

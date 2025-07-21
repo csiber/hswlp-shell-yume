@@ -72,9 +72,10 @@ export default function PostCard({
       } else {
         toast.error("Letöltés sikertelen");
       }
-    } catch {
-      toast.error("Hálózati hiba történt");
-    }
+      } catch (e) {
+        console.error(e)
+        toast.error("Hálózati hiba történt");
+      }
   }, [item.id, item.title, fetchSession]);
 
   const handlePlay = useCallback(async () => {
@@ -86,9 +87,10 @@ export default function PostCard({
         const data = (await res.json()) as { play_count?: number };
         setPlayCount(data.play_count ?? playCount + 1);
       }
-    } catch {
-      setPlayCount((c) => c + 1);
-    }
+      } catch (e) {
+        console.error(e)
+        setPlayCount((c) => c + 1);
+      }
   }, [item.id, playCount]);
 
   const handleView = useCallback(async () => {
@@ -100,9 +102,10 @@ export default function PostCard({
         const data = (await res.json()) as { view_count?: number };
         setViewCount(data.view_count ?? viewCount + 1);
       }
-    } catch {
-      setViewCount((c) => c + 1);
-    }
+      } catch (e) {
+        console.error(e)
+        setViewCount((c) => c + 1);
+      }
   }, [item.id, viewCount]);
 
   useEffect(() => {

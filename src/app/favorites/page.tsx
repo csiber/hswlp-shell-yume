@@ -19,7 +19,8 @@ export default function FavoritesPage() {
         body: JSON.stringify({ upload_id: id }),
       })
       if (res.ok) mutate()
-    } catch {
+    } catch (e) {
+      console.error(e)
       // ignore
     }
   }

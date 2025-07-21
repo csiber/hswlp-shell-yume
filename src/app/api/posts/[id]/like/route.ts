@@ -25,7 +25,8 @@ export async function POST(
     await db.prepare(
       'INSERT INTO post_likes (id, post_id, user_id) VALUES (?1, ?2, ?3)'
     ).bind(`like_${createId()}`, id, session.user.id).run()
-  } catch {
+  } catch (e) {
+    console.error(e)
     // ignore duplicates
   }
   return jsonResponse({ success: true })
