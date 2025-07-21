@@ -52,8 +52,9 @@ async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
 }
 
 export async function POST(req: Request) {
+  let session: Awaited<ReturnType<typeof getSessionFromCookie>> | null = null
   try {
-    const session = await getSessionFromCookie()
+    session = await getSessionFromCookie()
     const sourceApp = deriveSourceApp(req.headers.get('host') ?? undefined)
 
   if (!session?.user?.id) {
@@ -225,9 +226,18 @@ export async function POST(req: Request) {
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
     ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
 
-    await dbUser.prepare(
-      'UPDATE user SET used_storage_mb = COALESCE(used_storage_mb,0) + ?1 WHERE id = ?2'
-    ).bind(fileSizeMb, session.user.id).run()
+    const updateResult = await dbUser
+      .prepare(
+        'UPDATE user SET usedStorageMb = COALESCE(usedStorageMb,0) + ?1 WHERE id = ?2'
+      )
+      .bind(fileSizeMb, session.user.id)
+      .run()
+    if (updateResult.meta.changes === 0) {
+      console.error('Storage quota not updated', {
+        userId: session.user.id,
+        fileSizeMb,
+      })
+    }
     await updateAllSessionsOfUser(session.user.id)
 
     await updateUserCredits(session.user.id, creditValue)
@@ -243,7 +253,15 @@ export async function POST(req: Request) {
     const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')
       .bind(session.user.id)
       .first<{ currentCredits: number }>()
-    await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
+    try {
+      await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
+    } catch (webhookErr) {
+      console.error('Webhook dispatch failed', {
+        userId: session.user.id,
+        error: webhookErr,
+        stack: webhookErr instanceof Error ? webhookErr.stack : undefined,
+      })
+    }
 
     return jsonResponse(
       {
@@ -259,7 +277,11 @@ export async function POST(req: Request) {
       { status: 200 },
     )
   } catch (err) {
-    console.error('Error handling /api/upload:', err, JSON.stringify(err, null, 2))
+    console.error('Error handling /api/upload', {
+      userId: session?.user?.id,
+      error: err,
+      stack: err instanceof Error ? err.stack : undefined,
+    })
     return jsonResponse({ success: false, error: 'Server error' }, { status: 500 })
   }
 }

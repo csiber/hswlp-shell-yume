@@ -187,7 +187,8 @@ export async function addFreeMonthlyCreditsIfNeeded(session: KVSession): Promise
       amount: FREE_MONTHLY_CREDITS,
       description: 'Free monthly credits',
       type: CREDIT_TRANSACTION_TYPE.MONTHLY_REFRESH,
-      expirationDate
+      expirationDate,
+      source: 'yumekai'
     });
 
     // Update last refresh date
