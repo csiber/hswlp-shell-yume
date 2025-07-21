@@ -33,5 +33,5 @@ export const getDB = async () => {
 
 export const getGlobalDB = async () => {
   const { env } = getCloudflareContext()
-  return drizzle(env.DB_GLOBAL)
+  return drizzle(env.DB_GLOBAL, { schema })
 }
