@@ -33,7 +33,7 @@ export async function GET() {
         'SELECT nickname, email FROM user WHERE id = ?1'
       ).bind(row.user_id).first<{ nickname: string | null; email: string }>()
       if (user) {
-        pinnedItem = { ...row, nickname: user.nickname ?? null, email: user.email }
+        pinnedItem = { ...row, nickname: user.nickname ?? '', email: user.email } as Record<string, string>
       }
     }
   }
