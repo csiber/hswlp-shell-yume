@@ -1,4 +1,4 @@
-import { getDB } from '@/db'
+import { getGlobalDB } from '@/db'
 import { userTable } from '@/db/schema'
 import { verifyPassword } from '@/utils/password-hasher'
 import { signJWT } from '@/utils/jwt'
@@ -13,7 +13,7 @@ export const onRequestPost = async (req: Request) => {
       return jsonResponse({ error: 'Missing credentials' }, { status: 400 })
     }
 
-    const db = await getDB()
+    const db = await getGlobalDB()
     const user = await db.query.userTable.findFirst({ where: eq(userTable.email, email) })
 
     if (!user || !user.passwordHash) {
