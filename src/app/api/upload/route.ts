@@ -242,16 +242,21 @@ export async function POST(req: Request) {
 
     await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
 
-    return jsonResponse({
-      success: true,
-      uploadId: id,
-      album_id: albumId ?? undefined,
-      url,
-      message: 'Feltöltés sikeres!',
-      download_points: downloadPoints,
-      awarded_credits: creditValue,
-      total_credits: creditsRow?.currentCredits ?? null,
-    })
+    return new Response(
+      JSON.stringify({
+        success: true,
+        uploadId: id,
+        album_id: albumId ?? undefined,
+        url,
+        message: 'Feltöltés sikeres!',
+        download_points: downloadPoints,
+        awarded_credits: creditValue,
+        total_credits: creditsRow?.currentCredits ?? null,
+      }),
+      {
+        headers: { 'Content-Type': 'application/json' },
+      },
+    )
   } catch (err) {
     console.error('Error handling /api/upload:', err)
     return jsonResponse({ success: false, error: 'Server error' }, { status: 500 })
