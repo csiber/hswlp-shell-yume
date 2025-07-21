@@ -239,6 +239,7 @@ export async function POST(req: Request) {
     const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')
       .bind(session.user.id)
       .first<{ currentCredits: number }>()
+    const totalCredits = Number(creditsRow?.currentCredits ?? 0)
 
     await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
 
@@ -251,9 +252,10 @@ export async function POST(req: Request) {
         message: 'Feltöltés sikeres!',
         download_points: downloadPoints,
         awarded_credits: creditValue,
-        total_credits: creditsRow?.currentCredits ?? null,
+        total_credits: totalCredits,
       }),
       {
+        status: 200,
         headers: { 'Content-Type': 'application/json' },
       },
     )
