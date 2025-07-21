@@ -37,6 +37,7 @@ export const onScheduled = async () => {
       description: 'Monthly bonus',
       type: CREDIT_TRANSACTION_TYPE.MONTHLY_REFRESH,
       expirationDate,
+      sourceApp: 'cron',
     })
     await db
       .update(userTable)
