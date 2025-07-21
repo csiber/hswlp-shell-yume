@@ -15,9 +15,9 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./cloudflare-env.d.ts",
     "db:generate": "node ./scripts/db/generate.mjs",
     "db:migrate:dev": "wrangler d1 migrations apply $(node scripts/get-db-name.mjs) --local",
-    "d1:cache:clean": "wrangler d1 execute $(node scripts/get-db-name.mjs) --command \"DELETE FROM tags; DELETE FROM revalidations\" --remote",
-    "list:kv": "wrangler kv key list --namespace-id=$(node scripts/get-kv-id.mjs) --remote | jq '[.[].name]' > kv.log",
-    "delete:kv": "wrangler kv bulk delete kv.log --namespace-id=$(node scripts/get-kv-id.mjs) --remote",
+    "d1:cache:clean": "wrangler d1 execute $(node scripts/get-db-name.mjs) --command \"DELETE FROM tags; DELETE FROM revalidations\" --remote --preview false",
+    "list:kv": "wrangler kv key list --namespace-id=$(node scripts/get-kv-id.mjs) --remote --preview false | jq '[.[].name]' > kv.log",
+    "delete:kv": "wrangler kv bulk delete kv.log --namespace-id=$(node scripts/get-kv-id.mjs) --remote --preview false",
     "next:rollback": "bash ./scripts/dev/next-rollback.sh"
   },
   "dependencies": {
