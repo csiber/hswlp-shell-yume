@@ -42,6 +42,7 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
           type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
           paymentIntentId: id,
           sourceApp,
+          source: 'yumekai',
         })
       }
     }

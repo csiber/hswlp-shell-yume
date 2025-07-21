@@ -38,6 +38,7 @@ export const onScheduled = async () => {
       type: CREDIT_TRANSACTION_TYPE.MONTHLY_REFRESH,
       expirationDate,
       sourceApp: 'cron',
+      source: 'cron',
     })
     await db
       .update(userTable)

@@ -156,12 +156,16 @@ export const creditTransactionTable = sqliteTable("credit_transaction", {
   sourceApp: text({
     length: 255,
   }),
+  source: text({
+    length: 255,
+  }),
 }, (table) => ([
   index('credit_transaction_user_id_idx').on(table.userId),
   index('credit_transaction_type_idx').on(table.type),
   index('credit_transaction_created_at_idx').on(table.createdAt),
   index('credit_transaction_expiration_date_idx').on(table.expirationDate),
   index('credit_transaction_payment_intent_id_idx').on(table.paymentIntentId),
+  index('credit_transaction_source_idx').on(table.source),
 ]));
 
 // Define item types that can be purchased

@@ -140,6 +140,7 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
         expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} years`)),
         paymentIntentId: paymentIntent?.id,
         sourceApp,
+        source: 'yumekai',
       });
 
       return { success: true };
