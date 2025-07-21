@@ -1,5 +1,6 @@
 import { getSessionFromCookie } from "@/utils/auth";
 import { redirect } from "next/navigation";
+import ShellLayout from "@/layouts/ShellLayout";
 
 
 export default async function MarketplaceLayout({ children }: { children: React.ReactNode }) {
@@ -7,5 +8,9 @@ export default async function MarketplaceLayout({ children }: { children: React.
   if (!session) {
     redirect("/");
   }
-  return <div className="p-6 w-full">{children}</div>;
+  return (
+    <ShellLayout>
+      <div className="p-6 w-full">{children}</div>
+    </ShellLayout>
+  );
 }
