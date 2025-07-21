@@ -239,12 +239,10 @@ export async function POST(req: Request) {
     const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')
       .bind(session.user.id)
       .first<{ currentCredits: number }>()
-    const totalCredits = Number(creditsRow?.currentCredits ?? 0)
-
     await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
 
-    return new Response(
-      JSON.stringify({
+    return jsonResponse(
+      {
         success: true,
         uploadId: id,
         album_id: albumId ?? undefined,
@@ -252,12 +250,9 @@ export async function POST(req: Request) {
         message: 'Feltöltés sikeres!',
         download_points: downloadPoints,
         awarded_credits: creditValue,
-        total_credits: totalCredits,
-      }),
-      {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        total_credits: Number(creditsRow?.currentCredits ?? 0),
       },
+      { status: 200 },
     )
   } catch (err) {
     console.error('Error handling /api/upload:', err)
