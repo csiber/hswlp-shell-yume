@@ -4,7 +4,7 @@ import { createServerAction, ZSAError } from "zsa";
 import { z } from "zod";
 import { generatePasskeyRegistrationOptions, verifyPasskeyRegistration } from "@/utils/webauthn";
 import { createId } from "@paralleldrive/cuid2";
-import { getDB } from "@/db";
+import { getGlobalDB } from "@/db";
 import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema";
 import { SIGN_UP_BONUS_CREDITS } from "@/constants";
 import { eq } from "drizzle-orm";
@@ -38,7 +38,7 @@ export const startPasskeyRegistrationAction = createServerAction()
           }
         }
 
-        const db = await getDB();
+        const db = await getGlobalDB();
 
         const existingUser = await db.query.userTable.findFirst({
           where: eq(userTable.email, input.email),
@@ -160,7 +160,7 @@ export const completePasskeyRegistrationAction = createServerAction()
       });
 
       // Get user details for email verification
-      const db = await getDB();
+      const db = await getGlobalDB();
       const user = await db.query.userTable.findFirst({
         where: eq(userTable.id, userId),
       });

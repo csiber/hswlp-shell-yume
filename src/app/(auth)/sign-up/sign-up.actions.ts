@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerAction, ZSAError } from "zsa"
-import { getDB } from "@/db"
+import { getGlobalDB } from "@/db"
 import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema"
 import { SIGN_UP_BONUS_CREDITS } from "@/constants"
 import { signUpSchema } from "@/schemas/signup.schema";
@@ -20,7 +20,7 @@ export const signUpAction = createServerAction()
   .handler(async ({ input }) => {
     return withRateLimit(
       async () => {
-        const db = await getDB();
+        const db = await getGlobalDB();
 
         if (await isTurnstileEnabled() && input.captchaToken) {
           const success = await validateTurnstileToken(input.captchaToken)
