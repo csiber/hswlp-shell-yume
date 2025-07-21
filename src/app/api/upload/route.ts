@@ -255,7 +255,7 @@ export async function POST(req: Request) {
       { status: 200 },
     )
   } catch (err) {
-    console.error('Error handling /api/upload:', err)
+    console.error('Upload API error', err)
     return jsonResponse({ success: false, error: 'Server error' }, { status: 500 })
   }
 }
