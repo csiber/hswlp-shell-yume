@@ -5,6 +5,7 @@ import { getDb } from '@/lib/getDb'
 export async function GET(request: Request) {
   const { env } = getCloudflareContext()
   const dbRewards = getDb(env, 'upload_rewards')
+  // uses DB_GLOBAL
   const dbUser = env.DB_GLOBAL
   const url = new URL(request.url)
   const days = Number(url.searchParams.get('days') ?? '1')

@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
   }
   const { env } = getCloudflareContext()
   const db = getDb(env, 'comments')
+  // uses DB_GLOBAL
   const dbUsers = env.DB_GLOBAL
   const rows = await db.prepare(
     `SELECT c.id, c.user_id, c.content, c.created_at

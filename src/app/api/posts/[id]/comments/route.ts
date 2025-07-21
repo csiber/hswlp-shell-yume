@@ -26,6 +26,7 @@ export async function GET(
   const { env } = getCloudflareContext()
   const dbComments = getDb(env, 'comments')
   const dbReactions = getDb(env, 'comment_reactions')
+  // uses DB_GLOBAL
   const dbUsers = env.DB_GLOBAL
   const session = await getSessionFromCookie()
   const rows = await dbComments.prepare(

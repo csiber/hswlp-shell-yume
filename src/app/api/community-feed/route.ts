@@ -24,6 +24,7 @@ export async function GET() {
   const { env } = getCloudflareContext()
   const dbUploads = getDb(env, 'uploads')
   const dbAlbums = getDb(env, 'albums')
+  // uses DB_GLOBAL
   const dbUsers = env.DB_GLOBAL
   const result = await dbUploads.prepare(`
     SELECT u.id, u.title, u.url, u.r2_key, u.created_at, u.download_points,
