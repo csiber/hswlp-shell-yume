@@ -14,7 +14,7 @@ export const onRequestPost = async (req: Request) => {
     }
 
     const db = await getGlobalDB()
-    const user = await db.query.userTable.findFirst({ where: eq(userTable.email, email) })
+    const [user] = await db.select().from(userTable).where(eq(userTable.email, email)).limit(1)
 
     if (!user || !user.passwordHash) {
       return jsonResponse({ error: 'Invalid credentials' }, { status: 401 })
