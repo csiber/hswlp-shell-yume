@@ -128,7 +128,8 @@ export async function logTransaction({
   type,
   expirationDate,
   paymentIntentId,
-  sourceApp
+  sourceApp,
+  source
 }: {
   userId: string;
   amount: number;
@@ -137,6 +138,7 @@ export async function logTransaction({
   expirationDate?: Date;
   paymentIntentId?: string;
   sourceApp?: string;
+  source?: string;
 }) {
   const db = await getGlobalDB();
   await db.insert(creditTransactionTable).values({
@@ -147,7 +149,8 @@ export async function logTransaction({
     description,
     expirationDate,
     paymentIntentId,
-    sourceApp
+    sourceApp,
+    source
   });
 }
 
@@ -305,6 +308,7 @@ export async function addCredits({ userId, amount, description }: { userId: stri
     amount,
     description,
     type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
+    source: 'yumekai',
   });
 }
 

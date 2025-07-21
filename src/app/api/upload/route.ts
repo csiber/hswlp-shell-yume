@@ -237,6 +237,7 @@ export async function POST(req: Request) {
       description: `Upload reward (${type})`,
       type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
       sourceApp,
+      source: 'yumekai',
     })
 
     const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')
