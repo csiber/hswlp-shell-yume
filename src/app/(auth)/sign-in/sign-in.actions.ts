@@ -1,7 +1,7 @@
 "use server";
 
 import { createServerAction, ZSAError } from "zsa";
-import { getDB } from "@/db";
+import { getGlobalDB } from "@/db";
 import { userTable } from "@/db/schema";
 import { signInSchema } from "@/schemas/signin.schema";
 import { verifyPassword } from "@/utils/password-hasher";
@@ -14,7 +14,7 @@ export const signInAction = createServerAction()
   .handler(async ({ input }) => {
     return withRateLimit(
       async () => {
-        const db = await getDB();
+        const db = await getGlobalDB();
 
         try {
           // Find user by email
