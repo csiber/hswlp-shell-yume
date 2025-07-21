@@ -1,5 +1,5 @@
 import "server-only";
-import { getDB } from "@/db";
+import { getGlobalDB } from "@/db";
 import { SYSTEM_ROLES_ENUM, teamInvitationTable, teamMembershipTable, userTable, teamRoleTable, teamTable } from "@/db/schema";
 import { getSessionFromCookie } from "@/utils/auth";
 import { ZSAError } from "zsa";
@@ -17,7 +17,7 @@ export async function getTeamMembers(teamId: string) {
   // Check if user has access to the team
   await requireTeamPermission(teamId, TEAM_PERMISSIONS.ACCESS_DASHBOARD);
 
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   const members = await db.query.teamMembershipTable.findMany({
     where: eq(teamMembershipTable.teamId, teamId),
@@ -90,7 +90,7 @@ export async function updateTeamMemberRole({
   // Check if user has permission to change member roles
   await requireTeamPermission(teamId, TEAM_PERMISSIONS.CHANGE_MEMBER_ROLES);
 
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // Verify membership exists
   const membership = await db.query.teamMembershipTable.findFirst({
@@ -137,7 +137,7 @@ export async function removeTeamMember({
   // Check if user has permission to remove members
   await requireTeamPermission(teamId, TEAM_PERMISSIONS.REMOVE_MEMBERS);
 
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // Verify membership exists
   const membership = await db.query.teamMembershipTable.findFirst({
@@ -195,7 +195,7 @@ export async function inviteUserToTeam({
   }
 
 
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // Get team name for email
   const team = await db.query.teamTable.findFirst({
@@ -330,7 +330,7 @@ export async function acceptTeamInvitation(token: string) {
     throw new ZSAError("NOT_AUTHORIZED", "Not authenticated");
   }
 
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // Find the invitation by token
   const invitation = await db.query.teamInvitationTable.findFirst({
@@ -425,7 +425,7 @@ export async function getTeamInvitations(teamId: string) {
   // Check if user has permission to view invitations
   await requireTeamPermission(teamId, TEAM_PERMISSIONS.INVITE_MEMBERS);
 
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // Get invitations that have not been accepted
   const invitations = await db.query.teamInvitationTable.findMany({
@@ -467,7 +467,7 @@ export async function getTeamInvitations(teamId: string) {
  * Cancel a team invitation
  */
 export async function cancelTeamInvitation(invitationId: string) {
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // Find the invitation
   const invitation = await db.query.teamInvitationTable.findFirst({
@@ -498,7 +498,7 @@ export async function getPendingInvitationsForCurrentUser() {
     throw new ZSAError("NOT_AUTHORIZED", "Not authenticated");
   }
 
-  const db = await getDB();
+  const db = await getGlobalDB();
 
   // Get invitations for the user's email that have not been accepted
   const invitations = await db.query.teamInvitationTable.findMany({

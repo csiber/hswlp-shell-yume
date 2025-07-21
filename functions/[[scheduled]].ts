@@ -1,5 +1,5 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { getDB } from '@/db'
+import { getGlobalDB } from '@/db'
 import { userTable, CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS } from '@/constants'
@@ -9,7 +9,7 @@ import { lt, isNull, or, eq } from 'drizzle-orm'
 
 export const onScheduled = async () => {
   getCloudflareContext()
-  const db = await getDB()
+  const db = await getGlobalDB()
 
   const now = new Date()
   const monthAgo = new Date(now)
