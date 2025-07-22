@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie, getUserFromDB } from '@/utils/auth'
+import { MAX_ALBUM_UPLOAD } from '@/constants'
 import { jsonResponse } from '@/utils/api'
 import { WebhookService } from '@/app/services/WebhookService'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
@@ -144,7 +145,7 @@ export async function POST(req: Request) {
     const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE album_id = ?1')
       .bind(albumId)
       .first<{ c: number }>()
-    if ((countRow?.c ?? 0) >= 10) {
+    if ((countRow?.c ?? 0) >= MAX_ALBUM_UPLOAD) {
       return jsonResponse({ success: false, error: 'Album limit reached' }, { status: 400 })
     }
     const existsAlbum = await env.DB.prepare('SELECT id FROM albums WHERE id = ?1 LIMIT 1')
@@ -218,6 +219,12 @@ export async function POST(req: Request) {
     await env.DB.prepare(
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
     ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
+
+    if (albumId) {
+      await env.DB.prepare(
+        'UPDATE albums SET cover_file_id = COALESCE(cover_file_id, ?1) WHERE id = ?2'
+      ).bind(id, albumId).run()
+    }
 
     await env.DB.prepare(
       'UPDATE user SET usedStorageMb = COALESCE(usedStorageMb,0) + ?1 WHERE id = ?2'

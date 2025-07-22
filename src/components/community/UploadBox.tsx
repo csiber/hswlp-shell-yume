@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid'
 import { parseBlob } from "music-metadata-browser";
 import { formatTitle } from "@/utils/music";
+import { MAX_ALBUM_UPLOAD } from "@/constants";
 import {
   Card,
   CardContent,
@@ -115,14 +116,14 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
       return;
     }
 
-    if (selectedFiles.length > 10) {
-      toast.error("Legfeljebb 10 fájlt tölthetsz fel egyszerre");
+    if (selectedFiles.length > MAX_ALBUM_UPLOAD) {
+      toast.error(`Legfeljebb ${MAX_ALBUM_UPLOAD} fájlt tölthetsz fel egyszerre`);
       return;
     }
 
     const isAlbum =
       selectedFiles.length >= 2 &&
-      selectedFiles.length <= 10 &&
+      selectedFiles.length <= MAX_ALBUM_UPLOAD &&
       Array.from(selectedFiles).every((f) => detectType(f) === "image");
 
     let currentAlbumId = albumId;
