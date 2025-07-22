@@ -3,6 +3,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { consumeCredits } from '@/utils/credits'
 import { updateAllSessionsOfUser } from '@/utils/kv-session'
+import { getDb } from '@/utils/db'
 import { z } from 'zod'
 
 const bodySchema = z.object({
@@ -22,7 +23,8 @@ export async function PUT(req: Request) {
   const { nickname } = parse.data
 
   const { env } = getCloudflareContext()
-  const userRow = await env.DB.prepare(
+  const dbUser = getDb(env, 'DB_GLOBAL')
+  const userRow = await dbUser.prepare(
     'SELECT nickname, nickname_updated_at, currentCredits FROM user WHERE id = ?1'
   ).bind(session.user.id).first<{ nickname: string | null; nickname_updated_at: string | null; currentCredits: number | null }>()
 
@@ -34,7 +36,7 @@ export async function PUT(req: Request) {
     return jsonResponse({ success: true })
   }
 
-  const existing = await env.DB.prepare(
+  const existing = await dbUser.prepare(
     'SELECT id FROM user WHERE nickname = ?1 AND id != ?2'
   ).bind(nickname, session.user.id).first<{ id: string }>()
 
@@ -61,7 +63,7 @@ export async function PUT(req: Request) {
     return jsonResponse({ success: false, error: 'Not enough credits to change nickname.' }, { status: 402 })
   }
 
-  await env.DB.prepare(
+  await dbUser.prepare(
     'UPDATE user SET nickname = ?1, nickname_updated_at = datetime(\'now\') WHERE id = ?2'
   ).bind(nickname, session.user.id).run()
 

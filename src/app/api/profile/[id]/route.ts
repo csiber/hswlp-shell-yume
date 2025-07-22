@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
+import { getDb } from '@/utils/db'
 import { NextRequest } from 'next/server'
 
 interface RouteContext<T> {
@@ -13,7 +14,8 @@ export async function GET(
 ) {
   const { id } = await params
   const { env } = getCloudflareContext()
-  const user = await env.DB.prepare(
+  const dbUser = getDb(env, 'DB_GLOBAL')
+  const user = await dbUser.prepare(
     'SELECT id, nickname, email, avatar, currentCredits, profile_frame_enabled FROM user WHERE id = ?1 LIMIT 1'
   ).bind(id).first<{
     id: string
@@ -28,7 +30,7 @@ export async function GET(
     return new Response('Not found', { status: 404 })
   }
 
-  const uploads = await env.DB.prepare(
+  const uploads = await dbUser.prepare(
     'SELECT id, title, type, url, r2_key, created_at, download_points FROM uploads WHERE user_id = ?1 ORDER BY created_at DESC'
   ).bind(id).all<{
     id: string; title: string; type: string; url: string; r2_key: string; created_at: string; download_points: number | null

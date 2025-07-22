@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
+import { getDb } from '@/utils/db'
 
 export async function GET() {
   const session = await getSessionFromCookie()
@@ -10,14 +11,15 @@ export async function GET() {
   }
 
   const { env } = getCloudflareContext()
+  const dbUser = getDb(env, 'DB_GLOBAL')
 
-  const pinnedRow = await env.DB.prepare(
+  const pinnedRow = await dbUser.prepare(
     'SELECT pinned_post_id FROM user WHERE id = ?1 LIMIT 1'
   ).bind(session.user.id).first<{ pinned_post_id: string | null }>()
 
   let pinnedItem: Record<string, string> | null = null
   if (pinnedRow?.pinned_post_id) {
-    pinnedItem = await env.DB.prepare(`
+    pinnedItem = await dbUser.prepare(`
       SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
              u.view_count, u.play_count, u.download_points,
              usr.nickname, usr.email
@@ -28,7 +30,7 @@ export async function GET() {
     `).bind(pinnedRow.pinned_post_id).first<Record<string, string>>()
   }
 
-  const result = await env.DB.prepare(`
+  const result = await dbUser.prepare(`
     SELECT u.id, u.title, u.tags, u.type, u.created_at, u.url, u.r2_key,
            u.view_count, u.play_count, u.download_points,
           usr.nickname, usr.email

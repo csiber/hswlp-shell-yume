@@ -9,6 +9,7 @@ import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
 import { parseBuffer } from 'music-metadata-browser'
 import { formatTitle } from '@/utils/music'
+import { getDb } from '@/utils/db'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -103,6 +104,7 @@ export async function POST(req: Request) {
   }
 
   const { env } = getCloudflareContext()
+  const dbUser = getDb(env, 'DB_GLOBAL')
 
   const fileSizeMb = file.size / (1024 * 1024)
   const usedStorageMb = Number(freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0)
@@ -219,7 +221,7 @@ export async function POST(req: Request) {
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
     ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
 
-    await env.DB.prepare(
+    await dbUser.prepare(
       'UPDATE user SET used_storage_mb = COALESCE(used_storage_mb,0) + ?1 WHERE id = ?2'
     ).bind(fileSizeMb, session.user.id).run()
     await updateAllSessionsOfUser(session.user.id)
@@ -232,7 +234,7 @@ export async function POST(req: Request) {
       type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
     })
 
-    const creditsRow = await env.DB.prepare('SELECT currentCredits FROM user WHERE id = ?1')
+    const creditsRow = await dbUser.prepare('SELECT currentCredits FROM user WHERE id = ?1')
       .bind(session.user.id)
       .first<{ currentCredits: number }>()
 
