@@ -70,8 +70,8 @@ export async function GET() {
       fileUrl = `${base}${row.r2_key}`
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    else if (row.r2_key && typeof (env.hswlp_r2 as any).createSignedUrl === 'function') {
-      fileUrl = await getSignedUrl(env.hswlp_r2, row.r2_key)
+    else if (row.r2_key && typeof (env.yumekai_r2 as any).createSignedUrl === 'function') {
+      fileUrl = await getSignedUrl(env.yumekai_r2, row.r2_key)
     } else {
       fileUrl = row.url
     }
