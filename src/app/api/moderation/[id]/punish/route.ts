@@ -3,12 +3,14 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { consumeCredits } from '@/utils/credits'
 import { PUNISHMENT_CREDIT_LOSS, UPLOAD_BAN_HOURS } from '@/constants'
 import { v4 as uuidv4 } from 'uuid'
+import { getDb } from '@/utils/db'
 
 interface RouteContext<T> { params: Promise<T> }
 
 export async function POST(req: Request, { params }: RouteContext<{ id: string }>) {
   await requireAdmin()
   const { env } = getCloudflareContext()
+  const dbUser = getDb(env, 'DB_GLOBAL')
   const { id } = await params
   const { reason } = await req.json() as { reason: string }
 
@@ -22,7 +24,7 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   await env.DB.prepare('INSERT INTO user_punishments (id, user_id, reason, until) VALUES (?1, ?2, ?3, ?4)')
     .bind(uuidv4(), upload.user_id, reason, until).run()
 
-  await env.DB.prepare('UPDATE user SET upload_ban_until = ?1, uploadBanReason = ?2 WHERE id = ?3')
+  await dbUser.prepare('UPDATE user SET upload_ban_until = ?1, uploadBanReason = ?2 WHERE id = ?3')
     .bind(until, reason, upload.user_id).run()
 
   try {
