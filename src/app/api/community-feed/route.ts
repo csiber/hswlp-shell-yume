@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
 import { getDb } from '@/utils/db'
+import { getSessionFromCookie } from '@/utils/auth'
 
 export interface CommunityPreview {
   id: string
@@ -21,8 +22,14 @@ export interface AlbumPreview {
 }
 
 export async function GET() {
-  const { env } = getCloudflareContext()
-  const dbUser = getDb(env, 'DB_GLOBAL')
+  const session = await getSessionFromCookie()
+  if (!session?.user?.id) {
+    return jsonResponse({ items: [] }, { status: 401 })
+  }
+
+  try {
+    const { env } = getCloudflareContext()
+    const dbUser = getDb(env, 'DB_GLOBAL')
   const result = await dbUser.prepare(`
     SELECT u.id, u.title, u.url, u.r2_key, u.created_at, u.download_points,
            usr.nickname, usr.email,
@@ -37,7 +44,7 @@ export async function GET() {
       AND u.created_at >= datetime('now', '-30 day')
     GROUP BY u.id
     ORDER BY favorites DESC, u.created_at DESC
-    LIMIT 5
+    LIMIT 50
   `).all<Record<string, string>>()
 
   const albumRows = await dbUser.prepare(`
@@ -110,5 +117,10 @@ export async function GET() {
   }
   for (const a of Object.values(albumMap)) albums.push(a)
 
-  return jsonResponse({ items, albums })
+    return jsonResponse({ items, albums })
+  } catch (err) {
+    console.error(err)
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    return new Response(message, { status: 500 })
+  }
 }
