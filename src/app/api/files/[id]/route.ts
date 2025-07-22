@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     return new Response("Not found", { status: 404 })
   }
 
-  const object = await env.hswlp_r2.get(upload.r2_key)
+  const object = await env.yumekai_r2.get(upload.r2_key)
   if (!object?.body) {
     return new Response("File not found", { status: 404 })
   }

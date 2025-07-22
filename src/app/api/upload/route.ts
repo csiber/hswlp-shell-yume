@@ -191,7 +191,7 @@ export async function POST(req: Request) {
     promptText = promptField
   }
 
-    await env.hswlp_r2.put(key, file)
+    await env.yumekai_r2.put(key, file)
 
     const url = `/api/files/${id}` // helyi proxy link, védett!
 
