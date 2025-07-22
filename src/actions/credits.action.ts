@@ -80,7 +80,7 @@ export async function createPaymentIntent({ packageId }: CreatePaymentIntentInpu
 
       const paymentIntent = await getStripe().paymentIntents.create({
         amount: creditPackage.price * 100,
-        currency: 'usd',
+        currency: 'huf',
         automatic_payment_methods: {
           enabled: true,
           allow_redirects: 'never',

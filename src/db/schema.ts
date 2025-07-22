@@ -211,10 +211,11 @@ export const postsTable = sqliteTable("posts", {
 
 export const highlightedPostsTable = sqliteTable("highlighted_posts", {
   id: text().primaryKey().$defaultFn(() => `hlp_${createId()}`).notNull(),
-  postId: text().notNull().references(() => postsTable.id),
-  userId: text().notNull().references(() => userTable.id),
-  expiresAt: integer({ mode: "timestamp" }).notNull(),
+  post_id: text().notNull().references(() => postsTable.id),
+  user_id: text().notNull().references(() => userTable.id),
+  expires_at: integer({ mode: "timestamp" }).notNull(),
 });
+
 
 export const marketplaceActivationsTable = sqliteTable("marketplace_activations", {
   id: text("id").primaryKey(),

@@ -23,12 +23,13 @@ export async function updateUserField(
 export async function activateHighlightPost(userId: string, postId: string) {
   const db = await getDB();
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-  await db.insert(highlightedPostsTable).values({
-    id: `hlp_${createId()}`,
-    postId,
-    userId,
-    expiresAt: expires,
-  });
+await db.insert(highlightedPostsTable).values({
+  id: `hlp_${createId()}`,
+  post_id: postId,
+  user_id: userId,
+  expires_at: expires,
+});
+
 }
 
 export async function applyDailySurpriseReward(userId: string): Promise<string> {
