@@ -1,7 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import { getDb } from '@/lib/getDb'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
-import { getSessionFromCookie, getUserFromDB } from '@/utils/auth'
+import { getUserFromDB } from '@/utils/auth'
+import { verifyJWT } from '@/utils/jwt'
 import { jsonResponse } from '@/utils/api'
 import { WebhookService } from '@/app/services/WebhookService'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
@@ -53,9 +54,19 @@ async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
 
 export async function POST(req: Request) {
   const { env } = getCloudflareContext()
-  let session: Awaited<ReturnType<typeof getSessionFromCookie>> | null = null
+  let session: { user: Awaited<ReturnType<typeof getUserFromDB>> } | null = null
   try {
-    session = await getSessionFromCookie(req.headers.get('cookie') ?? '', env.SESSION_KV)
+    const auth = req.headers.get('Authorization') || ''
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
+    if (token && env.JWT_SECRET) {
+      const payload = await verifyJWT(token, env.JWT_SECRET)
+      if (payload && typeof payload.sub === 'string') {
+        const user = await getUserFromDB(payload.sub)
+        if (user) {
+          session = { user }
+        }
+      }
+    }
     const sourceApp = deriveSourceApp(req.headers.get('host') ?? undefined)
 
   if (!session?.user?.id) {
