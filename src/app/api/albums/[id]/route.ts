@@ -10,7 +10,10 @@ export async function GET(_req: Request, { params }: RouteContext<{ id: string }
   const { id } = await params
   const { env } = getCloudflareContext()
   const album = await env.DB.prepare(
-    'SELECT id, name, user_id, created_at FROM albums WHERE id = ?1'
+    `SELECT a.id, a.name, a.user_id, a.created_at, u.nickname, u.email
+       FROM albums a
+       JOIN user u ON u.id = a.user_id
+      WHERE a.id = ?1`
   ).bind(id).first<Record<string, string>>()
   if (!album) return jsonResponse({ success: false, error: 'Not found' }, { status: 404 })
 
@@ -33,5 +36,16 @@ export async function GET(_req: Request, { params }: RouteContext<{ id: string }
     files.push({ id: row.id, title: row.title, mime: row.mime, url })
   }
 
-  return jsonResponse({ success: true, album: { ...album, files } })
+  const author = album.nickname || album.email
+  return jsonResponse({
+    success: true,
+    album: {
+      id: album.id,
+      name: album.name,
+      user_id: album.user_id,
+      created_at: album.created_at,
+      author,
+      files,
+    },
+  })
 }
