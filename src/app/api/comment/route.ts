@@ -3,6 +3,7 @@ import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { v4 as uuidv4 } from 'uuid'
 import { NextRequest } from 'next/server'
+import { getDb } from '@/utils/db'
 
 interface CommentRow {
   id: string
@@ -19,7 +20,8 @@ export async function GET(req: NextRequest) {
     return jsonResponse({ comments: [] }, { status: 400 })
   }
   const { env } = getCloudflareContext()
-  const rows = await env.DB.prepare(
+  const dbUser = getDb(env, 'DB_GLOBAL')
+  const rows = await dbUser.prepare(
     `SELECT c.id, c.content, c.created_at, u.firstName, u.lastName, u.email
      FROM comments c
      LEFT JOIN user u ON c.user_id = u.id
@@ -49,9 +51,10 @@ export async function POST(req: NextRequest) {
     return jsonResponse({ success: false }, { status: 400 })
   }
   const { env } = getCloudflareContext()
+  const dbUser = getDb(env, 'DB_GLOBAL')
   const id = `com_${uuidv4()}`
   const text = content.trim()
-  await env.DB.prepare(
+  await dbUser.prepare(
     'INSERT INTO comments (id, upload_id, user_id, content) VALUES (?1, ?2, ?3, ?4)'
   ).bind(id, upload_id, session.user.id, text).run()
 

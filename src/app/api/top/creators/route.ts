@@ -1,12 +1,14 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
+import { getDb } from '@/utils/db'
 
 export async function GET(request: Request) {
   const { env } = getCloudflareContext()
+  const dbUser = getDb(env, 'DB_GLOBAL')
   const url = new URL(request.url)
   const days = Number(url.searchParams.get('days') ?? '1')
   const limit = Number(url.searchParams.get('limit') ?? '10')
-  const rows = await env.DB.prepare(
+  const rows = await dbUser.prepare(
     `SELECT uploader_id, SUM(points_awarded) as pts
      FROM upload_rewards
      WHERE created_at >= datetime('now', ?1)
@@ -17,7 +19,7 @@ export async function GET(request: Request) {
 
   const creators = [] as { id: string; nickname: string; avatar: string | null; points: number }[]
   for (const r of rows.results || []) {
-    const user = await env.DB.prepare(
+    const user = await dbUser.prepare(
       'SELECT id, nickname, avatar FROM user WHERE id = ?1'
     ).bind(r.uploader_id).first<{ id: string; nickname: string; avatar: string | null }>()
     if (user) {
