@@ -23,6 +23,13 @@ interface UploadItem {
   locked: number
   total_generated_points: number
 }
+interface AlbumItem {
+  id: string
+  name: string
+  cover_url: string | null
+  created_at: string
+  count: number
+}
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
@@ -52,9 +59,9 @@ export default function MyFilesPage() {
   const [showApprovedNotice, setShowApprovedNotice] = useState(false)
   const query = filter ? `?type=${filter}` : ''
   const fetcher = (url: string) =>
-    fetch(url).then((res) => res.json() as Promise<{ items: UploadItem[] }>)
+    fetch(url).then((res) => res.json() as Promise<{ items: UploadItem[]; albums: AlbumItem[] }>)
 
-  const { data, mutate } = useSWR<{ items: UploadItem[] }>(
+  const { data, mutate } = useSWR<{ items: UploadItem[]; albums: AlbumItem[] }>(
     `/api/my-files${query}`,
     fetcher
   )
@@ -160,6 +167,22 @@ export default function MyFilesPage() {
         <Button variant={filter === 'music' ? 'default' : 'outline'} onClick={() => setFilter('music')}>Zenék</Button>
         <Button variant={filter === 'prompt' ? 'default' : 'outline'} onClick={() => setFilter('prompt')}>Promptek</Button>
       </div>
+
+      {data?.albums && data.albums.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+          {data.albums.map((al) => (
+            <a key={al.id} href={`/album/${al.id}`} className="block">
+              {al.cover_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={al.cover_url} alt={al.name} className="w-full aspect-square object-cover rounded" />
+              ) : (
+                <div className="w-full aspect-square rounded bg-zinc-800 flex items-center justify-center">📁</div>
+              )}
+              <div className="mt-1 text-sm text-center">{al.name} ({al.count})</div>
+            </a>
+          ))}
+        </div>
+      )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {data?.items?.map((item) =>
