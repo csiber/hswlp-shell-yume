@@ -2,16 +2,21 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+interface RouteContext<T> {
+  params: Promise<T>
+}
+
+export async function GET(_req: Request, { params }: RouteContext<{ id: string }>) {
+  const { id } = await params
   const { env } = getCloudflareContext()
   const album = await env.DB.prepare(
     'SELECT id, name, user_id, created_at FROM albums WHERE id = ?1'
-  ).bind(params.id).first<Record<string, string>>()
+  ).bind(id).first<Record<string, string>>()
   if (!album) return jsonResponse({ success: false, error: 'Not found' }, { status: 404 })
 
   const rows = await env.DB.prepare(
     'SELECT id, title, mime, url, r2_key FROM uploads WHERE album_id = ?1 ORDER BY created_at'
-  ).bind(params.id).all<Record<string, string>>()
+  ).bind(id).all<Record<string, string>>()
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
   const files: { id: string; title: string; mime: string | null; url: string }[] = []
