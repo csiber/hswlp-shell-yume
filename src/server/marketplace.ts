@@ -125,7 +125,7 @@ export async function activateMarketplaceComponent(
   await consumeCredits({
     userId,
     amount: getComponentCredits(componentId),
-    description: `Activate ${componentId}`,
+    description: `Aktiváltad: ${component?.name || "ismeretlen komponens"}`,
   });
 }
 

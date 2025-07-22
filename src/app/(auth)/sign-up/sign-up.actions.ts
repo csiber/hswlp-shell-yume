@@ -71,7 +71,7 @@ export const signUpAction = createServerAction()
           await logTransaction({
             userId: user.id,
             amount: SIGN_UP_BONUS_CREDITS,
-            description: 'Signup bonus',
+            description: 'Belépési bónusz kreditek',
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
           });

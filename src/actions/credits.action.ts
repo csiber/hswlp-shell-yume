@@ -134,9 +134,9 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
       await logTransaction({
         userId: session.user.id,
         amount: creditPackage.credits,
-        description: `Purchased ${creditPackage.credits} credits`,
+        description: `Megvásároltál ${creditPackage.credits} kreditet.`,
         type: CREDIT_TRANSACTION_TYPE.PURCHASE,
-        expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} years`)),
+        expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} év`)),
         paymentIntentId: paymentIntent?.id
       });
 
