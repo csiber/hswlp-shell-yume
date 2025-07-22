@@ -21,7 +21,7 @@ import {
 } from "./kv-session";
 import { cache } from "react"
 import type { SessionValidationResult } from "@/types";
-import { SESSION_COOKIE_NAME, SITE_DOMAIN } from "@/constants";
+import { SESSION_COOKIE_NAME } from "@/constants";
 import { ZSAError } from "zsa";
 import { addFreeMonthlyCreditsIfNeeded } from "./credits";
 import { getInitials } from "./name-initials";
@@ -265,8 +265,7 @@ export async function setSessionTokenCookie({ token, userId, expiresAt }: SetSes
     sameSite: "lax",
     secure: true,
     expires: expiresAt,
-    path: "/",
-    domain: SITE_DOMAIN,
+    path: "/"
   });
 }
 
@@ -274,8 +273,7 @@ export async function deleteSessionTokenCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, '', {
     expires: new Date(0),
-    path: '/',
-    domain: SITE_DOMAIN,
+    path: "/"
   });
 }
 

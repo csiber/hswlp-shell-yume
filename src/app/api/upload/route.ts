@@ -220,7 +220,7 @@ export async function POST(req: Request) {
     ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
 
     await env.DB.prepare(
-      'UPDATE user SET used_storage_mb = COALESCE(used_storage_mb,0) + ?1 WHERE id = ?2'
+      'UPDATE user SET usedStorageMb = COALESCE(usedStorageMb,0) + ?1 WHERE id = ?2'
     ).bind(fileSizeMb, session.user.id).run()
     await updateAllSessionsOfUser(session.user.id)
 
