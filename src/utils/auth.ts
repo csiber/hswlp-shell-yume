@@ -313,7 +313,10 @@ export const requireVerifiedEmail = cache(async ({
       return null;
     }
 
-    throw new ZSAError("FORBIDDEN", "Please verify your email first");
+    throw new ZSAError(
+      "FORBIDDEN",
+      "Kérjük, előbb erősítsd meg az e-mail címed"
+    );
   }
 
   return session;
@@ -434,7 +437,7 @@ export async function canSignUp({ email }: { email: string }): Promise<void> {
     if (result.isDisposable) {
       throw new ZSAError(
         "PRECONDITION_FAILED",
-        "Disposable email addresses are not allowed"
+        "Eldobható e-mail címek használata nem engedélyezett"
       );
     }
 
@@ -445,6 +448,6 @@ export async function canSignUp({ email }: { email: string }): Promise<void> {
   // If all validators failed, we can't verify the email
   throw new ZSAError(
     "PRECONDITION_FAILED",
-    "Unable to verify email address at this time. Please try again later."
+    "Az e-mail-cím ellenőrzése jelenleg nem lehetséges. Kérjük, próbáld meg később."
   );
 }
