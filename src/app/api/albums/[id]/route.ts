@@ -18,11 +18,13 @@ export async function GET(_req: Request, { params }: RouteContext<{ id: string }
   if (!album) return jsonResponse({ success: false, error: 'Not found' }, { status: 404 })
 
   const rows = await env.DB.prepare(
-    'SELECT id, title, mime, url, r2_key FROM uploads WHERE album_id = ?1 ORDER BY created_at'
+    `SELECT id, title, mime, url, r2_key, "order" FROM uploads
+     WHERE album_id = ?1
+     ORDER BY CASE WHEN "order" IS NULL THEN 1 ELSE 0 END, "order", created_at DESC`
   ).bind(id).all<Record<string, string>>()
 
   const publicBase = process.env.R2_PUBLIC_BASE_URL
-  const files: { id: string; title: string; mime: string | null; url: string }[] = []
+  const files: { id: string; title: string; mime: string | null; url: string; order: number | null }[] = []
   for (const row of rows.results || []) {
     let url = row.url
     if (publicBase && row.r2_key) {
@@ -33,7 +35,7 @@ export async function GET(_req: Request, { params }: RouteContext<{ id: string }
     else if (row.r2_key && typeof (env.yumekai_r2 as any).createSignedUrl === 'function') {
       url = await getSignedUrl(env.yumekai_r2, row.r2_key)
     }
-    files.push({ id: row.id, title: row.title, mime: row.mime, url })
+    files.push({ id: row.id, title: row.title, mime: row.mime, url, order: row.order ? Number(row.order) : null })
   }
 
   const author = album.nickname || album.email

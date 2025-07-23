@@ -17,7 +17,7 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
   }
 
   const { env } = getCloudflareContext()
-  const body = await req.json() as { title?: string; description?: string; tags?: string; note?: string }
+  const body = await req.json() as { title?: string; description?: string; tags?: string; note?: string; albumId?: string | null; order?: number | null }
 
   return withRateLimit(async () => {
     const { id } = await params
@@ -90,8 +90,8 @@ export async function PUT(req: NextRequest, { params }: RouteContext<{ id: strin
 
     const newModeration = (changedDescription || changedTags) ? 'pending' : row.moderation_status
     await env.DB.prepare(
-      'UPDATE uploads SET title = COALESCE(?2,title), description = ?3, tags = ?4, note = ?5, moderation_status = ?6 WHERE id = ?1'
-    ).bind(id, body.title, body.description, body.tags, body.note, newModeration).run()
+      'UPDATE uploads SET title = COALESCE(?2,title), description = ?3, tags = ?4, note = ?5, moderation_status = ?6, album_id = COALESCE(?7, album_id), "order" = COALESCE(?8, "order") WHERE id = ?1'
+    ).bind(id, body.title, body.description, body.tags, body.note, newModeration, body.albumId ?? null, body.order ?? null).run()
 
     const latest = await env.DB.prepare('SELECT title, description, tags FROM uploads WHERE id = ?1')
       .bind(id)
