@@ -23,7 +23,6 @@ import { cache } from "react"
 import type { SessionValidationResult } from "@/types";
 import { SESSION_COOKIE_NAME } from "@/constants";
 import { ZSAError } from "zsa";
-import { addFreeMonthlyCreditsIfNeeded } from "./credits";
 import { getInitials } from "./name-initials";
 
 const getSessionLength = () => {
@@ -230,16 +229,10 @@ async function validateSessionToken(token: string, userId: string): Promise<Sess
     return updatedSession;
   }
 
-  // Check and refresh credits if needed
-  const currentCredits = await addFreeMonthlyCreditsIfNeeded(session);
 
-  // If credits were refreshed, update the session
-  if (
-    session?.user?.currentCredits &&
-    currentCredits !== session.user.currentCredits
-  ) {
-    session.user.currentCredits = currentCredits;
-  }
+  // Monthly credit refresh is now handled by the scheduled worker to avoid
+  // heavy DB operations on each request. We simply return the session data
+  // here without updating credits.
 
   // Update the user initials
   session.user.initials = getInitials(session.user.nickname);
