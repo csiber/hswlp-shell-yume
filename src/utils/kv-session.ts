@@ -266,25 +266,32 @@ export async function updateAllSessionsOfUser(userId: string) {
   // Get updated teams data with permissions
   const teamsWithPermissions = await getUserTeamsWithPermissions(userId);
 
-  for (const sessionObj of sessions) {
-    const session = await kv.get(sessionObj.key);
-    if (!session) continue;
+  await Promise.all(
+    sessions.map(async (sessionObj) => {
+      const session = await kv.get(sessionObj.key);
+      if (!session) return;
 
-    const sessionData = JSON.parse(session) as KVSession;
+      const sessionData = JSON.parse(session) as KVSession;
 
-    // Only update non-expired sessions
-    if (sessionObj.absoluteExpiration && sessionObj.absoluteExpiration.getTime() > Date.now()) {
-      const ttlInSeconds = Math.floor((sessionObj.absoluteExpiration.getTime() - Date.now()) / 1000);
+      // Only update non-expired sessions
+      if (
+        sessionObj.absoluteExpiration &&
+        sessionObj.absoluteExpiration.getTime() > Date.now()
+      ) {
+        const ttlInSeconds = Math.floor(
+          (sessionObj.absoluteExpiration.getTime() - Date.now()) / 1000
+        );
 
-      await kv.put(
-        sessionObj.key,
-        JSON.stringify({
-          ...sessionData,
-          user: newUserData,
-          teams: teamsWithPermissions,
-        }),
-        { expirationTtl: ttlInSeconds }
-      );
-    }
-  }
+        await kv.put(
+          sessionObj.key,
+          JSON.stringify({
+            ...sessionData,
+            user: newUserData,
+            teams: teamsWithPermissions,
+          }),
+          { expirationTtl: ttlInSeconds }
+        );
+      }
+    })
+  );
 }

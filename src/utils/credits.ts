@@ -1,5 +1,5 @@
 import "server-only";
-import { eq, sql, desc, and, lt, isNull, gt, or, asc } from "drizzle-orm";
+import { eq, sql, desc, and, lt, isNull, gt, or, asc, inArray } from "drizzle-orm";
 import { getDB } from "@/db";
 import { userTable, creditTransactionTable, teamMembershipTable, teamTable, CREDIT_TRANSACTION_TYPE, purchasedItemsTable } from "@/db/schema";
 import { updateAllSessionsOfUser, KVSession } from "./kv-session";
@@ -41,12 +41,13 @@ async function updateTeamCredits(userId: string, amount: number) {
       )
     );
 
-  for (const { teamId } of memberships) {
-    await db
-      .update(teamTable)
-      .set({ creditBalance: sql`${teamTable.creditBalance} + ${amount}` })
-      .where(eq(teamTable.id, teamId));
-  }
+  if (memberships.length === 0) return;
+
+  // Update all team balances in a single query instead of looping
+  await db
+    .update(teamTable)
+    .set({ creditBalance: sql`${teamTable.creditBalance} + ${amount}` })
+    .where(inArray(teamTable.id, memberships.map(m => m.teamId)));
 }
 
 // Lejárt tranzakciók kezelése és a felhasználó egyenlegének frissítése
