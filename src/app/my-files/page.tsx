@@ -35,6 +35,7 @@ import { Card } from '@/components/ui/card'
 import ImageLightbox from '@/components/ui/ImageLightbox'
 import MusicCard from '@/components/MusicCard'
 import EditUploadDialog from '@/components/myfiles/EditUploadDialog'
+import CreateAlbumDialog from '@/components/album/CreateAlbumDialog'
 import { cn } from '@/utils/cn'
 import { toast } from 'sonner'
 import { useSessionStore } from '@/state/session'
@@ -161,11 +162,12 @@ export default function MyFilesPage() {
           Gratulálunk! Feltöltésed jóvá lett hagyva.
         </div>
       )}
-      <div className="mb-4 flex gap-3">
+      <div className="mb-4 flex gap-3 items-center">
         <Button variant={filter === null ? 'default' : 'outline'} onClick={() => setFilter(null)}>Összes</Button>
         <Button variant={filter === 'image' ? 'default' : 'outline'} onClick={() => setFilter('image')}>Képek</Button>
         <Button variant={filter === 'music' ? 'default' : 'outline'} onClick={() => setFilter('music')}>Zenék</Button>
         <Button variant={filter === 'prompt' ? 'default' : 'outline'} onClick={() => setFilter('prompt')}>Promptek</Button>
+        <CreateAlbumDialog onCreated={mutate} />
       </div>
 
       {data?.albums && data.albums.length > 0 && (
