@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/d1";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
+import { wrapD1 } from "@/utils/with-timeout";
 
 import * as schema from "./schema";
 
@@ -21,7 +22,7 @@ export const getDB = async () => {
   }
 
   // Létrehozzuk a Drizzle ORM kapcsolatot a D1 adatbázissal
-  db = drizzle(env.NEXT_TAG_CACHE_D1, { schema, logger: true });
+  db = drizzle(wrapD1(env.NEXT_TAG_CACHE_D1), { schema, logger: true });
 
   return db;
 };

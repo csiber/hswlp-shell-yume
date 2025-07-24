@@ -3,6 +3,7 @@ import { jsonResponse } from '@/utils/api'
 import { parseBuffer } from 'music-metadata-browser'
 import { NextRequest } from 'next/server'
 import { guessMetaFromFilename } from '@/utils/music'
+import { withTimeout } from '@/utils/with-timeout'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
@@ -21,8 +22,14 @@ export async function GET(req: NextRequest) {
     return new Response('Not found', { status: 404 })
   }
 
-  const object = await env.yumekai_r2.get(row.r2_key)
-  if (!object?.body) {
+  let object: R2ObjectBody | string | null = null
+  try {
+    object = await withTimeout(env.yumekai_r2.get(row.r2_key), 2000)
+  } catch (err) {
+    console.error('R2 get failed', err)
+    object = 'Hiba történt a fájl betöltésénél'
+  }
+  if (!object || typeof object === 'string' || !object.body) {
     return new Response('File not found', { status: 404 })
   }
 

@@ -1,5 +1,6 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
+import { withTimeout } from '@/utils/with-timeout'
 
 export async function GET() {
   const { env } = getCloudflareContext()
@@ -11,8 +12,14 @@ export async function GET() {
   for (const row of rows.results || []) {
     let size: number | null = null
     if (row.r2_key) {
-      const obj = await env.yumekai_r2.head(row.r2_key)
-      size = obj?.size ?? null
+      let obj: R2Object | string | null = null
+      try {
+        obj = await withTimeout(env.yumekai_r2.head(row.r2_key), 2000)
+      } catch (err) {
+        console.error('R2 head failed', err)
+        obj = 'Hiba történt a fájl betöltésénél'
+      }
+      size = obj && typeof obj !== 'string' ? obj.size ?? null : null
     }
     items.push({ id: row.id, name: row.title, type: row.type, size })
   }
