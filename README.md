@@ -104,6 +104,7 @@ vagy a Cloudflare dashboardon manuálisan.
 - Kedvencek, lejátszási listák
 - Stripe integráció fizetéshez (ha beállítod)
 - Webhook rendszer (ha technikai vagy)
+- Stripe webhook útvonala: `/api/stripe/webhook` (a `STRIPE_WEBHOOK_SECRET` változóval hitelesítve)
 
 ---
 
