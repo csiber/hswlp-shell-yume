@@ -12,6 +12,9 @@ export async function GET(req: NextRequest) {
   const { env } = getCloudflareContext()
 
   const kv = env.NEXT_INC_CACHE_KV
+  if (!kv) {
+    throw new Error('Nem sikerült csatlakozni a KV tárhoz')
+  }
   const { searchParams } = new URL(req.url)
   let limit = parseInt(searchParams.get('limit') || '20', 10)
   if (Number.isNaN(limit) || limit <= 0) limit = 20
@@ -45,7 +48,7 @@ export async function GET(req: NextRequest) {
     rows = result.results || []
     await kv.put(feedCacheKey, JSON.stringify(rows), { expirationTtl: 60 })
   }
-
+  
   if (pinnedItem === undefined) {
     const pinnedRow = await env.DB.prepare(
       'SELECT pinned_post_id FROM user WHERE id = ?1 LIMIT 1'
