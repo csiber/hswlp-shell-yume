@@ -2,7 +2,7 @@ import type { Route } from "next"
 
 export const SITE_NAME = "Yumekai"
 export const SITE_DESCRIPTION =
-  "🧩 Hybrid Service Workflow Launch Platform – felhőalapú SaaS sablon a gyors induláshoz."
+  "A kreativitás jövője itt kezdődik. Fedezd fel a művészet határait, és oszd meg alkotásaidat egy támogató közösséggel. Csatlakozz hozzánk, és légy része a kreatív forradalomnak!"
 export const SITE_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://hswlp-shell-yumekai.promnet.workers.dev/"
 export const GITHUB_REPO_URL = "https://github.com/csiber/hswlp-next"
 
@@ -15,9 +15,9 @@ export const MAX_TEAMS_JOINED_PER_USER = 10;
 export const SESSION_COOKIE_NAME = "session";
 
 export const CREDIT_PACKAGES = [
-  { id: "package-1", credits: 500, price: 500 },
-  { id: "package-2", credits: 1200, price: 1000 },
-  { id: "package-3", credits: 3000, price: 2000 },
+  { id: "yume-package-1", credits: 500, price: 500 },
+  { id: "yume-package-2", credits: 1200, price: 1000 },
+  { id: "yume-package-3", credits: 3000, price: 2000 },
 ] as const;
 
 export const CREDITS_EXPIRATION_YEARS = 2;
