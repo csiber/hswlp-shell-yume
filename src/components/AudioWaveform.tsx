@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import WaveSurfer from "wavesurfer.js";
+import type WaveSurferType from "wavesurfer.js";
 
 export default function AudioWaveform({ src }: { src: string }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const waveRef = useRef<WaveSurfer | null>(null);
+  const waveRef = useRef<WaveSurferType | null>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -15,20 +15,23 @@ export default function AudioWaveform({ src }: { src: string }) {
       waveRef.current = null;
     }
 
-    const ws = WaveSurfer.create({
-      container: containerRef.current,
-      waveColor: "#888",
-      progressColor: "#0ea5e9",
-      cursorColor: "#0ea5e9",
-      height: 80,
-      barWidth: 2,
+    let ws: WaveSurferType | null = null;
+    import("wavesurfer.js").then(({ default: WaveSurferLib }) => {
+      ws = WaveSurferLib.create({
+        container: containerRef.current!,
+        waveColor: "#888",
+        progressColor: "#0ea5e9",
+        cursorColor: "#0ea5e9",
+        height: 80,
+        barWidth: 2,
+      });
+
+      ws.load(src);
+      waveRef.current = ws;
     });
 
-    ws.load(src);
-    waveRef.current = ws;
-
     return () => {
-      ws.destroy();
+      ws?.destroy();
     };
   }, [src]);
 
