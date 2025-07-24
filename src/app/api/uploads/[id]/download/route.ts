@@ -18,8 +18,8 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
   const { env } = getCloudflareContext()
   const { id } = await params
   const row = await env.DB.prepare(
-    'SELECT r2_key, download_points, user_id, type, album_id FROM uploads WHERE id = ?1 LIMIT 1'
-  ).bind(id).first<{ r2_key: string; download_points: number | null; user_id: string; type: string; album_id: string | null }>()
+    'SELECT r2_key, download_points, user_id, type, mime, album_id FROM uploads WHERE id = ?1 LIMIT 1'
+  ).bind(id).first<{ r2_key: string; download_points: number | null; user_id: string; type: string; mime: string | null; album_id: string | null }>()
 
   if (!row) {
     return new Response('Not found', { status: 404 })
@@ -86,13 +86,17 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
     }
   }
 
-    return new Response(object.body, {
-      status: 200,
-      headers: {
-        'Content-Type': object.httpMetadata?.contentType || row.type.startsWith('audio/') ? 'audio/mpeg' : 'application/octet-stream',
-        'Content-Disposition': `attachment; filename="${id}"`,
-        'Cache-Control': 'public, max-age=86400',
-        'X-Already-Downloaded': alreadyDownloaded ? '1' : '0'
-      }
-    })
+  const contentType =
+    object.httpMetadata?.contentType || row.mime || 'application/octet-stream'
+
+  return new Response(object.body, {
+    status: 200,
+    headers: {
+      'Content-Type': contentType,
+      'Content-Disposition': `attachment; filename="${id}"`,
+      'Cache-Control': 'public, max-age=86400',
+      'X-Already-Downloaded': alreadyDownloaded ? '1' : '0'
+    }
+  })
   }
+

@@ -8,10 +8,10 @@ export async function GET(req: NextRequest) {
 
   const id = req.nextUrl.pathname.split("/").pop()!
   const upload = await env.DB.prepare(
-    'SELECT r2_key, type FROM uploads WHERE id = ?1 LIMIT 1'
+    'SELECT r2_key, mime FROM uploads WHERE id = ?1 LIMIT 1'
   )
     .bind(id)
-    .first<{ r2_key: string; type: string }>()
+    .first<{ r2_key: string; mime: string | null }>()
 
   if (!upload) {
     return new Response("Not found", { status: 404 })
@@ -36,14 +36,18 @@ export async function GET(req: NextRequest) {
   }
 
   const allowedOrigin = new URL(SITE_URL).origin
+  const contentType =
+    object.httpMetadata?.contentType || upload.mime || 'application/octet-stream'
+
   return new Response(object.body, {
     status: 200,
-      headers: {
-        "Content-Type": object.httpMetadata?.contentType || "audio/mpeg",
-        "Content-Disposition": 'inline; filename="audio.mp3"',
-        "Access-Control-Allow-Origin": allowedOrigin,
-        "Accept-Ranges": "bytes", // <--- ez fontos a seek és stream működéséhez
-        "Cache-Control": "public, max-age=86400",
-      },
-    })
+    headers: {
+      'Content-Type': contentType,
+      'Content-Disposition': 'inline',
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Accept-Ranges': 'bytes', // <--- ez fontos a seek és stream működéséhez
+      'Cache-Control': 'public, max-age=86400',
+    },
+  })
   }
+
