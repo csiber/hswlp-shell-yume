@@ -225,6 +225,19 @@ export const marketplaceActivationsTable = sqliteTable("marketplace_activations"
   activated_at: text("activated_at").default(sql`CURRENT_TIMESTAMP`)
 });
 
+// Slow request log table for monitoring performance
+export const slowRequestLogTable = sqliteTable("slow_request_logs", {
+  id: text().primaryKey().$defaultFn(() => `slog_${createId()}`).notNull(),
+  url: text().notNull(),
+  durationMs: integer("duration_ms").notNull(),
+  userId: text("user_id"),
+  sessionHash: text("session_hash"),
+  createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+}, (table) => [
+  index('slow_request_logs_user_id_idx').on(table.userId),
+  index('slow_request_logs_created_at_idx').on(table.createdAt),
+]);
+
 
 
 // System-defined roles - these are always available
@@ -410,3 +423,4 @@ export type UploadReward = InferSelectModel<typeof uploadRewardTable>;
 export type Post = InferSelectModel<typeof postsTable>;
 export type HighlightedPost = InferSelectModel<typeof highlightedPostsTable>;
 export type MarketplaceActivation = InferSelectModel<typeof marketplaceActivationsTable>;
+export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
