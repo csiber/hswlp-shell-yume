@@ -8,7 +8,7 @@ import {
   getCreditPackage,
 } from "@/utils/credits";
 import { CREDIT_TRANSACTION_TYPE } from "@/db/schema";
-import { getStripe } from "@/lib/stripe";
+import { getStripeClient } from "@/lib/stripe-client";
 import { MAX_TRANSACTIONS_PER_PAGE, CREDITS_EXPIRATION_YEARS } from "@/constants";
 import ms from "ms";
 import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
@@ -78,7 +78,7 @@ export async function createPaymentIntent({ packageId }: CreatePaymentIntentInpu
         throw new Error("Invalid package");
       }
 
-      const paymentIntent = await getStripe().paymentIntents.create({
+      const paymentIntent = await getStripeClient().createPaymentIntent({
         amount: creditPackage.price * 100,
         currency: 'huf',
         automatic_payment_methods: {
@@ -114,7 +114,7 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
       }
 
       // Verify the payment intent
-      const paymentIntent = await getStripe().paymentIntents.retrieve(paymentIntentId);
+      const paymentIntent = await getStripeClient().retrievePaymentIntent(paymentIntentId);
 
       if (paymentIntent.status !== 'succeeded') {
         throw new Error("Payment not completed");

@@ -55,7 +55,7 @@ export function CreditPackages() {
       const { clientSecret } = await createPaymentIntent({
         packageId: pkg.id,
       });
-      setClientSecret(clientSecret);
+      setClientSecret(clientSecret ?? null);
       setSelectedPackage(pkg);
       setIsDialogOpen(true);
     } catch (error) {
