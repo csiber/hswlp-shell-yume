@@ -8,17 +8,15 @@ initOpenNextCloudflareForDev();
 // TODO cache-control headers don't work for static files
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    modularizeImports: {
-      'lucide-react': {
-        transform: 'lucide-react/dist/esm/icons/{{member}}',
-      },
-      '@heroicons/react/24/solid': {
-        transform: '@heroicons/react/24/solid/{{member}}',
-      },
-      '@heroicons/react/24/outline': {
-        transform: '@heroicons/react/24/outline/{{member}}',
-      },
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{member}}',
+    },
+    '@heroicons/react/24/solid': {
+      transform: '@heroicons/react/24/solid/{{member}}',
+    },
+    '@heroicons/react/24/outline': {
+      transform: '@heroicons/react/24/outline/{{member}}',
     },
   },
   eslint: {
