@@ -86,13 +86,13 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
     }
   }
 
-  return new Response(object.body, {
-    status: 200,
-    headers: {
-      'Content-Type': object.httpMetadata?.contentType || row.type.startsWith('audio/') ? 'audio/mpeg' : 'application/octet-stream',
-      'Content-Disposition': `attachment; filename="${id}"`,
-      'Cache-Control': 'no-store',
-      'X-Already-Downloaded': alreadyDownloaded ? '1' : '0'
-    }
-  })
-}
+    return new Response(object.body, {
+      status: 200,
+      headers: {
+        'Content-Type': object.httpMetadata?.contentType || row.type.startsWith('audio/') ? 'audio/mpeg' : 'application/octet-stream',
+        'Content-Disposition': `attachment; filename="${id}"`,
+        'Cache-Control': 'public, max-age=86400',
+        'X-Already-Downloaded': alreadyDownloaded ? '1' : '0'
+      }
+    })
+  }
