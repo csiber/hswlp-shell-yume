@@ -12,7 +12,7 @@ export const onRequest: PagesFunction = async (ctx) => {
   }
 
   const cache = caches.default
-  const cacheKey = new Request(request.url, request)
+  const cacheKey = new Request(request.url, request as RequestInit)
   let response = await cache.match(cacheKey)
   if (response) {
     return response
