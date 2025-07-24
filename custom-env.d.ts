@@ -8,4 +8,6 @@ interface CloudflareEnv {
   NSFW_CHECK_KEY?: string;
   PUNISHMENT_CREDIT_LOSS?: string;
   UPLOAD_BAN_HOURS?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
 }
