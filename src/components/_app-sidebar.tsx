@@ -80,7 +80,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const data: Data = {
     user: {
-      name: session?.user?.firstName || "User",
+      name:
+        session?.user?.nickname ||
+        session?.user?.firstName ||
+        "User",
       email: session?.user?.email || "user@example.com",
     },
     teams: formattedTeams,
