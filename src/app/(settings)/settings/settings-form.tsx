@@ -117,15 +117,20 @@ export function SettingsForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
-              <div className="space-y-2">
-                <FormLabel>Keresztnév</FormLabel>
-                <Input disabled value={session.user.firstName ?? ''} />
-              </div>
-              <div className="space-y-2">
-                <FormLabel>Vezetéknév</FormLabel>
-                <Input disabled value={session.user.lastName ?? ''} />
-              </div>
+            <div className="space-y-2">
+              <FormLabel>Keresztnév</FormLabel>
+              <Input disabled value={session.user.firstName ?? ''} />
             </div>
+            <div className="space-y-2">
+              <FormLabel>Vezetéknév</FormLabel>
+              <Input disabled value={session.user.lastName ?? ''} />
+            </div>
+            <div className="col-span-2">
+              <FormDescription>
+                A teljes neved rejtve marad más felhasználók elől.
+              </FormDescription>
+            </div>
+          </div>
 
             <FormField
               control={form.control}

@@ -50,9 +50,10 @@ export default function TopBar({}: TopBarProps) {
 
   const user = session?.user;
   const displayName =
-    user?.firstName && user?.lastName
+    user?.nickname ||
+    (user?.firstName && user?.lastName
       ? `${user.firstName} ${user.lastName}`
-      : user?.email ?? "";
+      : user?.email ?? "");
   const initials = displayName
     .split(" ")
     .map((n) => n[0])

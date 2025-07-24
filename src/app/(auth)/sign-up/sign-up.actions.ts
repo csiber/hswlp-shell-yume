@@ -49,7 +49,20 @@ export const signUpAction = createServerAction()
         const hashedPassword = await hashPassword({ password: input.password });
 
         // Create the user with signup credits
-        const nickname = `anon_${createId().slice(0, 8)}`;
+        let nickname = input.nickname?.trim();
+        if (nickname) {
+          const existingNickname = await db.query.userTable.findFirst({
+            where: eq(userTable.nickname, nickname),
+          });
+          if (existingNickname) {
+            throw new ZSAError(
+              "CONFLICT",
+              "Ez a nicknév már foglalt"
+            );
+          }
+        } else {
+          nickname = `anon_${createId().slice(0, 8)}`;
+        }
 
         const [user] = await db.insert(userTable)
           .values({

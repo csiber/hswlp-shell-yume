@@ -32,7 +32,7 @@ export function NavUser() {
   const user = session?.user
   if (!user) return null
 
-  const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || ""
+  const name = user.nickname || [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || ""
   const initials =
     user.initials ||
     name
