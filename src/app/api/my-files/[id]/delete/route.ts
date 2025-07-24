@@ -3,6 +3,8 @@
 import { NextRequest } from 'next/server'
 import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
+import { withTimeout } from '@/utils/with-timeout'
+import { jsonResponse } from '@/utils/api'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(req: NextRequest, { params }: any) {
@@ -21,7 +23,12 @@ export async function POST(req: NextRequest, { params }: any) {
     return new Response('Not found', { status: 404 })
   }
 
-  await env.yumekai_r2.delete(file.r2_key)
+  try {
+    await withTimeout(env.yumekai_r2.delete(file.r2_key), 2000)
+  } catch (err) {
+    console.error('R2 delete failed', err)
+    return jsonResponse({ success: false, error: 'Hiba történt a fájl betöltésénél' }, { status: 500 })
+  }
 
   await env.DB.prepare(
     'INSERT INTO deletions (user_id, upload_id, deleted_at) VALUES (?1, ?2, CURRENT_TIMESTAMP)'

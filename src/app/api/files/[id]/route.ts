@@ -1,6 +1,7 @@
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { NextRequest } from "next/server"
 import { SITE_URL } from "@/constants"
+import { withTimeout } from "@/utils/with-timeout"
 
 export async function GET(req: NextRequest) {
   const { env } = getCloudflareContext()
@@ -16,15 +17,21 @@ export async function GET(req: NextRequest) {
     return new Response("Not found", { status: 404 })
   }
 
-  const [object] = await Promise.all([
-    env.yumekai_r2.get(upload.r2_key),
-    env.DB.prepare(
-      'UPDATE uploads SET view_count = COALESCE(view_count,0) + 1 WHERE id = ?1'
-    )
-      .bind(id)
-      .run(),
-  ])
-  if (!object?.body) {
+  const object: R2ObjectBody | string | null = await (async () => {
+    try {
+      return await withTimeout(env.yumekai_r2.get(upload.r2_key), 2000)
+    } catch (err) {
+      console.error('R2 get failed', err)
+      return 'Hiba történt a fájl betöltésénél'
+    }
+  })()
+
+  await env.DB.prepare(
+    'UPDATE uploads SET view_count = COALESCE(view_count,0) + 1 WHERE id = ?1'
+  )
+    .bind(id)
+    .run()
+  if (!object || typeof object === 'string' || !object.body) {
     return new Response('File not found', { status: 404 })
   }
 

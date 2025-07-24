@@ -1,7 +1,10 @@
 import { SESSION_COOKIE_NAME } from '@/constants'
+import { wrapD1, wrapR2 } from '@/utils/with-timeout'
 
 export const onRequest = async (ctx: any) => {
   const { request, env } = ctx
+  env.DB = wrapD1(env.DB)
+  env.yumekai_r2 = wrapR2(env.yumekai_r2)
   const start = performance.now()
 
   let response: Response

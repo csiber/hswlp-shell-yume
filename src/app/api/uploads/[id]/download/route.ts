@@ -5,6 +5,7 @@ import { jsonResponse } from '@/utils/api'
 import { ALBUM_PRICING_MODE, ALBUM_GROUP_CREDITS } from '@/constants'
 import { NextRequest } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
+import { withTimeout } from '@/utils/with-timeout'
 
 interface RouteContext<T> { params: Promise<T> }
 
@@ -54,8 +55,14 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
     alreadyDownloaded = true
   }
 
-  const object = await env.yumekai_r2.get(row.r2_key)
-  if (!object?.body) {
+  let object: R2ObjectBody | string | null = null
+  try {
+    object = await withTimeout(env.yumekai_r2.get(row.r2_key), 2000)
+  } catch (err) {
+    console.error('R2 get failed', err)
+    object = 'Hiba történt a fájl betöltésénél'
+  }
+  if (!object || typeof object === 'string' || !object.body) {
     return new Response('File not found', { status: 404 })
   }
 

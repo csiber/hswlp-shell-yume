@@ -10,6 +10,7 @@ import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
 import { parseBuffer } from 'music-metadata-browser'
 import { formatTitle } from '@/utils/music'
+import { withTimeout } from '@/utils/with-timeout'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -192,7 +193,12 @@ export async function POST(req: Request) {
     promptText = promptField
   }
 
-    await env.yumekai_r2.put(key, file)
+    try {
+      await withTimeout(env.yumekai_r2.put(key, file), 2000)
+    } catch (err) {
+      console.error('R2 put failed', err)
+      return jsonResponse({ success: false, error: 'Hiba történt a fájl betöltésénél' }, { status: 500 })
+    }
 
     const url = `/api/files/${id}` // helyi proxy link, védett!
 
