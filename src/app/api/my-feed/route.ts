@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     rows = result.results || []
     await kv.put(feedCacheKey, JSON.stringify(rows), { expirationTtl: 60 })
   }
-
+  
   if (pinnedItem === undefined) {
     const pinnedRow = await env.DB.prepare(
       'SELECT pinned_post_id FROM user WHERE id = ?1 LIMIT 1'
