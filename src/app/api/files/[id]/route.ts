@@ -16,16 +16,17 @@ export async function GET(req: NextRequest) {
     return new Response("Not found", { status: 404 })
   }
 
-  const object = await env.yumekai_r2.get(upload.r2_key)
+  const [object] = await Promise.all([
+    env.yumekai_r2.get(upload.r2_key),
+    env.DB.prepare(
+      'UPDATE uploads SET view_count = COALESCE(view_count,0) + 1 WHERE id = ?1'
+    )
+      .bind(id)
+      .run(),
+  ])
   if (!object?.body) {
-    return new Response("File not found", { status: 404 })
+    return new Response('File not found', { status: 404 })
   }
-
-  await env.DB.prepare(
-    'UPDATE uploads SET view_count = COALESCE(view_count,0) + 1 WHERE id = ?1'
-  )
-    .bind(id)
-    .run()
 
   const allowedOrigin = new URL(SITE_URL).origin
   return new Response(object.body, {
