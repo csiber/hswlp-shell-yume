@@ -38,12 +38,12 @@ export async function GET(req: NextRequest) {
   const allowedOrigin = new URL(SITE_URL).origin
   return new Response(object.body, {
     status: 200,
-    headers: {
-      "Content-Type": object.httpMetadata?.contentType || "audio/mpeg",
-      "Content-Disposition": 'inline; filename="audio.mp3"',
-      "Access-Control-Allow-Origin": allowedOrigin,
-      "Accept-Ranges": "bytes", // <--- ez fontos a seek és stream működéséhez
-      "Cache-Control": "no-store",
-    },
-  })
-}
+      headers: {
+        "Content-Type": object.httpMetadata?.contentType || "audio/mpeg",
+        "Content-Disposition": 'inline; filename="audio.mp3"',
+        "Access-Control-Allow-Origin": allowedOrigin,
+        "Accept-Ranges": "bytes", // <--- ez fontos a seek és stream működéséhez
+        "Cache-Control": "public, max-age=86400",
+      },
+    })
+  }

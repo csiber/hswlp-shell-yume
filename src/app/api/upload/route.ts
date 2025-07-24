@@ -41,6 +41,10 @@ async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
       method: 'POST',
       headers: { 'api-key': key },
       body: fd,
+      cf: {
+        cacheTtl: 86400,
+        cacheEverything: true,
+      },
     })
     if (!res.ok) return false
     const data = (await res.json()) as { nsfw_score?: number }
