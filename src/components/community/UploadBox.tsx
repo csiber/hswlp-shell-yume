@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import type { IAudioMetadata } from "music-metadata-browser";
 import { v4 as uuidv4 } from 'uuid'
-import { parseBlob } from "music-metadata-browser";
 import { formatTitle } from "@/utils/music";
 import { MAX_ALBUM_UPLOAD } from "@/constants";
 import {
@@ -44,8 +44,15 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [albumName, setAlbumName] = useState<string | null>(null);
   const [albumId, setAlbumId] = useState<string | null>(null);
   const dropRef = useRef<HTMLDivElement>(null);
+  const parseBlobRef = useRef<((file: Blob) => Promise<IAudioMetadata>) | null>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
   const sessionUser = useSessionStore((s) => s.session?.user)
+
+  useEffect(() => {
+    import('music-metadata-browser').then((mod) => {
+      parseBlobRef.current = mod.parseBlob;
+    });
+  }, []);
 
   const fetchQuota = async (u: string) => {
     try {
@@ -89,26 +96,31 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   }
 
   const prepareTitles = async (files: FileList) => {
-    const entries: Record<string, string> = {}
+    const entries: Record<string, string> = {};
     for (const file of Array.from(files)) {
-      const type = detectType(file)
+      const type = detectType(file);
       if (type === 'image') {
-        entries[file.name] = ''
+        entries[file.name] = '';
       } else if (type === 'music') {
         try {
-          const meta = await parseBlob(file)
-          const common = meta.common || {}
-          const t = common.title ? formatTitle(common.title) : formatTitle(file.name)
-          entries[file.name] = common.artist ? `${common.artist} - ${t}` : t
+          const parseBlob = parseBlobRef.current;
+          if (parseBlob) {
+            const meta = await parseBlob(file);
+            const common = meta.common || {};
+            const t = common.title ? formatTitle(common.title) : formatTitle(file.name);
+            entries[file.name] = common.artist ? `${common.artist} - ${t}` : t;
+          } else {
+            entries[file.name] = formatTitle(file.name);
+          }
         } catch {
-          entries[file.name] = formatTitle(file.name)
+          entries[file.name] = formatTitle(file.name);
         }
       } else {
-        entries[file.name] = formatTitle(file.name)
+        entries[file.name] = formatTitle(file.name);
       }
     }
-    setTitles(entries)
-  }
+    setTitles(entries);
+  };
 
   const handleUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) {
