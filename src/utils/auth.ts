@@ -103,25 +103,27 @@ export async function getUserTeamsWithPermissions(userId: string) {
   // Fetch permissions for each membership
   return Promise.all(
     userTeamMemberships.map(async (membership) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const m = membership as any;
       let roleName = '';
       let permissions: string[] = [];
 
       // Handle system roles
-      if (membership.isSystemRole) {
-        roleName = membership.roleId; // For system roles, roleId contains the role name
+      if (m.isSystemRole) {
+        roleName = m.roleId; // For system roles, roleId contains the role name
 
         // For system roles, get permissions based on role
-        if (membership.roleId === SYSTEM_ROLES_ENUM.OWNER || membership.roleId === SYSTEM_ROLES_ENUM.ADMIN) {
+        if (m.roleId === SYSTEM_ROLES_ENUM.OWNER || m.roleId === SYSTEM_ROLES_ENUM.ADMIN) {
           // Owners and admins have all permissions
           permissions = Object.values(TEAM_PERMISSIONS);
-        } else if (membership.roleId === SYSTEM_ROLES_ENUM.MEMBER) {
+        } else if (m.roleId === SYSTEM_ROLES_ENUM.MEMBER) {
           // Default permissions for members
           permissions = [
             TEAM_PERMISSIONS.ACCESS_DASHBOARD,
             TEAM_PERMISSIONS.CREATE_COMPONENTS,
             TEAM_PERMISSIONS.EDIT_COMPONENTS,
           ];
-        } else if (membership.roleId === SYSTEM_ROLES_ENUM.GUEST) {
+        } else if (m.roleId === SYSTEM_ROLES_ENUM.GUEST) {
           // Guest permissions are limited
           permissions = [
             TEAM_PERMISSIONS.ACCESS_DASHBOARD,
@@ -130,7 +132,7 @@ export async function getUserTeamsWithPermissions(userId: string) {
       } else {
         // Handle custom roles
         const role = await db.query.teamRoleTable.findFirst({
-          where: eq(teamRoleTable.id, membership.roleId),
+          where: eq(teamRoleTable.id, m.roleId),
         });
 
         if (role) {
@@ -141,13 +143,13 @@ export async function getUserTeamsWithPermissions(userId: string) {
       }
 
       return {
-        id: membership.teamId,
-        name: membership.team.name,
-        slug: membership.team.slug,
+        id: m.teamId,
+        name: m.team.name,
+        slug: m.team.slug,
         role: {
-          id: membership.roleId,
+          id: m.roleId,
           name: roleName,
-          isSystemRole: !!membership.isSystemRole,
+          isSystemRole: !!m.isSystemRole,
         },
         permissions,
       };
