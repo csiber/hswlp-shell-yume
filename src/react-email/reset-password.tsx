@@ -14,7 +14,7 @@ export default function ResetPassword({ resetUrl, userName }: ResetPasswordProps
         <p>
           <a href={resetUrl}>Reset password</a>
         </p>
-        <p>If you didn't request this, please ignore this message.</p>
+        <p>If you did not request this, please ignore this message.</p>
       </body>
     </html>
   );

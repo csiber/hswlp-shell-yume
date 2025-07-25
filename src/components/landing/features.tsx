@@ -32,7 +32,7 @@ export default function Features() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-zinc-600 mb-12 max-w-2xl mx-auto dark:text-zinc-400"
         >
-          Yumekai helps you create, get feedback and even earn income. Creativity here isn't a solitary pursuit.
+          Yumekai helps you create, get feedback and even earn income. Creativity here is not a solitary pursuit.
         </motion.p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left max-w-3xl mx-auto">

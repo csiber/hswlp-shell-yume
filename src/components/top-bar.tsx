@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Users,
   ShoppingCart,
+  Crosshair,
   CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -148,6 +149,27 @@ export default function TopBar({}: TopBarProps) {
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p>Marketplace</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/requests">
+                  <Crosshair className="size-5" />
+                  <span className="sr-only">Kérések</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Kérések</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
