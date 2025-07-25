@@ -37,6 +37,11 @@ export const UPLOAD_BAN_HOURS = parseInt(process.env.UPLOAD_BAN_HOURS || '24', 1
 
 // Badge definitions for the achievement system
 export const BADGE_DEFINITIONS = {
+  newcomer: {
+    name: '🔰 Newcomer',
+    description: 'Üdvözlünk! Most kezdted Yumekai kalandodat.',
+    icon: '🔰',
+  },
   hot_dropper: {
     name: '🔥 Hot Dropper',
     description: '3 trending poszt egy héten belül',
