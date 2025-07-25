@@ -85,7 +85,7 @@ export default function TopBar({}: TopBarProps) {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Főoldal</p>
+              <p>Home</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -164,12 +164,12 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/requests">
                   <Crosshair className="size-5" />
-                  <span className="sr-only">Kérések</span>
+                  <span className="sr-only">Requests</span>
                 </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Kérések</p>
+              <p>Requests</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

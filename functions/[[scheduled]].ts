@@ -142,7 +142,7 @@ async function sendLowCreditWarnings(db: any) {
 
     await sendEmail({
       to: row.email,
-      subject: '🪙 Elfogytak a pontjaid – ne maradj le!',
+      subject: '🪙 You\'re out of points – don\'t miss out!',
       html,
       text
     })
@@ -182,7 +182,7 @@ async function sendFirstPostEmails(db: any) {
 
     await sendEmail({
       to: email,
-      subject: '🎉 Az első Yumekai posztod fent van!',
+      subject: '🎉 Your first Yumekai post is live!',
       html,
       text,
     });
@@ -224,7 +224,7 @@ async function sendReengagementEmails(db: any) {
 
     await sendEmail({
       to: row.email,
-      subject: '👀 Rég nem láttunk – új NSFW képek várnak!',
+      subject: '👀 Long time no see – new NSFW images await!',
       html,
       text
     })

@@ -121,7 +121,7 @@ export default function MyFilesPage() {
         toast.error("Hiba történt törlés közben");
       }
     } catch {
-      toast.error("Hálózati hiba történt");
+      toast.error("Network error");
     }
   };
 
@@ -149,7 +149,7 @@ export default function MyFilesPage() {
 
       const res = await fetch(`/api/uploads/${item.id}/download`);
       if (res.ok) {
-        toast.success("Letöltés indítása");
+        toast.success("Starting download");
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -159,10 +159,10 @@ export default function MyFilesPage() {
         URL.revokeObjectURL(url);
         markDownloaded(item.id);
       } else {
-        toast.error("Letöltés sikertelen");
+        toast.error("Download failed");
       }
     } catch {
-      toast.error("Hálózati hiba történt");
+      toast.error("Network error");
     }
   };
 
@@ -171,7 +171,7 @@ export default function MyFilesPage() {
       <UploadBanAlert />
       {showApprovedNotice && (
         <div className="mb-4 rounded-md bg-amber-400 text-black p-4 shadow-md animate-fade-in">
-          Gratulálunk! Feltöltésed jóvá lett hagyva.
+          Congratulations! Your upload has been approved.
         </div>
       )}
       <div className="mb-4 flex gap-3 items-center">
@@ -179,25 +179,25 @@ export default function MyFilesPage() {
           variant={filter === null ? "default" : "outline"}
           onClick={() => setFilter(null)}
         >
-          Összes
+          All
         </Button>
         <Button
           variant={filter === "image" ? "default" : "outline"}
           onClick={() => setFilter("image")}
         >
-          Képek
+          Images
         </Button>
         <Button
           variant={filter === "music" ? "default" : "outline"}
           onClick={() => setFilter("music")}
         >
-          Zenék
+          Music
         </Button>
         <Button
           variant={filter === "prompt" ? "default" : "outline"}
           onClick={() => setFilter("prompt")}
         >
-          Promptek
+          Prompts
         </Button>
         <CreateAlbumDialog onCreated={mutate} />
       </div>
@@ -240,12 +240,12 @@ export default function MyFilesPage() {
             >
               {!item.approved && (
                 <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
-                  Moderációra vár
+                  Pending moderation
                 </span>
               )}
               {item.moderation_status === "punished" && (
                 <span className="absolute bottom-2 left-2 right-2 bg-red-600 text-xs text-white px-2 py-1 rounded">
-                  Szankcionálva – {item.moderation_reason}
+                  Punished – {item.moderation_reason}
                 </span>
               )}
               <MusicCard
@@ -281,7 +281,7 @@ export default function MyFilesPage() {
                 {item.locked ? <Lock className="w-3 h-3 text-red-500" /> : null}
               </div>
               <div className="px-1 pb-1 text-xs text-muted-foreground">
-                Eddig {item.total_generated_points} pontot hozott
+                Earned {item.total_generated_points} points so far
               </div>
             </div>
           ) : (
@@ -296,12 +296,12 @@ export default function MyFilesPage() {
             >
               {!item.approved && (
                 <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
-                  Moderációra vár
+                  Pending moderation
                 </span>
               )}
               {item.moderation_status === "punished" && (
                 <span className="absolute bottom-2 left-2 right-2 bg-red-600 text-xs text-white px-2 py-1 rounded">
-                  Szankcionálva – {item.moderation_reason}
+                  Punished – {item.moderation_reason}
                 </span>
               )}
               {item.mime?.startsWith("image/") && (
@@ -369,7 +369,7 @@ export default function MyFilesPage() {
                           ? "Szankcionált tartalom"
                           : userCredits < item.download_points
                           ? "Nincs elég kredit a letöltéshez"
-                          : `Letöltés ${item.download_points} pontért`}
+                          : `Download for ${item.download_points} credits`}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -410,7 +410,7 @@ export default function MyFilesPage() {
                 {item.locked ? <Lock className="w-3 h-3 text-red-500" /> : null}
               </div>
               <div className="px-2 pb-2 text-xs text-muted-foreground">
-                Eddig {item.total_generated_points} pontot hozott
+                Earned {item.total_generated_points} points so far
               </div>
             </Card>
           )
@@ -436,7 +436,7 @@ function PromptPreview({ url }: { url: string }) {
       {hasMore && (
         <Button asChild size="sm" className="mt-2">
           <a href={url} target="_blank" rel="noopener noreferrer">
-            Megnyitás
+            Open
           </a>
         </Button>
       )}

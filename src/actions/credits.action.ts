@@ -156,7 +156,7 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
 
       await sendEmail({
         to: session.user.email!,
-        subject: '🧾 Yumekai – Vásárlás visszaigazolás',
+        subject: '🧾 Yumekai – Purchase confirmation',
         html,
         text
       });

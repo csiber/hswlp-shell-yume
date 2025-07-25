@@ -25,25 +25,25 @@ export default function FeedStats({
         className={cn("block cursor-pointer", filter === "all" && "font-semibold text-primary")}
         onClick={() => onFilterChange("all")}
       >
-        📦 {total} elem
+        📦 {total} items
       </span>
       <span
         className={cn("block cursor-pointer", filter === "image" && "font-semibold text-primary")}
         onClick={() => onFilterChange("image")}
       >
-        🖼️ {images} kép
+        🖼️ {images} images
       </span>
       <span
         className={cn("block cursor-pointer", filter === "music" && "font-semibold text-primary")}
         onClick={() => onFilterChange("music")}
       >
-        🎵 {music} zene
+        🎵 {music} music
       </span>
       <span
         className={cn("block cursor-pointer", filter === "prompt" && "font-semibold text-primary")}
         onClick={() => onFilterChange("prompt")}
       >
-        💬 {prompts} prompt
+        💬 {prompts} prompts
       </span>
     </div>
   );

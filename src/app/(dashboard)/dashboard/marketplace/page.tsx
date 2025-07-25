@@ -12,17 +12,16 @@ export default async function MarketplacePage() {
     <>
       <div className="container mx-auto px-5 pb-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mt-4">Vásártér</h1>
+          <h1 className="text-4xl font-bold mt-4">Marketplace</h1>
           <p className="text-muted-foreground mt-2">
-            Vásárolj és használd prémium termékeinket kreditjeid
-            felhasználásával
+            Purchase and use our premium products with your credits
           </p>
         </div>
 
         <Alert
           color="warning"
-          title="Hogyan működik?"
-          description="Válassz ki egy komponenst, vásárold meg a kreditjeid felhasználásával, majd az aktiválás után azonnal élesben használhatod."
+          title="How does it work?"
+          description="Select a component, purchase it with your credits, then activate it to use immediately."
           className="mb-6"
         />
 

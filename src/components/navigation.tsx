@@ -46,14 +46,14 @@ export function Navigation() {
   const { isOpen, setIsOpen } = useNavStore();
 
   const navItems: NavItem[] = [
-    { name: "Főoldal", href: "/" },
+    { name: "Home", href: "/" },
     { name: "Explore", href: "/explore" as Route },
     { name: "Trending", href: "/trending" as Route },
     { name: "Random", href: "/random" as Route },
     ...(session
       ? [
-          { name: "Vezérlőpult", href: "/dashboard" as Route },
-          { name: "Beállítások", href: "/settings" as Route },
+          { name: "Dashboard", href: "/dashboard" as Route },
+          { name: "Settings", href: "/settings" as Route },
         ]
       : []),
   ];
@@ -104,7 +104,7 @@ export function Navigation() {
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="p-6">
                   <Menu className="w-9 h-9" />
-                  <span className="sr-only">Menü megnyitása</span>
+                  <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
 
