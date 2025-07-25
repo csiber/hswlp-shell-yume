@@ -59,6 +59,7 @@ export const userTable = sqliteTable("user", {
   googleAccountId: text({
     length: 255,
   }),
+  emailNotificationsEnabled: integer('email_notifications_enabled').default(1).notNull(),
   // @ts-expect-error circular reference
   referredBy: text('referred_by').references(() => userTable.id),
   /**
@@ -277,6 +278,18 @@ export const creditWarningEmailTable = sqliteTable('credit_warning_email', {
   index('credit_warning_email_user_idx').on(table.userId),
 ]);
 
+export const emailLogTable = sqliteTable('email_log', {
+  id: text().primaryKey().$defaultFn(() => `elog_${createId()}`).notNull(),
+  userId: text('user_id').references(() => userTable.id),
+  type: text({ length: 50 }).notNull(),
+  sentAt: integer('sent_at', { mode: 'timestamp' })
+    .$defaultFn(() => new Date())
+    .notNull(),
+}, (table) => [
+  index('email_log_user_idx').on(table.userId),
+  index('email_log_type_idx').on(table.type),
+]);
+
 
 
 // System-defined roles - these are always available
@@ -473,3 +486,4 @@ export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
 export type ReferralEvent = InferSelectModel<typeof referralEventsTable>;
 export type UserBadge = InferSelectModel<typeof userBadgeTable>;
 export type CreditWarningEmail = InferSelectModel<typeof creditWarningEmailTable>;
+export type EmailLog = InferSelectModel<typeof emailLogTable>;
