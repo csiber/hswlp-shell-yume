@@ -303,6 +303,42 @@ export const emailLogTable = sqliteTable('email_log', {
 
 ]);
 
+export const requestsTable = sqliteTable('requests', {
+  id: text().primaryKey().$defaultFn(() => `req_${createId()}`).notNull(),
+  userId: text('user_id').notNull().references(() => userTable.id),
+  prompt: text().notNull(),
+  type: text().notNull(),
+  style: text().notNull(),
+  offeredCredits: integer('offered_credits').notNull(),
+  status: text().default('open').notNull(),
+  isFlagged: integer('is_flagged').default(0).notNull(),
+  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+}, (table) => [
+  index('requests_user_idx').on(table.userId),
+  index('requests_status_idx').on(table.status),
+]);
+
+export const requestSubmissionTable = sqliteTable('request_submissions', {
+  id: text().primaryKey().$defaultFn(() => `rsb_${createId()}`).notNull(),
+  requestId: text('request_id').notNull().references(() => requestsTable.id),
+  userId: text('user_id').notNull().references(() => userTable.id),
+  fileUrl: text('file_url').notNull(),
+  isApproved: integer('is_approved').default(0).notNull(),
+  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+}, (table) => [
+  index('request_submissions_request_idx').on(table.requestId),
+  index('request_submissions_user_idx').on(table.userId),
+]);
+
+export const requestFlaggedAttemptTable = sqliteTable('request_flagged_attempts', {
+  id: text().primaryKey().$defaultFn(() => `rfa_${createId()}`).notNull(),
+  userId: text('user_id').references(() => userTable.id),
+  prompt: text().notNull(),
+  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+}, (table) => [
+  index('request_flagged_attempts_user_idx').on(table.userId),
+]);
+
 
 
 // System-defined roles - these are always available
@@ -501,3 +537,6 @@ export type UserBadge = InferSelectModel<typeof userBadgeTable>;
 export type CreditWarningEmail = InferSelectModel<typeof creditWarningEmailTable>;
 export type FirstPostEmail = InferSelectModel<typeof firstPostEmailTable>;
 export type EmailLog = InferSelectModel<typeof emailLogTable>;
+export type Request = InferSelectModel<typeof requestsTable>;
+export type RequestSubmission = InferSelectModel<typeof requestSubmissionTable>;
+export type RequestFlaggedAttempt = InferSelectModel<typeof requestFlaggedAttemptTable>;

@@ -64,6 +64,10 @@ export function Footer() {
                 © {new Date().getFullYear()} {SITE_NAME}. Minden jog fenntartva.
               </p>
 
+              <p className="text-xs text-muted-foreground text-center md:text-left">
+                Yumekai nem engedélyez erotikus, szexuális vagy erőszakos tartalom kérését vagy megosztását. Minden ilyen próbálkozás naplózásra kerül.
+              </p>
+
               <div className="flex flex-col md:flex-row items-center gap-4">
                 <ThemeSwitch />
                 <a
