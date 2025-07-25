@@ -12,7 +12,10 @@ export async function GET(req: NextRequest) {
 
   const { env } = getCloudflareContext()
   const row = await env.DB.prepare(
-    'SELECT r2_key FROM uploads WHERE id = ?1 LIMIT 1'
+    `SELECT r2_key
+       FROM uploads
+      WHERE id = ?1 AND approved = 1 AND visibility = 'public'
+      LIMIT 1`
   ).bind(id).first<{ r2_key: string | null }>()
 
   if (!row?.r2_key) {

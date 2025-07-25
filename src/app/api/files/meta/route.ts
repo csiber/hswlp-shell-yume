@@ -5,7 +5,11 @@ import { withTimeout } from '@/utils/with-timeout'
 export async function GET() {
   const { env } = getCloudflareContext()
   const rows = await env.DB.prepare(
-    `SELECT id, title, type, r2_key FROM uploads ORDER BY created_at DESC LIMIT 50`
+    `SELECT id, title, type, r2_key
+       FROM uploads
+      WHERE approved = 1 AND visibility = 'public'
+      ORDER BY created_at DESC
+      LIMIT 50`
   ).all<{ id: string; title: string; type: string; r2_key: string | null }>()
 
   const items = [] as { id: string; name: string; type: string; size: number | null }[]

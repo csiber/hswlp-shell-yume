@@ -8,13 +8,16 @@ export async function GET(req: NextRequest) {
 
   const id = req.nextUrl.pathname.split("/").pop()!
   const upload = await env.DB.prepare(
-    'SELECT r2_key, mime FROM uploads WHERE id = ?1 LIMIT 1'
+    `SELECT r2_key, mime, approved, visibility
+       FROM uploads
+      WHERE id = ?1
+      LIMIT 1`
   )
     .bind(id)
-    .first<{ r2_key: string; mime: string | null }>()
+    .first<{ r2_key: string; mime: string | null; approved: number; visibility: string }>()
 
-  if (!upload) {
-    return new Response("Not found", { status: 404 })
+  if (!upload || upload.approved !== 1 || upload.visibility !== 'public') {
+    return new Response('Not found', { status: 404 })
   }
 
   const object: R2ObjectBody | string | null = await (async () => {
