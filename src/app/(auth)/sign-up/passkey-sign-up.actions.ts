@@ -5,9 +5,9 @@ import { z } from "zod";
 import { generatePasskeyRegistrationOptions, verifyPasskeyRegistration } from "@/utils/webauthn";
 import { createId } from "@paralleldrive/cuid2";
 import { getDB } from "@/db";
-import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema";
+import { userTable, CREDIT_TRANSACTION_TYPE, referralEventsTable } from "@/db/schema";
 import { SIGN_UP_BONUS_CREDITS } from "@/constants";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
 import { createSession, generateSessionToken, setSessionTokenCookie } from "@/utils/auth";
 import type { RegistrationResponseJSON, PublicKeyCredentialCreationOptionsJSON } from "@simplewebauthn/types";
@@ -78,6 +78,7 @@ export const startPasskeyRegistrationAction = createServerAction()
             emailVerified: new Date(),
             currentCredits: SIGN_UP_BONUS_CREDITS,
             lastCreditRefreshAt: new Date(),
+            referredBy: input.referrerId ?? null,
           })
           .returning();
 
@@ -91,6 +92,19 @@ export const startPasskeyRegistrationAction = createServerAction()
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
           });
+
+          if (input.referrerId) {
+            await db
+              .update(userTable)
+              .set({ points: sql`${userTable.points} + 20` })
+              .where(eq(userTable.id, input.referrerId));
+            await db.insert(referralEventsTable).values({
+              id: `refe_${createId()}`,
+              referrerId: input.referrerId,
+              referredUserId: user.id,
+              rewarded: 1,
+            });
+          }
         }
 
         if (!user) {

@@ -26,9 +26,10 @@ import { REDIRECT_AFTER_SIGN_IN } from "@/constants";
 
 interface SignUpClientProps {
   redirectPath: string;
+  referrerId?: string;
 }
 
-const SignUpPage = ({ redirectPath }: SignUpClientProps) => {
+const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
   const { isTurnstileEnabled } = useConfigStore();
   const [isPasskeyModalOpen, setIsPasskeyModalOpen] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -105,11 +106,11 @@ const SignUpPage = ({ redirectPath }: SignUpClientProps) => {
   const passkeyCaptchaToken = useWatch({ control: passkeyForm.control, name: 'captchaToken' });
 
   const onSubmit = async (data: SignUpSchema) => {
-    signUp(data)
+    signUp({ ...data, referrerId })
   }
 
   const onPasskeySubmit = async (data: PasskeyEmailSchema) => {
-    startPasskeyRegistration(data)
+    startPasskeyRegistration({ ...data, referrerId })
   }
 
   return (

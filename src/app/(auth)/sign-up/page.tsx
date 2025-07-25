@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 const SignUpPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ redirect?: string }>;
+  searchParams: Promise<{ redirect?: string; ref?: string }>;
 }) => {
-  const { redirect: redirectParam } = await searchParams;
+  const { redirect: redirectParam, ref: referrerId } = await searchParams;
   const session = await getSessionFromCookie();
   const redirectPath = redirectParam ?? REDIRECT_AFTER_SIGN_IN;
 
@@ -24,7 +24,7 @@ const SignUpPage = async ({
     return redirect(redirectPath);
   }
 
-  return <SignUpClientComponent redirectPath={redirectPath} />
+  return <SignUpClientComponent redirectPath={redirectPath} referrerId={referrerId} />
 }
 
 export default SignUpPage;

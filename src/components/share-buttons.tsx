@@ -10,20 +10,25 @@ interface ShareButtonsProps {
   title: string;
   url: string;
   className?: string;
+  referrerId?: string;
 }
 
-export default function ShareButtons({ title, url, className }: ShareButtonsProps) {
+export default function ShareButtons({ title, url, className, referrerId }: ShareButtonsProps) {
+  const shareUrl = referrerId ? `${url}?ref=${referrerId}` : url;
   const encodedText = encodeURIComponent(title);
-  const encodedUrl = encodeURIComponent(url);
+  const encodedUrl = encodeURIComponent(shareUrl);
 
   function copyLink() {
-    navigator.clipboard.writeText(url).then(() => {
+    navigator.clipboard.writeText(shareUrl).then(() => {
       toast.success("Link másolva a vágólapra");
     });
   }
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
+      {referrerId && (
+        <p className="text-sm text-center">💌 Küldd el egy barátodnak:<br/>Ha regisztrál → kapsz 20 pontot!</p>
+      )}
       <Button size="icon" variant="secondary" asChild>
         <a
           href={`https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`}

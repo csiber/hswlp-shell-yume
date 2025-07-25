@@ -55,6 +55,7 @@ export const userTable = sqliteTable("user", {
   googleAccountId: text({
     length: 255,
   }),
+  referredBy: text('referred_by').references(() => userTable.id),
   /**
    * This can either be an absolute or relative path to an image
    */
@@ -209,6 +210,16 @@ export const postsTable = sqliteTable("posts", {
   createdAt: integer({ mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
 });
 
+export const referralEventsTable = sqliteTable("referral_events", {
+  id: text().primaryKey().$defaultFn(() => `refe_${createId()}`).notNull(),
+  referrerId: text('referrer_id').notNull().references(() => userTable.id),
+  referredUserId: text('referred_user_id').notNull().references(() => userTable.id),
+  timestamp: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+  rewarded: integer().default(0).notNull(),
+}, (table) => [
+  index('referral_events_referrer_idx').on(table.referrerId),
+  index('referral_events_referred_idx').on(table.referredUserId),
+]);
 export const highlightedPostsTable = sqliteTable("highlighted_posts", {
   id: text().primaryKey().$defaultFn(() => `hlp_${createId()}`).notNull(),
   post_id: text().notNull().references(() => postsTable.id),
@@ -409,6 +420,12 @@ export const userRelations = relations(userTable, ({ many }) => ({
   creditTransactions: many(creditTransactionTable),
   purchasedItems: many(purchasedItemsTable),
   teamMemberships: many(teamMembershipTable),
+  referrals: many(referralEventsTable, {
+    relationName: 'referrer',
+  }),
+  referredByEvents: many(referralEventsTable, {
+    relationName: 'referred',
+  }),
 }));
 
 export type User = InferSelectModel<typeof userTable>;
@@ -424,3 +441,4 @@ export type Post = InferSelectModel<typeof postsTable>;
 export type HighlightedPost = InferSelectModel<typeof highlightedPostsTable>;
 export type MarketplaceActivation = InferSelectModel<typeof marketplaceActivationsTable>;
 export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
+export type ReferralEvent = InferSelectModel<typeof referralEventsTable>;

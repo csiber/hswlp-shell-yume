@@ -2,14 +2,14 @@
 
 import { createServerAction, ZSAError } from "zsa"
 import { getDB } from "@/db"
-import { userTable, CREDIT_TRANSACTION_TYPE } from "@/db/schema"
+import { userTable, CREDIT_TRANSACTION_TYPE, referralEventsTable } from "@/db/schema"
 import { SIGN_UP_BONUS_CREDITS } from "@/constants"
 import { signUpSchema } from "@/schemas/signup.schema";
 import { createId } from "@paralleldrive/cuid2";
 import { hashPassword } from "@/utils/password-hasher";
 import { createSession, generateSessionToken, setSessionTokenCookie } from "@/utils/auth";
 import { logTransaction } from "@/utils/credits";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
 import { getIP } from "@/utils/get-IP";
 import { validateTurnstileToken } from "@/utils/validate-captcha";
@@ -74,7 +74,8 @@ export const signUpAction = createServerAction()
             signUpIpAddress: await getIP(),
             emailVerified: new Date(),
             currentCredits: SIGN_UP_BONUS_CREDITS,
-          lastCreditRefreshAt: new Date(),
+            lastCreditRefreshAt: new Date(),
+            referredBy: input.referrerId ?? null,
           })
           .returning();
 
@@ -88,6 +89,19 @@ export const signUpAction = createServerAction()
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
           });
+
+          if (input.referrerId) {
+            await db
+              .update(userTable)
+              .set({ points: sql`${userTable.points} + 20` })
+              .where(eq(userTable.id, input.referrerId));
+            await db.insert(referralEventsTable).values({
+              id: `refe_${createId()}`,
+              referrerId: input.referrerId,
+              referredUserId: user.id,
+              rewarded: 1,
+            });
+          }
         }
 
         if (!user || !user.email) {
