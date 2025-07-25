@@ -2,8 +2,10 @@ import { getCloudflareContext } from "@opennextjs/cloudflare"
 import { NextRequest } from "next/server"
 import { SITE_URL } from "@/constants"
 import { withTimeout } from "@/utils/with-timeout"
+import { getSessionFromCookie } from "@/utils/auth"
 
 export async function GET(req: NextRequest) {
+  const session = await getSessionFromCookie()
   const { env } = getCloudflareContext()
 
   const id = req.nextUrl.pathname.split('/').pop()!
@@ -13,11 +15,12 @@ export async function GET(req: NextRequest) {
     mime: string | null
     approved: number
     visibility: string
+    user_id: string
   } | null
 
   try {
     upload = await env.DB.prepare(
-      `SELECT r2_key, mime, approved, visibility
+      `SELECT r2_key, mime, approved, visibility, user_id
          FROM uploads
         WHERE id = ?1
         LIMIT 1`
@@ -34,7 +37,9 @@ export async function GET(req: NextRequest) {
     return new Response('Fájl nem található', { status: 404 })
   }
 
-  if (upload.approved !== 1 || upload.visibility !== 'public' || !upload.r2_key) {
+  const isOwner = session?.user?.id === upload.user_id
+
+  if ((!isOwner && (upload.approved !== 1 || upload.visibility !== 'public')) || !upload.r2_key) {
     console.warn('File not public or missing key', id)
     return new Response('Fájl nem található', { status: 404 })
   }
