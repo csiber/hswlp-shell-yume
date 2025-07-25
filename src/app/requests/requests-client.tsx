@@ -50,7 +50,7 @@ export default function RequestsClient() {
       setPrompt('')
       setStyle('')
     } else {
-      const data = await res.json().catch(() => null)
+      const data = (await res.json().catch(() => null)) as { error?: string } | null
       toast.error(data?.error || 'Hiba történt')
     }
   }
