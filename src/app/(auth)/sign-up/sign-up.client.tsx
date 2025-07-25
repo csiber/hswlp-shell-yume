@@ -45,6 +45,9 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
     onSuccess: () => {
       toast.dismiss()
       toast.success("Sikeres fióklétrehozás")
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('newcomer_badge_toast', '1')
+      }
       window.location.href = redirectPath || REDIRECT_AFTER_SIGN_IN
     }
   })
@@ -58,6 +61,9 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
     onSuccess: () => {
       toast.dismiss()
       toast.success("Sikeres fióklétrehozás")
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('newcomer_badge_toast', '1')
+      }
       window.location.href = redirectPath || REDIRECT_AFTER_SIGN_IN
     }
   })
