@@ -1,10 +1,15 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getDB } from '@/db'
-import { userTable, CREDIT_TRANSACTION_TYPE } from '@/db/schema'
+import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable } from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
 import { lt, isNull, or, eq } from 'drizzle-orm'
+import { sendEmail } from '@/utils/email'
+import { CreditsLowWarning } from '@/react-email'
+import { renderToStaticMarkup } from 'react-dom/server'
+import { createId } from '@paralleldrive/cuid2'
+import React from 'react'
 
 // Ütemezett Worker, amely havonta kreditet ad a kevésbé aktív felhasználóknak
 
@@ -46,6 +51,7 @@ export const onScheduled = async () => {
   }
 
   await checkBadges(db)
+  await sendLowCreditWarnings(db)
 }
 
 async function checkBadges(db: any) {
@@ -95,5 +101,45 @@ async function checkBadges(db: any) {
   ).all()
   for (const row of spendRows.results || []) {
     await awardBadge(row.user_id, 'spender')
+  }
+}
+
+async function sendLowCreditWarnings(db: any) {
+  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+
+  const rows = await db.execute(
+    `SELECT u.id, u.email, u.nickname, l.sent_at FROM user u
+     LEFT JOIN credit_warning_email l ON l.user_id = u.id
+     WHERE u.currentCredits = 0
+       AND u.emailVerified IS NOT NULL
+       AND (u.last_login_at IS NULL OR u.last_login_at <= ?1)
+       AND (l.sent_at IS NULL OR l.sent_at <= ?2)`
+  ).bind(threeDaysAgo.toISOString(), weekAgo.toISOString()).all<{
+    id: string
+    email: string
+    nickname: string | null
+    sent_at?: string
+  }>()
+
+  for (const row of rows.results || []) {
+    if (!row.email) continue
+
+    const html = renderToStaticMarkup(
+      <CreditsLowWarning userName={row.nickname || undefined} />
+    )
+
+    await sendEmail({
+      to: row.email,
+      subject: '🪙 Elfogytak a pontjaid – ne maradj le!',
+      html,
+      text: 'Jelenleg 0 pontod van. Azóta új képek, badge-ek, funkciók jelentek meg...'
+    })
+
+    await db.insert(creditWarningEmailTable).values({
+      id: `cwl_${createId()}`,
+      userId: row.id,
+      sentAt: new Date()
+    })
   }
 }
