@@ -1,13 +1,16 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getDB } from '@/db'
+import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, firstPostEmailTable } from '@/db/schema'
 import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, emailLogTable } from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
-import { lt, isNull, or, eq } from 'drizzle-orm'
+import { lt, isNull, or, eq, and } from 'drizzle-orm'
 import { sendEmail } from '@/utils/email'
 import { renderCreditsLowWarningEmail } from '@/utils/credits-low-warning-email'
+import { renderFirstPostEmail } from '@/utils/first-post-email'
 import { renderReengagementEmail } from '@/utils/reengagement-email'
+
 import { createId } from '@paralleldrive/cuid2'
 
 // Ütemezett Worker, amely havonta kreditet ad a kevésbé aktív felhasználóknak
@@ -51,6 +54,7 @@ export const onScheduled = async () => {
 
   await checkBadges(db)
   await sendLowCreditWarnings(db)
+  await sendFirstPostEmails(db)
   await sendReengagementEmails(db)
 }
 
@@ -145,6 +149,43 @@ async function sendLowCreditWarnings(db: any) {
     })
   }
 }
+
+
+async function sendFirstPostEmails(db: any) {
+  const rows = await db
+    .select()
+    .from(firstPostEmailTable)
+    .leftJoin(userTable, eq(firstPostEmailTable.userId, userTable.id))
+    .where(and(isNull(firstPostEmailTable.sentAt), lt(firstPostEmailTable.sendAfter, new Date())))
+    .all<{
+      first_post_email: { id: string; userId: string; postId: string };
+      user: { email: string | null; nickname: string | null; emailVerified: number | null };
+    }>();
+
+  for (const row of rows) {
+    const email = row.user.email;
+    if (!email || !row.user.emailVerified) continue;
+
+    const likesRow = await db
+      .execute('SELECT COUNT(*) as c FROM post_likes WHERE post_id = ?1')
+      .bind(row.first_post_email.postId)
+      .first<{ c: number }>();
+
+    const likeCount = likesRow?.c ?? 0;
+    const postUrl = `https://yumekai.com/post/${row.first_post_email.postId}`;
+    const { html, text } = renderFirstPostEmail({ postUrl, likeCount });
+
+    await sendEmail({
+      to: email,
+      subject: '🎉 Az első Yumekai posztod fent van!',
+      html,
+      text,
+    });
+
+    await db
+      .update(firstPostEmailTable)
+      .set({ sentAt: new Date() })
+      .where(eq(firstPostEmailTable.id, row.first_post_email.id));
 
 async function sendReengagementEmails(db: any) {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)

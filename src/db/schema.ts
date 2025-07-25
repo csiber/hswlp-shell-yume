@@ -278,6 +278,17 @@ export const creditWarningEmailTable = sqliteTable('credit_warning_email', {
   index('credit_warning_email_user_idx').on(table.userId),
 ]);
 
+
+export const firstPostEmailTable = sqliteTable('first_post_email', {
+  id: text().primaryKey().$defaultFn(() => `fpe_${createId()}`).notNull(),
+  userId: text('user_id').notNull().references(() => userTable.id),
+  postId: text('post_id').notNull(),
+  sendAfter: integer('send_after', { mode: 'timestamp' }).notNull(),
+  sentAt: integer('sent_at', { mode: 'timestamp' }),
+}, (table) => [
+  index('first_post_email_user_idx').on(table.userId),
+  index('first_post_email_send_after_idx').on(table.sendAfter),
+
 export const emailLogTable = sqliteTable('email_log', {
   id: text().primaryKey().$defaultFn(() => `elog_${createId()}`).notNull(),
   userId: text('user_id').references(() => userTable.id),
@@ -288,6 +299,7 @@ export const emailLogTable = sqliteTable('email_log', {
 }, (table) => [
   index('email_log_user_idx').on(table.userId),
   index('email_log_type_idx').on(table.type),
+
 ]);
 
 
@@ -486,4 +498,5 @@ export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
 export type ReferralEvent = InferSelectModel<typeof referralEventsTable>;
 export type UserBadge = InferSelectModel<typeof userBadgeTable>;
 export type CreditWarningEmail = InferSelectModel<typeof creditWarningEmailTable>;
+export type FirstPostEmail = InferSelectModel<typeof firstPostEmailTable>;
 export type EmailLog = InferSelectModel<typeof emailLogTable>;

@@ -11,6 +11,7 @@ import { calculateUploadCredits } from '@/utils/upload-credits'
 import { parseBuffer } from 'music-metadata-browser'
 import { formatTitle } from '@/utils/music'
 import { withTimeout } from '@/utils/with-timeout'
+import { createId } from '@paralleldrive/cuid2'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -172,6 +173,7 @@ export async function POST(req: Request) {
 
   // Calculate download points based on metadata
   let downloadPoints = 2
+  let userUploadCount = 0
   try {
     if (type === 'music' && meta) {
       const common = meta.common || {}
@@ -184,7 +186,8 @@ export async function POST(req: Request) {
     const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE user_id = ?1')
       .bind(session.user.id)
       .first<{ c: number }>()
-    if ((countRow?.c ?? 0) === 0) downloadPoints++
+    userUploadCount = countRow?.c ?? 0
+    if (userUploadCount === 0) downloadPoints++
   } catch (err) {
     console.warn('Failed to calculate download points', err)
   }
@@ -254,6 +257,13 @@ export async function POST(req: Request) {
       .first<{ currentCredits: number }>()
 
     await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
+
+    if (userUploadCount === 0) {
+      const sendAfter = new Date(Date.now() + 60 * 60 * 1000)
+      await env.DB.prepare(
+        'INSERT INTO first_post_email (id, user_id, post_id, send_after) VALUES (?1, ?2, ?3, ?4)'
+      ).bind(`fpe_${createId()}`, session.user.id, id, sendAfter.toISOString()).run()
+    }
 
     return jsonResponse({
       success: true,
