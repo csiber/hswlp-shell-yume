@@ -21,8 +21,8 @@ export default async function MarketplacePage() {
 
         <Alert
           color="warning"
-          title="Demo funkció"
-          description="Ez az oldal bemutatja, hogyan valósítható meg a kredit alapú fizetés. Saját igényeid szerint továbbfejlesztheted."
+          title="Hogyan működik?"
+          description="Válassz ki egy komponenst, vásárold meg a kreditjeid felhasználásával, majd az aktiválás után azonnal élesben használhatod."
           className="mb-6"
         />
 
