@@ -12,6 +12,8 @@ import { getStripeClient } from "@/lib/stripe-client";
 import { MAX_TRANSACTIONS_PER_PAGE, CREDITS_EXPIRATION_YEARS } from "@/constants";
 import ms from "ms";
 import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
+import { sendEmail } from "@/utils/email";
+import { renderPurchaseEmail } from "@/utils/purchase-email";
 
 // Action types
 type GetTransactionsInput = {
@@ -138,6 +140,25 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
         type: CREDIT_TRANSACTION_TYPE.PURCHASE,
         expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} év`)),
         paymentIntentId: paymentIntent?.id
+      });
+
+      const userName = session.user.firstName
+        ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
+        : session.user.nickname || session.user.email;
+      const { html, text } = renderPurchaseEmail({
+        userName,
+        date: new Date().toLocaleString('hu-HU', { timeZone: 'Europe/Budapest' }),
+        packageName: packageId,
+        price: `${creditPackage.price} Ft`,
+        transactionId: paymentIntent.id,
+        credits: creditPackage.credits
+      });
+
+      await sendEmail({
+        to: session.user.email!,
+        subject: '🧾 Yumekai – Vásárlás visszaigazolás',
+        html,
+        text
       });
 
       return { success: true };

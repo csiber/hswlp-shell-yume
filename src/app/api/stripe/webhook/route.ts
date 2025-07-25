@@ -1,8 +1,13 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
-import { updateUserCredits, logTransaction } from '@/utils/credits'
+import { updateUserCredits, logTransaction, getCreditPackage } from '@/utils/credits'
 import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { CREDITS_EXPIRATION_YEARS } from '@/constants'
+import { sendEmail } from '@/utils/email'
+import { renderPurchaseEmail } from '@/utils/purchase-email'
+import { getDB } from '@/db'
+import { userTable } from '@/db/schema'
+import { eq } from 'drizzle-orm'
 import ms from 'ms'
 
 async function verifySignature(body: string, signatureHeader: string, secret: string) {
@@ -54,6 +59,7 @@ export async function POST(req: Request) {
       metadata?: Record<string, string>
     }
     const userId = paymentIntent.metadata?.userId
+    const packageId = paymentIntent.metadata?.packageId
     const credits = parseInt(paymentIntent.metadata?.credits || '0', 10)
     if (userId && credits > 0) {
       await updateUserCredits(userId, credits)
@@ -65,6 +71,35 @@ export async function POST(req: Request) {
         expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} év`)),
         paymentIntentId: paymentIntent.id
       })
+
+      try {
+        const db = await getDB()
+        const user = await db.query.userTable.findFirst({
+          where: eq(userTable.id, userId),
+          columns: { firstName: true, lastName: true, nickname: true, email: true }
+        })
+        const pack = packageId ? getCreditPackage(packageId) : undefined
+        if (user?.email && pack) {
+          const userName = user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.nickname || user.email
+          const { html, text } = renderPurchaseEmail({
+            userName,
+            date: new Date().toLocaleString('hu-HU', { timeZone: 'Europe/Budapest' }),
+            packageName: packageId || '',
+            price: `${pack.price} Ft`,
+            transactionId: paymentIntent.id,
+            credits: pack.credits
+          })
+
+          await sendEmail({
+            to: user.email,
+            subject: '🧾 Yumekai – Vásárlás visszaigazolás',
+            html,
+            text
+          })
+        }
+      } catch (e) {
+        console.error('Failed to send purchase email from webhook:', e)
+      }
     }
   }
 

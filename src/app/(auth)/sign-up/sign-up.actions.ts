@@ -14,6 +14,7 @@ import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
 import { getIP } from "@/utils/get-IP";
 import { validateTurnstileToken } from "@/utils/validate-captcha";
 import { isTurnstileEnabled } from "@/flags";
+import { awardBadge } from "@/utils/badges";
 
 export const signUpAction = createServerAction()
   .input(signUpSchema)
@@ -104,6 +105,8 @@ export const signUpAction = createServerAction()
               rewarded: 1,
             });
           }
+
+          await awardBadge(user.id, 'newcomer');
         }
 
         if (!user || !user.email) {

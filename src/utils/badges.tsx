@@ -1,7 +1,11 @@
+import 'server-only'
 import { getDB } from '@/db'
-import { userBadgeTable } from '@/db/schema'
+import { userBadgeTable, userTable } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { BADGE_DEFINITIONS, BadgeKey } from '@/constants'
+import { sendEmail } from './email'
+import { NewBadge } from '@/react-email'
+import React from 'react'
 
 export async function awardBadge(userId: string, badge: BadgeKey) {
   const db = await getDB()
@@ -16,6 +20,25 @@ export async function awardBadge(userId: string, badge: BadgeKey) {
     badgeKey: badge,
     awardedAt: new Date()
   })
+
+  const user = await db.query.userTable.findFirst({
+    where: eq(userTable.id, userId),
+    columns: { email: true, emailVerified: true, notificationsEnabled: true }
+  })
+
+  if (user?.email && user.emailVerified && user.notificationsEnabled) {
+    await sendEmail({
+      to: user.email,
+      subject: '🏅 Gratulálunk, új rangot szereztél!',
+      component: (
+        <NewBadge
+          badgeName={BADGE_DEFINITIONS[badge].name}
+          badgeDescription={BADGE_DEFINITIONS[badge].description}
+          badgeIcon={BADGE_DEFINITIONS[badge].icon}
+        />
+      )
+    })
+  }
 }
 
 export type UserBadgeWithMeta = {

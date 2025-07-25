@@ -66,7 +66,7 @@ async function checkBadges(db: any) {
         GROUP BY u.id
         HAVING COUNT(f.id) >= 5
      ) t GROUP BY user_id HAVING cnt >= 3`
-  ).all<{ user_id: string }>()
+  ).all()
   for (const row of hotRows.results || []) {
     await awardBadge(row.user_id, 'hot_dropper')
   }
@@ -74,7 +74,7 @@ async function checkBadges(db: any) {
   // Fan Favorite - any post with 20+ likes
   const fanRows = await db.execute(
     `SELECT u.user_id FROM uploads u JOIN favorites f ON u.id = f.upload_id GROUP BY u.id HAVING COUNT(f.id) >= 20`
-  ).all<{ user_id: string }>()
+  ).all()
   for (const row of fanRows.results || []) {
     await awardBadge(row.user_id, 'fan_favorite')
   }
@@ -82,7 +82,7 @@ async function checkBadges(db: any) {
   // Visual Artist - 100 uploads total
   const visualRows = await db.execute(
     `SELECT user_id FROM uploads GROUP BY user_id HAVING COUNT(*) >= 100`
-  ).all<{ user_id: string }>()
+  ).all()
   for (const row of visualRows.results || []) {
     await awardBadge(row.user_id, 'visual_artist')
   }
@@ -90,7 +90,7 @@ async function checkBadges(db: any) {
   // Master Commentator - comments received 100 reactions
   const commentRows = await db.execute(
     `SELECT c.user_id FROM comments c JOIN comment_reactions r ON r.comment_id = c.id GROUP BY c.user_id HAVING COUNT(r.id) >= 100`
-  ).all<{ user_id: string }>()
+  ).all()
   for (const row of commentRows.results || []) {
     await awardBadge(row.user_id, 'master_commentator')
   }
@@ -98,7 +98,7 @@ async function checkBadges(db: any) {
   // Spender - spent 1000 points (credits)
   const spendRows = await db.execute(
     `SELECT user_id, SUM(-amount) as spent FROM credit_transaction WHERE amount < 0 GROUP BY user_id HAVING SUM(-amount) >= 1000`
-  ).all<{ user_id: string }>()
+  ).all()
   for (const row of spendRows.results || []) {
     await awardBadge(row.user_id, 'spender')
   }
