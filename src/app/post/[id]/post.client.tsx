@@ -4,6 +4,7 @@ import useSWR from 'swr'
 import { useSessionStore } from '@/state/session'
 import PromptBox from '@/components/community/PromptBox'
 import NsfwImage from '@/components/ui/NsfwImage'
+import ShareButtons from '@/components/share-buttons'
 
 interface ApiResponse {
   post: {
@@ -52,24 +53,11 @@ export default function PostClient({ id }: { id: string }) {
           🔓 További funkciókért jelentkezz be vagy regisztrálj
         </div>
       )}
-      <div className="flex gap-4 pt-2">
-        <a
-          href={`https://twitter.com/intent/tweet?url=https://yumekai.com/post/${id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          Twitter
-        </a>
-        <a
-          href={`https://www.reddit.com/submit?url=https://yumekai.com/post/${id}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline"
-        >
-          Reddit
-        </a>
-      </div>
+      <ShareButtons
+        title={post.title}
+        url={`${typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL ?? ''}/post/${id}`}
+        className="fixed right-4 bottom-4 z-20 print:hidden"
+      />
     </main>
   )
 }
