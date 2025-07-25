@@ -228,7 +228,7 @@ export default function TopBar({}: TopBarProps) {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Csapatok</p>
+              <p>Aktív tagok</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
