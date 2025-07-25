@@ -12,6 +12,7 @@ import { parseBuffer } from 'music-metadata-browser'
 import { formatTitle } from '@/utils/music'
 import { withTimeout } from '@/utils/with-timeout'
 import { createId } from '@paralleldrive/cuid2'
+import { generateRandomName } from '@/utils/random-name'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -72,7 +73,8 @@ export async function POST(req: Request) {
 
   const formData = await req.formData()
   const file = formData.get('file')
-  const title = formData.get('title')
+  const titleField = formData.get('title')
+  const title = typeof titleField === 'string' ? titleField : ''
   const type = formData.get('type')
   const promptField = formData.get('prompt')
   const artist = formData.get('artist')
@@ -87,7 +89,7 @@ export async function POST(req: Request) {
   const albumId = typeof albumIdField === 'string' ? albumIdField : null
   const albumName = typeof albumNameField === 'string' ? albumNameField.trim() : null
 
-  if (!(file instanceof Blob) || typeof title !== 'string' || typeof type !== 'string') {
+  if (!(file instanceof Blob) || typeof type !== 'string') {
     return jsonResponse({ success: false, error: 'Invalid form data' }, { status: 400 })
   }
 
@@ -130,6 +132,9 @@ export async function POST(req: Request) {
   }
 
   let finalTitle = title
+  if (type === 'image' && !title.trim()) {
+    finalTitle = generateRandomName()
+  }
   if (type === 'music' && meta) {
     const common = meta.common || {}
     const t = common.title ? formatTitle(common.title) : formatTitle(title)
@@ -139,11 +144,7 @@ export async function POST(req: Request) {
     finalTitle = formatTitle(title)
   }
 
-  if (type === 'image' && !title.trim()) {
-    return jsonResponse({ success: false, error: 'Title required' }, { status: 400 })
-  }
-
-    if (type === 'image' && await isNsfwImage(file, env)) {
+  if (type === 'image' && await isNsfwImage(file, env)) {
       return jsonResponse({ success: false, error: 'NSFW content detected' }, { status: 400 })
     }
 

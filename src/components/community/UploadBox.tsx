@@ -157,10 +157,6 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     for (const file of Array.from(selectedFiles)) {
       const formData = new FormData();
       const title = titles[file.name] ?? formatTitle(file.name);
-      if (detectType(file) === "image" && !title.trim()) {
-        toast.error(`Adj címet a képnek: ${file.name}`);
-        continue;
-      }
       formData.append("title", title);
       formData.append("type", detectType(file));
       formData.append("file", file);
@@ -270,7 +266,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                     {isImage ? (
                       <input
                         type="text"
-                        placeholder="Image title"
+                        placeholder="Image title (optional)"
                         className="border rounded px-1 text-sm flex-1"
                         value={titles[file.name] ?? ''}
                         onChange={(e) =>

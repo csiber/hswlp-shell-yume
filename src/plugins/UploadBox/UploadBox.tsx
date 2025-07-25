@@ -38,8 +38,8 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
   }
 
   async function upload() {
-    if (!file || !title.trim()) {
-      toast.error("Hiányzó fájl vagy cím")
+    if (!file) {
+      toast.error("Hiányzó fájl")
       return
     }
     startTransition(async () => {
@@ -70,7 +70,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <Input
-          placeholder="Adj címet a feltöltésednek..."
+          placeholder="Adj címet a feltöltésednek... (opcionális)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
