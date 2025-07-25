@@ -1,7 +1,6 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getDB } from '@/db'
-import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, firstPostEmailTable } from '@/db/schema'
-import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, emailLogTable } from '@/db/schema'
+import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, firstPostEmailTable, emailLogTable } from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
@@ -55,7 +54,7 @@ export const onScheduled = async () => {
   await checkBadges(db)
   await sendLowCreditWarnings(db)
   await sendFirstPostEmails(db)
-  await sendReengagementEmails(db)
+  // await sendReengagementEmails(db)
 }
 
 async function checkBadges(db: any) {

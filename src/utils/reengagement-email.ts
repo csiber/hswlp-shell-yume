@@ -4,14 +4,14 @@ export interface ReengagementEmailData {
 
 export function renderReengagementEmail({ userName }: ReengagementEmailData) {
   const html = `<!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
   <body>
-    <p>Szia ${userName || 'felhasználó'}! 7 napja nem jártál nálunk. Ezalatt sok minden történt!</p>
-    <p>🎴 Új képek kerültek fel a galériába – köztük egy csomó NSFW is.</p>
-    <p><a href="https://yumekai.com/explore">Nézd meg most → yumekai.com/explore</a></p>
-    <p>Ne szeretnél több ilyen levelet? Állítsd be az értesítéseidet itt.</p>
+    <p>Hi ${userName || 'user'}! You haven't visited us for 7 days and a lot has happened!</p>
+    <p>🎴 New images have been added to the gallery – including plenty of NSFW.</p>
+    <p><a href="https://yumekai.com/explore">Check them out → yumekai.com/explore</a></p>
+    <p>Don't want more emails like this? Update your notifications here.</p>
   </body>
 </html>`;
-  const text = `Szia ${userName || 'felhasználó'}! 7 napja nem jártál nálunk. Ezalatt sok minden történt!\n\n🎴 Új képek kerültek fel a galériába – köztük egy csomó NSFW is.\nNézd meg most → https://yumekai.com/explore\n\nNe szeretnél több ilyen levelet? Állítsd be az értesítéseidet itt.`;
+  const text = `Hi ${userName || 'user'}! You haven't visited us for 7 days and a lot has happened!\n\n🎴 New images have been added to the gallery – including plenty of NSFW.\nCheck them out → https://yumekai.com/explore\n\nDon't want more emails like this? Update your notifications here.`;
   return { html, text };
 }

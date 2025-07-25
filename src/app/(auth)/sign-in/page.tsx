@@ -7,8 +7,8 @@ import { REDIRECT_AFTER_SIGN_IN } from "@/constants";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Bejelentkezés",
-  description: "Lépj be a fiókodba",
+  title: "Login",
+  description: "Sign in to your account",
 };
 
 const SignInPage = async ({

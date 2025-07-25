@@ -169,7 +169,7 @@ export default function CommunityFeedV3({
           >
             <path d="M12 5v14M5 12h14" />
           </svg>
-          <p className="text-sm">Nincs közösségi tartalom</p>
+          <p className="text-sm">No community content</p>
         </div>
       ) : (
         <>

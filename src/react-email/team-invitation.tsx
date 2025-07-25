@@ -7,12 +7,12 @@ interface TeamInvitationProps {
 
 export default function TeamInvitation({ invitationUrl, teamName }: TeamInvitationProps) {
   return (
-    <html lang="hu">
+    <html lang="en">
       <body>
-        <p>Meghívást kaptál a(z) {teamName} csapatba.</p>
-        <p>A csatlakozáshoz kattints az alábbi linkre:</p>
+        <p>You have been invited to the {teamName} team.</p>
+        <p>Click the link below to join:</p>
         <p>
-          <a href={invitationUrl}>Csatlakozás a csapathoz</a>
+          <a href={invitationUrl}>Join the team</a>
         </p>
       </body>
     </html>

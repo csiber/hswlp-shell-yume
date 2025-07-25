@@ -38,14 +38,14 @@ export default function PostClient({ id }: { id: string }) {
     <main className="max-w-md mx-auto p-4 space-y-4">
       {limitReached ? (
         <div className="space-y-2 text-center bg-yellow-100 dark:bg-yellow-900 p-4 rounded-md">
-          <p>👀 Elérted a napi limitet (30 kép/nap vendégként).</p>
-          <p>🔓 Jelentkezz be vagy regisztrálj a korlátlan böngészéshez!</p>
+          <p>👀 Daily limit reached (30 images/day as a guest).</p>
+          <p>🔓 Sign in or register for unlimited browsing!</p>
           <div className="flex justify-center gap-2">
             <Button asChild>
-              <Link href="/sign-in">Bejelentkezés</Link>
+              <Link href="/sign-in">Login</Link>
             </Button>
             <Button asChild variant="secondary">
-              <Link href="/sign-up">Regisztráció</Link>
+              <Link href="/sign-up">Sign up</Link>
             </Button>
           </div>
         </div>
@@ -59,7 +59,7 @@ export default function PostClient({ id }: { id: string }) {
           />
           {blurred && (
             <div className="text-center text-sm bg-red-100 dark:bg-red-800 dark:text-red-100 text-red-800 p-2 rounded">
-              Ez a tartalom érzékeny lehet. Belépés után teljes felbontásban megtekinthető.
+              This content may be sensitive. Sign in to view in full resolution.
             </div>
           )}
         </>
@@ -68,10 +68,10 @@ export default function PostClient({ id }: { id: string }) {
       {post.description && <p>{post.description}</p>}
       {post.prompt && <PromptBox text={post.prompt} lines={10} />}
       {post.tags && <p className="text-sm text-muted-foreground">{post.tags}</p>}
-      <p className="text-sm text-muted-foreground">Készítette: {post.author}</p>
+      <p className="text-sm text-muted-foreground">Created by: {post.author}</p>
       {guest && (
         <div className="w-full rounded-md bg-amber-500 text-white text-center py-2">
-          🔓 További funkciókért jelentkezz be vagy regisztrálj
+          🔓 Sign in or register to unlock more features
         </div>
       )}
       <ShareButtons

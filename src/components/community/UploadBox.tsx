@@ -124,12 +124,12 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
 
   const handleUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) {
-      toast.error("Nincs kiválasztott fájl");
+      toast.error("No file selected");
       return;
     }
 
     if (selectedFiles.length > MAX_ALBUM_UPLOAD) {
-      toast.error(`Legfeljebb ${MAX_ALBUM_UPLOAD} fájlt tölthetsz fel egyszerre`);
+      toast.error(`You can upload up to ${MAX_ALBUM_UPLOAD} files at once`);
       return;
     }
 
@@ -141,9 +141,9 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     let currentAlbumId = albumId;
     let currentAlbumName = albumName;
     if (isAlbum && !currentAlbumId) {
-      const name = window.prompt("Album neve:")?.trim();
+      const name = window.prompt("Album name:")?.trim();
       if (!name) {
-        toast.error("Album név kötelező");
+        toast.error("Album name is required");
         return;
       }
       currentAlbumName = name;
@@ -158,7 +158,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
       const formData = new FormData();
       const title = titles[file.name] ?? formatTitle(file.name);
       if (detectType(file) === "image" && !title.trim()) {
-        toast.error(`Adj címet a képnek: ${file.name}`);
+        toast.error(`Add a title for the image: ${file.name}`);
         continue;
       }
       formData.append("title", title);
@@ -177,13 +177,13 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         const data = (await res.json()) as { success: boolean; error?: string };
         if (res.ok && data.success) {
           success = true;
-          toast.success(`Feltöltve: ${file.name}`);
+          toast.success(`Uploaded: ${file.name}`);
           await mutateQuota();
         } else {
-          toast.error(data.error || `Hiba a(z) ${file.name} feltöltésekor`);
+          toast.error(data.error || `Error uploading ${file.name}`);
         }
       } catch {
-        toast.error(`Hálózati hiba: ${file.name}`);
+        toast.error(`Network error: ${file.name}`);
       }
     }
 
@@ -219,7 +219,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   return (
     <Card className="mb-6 animate-fade-in rounded-xl border bg-white shadow dark:bg-gray-900">
       <CardHeader>
-        <h2 className="text-2xl font-bold tracking-tight">Feltöltés</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Upload</h2>
       </CardHeader>
       <CardContent>
         <div
@@ -231,9 +231,9 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         >
           <UploadCloud className="h-10 w-10 text-gray-400 dark:text-gray-500" />
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            Húzd ide a fájlokat vagy
+            Drag your files here or
             <label className="ml-1 cursor-pointer font-medium underline">
-              válassz ki
+              choose
               <input
                 type="file"
                 multiple
@@ -270,7 +270,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                     {isImage ? (
                       <input
                         type="text"
-                        placeholder="Kép címe"
+                        placeholder="Image title"
                         className="border rounded px-1 text-sm flex-1"
                         value={titles[file.name] ?? ''}
                         onChange={(e) =>
@@ -312,7 +312,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
             </p>
             {percent >= 100 && (
               <p className="mt-2 text-center text-sm animate-pulse">
-                👉 Több tárhelyre van szükséged? Vásárolj a Marketplace-en!
+                👉 Need more storage? Buy it on the Marketplace!
               </p>
             )}
           </>
@@ -329,7 +329,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
               : "bg-gradient-to-r from-black via-gray-800 to-black hover:brightness-110",
           )}
         >
-          <span className="z-10">{loading ? "Feltöltés..." : "Feltöltés"}</span>
+          <span className="z-10">{loading ? "Uploading..." : "Upload"}</span>
           {!loading && <span className="upload-wave-glow" />}
         </button>
       </CardFooter>

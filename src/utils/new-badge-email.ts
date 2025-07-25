@@ -6,15 +6,15 @@ export interface NewBadgeEmailData {
 
 export function renderNewBadgeEmail({ badgeName, badgeDescription, badgeIcon }: NewBadgeEmailData) {
   const html = `<!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
   <body>
-    <p>Megszerezted a(z) ${badgeName} rangot! Ez azt jelenti, hogy...</p>
+    <p>You earned the ${badgeName} badge! This means...</p>
     <p>${badgeIcon} ${badgeDescription}</p>
-    <p><a href="https://yumekai.com/profile">Nézd meg profilod → yumekai.com/profile</a></p>
+    <p><a href="https://yumekai.com/profile">View your profile → yumekai.com/profile</a></p>
   </body>
 </html>`;
 
-  const text = `Megszerezted a(z) ${badgeName} rangot! Ez azt jelenti, hogy...\n${badgeIcon} ${badgeDescription}\nNézd meg profilod → https://yumekai.com/profile`;
+  const text = `You earned the ${badgeName} badge! This means...\n${badgeIcon} ${badgeDescription}\nView your profile → https://yumekai.com/profile`;
 
   return { html, text };
 }

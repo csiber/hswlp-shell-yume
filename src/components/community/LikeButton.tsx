@@ -84,7 +84,7 @@ export default function LikeButton({ postId, isGuest = false }: Props) {
           </motion.button>
         </TooltipTrigger>
         <TooltipContent>
-          {isGuest ? 'Bejelentkezés szükséges' : liked ? 'Mégse tetszik' : 'Tetszik'}
+          {isGuest ? 'Login required' : liked ? 'Unlike' : 'Like'}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

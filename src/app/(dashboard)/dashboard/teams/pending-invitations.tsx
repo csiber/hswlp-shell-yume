@@ -66,7 +66,7 @@ export function PendingInvitations() {
       const [result] = await acceptInvitationAction({ token });
 
       if (result?.success) {
-        toast.success("Sikeresen csatlakoztál a csapathoz");
+        toast.success("You have joined the team");
 
         // Remove from pending list
         setPendingInvitations(prev => prev.filter(inv => inv.token !== token));
@@ -75,7 +75,7 @@ export function PendingInvitations() {
         router.refresh();
       }
     } catch {
-        toast.error("Nem sikerült elfogadni a meghívást");
+        toast.error("Failed to accept the invitation");
     } finally {
       setIsAccepting(prev => ({ ...prev, [token]: false }));
     }

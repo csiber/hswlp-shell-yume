@@ -288,6 +288,7 @@ export const firstPostEmailTable = sqliteTable('first_post_email', {
 }, (table) => [
   index('first_post_email_user_idx').on(table.userId),
   index('first_post_email_send_after_idx').on(table.sendAfter),
+]);
 
 export const emailLogTable = sqliteTable('email_log', {
   id: text().primaryKey().$defaultFn(() => `elog_${createId()}`).notNull(),

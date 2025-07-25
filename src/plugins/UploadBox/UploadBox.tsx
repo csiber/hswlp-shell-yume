@@ -39,7 +39,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
 
   async function upload() {
     if (!file || !title.trim()) {
-      toast.error("Hiányzó fájl vagy cím")
+      toast.error("Missing file or title")
       return
     }
     startTransition(async () => {
@@ -55,10 +55,10 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         if (fileInputRef.current) fileInputRef.current.value = ""
         setShowSuccess(true)
         setDownloadPoints(data.download_points ?? null)
-        toast.success("Sikeres feltöltés, moderációra vár")
+        toast.success("Upload successful, pending moderation")
         if (onSuccess) onSuccess()
       } catch {
-        toast.error("Feltöltés sikertelen")
+        toast.error("Upload failed")
       }
     })
   }
@@ -66,11 +66,11 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
   return (
     <Card className="mb-4 shadow-lg">
       <CardHeader>
-        <h2 className="text-xl font-semibold">Feltöltés</h2>
+        <h2 className="text-xl font-semibold">Upload</h2>
       </CardHeader>
       <CardContent className="space-y-4">
         <Input
-          placeholder="Adj címet a feltöltésednek..."
+          placeholder="Give your upload a title..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -85,7 +85,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
           className={`flex cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed p-6 text-sm transition-colors ${dragging ? "bg-primary/10" : "bg-muted"}`}
         >
           <p className="select-none text-muted-foreground">
-            {file ? "Fájl kiválasztva" : "Húzd ide a fájlt vagy kattints"}
+            {file ? "File selected" : "Drag your file here or click"}
           </p>
           <Input
             ref={fileInputRef}
@@ -96,8 +96,8 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         </div>
         {showSuccess && (
           <p className="text-center text-sm text-green-600">
-            Sikeres feltöltés – moderációra vár
-            {downloadPoints !== null ? ` – a fájl értéke: ${downloadPoints} pont` : ''}
+            Upload successful – pending moderation
+            {downloadPoints !== null ? ` – value: ${downloadPoints} points` : ''}
           </p>
         )}
       </CardContent>
@@ -109,10 +109,10 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         >
           {isPending ? (
             <>
-              <Spinner size="small" className="mr-2" /> Feltöltés...
+              <Spinner size="small" className="mr-2" /> Uploading...
             </>
           ) : (
-            "Feltöltés"
+            "Upload"
           )}
         </Button>
       </CardFooter>

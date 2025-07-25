@@ -94,10 +94,10 @@ export function SettingsForm() {
       const data = (await res.json()) as { success?: boolean; error?: string }
       toast.dismiss()
       if (res.ok && data.success) {
-        toast.success('Sikeres mentés')
+        toast.success('Saved successfully')
         router.refresh()
       } else {
-        toast.error(data.error || 'Hiba történt')
+        toast.error(data.error || 'Something went wrong')
       }
     } catch {
       toast.dismiss()

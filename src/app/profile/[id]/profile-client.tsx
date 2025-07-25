@@ -100,21 +100,21 @@ export default function ProfileClient({ user, uploads, badges, currentUserId }: 
         </div>
       )}
       {currentUserId === user.id ? (
-        <p className="mb-4 text-sm text-primary">Saját profilod</p>
+        <p className="mb-4 text-sm text-primary">Your profile</p>
       ) : (
         <Button className="mb-4" variant="outline">
-          Üzenet küldése
+          Send message
         </Button>
       )}
       <div className="flex gap-2 mb-4">
         <Button variant={tab === 'image' ? 'default' : 'outline'} onClick={() => setTab('image')}>
-          Képek
+          Images
         </Button>
         <Button variant={tab === 'music' ? 'default' : 'outline'} onClick={() => setTab('music')}>
-          Zenék
+          Music
         </Button>
         <Button variant={tab === 'prompt' ? 'default' : 'outline'} onClick={() => setTab('prompt')}>
-          Promtok
+          Prompts
         </Button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -139,7 +139,7 @@ export default function ProfileClient({ user, uploads, badges, currentUserId }: 
                         <Download className="w-4 h-4" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>{`Letöltés ${u.download_points} pontért`}</TooltipContent>
+                    <TooltipContent>{`Download for ${u.download_points} points`}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>

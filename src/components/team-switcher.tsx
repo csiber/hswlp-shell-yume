@@ -55,9 +55,9 @@ export function TeamSwitcher({
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
-                  {activeTeam?.name || "Nincs csapat"}
+                  {activeTeam?.name || "No team"}
                 </span>
-                <span className="truncate text-xs">{activeTeam?.plan || "Válassz csapatot"}</span>
+                <span className="truncate text-xs">{activeTeam?.plan || "Select a team"}</span>
               </div>
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
@@ -69,7 +69,7 @@ export function TeamSwitcher({
             sideOffset={4}
           >
             <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Csapatok
+              Teams
             </DropdownMenuLabel>
             {teams.length > 0 ? (
               teams.map((team, index) => (
@@ -90,7 +90,7 @@ export function TeamSwitcher({
                 <div className="flex size-6 items-center justify-center rounded-sm border">
                   <Building2 className="size-4 shrink-0" />
                 </div>
-                Nincs elérhető csapat
+                No team available
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
@@ -99,7 +99,7 @@ export function TeamSwitcher({
                 <div className="flex size-6 items-center justify-center rounded-md border bg-background">
                   <Plus className="size-4" />
                 </div>
-                <div className="font-medium text-muted-foreground">Csapat hozzáadása</div>
+                <div className="font-medium text-muted-foreground">Add team</div>
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

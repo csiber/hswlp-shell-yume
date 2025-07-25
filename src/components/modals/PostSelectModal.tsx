@@ -55,9 +55,9 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
           </DialogTitle>
         </DialogHeader>
         {loading ? (
-          <p>Betöltés...</p>
+          <p>Loading...</p>
         ) : posts.length === 0 ? (
-          <p>Nincs feltöltött posztod.</p>
+          <p>No uploaded posts.</p>
         ) : (
           <div className="grid max-h-[60vh] grid-cols-1 gap-3 overflow-y-auto">
             {posts.map((post) => (

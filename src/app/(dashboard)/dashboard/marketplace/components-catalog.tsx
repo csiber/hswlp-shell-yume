@@ -12,16 +12,16 @@ interface MarketplaceComponent {
 export const COMPONENTS: MarketplaceComponent[] = [
   {
     id: "highlight-post",
-    name: "Poszt kiemelés",
+    name: "Highlight post",
     description:
-      "A kiválasztott poszt kiemelten jelenik meg 24 órán keresztül.",
+      "The selected post is featured for 24 hours.",
     credits: 50,
     preview: () => <div className="h-12 w-24 bg-yellow-200 rounded" />,
   },
   {
     id: "profile-frame",
-    name: "Színes profilkeret",
-    description: "Látható, színes profilkeret a kiemelt felhasználóknak.",
+    name: "Colorful profile frame",
+    description: "A visible, colorful frame for highlighted users.",
     credits: 100,
     preview: () => (
       <div className="h-12 w-12 rounded-full border-4 border-pink-500" />
@@ -29,8 +29,8 @@ export const COMPONENTS: MarketplaceComponent[] = [
   },
   {
     id: "custom-avatar",
-    name: "Egyedi profil ikon (3 változat)",
-    description: "Választható egyedi avatar ikon szettek közül.",
+    name: "Custom profile icon (3 variants)",
+    description: "Choose from unique avatar icon sets.",
     credits: 150,
     preview: () => (
       <div className="h-12 w-12 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full" />
@@ -38,32 +38,32 @@ export const COMPONENTS: MarketplaceComponent[] = [
   },
   {
     id: "pin-post",
-    name: "Poszt fixálás",
-    description: "A kiválasztott poszt rögzítésre kerül a feed tetejére.",
+    name: "Pin post",
+    description: "The selected post will be pinned to the top of the feed.",
     credits: 200,
     preview: () => <div className="h-8 w-8 bg-blue-300 rounded-full" />,
   },
   {
     id: "emoji-reactions",
-    name: "Emoji reakciók kommentekhez",
+    name: "Emoji reactions for comments",
     description:
-      "Lehetővé teszi, hogy emoji reakciókat adj mások kommentjeihez.",
+      "Allows you to add emoji reactions to other users' comments.",
     credits: 80,
     preview: () => <div className="text-2xl">😀</div>,
   },
   {
     id: "daily-surprise",
-    name: "Napi meglepetés",
+    name: "Daily surprise",
     description:
-      "Véletlenszerűen kapsz egy kis extrát: pl. kis keret, 10 pont vagy ritkán badge.",
+      "Get a random bonus like a small frame, 10 points or rarely a badge.",
     credits: 60,
     preview: () => <div className="h-8 w-20 bg-green-200 rounded" />,
   },
   {
     id: "storage-upgrade-500",
     type: "storage-upgrade",
-    name: "+500 MB tárhely",
-    description: "További 500 MB feltöltési keret.",
+    name: "+500 MB storage",
+    description: "Extra 500 MB upload quota.",
     credits: 100,
     preview: () => <div className="h-8 w-20 bg-purple-200 rounded" />,
     props: { addMb: 500 },

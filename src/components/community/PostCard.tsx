@@ -276,7 +276,7 @@ export default function PostCard({
                 </button>
               </TooltipTrigger>
               <TooltipContent>
-                {guest ? 'Bejelentkezés szükséges' : 'Letöltés'}
+                {guest ? 'Login required' : 'Download'}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -286,7 +286,7 @@ export default function PostCard({
       <CommentList postId={item.id} isGuest={guest} />
       {guest && (
         <div className="mt-4 rounded-md bg-amber-500 text-white text-center py-2">
-          🔓 További funkciókért jelentkezz be vagy regisztrálj
+          🔓 Sign in or register to unlock more features
         </div>
       )}
     </motion.div>

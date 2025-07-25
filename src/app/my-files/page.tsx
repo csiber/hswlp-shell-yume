@@ -115,19 +115,19 @@ export default function MyFilesPage() {
     try {
       const res = await fetch(`/api/my-files/${id}/delete`, { method: "POST" });
       if (res.ok) {
-        toast.success("Fájl törölve");
+        toast.success("File deleted");
         mutate();
       } else {
-        toast.error("Hiba történt törlés közben");
+        toast.error("Error during deletion");
       }
     } catch {
-      toast.error("Hálózati hiba történt");
+      toast.error("Network error");
     }
   };
 
   const downloadFile = async (item: UploadItem) => {
     if (userCredits < item.download_points) {
-      toast.error("Nincs elég kredit a letöltéshez");
+      toast.error("Not enough credits to download");
       return;
     }
     try {
@@ -141,7 +141,7 @@ export default function MyFilesPage() {
       });
 
       if (!creditRes.ok) {
-        toast.error("Nincs elég kredit a letöltéshez");
+        toast.error("Not enough credits to download");
         return;
       }
 
@@ -149,7 +149,7 @@ export default function MyFilesPage() {
 
       const res = await fetch(`/api/uploads/${item.id}/download`);
       if (res.ok) {
-        toast.success("Letöltés indítása");
+        toast.success("Starting download");
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -159,10 +159,10 @@ export default function MyFilesPage() {
         URL.revokeObjectURL(url);
         markDownloaded(item.id);
       } else {
-        toast.error("Letöltés sikertelen");
+        toast.error("Download failed");
       }
     } catch {
-      toast.error("Hálózati hiba történt");
+      toast.error("Network error");
     }
   };
 
@@ -171,7 +171,7 @@ export default function MyFilesPage() {
       <UploadBanAlert />
       {showApprovedNotice && (
         <div className="mb-4 rounded-md bg-amber-400 text-black p-4 shadow-md animate-fade-in">
-          Gratulálunk! Feltöltésed jóvá lett hagyva.
+          Congratulations! Your upload has been approved.
         </div>
       )}
       <div className="mb-4 flex gap-3 items-center">
@@ -179,25 +179,25 @@ export default function MyFilesPage() {
           variant={filter === null ? "default" : "outline"}
           onClick={() => setFilter(null)}
         >
-          Összes
+          All
         </Button>
         <Button
           variant={filter === "image" ? "default" : "outline"}
           onClick={() => setFilter("image")}
         >
-          Képek
+          Images
         </Button>
         <Button
           variant={filter === "music" ? "default" : "outline"}
           onClick={() => setFilter("music")}
         >
-          Zenék
+          Music
         </Button>
         <Button
           variant={filter === "prompt" ? "default" : "outline"}
           onClick={() => setFilter("prompt")}
         >
-          Promptek
+          Prompts
         </Button>
         <CreateAlbumDialog onCreated={mutate} />
       </div>

@@ -40,11 +40,11 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
       toast.error(error.err?.message)
     },
     onStart: () => {
-      toast.loading("Fiók létrehozása folyamatban...")
+      toast.loading("Creating account...")
     },
     onSuccess: () => {
       toast.dismiss()
-      toast.success("Sikeres fióklétrehozás")
+      toast.success("Account created successfully")
       if (typeof window !== 'undefined') {
         localStorage.setItem('newcomer_badge_toast', '1')
       }
@@ -60,7 +60,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
     },
     onSuccess: () => {
       toast.dismiss()
-      toast.success("Sikeres fióklétrehozás")
+      toast.success("Account created successfully")
       if (typeof window !== 'undefined') {
         localStorage.setItem('newcomer_badge_toast', '1')
       }
@@ -75,7 +75,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
       setIsRegistering(false)
     },
     onStart: () => {
-      toast.loading("Passkey regisztráció indítása...")
+      toast.loading("Starting passkey registration...")
       setIsRegistering(true)
     },
     onSuccess: async (response) => {
@@ -93,8 +93,8 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
         });
         await completePasskeyRegistration({ response: attResp });
       } catch (error: unknown) {
-      console.error("Nem sikerült regisztrálni a passkey-t:", error);
-      toast.error("Nem sikerült regisztrálni a passkey-t")
+      console.error("Failed to register the passkey:", error);
+      toast.error("Failed to register the passkey")
         setIsRegistering(false)
       }
     }
@@ -124,12 +124,12 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
       <div className="w-full max-w-md space-y-8 p-6 md:p-10 bg-card rounded-xl shadow-lg border border-border">
         <div className="text-center">
           <h2 className="mt-6 text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-            Hozz létre új fiókot
+            Create a new account
           </h2>
           <p className="mt-2 text-muted-foreground">
-            Van már fiókod?{" "}
+            Already have an account?{" "}
             <Link href={`/sign-in?redirect=${encodeURIComponent(redirectPath)}`} className="font-medium text-primary hover:text-primary/90 underline">
-              Jelentkezz be
+              Sign in
             </Link>
           </p>
         </div>
@@ -140,12 +140,12 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
             onClick={() => setIsPasskeyModalOpen(true)}
           >
             <KeyIcon className="w-5 h-5 mr-2" />
-            Regisztráció Passkey-jel
+            Register with Passkey
           </Button>
         </div>
 
         <SeparatorWithText>
-          <span className="uppercase text-muted-foreground">Vagy</span>
+          <span className="uppercase text-muted-foreground">Or</span>
         </SeparatorWithText>
 
         <Form {...form}>
@@ -158,7 +158,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="Email cím"
+                      placeholder="Email address"
                       className="w-full px-3 py-2"
                       {...field}
                     />
@@ -175,7 +175,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Keresztnév"
+                      placeholder="First name"
                       className="w-full px-3 py-2"
                       {...field}
                     />
@@ -192,7 +192,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Vezetéknév"
+                      placeholder="Last name"
                       className="w-full px-3 py-2"
                       {...field}
                     />
@@ -209,7 +209,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Nicknév (opcionális)"
+                      placeholder="Nickname (optional)"
                       className="w-full px-3 py-2"
                       {...field}
                     />
@@ -227,7 +227,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Jelszó"
+                      placeholder="Password"
                       className="w-full px-3 py-2"
                     {...field}
                   />
@@ -245,7 +245,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Jelszó újra"
+                      placeholder="Password again"
                       className="w-full px-3 py-2"
                       {...field}
                     />
@@ -274,13 +274,13 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
 
         <div className="mt-6">
           <p className="text-xs text-center text-muted-foreground">
-            A regisztrációval elfogadod a{" "}
+            By registering you agree to the{" "}
             <Link href="/terms" className="font-medium text-primary hover:text-primary/90 underline">
-              Felhasználási feltételeket
+              Terms of Service
             </Link>{" "}
-            és a{" "}
+            and the{" "}
             <Link href="/privacy" className="font-medium text-primary hover:text-primary/90 underline">
-              Adatkezelési tájékoztatót
+              Privacy Policy
             </Link>
           </p>
         </div>
@@ -289,7 +289,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
       <Dialog open={isPasskeyModalOpen} onOpenChange={setIsPasskeyModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Regisztráció Passkey-jel</DialogTitle>
+            <DialogTitle>Register with Passkey</DialogTitle>
           </DialogHeader>
           <Form {...passkeyForm}>
             <form onSubmit={passkeyForm.handleSubmit(onPasskeySubmit)} className="space-y-6 mt-6">
@@ -301,7 +301,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                     <FormControl>
                       <Input
                         type="email"
-                          placeholder="Email cím"
+                          placeholder="Email address"
                         className="w-full px-3 py-2"
                         disabled={isRegistering}
                         {...field}
@@ -318,7 +318,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                          placeholder="Keresztnév"
+                          placeholder="First name"
                         className="w-full px-3 py-2"
                         disabled={isRegistering}
                         {...field}
@@ -335,7 +335,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                          placeholder="Vezetéknév"
+                          placeholder="Last name"
                         className="w-full px-3 py-2"
                         disabled={isRegistering}
                         {...field}
@@ -352,7 +352,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        placeholder="Nicknév (opcionális)"
+                        placeholder="Nickname (optional)"
                         className="w-full px-3 py-2"
                         disabled={isRegistering}
                         {...field}
@@ -376,16 +376,16 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                   {isRegistering ? (
                     <>
                       <Spinner className="mr-2 h-4 w-4" />
-                      Regisztráció...
+                      Registering...
                     </>
                   ) : (
-                    "Folytatás"
+                    "Continue"
                   )}
                 </Button>
               </div>
               {!isRegistering && (
                 <p className="text-xs text-muted text-center mt-4">
-                  A folytatás után a böngésző felkér egy Passkey létrehozására és mentésére, így a jövőben jelszó nélkül tudsz majd bejelentkezni.
+                  After continuing your browser will prompt you to create and save a Passkey so you can sign in without a password in the future.
                 </p>
               )}
             </form>

@@ -4,12 +4,12 @@ import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 
 const features = [
-  "Zenék, képek, promtok – egyetlen platformon",
-  "Feltöltés, értékelés, komment – közösségi alkotás",
-  "Valós idejű feed és globális zenelejátszó",
-  "Kredit alapú rendszer, jutalmazott aktivitás",
-  "Személyes gyűjtemények, lejátszási listák",
-  "Beépített piactér – adj el vagy vásárolj tartalmakat",
+  "Music, images and prompts on one platform",
+  "Upload, rate and comment – create together",
+  "Real-time feed and global music player",
+  "Credit-based system with rewarded activity",
+  "Personal collections and playlists",
+  "Built-in marketplace – sell or buy content",
 ];
 
 export default function Features() {
@@ -23,7 +23,7 @@ export default function Features() {
           transition={{ duration: 0.6 }}
           className="text-3xl sm:text-4xl font-extrabold mb-8"
         >
-          Egy kreatív játszótér az AI és a közösség határán
+          A creative playground between AI and community
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -32,9 +32,7 @@ export default function Features() {
           transition={{ delay: 0.2, duration: 0.6 }}
           className="text-zinc-600 mb-12 max-w-2xl mx-auto dark:text-zinc-400"
         >
-          A Yumekai segít, hogy ne csak alkoss, hanem visszajelzést is kapj,
-          közösségbe kerülj, és akár bevételt is szerezz. A kreativitás itt nem
-          magányos műfaj.
+          Yumekai helps you create, get feedback and even earn income. Creativity here isn&apos;t a solitary pursuit.
         </motion.p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
