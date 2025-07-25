@@ -50,6 +50,9 @@ export const userTable = sqliteTable("user", {
   emailVerified: integer({
     mode: "timestamp",
   }),
+  lastLoginAt: integer("last_login_at", {
+    mode: "timestamp",
+  }),
   signUpIpAddress: text({
     length: 100,
   }),
@@ -264,6 +267,16 @@ export const userBadgeTable = sqliteTable('user_badges', {
   index('user_badges_badge_key_idx').on(table.badgeKey),
 ]);
 
+export const creditWarningEmailTable = sqliteTable('credit_warning_email', {
+  id: text().primaryKey().$defaultFn(() => `cwl_${createId()}`).notNull(),
+  userId: text('user_id').notNull().references(() => userTable.id),
+  sentAt: integer('sent_at', { mode: 'timestamp' })
+    .$defaultFn(() => new Date())
+    .notNull(),
+}, (table) => [
+  index('credit_warning_email_user_idx').on(table.userId),
+]);
+
 
 
 // System-defined roles - these are always available
@@ -459,3 +472,4 @@ export type MarketplaceActivation = InferSelectModel<typeof marketplaceActivatio
 export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
 export type ReferralEvent = InferSelectModel<typeof referralEventsTable>;
 export type UserBadge = InferSelectModel<typeof userBadgeTable>;
+export type CreditWarningEmail = InferSelectModel<typeof creditWarningEmailTable>;
