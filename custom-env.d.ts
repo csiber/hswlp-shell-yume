@@ -13,4 +13,6 @@ interface CloudflareEnv {
   UPLOAD_BAN_HOURS?: string;
   STRIPE_SECRET_KEY?: string;
   STRIPE_WEBHOOK_SECRET?: string;
+  IMAGE_CAPTION_URL?: string;
+  IMAGE_CAPTION_KEY?: string;
 }

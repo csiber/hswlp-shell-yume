@@ -8,8 +8,10 @@ declare namespace Cloudflare {
 		PRESENCE_KV: KVNamespace;
 		EMAIL_FROM: "no-reply@hswlp.hu";
 		EMAIL_FROM_NAME: "HSWLP System";
-		EMAIL_REPLY_TO: "support@hswlp.hu";
-		yumekai_r2: R2Bucket;
+                EMAIL_REPLY_TO: "support@hswlp.hu";
+                IMAGE_CAPTION_URL?: string;
+                IMAGE_CAPTION_KEY?: string;
+                yumekai_r2: R2Bucket;
 		DB: D1Database;
 		NEXT_TAG_CACHE_D1: D1Database;
 		WORKER_SELF_REFERENCE: Fetcher /* hswlp-shell-yumekai */;
