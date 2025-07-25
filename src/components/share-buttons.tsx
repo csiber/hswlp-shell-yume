@@ -1,6 +1,7 @@
 "use client"
 
-import { Facebook, Twitter, Reddit, Copy } from "lucide-react";
+import { Facebook, Twitter, Copy } from "lucide-react";
+import { SiReddit } from "@icons-pack/react-simple-icons";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -38,7 +39,7 @@ export default function ShareButtons({ title, url, className }: ShareButtonsProp
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Reddit className="h-4 w-4" />
+          <SiReddit className="h-4 w-4" />
         </a>
       </Button>
       <Button size="icon" variant="secondary" asChild>
