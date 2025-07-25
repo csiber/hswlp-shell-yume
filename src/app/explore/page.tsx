@@ -2,9 +2,12 @@ import type { Metadata } from 'next'
 import ExploreClient from '@/components/explore/ExploreClient'
 
 export const metadata: Metadata = {
-  title: 'Felfedezés - Nyilvános galéria',
-  description: 'Fedezd fel a legfrissebb publikus posztokat a Yumekai galériában',
+  title: 'Explore \u2013 Yumekai AI Gallery',
+  description: 'Browse high-quality AI-generated anime art from the community.',
   keywords: ['explore', 'galéria', 'nyilvános posztok'],
+  openGraph: {
+    images: ['https://yumekai.com/og-cover.png'],
+  },
 }
 
 export default function ExplorePage() {
