@@ -96,7 +96,7 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
-    "wrangler": "^4.20.5"
+    "wrangler": "^4.26.0"
   },
   "packageManager": "pnpm@10.13.1"
 }
