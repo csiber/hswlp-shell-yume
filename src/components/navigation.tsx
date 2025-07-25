@@ -29,9 +29,14 @@ const ActionButtons = () => {
   if (session) return null;
 
   return (
-    <Button asChild onClick={() => setIsOpen(false)}>
-      <Link href="/sign-in">Bejelentkezés</Link>
-    </Button>
+    <div className="flex gap-2">
+      <Button asChild onClick={() => setIsOpen(false)}>
+        <Link href="/sign-in">Login</Link>
+      </Button>
+      <Button asChild variant="secondary" onClick={() => setIsOpen(false)}>
+        <Link href="/sign-up">Sign up</Link>
+      </Button>
+    </div>
   );
 };
 
@@ -47,7 +52,7 @@ export function Navigation() {
           { name: "Vezérlőpult", href: "/dashboard" as Route },
           { name: "Beállítások", href: "/settings" as Route },
         ]
-      : []),
+      : [{ name: "Explore", href: "/explore" as Route }]),
   ];
 
   const isActiveLink = (href: string) => {
