@@ -168,8 +168,18 @@ export default function PostCard({
         </Avatar>
         <div className="flex-1">
           <div className="flex items-center justify-between">
-            <span className="font-semibold text-sm">
+            <span className="font-semibold text-sm flex items-center gap-1">
               {item.user.name || item.user.email}
+              {item.user.badge && (
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="text-sm cursor-default">{item.user.badge.icon}</span>
+                    </TooltipTrigger>
+                    <TooltipContent>{`${item.user.badge.name} – ${item.user.badge.description}`}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </span>
             <span className="text-muted-foreground">
               {item.type === "music"

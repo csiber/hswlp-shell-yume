@@ -19,6 +19,13 @@ interface ApiResponse {
     created_at: string
     download_points: number
   }[]
+  badges: {
+    key: string
+    name: string
+    description: string
+    icon: string
+    awarded_at: string
+  }[]
 }
 
 interface ProfilePageProps {
@@ -43,6 +50,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
     <ProfileClient
       user={data.user}
       uploads={data.uploads}
+      badges={data.badges}
       currentUserId={session?.user?.id}
     />
   )

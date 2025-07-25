@@ -34,3 +34,34 @@ export const MAX_ALBUM_UPLOAD = 10
 
 export const PUNISHMENT_CREDIT_LOSS = parseInt(process.env.PUNISHMENT_CREDIT_LOSS || '20', 10)
 export const UPLOAD_BAN_HOURS = parseInt(process.env.UPLOAD_BAN_HOURS || '24', 10)
+
+// Badge definitions for the achievement system
+export const BADGE_DEFINITIONS = {
+  hot_dropper: {
+    name: '🔥 Hot Dropper',
+    description: '3 trending poszt egy héten belül',
+    icon: '🔥',
+  },
+  fan_favorite: {
+    name: '🫶 Fan Favorite',
+    description: 'Egy poszt 20+ like-ot kapott',
+    icon: '🫶',
+  },
+  visual_artist: {
+    name: '🌸 Visual Artist',
+    description: '100 feltöltött poszt',
+    icon: '🌸',
+  },
+  master_commentator: {
+    name: '💬 Master Commentator',
+    description: 'Kommentjeid összesen elértek 100 like-ot',
+    icon: '💬',
+  },
+  spender: {
+    name: '🪙 Spender',
+    description: '1000 pontot elköltöttél valaha',
+    icon: '🪙',
+  },
+} as const
+
+export type BadgeKey = keyof typeof BADGE_DEFINITIONS

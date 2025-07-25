@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/hu";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 
 dayjs.extend(relativeTime);
 dayjs.locale("hu");
@@ -22,7 +23,7 @@ interface Comment {
   id: string
   text: string
   created_at: string
-  user: { name: string; avatar?: string }
+  user: { name: string; avatar?: string; badge?: { icon: string; name: string; description: string } }
   reactions: Reaction[]
 }
 
@@ -164,8 +165,18 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
                 )}
               </Avatar>
               <div className="text-sm">
-                <p className="leading-none">
-                  <span className="font-medium">{c.user.name}</span>{" "}
+                <p className="leading-none flex items-center gap-1">
+                  <span className="font-medium">{c.user.name}</span>
+                  {c.user.badge && (
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="text-sm cursor-default">{c.user.badge.icon}</span>
+                        </TooltipTrigger>
+                        <TooltipContent>{`${c.user.badge.name} – ${c.user.badge.description}`}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
                   <span className="text-xs text-gray-500">
                     {dayjs(c.created_at).fromNow()}
                   </span>

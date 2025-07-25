@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
+import { BADGE_DEFINITIONS } from '@/constants'
 import { NextRequest } from 'next/server'
 
 interface RouteContext<T> {
@@ -67,6 +68,18 @@ const items = [] as {
     })
   }
 
+  const badgeRows = await env.DB.prepare(
+    'SELECT badge_key, awarded_at FROM user_badges WHERE user_id = ?1 ORDER BY awarded_at'
+  ).bind(id).all<{ badge_key: string; awarded_at: string }>()
+
+  const badges = (badgeRows.results || []).map(r => ({
+    key: r.badge_key,
+    name: BADGE_DEFINITIONS[r.badge_key as keyof typeof BADGE_DEFINITIONS].name,
+    description: BADGE_DEFINITIONS[r.badge_key as keyof typeof BADGE_DEFINITIONS].description,
+    icon: BADGE_DEFINITIONS[r.badge_key as keyof typeof BADGE_DEFINITIONS].icon,
+    awarded_at: r.awarded_at,
+  }))
+
   const displayName = user.nickname || `Anon${user.id.slice(-4)}`
   return jsonResponse({
     user: {
@@ -78,5 +91,6 @@ const items = [] as {
       profileFrameEnabled: !!user.profile_frame_enabled,
     },
     uploads: items,
+    badges,
   })
 }

@@ -249,6 +249,19 @@ export const slowRequestLogTable = sqliteTable("slow_request_logs", {
   index('slow_request_logs_created_at_idx').on(table.createdAt),
 ]);
 
+// Badge table linking users to earned badges
+export const userBadgeTable = sqliteTable('user_badges', {
+  id: text().primaryKey().$defaultFn(() => `ubg_${createId()}`).notNull(),
+  userId: text('user_id').notNull().references(() => userTable.id),
+  badgeKey: text('badge_key').notNull(),
+  awardedAt: integer('awarded_at', { mode: 'timestamp' })
+    .$defaultFn(() => new Date())
+    .notNull(),
+}, (table) => [
+  index('user_badges_user_id_idx').on(table.userId),
+  index('user_badges_badge_key_idx').on(table.badgeKey),
+]);
+
 
 
 // System-defined roles - these are always available
@@ -419,6 +432,7 @@ export const userRelations = relations(userTable, ({ many }) => ({
   passkeys: many(passKeyCredentialTable),
   creditTransactions: many(creditTransactionTable),
   purchasedItems: many(purchasedItemsTable),
+  badges: many(userBadgeTable),
   teamMemberships: many(teamMembershipTable),
   referrals: many(referralEventsTable, {
     relationName: 'referrer',
@@ -442,3 +456,4 @@ export type HighlightedPost = InferSelectModel<typeof highlightedPostsTable>;
 export type MarketplaceActivation = InferSelectModel<typeof marketplaceActivationsTable>;
 export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
 export type ReferralEvent = InferSelectModel<typeof referralEventsTable>;
+export type UserBadge = InferSelectModel<typeof userBadgeTable>;
