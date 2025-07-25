@@ -8,14 +8,14 @@ interface NewBadgeProps {
 
 export default function NewBadge({ badgeName, badgeDescription, badgeIcon }: NewBadgeProps) {
   return (
-    <html lang="hu">
+    <html lang="en">
       <body>
-        <p>Megszerezted a(z) {badgeName} rangot! Ez azt jelenti, hogy...</p>
+        <p>You earned the {badgeName} badge! This means...</p>
         <p>
           {badgeIcon} {badgeDescription}
         </p>
         <p>
-          <a href="https://yumekai.com/profile">Nézd meg profilod → yumekai.com/profile</a>
+          <a href="https://yumekai.com/profile">View your profile → yumekai.com/profile</a>
         </p>
       </body>
     </html>

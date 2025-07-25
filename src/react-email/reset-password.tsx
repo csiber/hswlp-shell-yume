@@ -7,14 +7,14 @@ interface ResetPasswordProps {
 
 export default function ResetPassword({ resetUrl, userName }: ResetPasswordProps) {
   return (
-    <html lang="hu">
+    <html lang="en">
       <body>
-        <p>Kedves {userName || "felhasználó"}!</p>
-        <p>Az alábbi hivatkozással beállíthatsz egy új jelszót:</p>
+        <p>Dear {userName || "user"},</p>
+        <p>You can set a new password using the link below:</p>
         <p>
-          <a href={resetUrl}>Jelszó visszaállítása</a>
+          <a href={resetUrl}>Reset password</a>
         </p>
-        <p>Ha nem te kezdeményezted, hagyd figyelmen kívül ezt a levelet.</p>
+        <p>If you didn't request this, please ignore this message.</p>
       </body>
     </html>
   );

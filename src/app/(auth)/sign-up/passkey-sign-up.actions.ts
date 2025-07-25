@@ -33,7 +33,7 @@ export const startPasskeyRegistrationAction = createServerAction()
           if (!success) {
             throw new ZSAError(
               "INPUT_PARSE_ERROR",
-              "Kérjük, töltsd ki a captchát"
+              "Please complete the captcha"
             )
           }
         }
@@ -47,7 +47,7 @@ export const startPasskeyRegistrationAction = createServerAction()
         if (existingUser) {
           throw new ZSAError(
             "CONFLICT",
-            "Ezzel az email címmel már létezik fiók"
+            "An account with this email already exists"
           );
         }
 
@@ -61,7 +61,7 @@ export const startPasskeyRegistrationAction = createServerAction()
           if (existingNickname) {
             throw new ZSAError(
               "CONFLICT",
-              "Ez a nicknév már foglalt"
+              "This nickname is already taken"
             );
           }
         } else {
@@ -90,7 +90,7 @@ export const startPasskeyRegistrationAction = createServerAction()
           await logTransaction({
             userId: user.id,
             amount: SIGN_UP_BONUS_CREDITS,
-            description: 'Belpési bónusz kreditek',
+            description: 'Signup bonus credits',
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
           });
@@ -112,7 +112,7 @@ export const startPasskeyRegistrationAction = createServerAction()
         if (!user) {
           throw new ZSAError(
             "INTERNAL_SERVER_ERROR",
-            "Nem sikerült létrehozni a felhasználót"
+            "Failed to create user"
           );
         }
 
@@ -161,7 +161,7 @@ export const startPasskeyRegistrationAction = createServerAction()
 const completePasskeyRegistrationSchema = z.object({
   response: z.custom<RegistrationResponseJSON>((val): val is RegistrationResponseJSON => {
     return typeof val === "object" && val !== null && "id" in val && "rawId" in val;
-  }, "Érvénytelen regisztrációs válasz"),
+  }, "Invalid registration response"),
 });
 
 export const completePasskeyRegistrationAction = createServerAction()
@@ -174,7 +174,7 @@ export const completePasskeyRegistrationAction = createServerAction()
     if (!challenge || !userId) {
       throw new ZSAError(
         "PRECONDITION_FAILED",
-        "Érvénytelen regisztrációs munkamenet"
+        "Invalid registration session"
       );
     }
 
@@ -226,10 +226,10 @@ export const completePasskeyRegistrationAction = createServerAction()
 
       return { success: true };
     } catch (error) {
-      console.error("Nem sikerült regisztrálni a passkey-t:", error);
+          console.error("Failed to register the passkey:", error);
       throw new ZSAError(
         "PRECONDITION_FAILED",
-        "Nem sikerült regisztrálni a passkey-t"
+        "Failed to register the passkey"
       );
     }
   });

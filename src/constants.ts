@@ -2,7 +2,7 @@ import type { Route } from "next"
 
 export const SITE_NAME = "Yumekai"
 export const SITE_DESCRIPTION =
-  "A kreativitás jövője itt kezdődik. Fedezd fel a művészet határait, és oszd meg alkotásaidat egy támogató közösséggel. Csatlakozz hozzánk, és légy része a kreatív forradalomnak!"
+  "The future of creativity starts here. Explore the boundaries of art and share your creations with a supportive community. Join us and be part of the creative revolution!"
 export const SITE_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://hswlp-shell-yumekai.promnet.workers.dev/"
 export const GITHUB_REPO_URL = "https://github.com/csiber/hswlp-next"
 
@@ -39,32 +39,32 @@ export const UPLOAD_BAN_HOURS = parseInt(process.env.UPLOAD_BAN_HOURS || '24', 1
 export const BADGE_DEFINITIONS = {
   newcomer: {
     name: '🔰 Newcomer',
-    description: 'Üdvözlünk! Most kezdted Yumekai kalandodat.',
+    description: 'Welcome! You just started your Yumekai journey.',
     icon: '🔰',
   },
   hot_dropper: {
     name: '🔥 Hot Dropper',
-    description: '3 trending poszt egy héten belül',
+    description: '3 trending posts within 7 days',
     icon: '🔥',
   },
   fan_favorite: {
     name: '🫶 Fan Favorite',
-    description: 'Egy poszt 20+ like-ot kapott',
+    description: 'One of your posts received 20+ likes',
     icon: '🫶',
   },
   visual_artist: {
     name: '🌸 Visual Artist',
-    description: '100 feltöltött poszt',
+    description: '100 uploaded posts',
     icon: '🌸',
   },
   master_commentator: {
     name: '💬 Master Commentator',
-    description: 'Kommentjeid összesen elértek 100 like-ot',
+    description: 'Your comments reached a total of 100 likes',
     icon: '💬',
   },
   spender: {
     name: '🪙 Spender',
-    description: '1000 pontot elköltöttél valaha',
+    description: 'You have spent 1000 points in total',
     icon: '🪙',
   },
 } as const

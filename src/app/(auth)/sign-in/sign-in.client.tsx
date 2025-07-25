@@ -50,7 +50,7 @@ function PasskeyAuthenticationButton({
       onError: (error) => {
         toast.dismiss();
         toast.error(
-          error.err?.message || "Nem sikerült lekérni a hitelesítési opciókat"
+          error.err?.message || "Failed to fetch authentication options"
         );
       },
     }
@@ -61,11 +61,11 @@ function PasskeyAuthenticationButton({
     {
       onError: (error) => {
         toast.dismiss();
-        toast.error(error.err?.message || "A hitelesítés nem sikerült");
+        toast.error(error.err?.message || "Authentication failed");
       },
       onSuccess: () => {
         toast.dismiss();
-        toast.success("Sikeres hitelesítés");
+        toast.success("Successfully authenticated");
         window.location.href = redirectPath;
       },
     }
@@ -76,13 +76,13 @@ function PasskeyAuthenticationButton({
   const handleAuthenticate = async () => {
     try {
       setIsAuthenticating(true);
-      toast.loading("Hitelesítés passkey-jel...");
+      toast.loading("Authenticating with passkey...");
 
       // Get authentication options from the server
       const [options] = await generateOptions({});
 
       if (!options) {
-        throw new Error("Nem sikerült lekérni a hitelesítési opciókat");
+        throw new Error("Failed to fetch authentication options");
       }
 
       // Start the authentication process in the browser
@@ -96,9 +96,9 @@ function PasskeyAuthenticationButton({
         challenge: options.challenge,
       });
     } catch (error) {
-      console.error("Passkey hitelesítési hiba:", error);
+      console.error("Passkey authentication error:", error);
       toast.dismiss();
-      toast.error("A hitelesítés nem sikerült");
+      toast.error("Authentication failed");
     } finally {
       setIsAuthenticating(false);
     }
@@ -111,8 +111,8 @@ function PasskeyAuthenticationButton({
       className={className}
     >
       {isAuthenticating
-        ? "Hitelesítés..."
-        : children || "Bejelentkezés Passkey-jel"}
+        ? "Authenticating..."
+        : children || "Login with Passkey"}
     </Button>
   );
 }
@@ -124,11 +124,11 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
       toast.error(error.err?.message);
     },
     onStart: () => {
-      toast.loading("Bejelentkezés folyamatban...");
+      toast.loading("Signing in...");
     },
     onSuccess: () => {
       toast.dismiss();
-      toast.success("Sikeres bejelentkezés");
+      toast.success("Successfully signed in");
       window.location.href = redirectPath;
     },
   });
@@ -145,7 +145,7 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
       <div className="w-full max-w-md space-y-8 p-6 md:p-10 bg-card rounded-xl shadow-lg border border-border">
         <div className="text-center">
           <h2 className="mt-2 text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-            Jelentkezz be a fiókodba
+            Sign in to your account
           </h2>
           <p className="mt-2 text-muted-foreground">
             vagy{" "}
@@ -153,7 +153,7 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
               href={`/sign-up?redirect=${encodeURIComponent(redirectPath)}`}
               className="font-medium text-primary hover:text-primary/90 underline"
             >
-              hozz létre új fiókot
+              create a new account
             </Link>
           </p>
         </div>
@@ -164,12 +164,12 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
             redirectPath={redirectPath}
           >
             <KeyIcon className="w-5 h-5 mr-2" />
-            Bejelentkezés Passkey-jel
+            Login with Passkey
           </PasskeyAuthenticationButton>
         </div>
 
         <SeparatorWithText>
-          <span className="uppercase text-muted-foreground">Vagy</span>
+          <span className="uppercase text-muted-foreground">Or</span>
         </SeparatorWithText>
 
         <Form {...form}>
@@ -184,7 +184,7 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Email cím"
+                      placeholder="Email address"
                       type="email"
                       className="w-full px-3 py-2"
                       {...field}
@@ -203,7 +203,7 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Jelszó"
+                      placeholder="Password"
                       className="w-full px-3 py-2"
                       {...field}
                     />
@@ -214,7 +214,7 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
             />
 
             <Button type="submit" className="w-full flex justify-center py-2.5">
-              Bejelentkezés jelszóval
+              Login with password
             </Button>
           </form>
         </Form>

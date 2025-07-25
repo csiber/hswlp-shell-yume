@@ -11,18 +11,18 @@ export interface PurchaseReceiptProps {
 
 export default function PurchaseReceipt({ userName, date, packageName, price, transactionId, credits }: PurchaseReceiptProps) {
   return (
-    <html lang="hu">
+    <html lang="en">
       <body>
-        <p>Kedves {userName}!</p>
-        <p>Köszönjük, a vásárlás sikeres volt!</p>
+        <p>Dear {userName},</p>
+        <p>Thank you, your purchase was successful!</p>
         <ul>
-          <li><strong>Dátum és idő:</strong> {date}</li>
-          <li><strong>Vásárlás típusa:</strong> {packageName}</li>
-          <li><strong>Ár:</strong> {price}</li>
-          <li><strong>Stripe tranzakció ID:</strong> {transactionId}</li>
-          <li><strong>Jóváírt pontok:</strong> {credits}</li>
+          <li><strong>Date and time:</strong> {date}</li>
+          <li><strong>Purchase type:</strong> {packageName}</li>
+          <li><strong>Price:</strong> {price}</li>
+          <li><strong>Stripe transaction ID:</strong> {transactionId}</li>
+          <li><strong>Credited points:</strong> {credits}</li>
         </ul>
-        <p>📄 Letölthető PDF nyugta hamarosan elérhető a profilodban</p>
+        <p>📄 A downloadable PDF receipt will soon be available in your profile</p>
       </body>
     </html>
   )

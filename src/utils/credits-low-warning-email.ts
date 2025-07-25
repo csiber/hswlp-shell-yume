@@ -4,13 +4,13 @@ export interface CreditsLowWarningEmailData {
 
 export function renderCreditsLowWarningEmail({ userName }: CreditsLowWarningEmailData) {
   const html = `<!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
   <body>
-    <p>Kedves ${userName || 'felhasználó'}!</p>
-    <p>Jelenleg 0 pontod van. Azóta új képek, badge-ek, funkciók jelentek meg...</p>
-    <p><a href="https://yumekai.com/credits">Tölts fel pontot most → yumekai.com/credits</a></p>
+    <p>Dear ${userName || 'user'}!</p>
+    <p>You currently have 0 credits. New images, badges and features have appeared...</p>
+    <p><a href="https://yumekai.com/credits">Top up now → yumekai.com/credits</a></p>
   </body>
 </html>`;
-  const text = `Kedves ${userName || 'felhasználó'}!\n\nJelenleg 0 pontod van. Azóta új képek, badge-ek, funkciók jelentek meg...\nTölts fel pontot most → https://yumekai.com/credits`;
+  const text = `Dear ${userName || 'user'}!\n\nYou currently have 0 credits. New images, badges and features have appeared...\nTop up now → https://yumekai.com/credits`;
   return { html, text };
 }

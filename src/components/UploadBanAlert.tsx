@@ -17,12 +17,12 @@ export default function UploadBanAlert() {
     <Alert color="danger" className="mb-4 flex items-start">
       <ShieldX className="mr-2 h-4 w-4 mt-0.5" />
       <div>
-        <p className="font-bold">Feltöltés letiltva</p>
+        <p className="font-bold">Uploads disabled</p>
         <p>
-          Nem tölthetsz fel új tartalmat <strong>{formatDateHu(until)}</strong>-ig.
+          You cannot upload new content until <strong>{formatDateHu(until)}</strong>.
         </p>
         {uploadBanReason && (
-          <p className="text-sm text-muted-foreground mt-1">Indok: {uploadBanReason}</p>
+          <p className="text-sm text-muted-foreground mt-1">Reason: {uploadBanReason}</p>
         )}
       </div>
     </Alert>

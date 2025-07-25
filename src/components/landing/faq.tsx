@@ -6,24 +6,24 @@ import clsx from "clsx";
 
 const faqs = [
   {
-    q: "Mi az a Yumekai?",
-    a: "Egy kreatív megosztó oldal, ahol képeket, zenéket és promptokat oszthatsz meg másokkal, vagy inspirálódhatsz mások tartalmaiból.",
+    q: "What is Yumekai?",
+    a: "A creative sharing site where you can post images, music and prompts or get inspired by others.",
   },
   {
-    q: "Kik használhatják?",
-    a: "Bárki, aki érdeklődik a mesterséges intelligencia, zene vagy vizuális művészetek iránt. A platform nyitott mind kezdők, mind haladók számára.",
+    q: "Who can use it?",
+    a: "Anyone interested in AI, music or visual arts. The platform is open to both beginners and advanced users.",
   },
   {
-    q: "Milyen tartalmakat tölthetek fel?",
-    a: "Jelenleg képeket, zenei fájlokat és AI promptokat. Minden feltöltést moderálunk, hogy biztonságos és inspiráló közösség maradjon.",
+    q: "What content can I upload?",
+    a: "Currently images, audio files and AI prompts. We moderate everything to keep the community safe and inspiring.",
   },
   {
-    q: "Ingyenes a használata?",
-    a: "A Yumekai használata teljesen ingyenes. Később lesznek kreditalapú funkciók, de a böngészés és feltöltés továbbra is szabadon elérhető marad.",
+    q: "Is it free to use?",
+    a: "Yumekai is completely free. Credit based features may arrive later but browsing and uploading will remain free.",
   },
   {
-    q: "Hogyan kezdjek neki?",
-    a: "Regisztrálj egy fiókot, majd máris feltölthetsz, kedvelhetsz vagy menthetsz tartalmakat saját listádba. Nincs szükség technikai tudásra.",
+    q: "How do I start?",
+    a: "Create an account and you can immediately upload, like or save content. No technical skills required.",
   },
 ];
 
@@ -34,7 +34,7 @@ export default function FAQ() {
     <section className="bg-gray-100 text-gray-900 py-24 dark:bg-[#0e111f] dark:text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl font-bold text-center mb-12">
-          Gyakori kérdések
+          Frequently Asked Questions
         </h2>
         <div className="space-y-4">
           {faqs.map((faq, i) => {
