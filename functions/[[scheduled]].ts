@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getDB } from '@/db'
 import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, firstPostEmailTable } from '@/db/schema'
+import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, emailLogTable } from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
@@ -8,6 +9,8 @@ import { lt, isNull, or, eq, and } from 'drizzle-orm'
 import { sendEmail } from '@/utils/email'
 import { renderCreditsLowWarningEmail } from '@/utils/credits-low-warning-email'
 import { renderFirstPostEmail } from '@/utils/first-post-email'
+import { renderReengagementEmail } from '@/utils/reengagement-email'
+
 import { createId } from '@paralleldrive/cuid2'
 
 // Ütemezett Worker, amely havonta kreditet ad a kevésbé aktív felhasználóknak
@@ -52,6 +55,7 @@ export const onScheduled = async () => {
   await checkBadges(db)
   await sendLowCreditWarnings(db)
   await sendFirstPostEmails(db)
+  await sendReengagementEmails(db)
 }
 
 async function checkBadges(db: any) {
@@ -146,6 +150,7 @@ async function sendLowCreditWarnings(db: any) {
   }
 }
 
+
 async function sendFirstPostEmails(db: any) {
   const rows = await db
     .select()
@@ -181,5 +186,46 @@ async function sendFirstPostEmails(db: any) {
       .update(firstPostEmailTable)
       .set({ sentAt: new Date() })
       .where(eq(firstPostEmailTable.id, row.first_post_email.id));
+
+async function sendReengagementEmails(db: any) {
+  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+
+  const rows = await db.execute(
+    `SELECT u.id, u.email, u.nickname, l.sent_at FROM user u
+     LEFT JOIN email_log l ON l.user_id = u.id AND l.type = 'reengagement'
+     WHERE u.email IS NOT NULL
+       AND u.emailVerified IS NOT NULL
+       AND u.email_notifications_enabled = 1
+       AND (u.last_login_at IS NULL OR u.last_login_at <= ?1)
+       AND (l.sent_at IS NULL OR l.sent_at <= ?2)`
+  ).bind(weekAgo.toISOString(), weekAgo.toISOString()).all() as {
+    results?: {
+      id: string
+      email: string
+      nickname: string | null
+      sent_at?: string
+    }[]
+  }
+
+  for (const row of rows.results || []) {
+    if (!row.email) continue
+
+    const { html, text } = renderReengagementEmail({
+      userName: row.nickname || undefined
+    })
+
+    await sendEmail({
+      to: row.email,
+      subject: '👀 Rég nem láttunk – új NSFW képek várnak!',
+      html,
+      text
+    })
+
+    await db.insert(emailLogTable).values({
+      id: `elog_${createId()}`,
+      userId: row.id,
+      type: 'reengagement',
+      sentAt: new Date()
+    })
   }
 }
