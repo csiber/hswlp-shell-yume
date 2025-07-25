@@ -29,8 +29,8 @@ export default function FavoritesPage() {
       <div className="max-w-5xl mx-auto">
         <EmptyState
           icon={<HeartCrack className="w-8 h-8" />}
-          title="Még nincs kedvenced"
-          subtitle="Szívecskézz tartalmakat, hogy ide kerüljenek"
+          title="No favorites yet"
+          subtitle="Heart some content to save it here"
         />
       </div>
     )
@@ -38,7 +38,7 @@ export default function FavoritesPage() {
 
   return (
     <main className="max-w-6xl mx-auto space-y-4">
-      <h1 className="text-2xl font-bold">Kedvenceim</h1>
+      <h1 className="text-2xl font-bold">My Favorites</h1>
       <FavoritesGrid>
         {data?.items.map(item => (
           <FavoritesCard key={item.id} item={item} onRemove={() => removeFavorite(item.id)} />

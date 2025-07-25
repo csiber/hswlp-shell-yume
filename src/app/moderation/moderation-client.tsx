@@ -175,7 +175,7 @@ function ImagePreview({ url, alt }: { url: string; alt: string }) {
 
 function PromptPreview({ url }: { url: string }) {
   const { data } = useSWR<string>(url, (u: string) => fetch(u).then(r => r.text()))
-  if (!data) return <div className="text-sm p-2">Betöltés...</div>
+  if (!data) return <div className="text-sm p-2">Loading...</div>
   const lines = data.split(/\r?\n/)
   const truncated = lines.slice(0, 20).join('\n')
   const hasMore = lines.length > 20

@@ -50,14 +50,12 @@ export default function PostSelectModal({ open, onOpenChange, onSelect }: Props)
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>
-            Kérlek válaszd ki melyik posztot szeretnéd kiemelni
-          </DialogTitle>
+          <DialogTitle>Please select which post you want to feature</DialogTitle>
         </DialogHeader>
         {loading ? (
-          <p>Betöltés...</p>
+          <p>Loading...</p>
         ) : posts.length === 0 ? (
-          <p>Nincs feltöltött posztod.</p>
+          <p>You have no uploads.</p>
         ) : (
           <div className="grid max-h-[60vh] grid-cols-1 gap-3 overflow-y-auto">
             {posts.map((post) => (

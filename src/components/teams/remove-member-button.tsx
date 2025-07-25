@@ -98,14 +98,14 @@ export function RemoveMemberButton({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Csapattag eltávolítása</DialogTitle>
+          <DialogTitle>Remove team member</DialogTitle>
           <DialogDescription>
-            Biztosan el szeretnéd távolítani {memberName} felhasználót a csapatból? Ez a művelet nem visszavonható.
+            Are you sure you want to remove {memberName} from the team? This action cannot be undone.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="mt-4 flex flex-col gap-4 sm:flex-row">
           <DialogClose ref={dialogCloseRef} asChild>
-            <Button variant="outline" className="sm:w-auto w-full">Mégsem</Button>
+            <Button variant="outline" className="sm:w-auto w-full">Cancel</Button>
           </DialogClose>
           <Button
             variant="destructive"
@@ -113,7 +113,7 @@ export function RemoveMemberButton({
             disabled={isPending}
             className="sm:w-auto w-full"
           >
-            {isPending ? "Eltávolítás..." : "Tag eltávolítása"}
+            {isPending ? "Removing..." : "Remove member"}
           </Button>
         </DialogFooter>
       </DialogContent>

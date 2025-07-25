@@ -38,7 +38,7 @@ export default function FavoritesCard({ item, onRemove }: { item: FavoriteItem; 
               <Heart className="w-5 h-5 text-red-500" />
             </button>
           </TooltipTrigger>
-          <TooltipContent>Ezt a képet szívecskézted</TooltipContent>
+          <TooltipContent>You liked this item</TooltipContent>
         </Tooltip>
       </TooltipProvider>
       {item.mime?.startsWith('image/') && (

@@ -53,8 +53,8 @@ export function SessionsClient({ sessions }: { sessions: SessionWithMeta[] }) {
                   <CardTitle className="flex flex-wrap items-center gap-2 text-base">
                     {session.city && session.country
                         ? `${session.city}, ${regionNames.of(session.country)}`
-                        : session.country || "Ismeretlen hely"}
-                      {session.isCurrentSession && <Badge>Aktuális munkamenet</Badge>}
+                        : session.country || "Unknown location"}
+                      {session.isCurrentSession && <Badge>Current session</Badge>}
                   </CardTitle>
                   {session?.authenticationType && (
                       <Badge variant='outline'>
@@ -62,36 +62,36 @@ export function SessionsClient({ sessions }: { sessions: SessionWithMeta[] }) {
                       </Badge>
                   )}
                   <div className="text-sm text-muted-foreground whitespace-nowrap">
-                      &nbsp;· &nbsp;{formatDistanceToNow(session.createdAt)} ezelőtt
+                      &nbsp;· &nbsp;{formatDistanceToNow(session.createdAt)} ago
                   </div>
                 </div>
                 <CardDescription className="text-sm">
-                    {session.parsedUserAgent?.browser.name ?? "Ismeretlen böngésző"} {session.parsedUserAgent?.browser.major ?? "Ismeretlen verzió"} - {session.parsedUserAgent?.device.vendor ?? "Ismeretlen eszköz"} {session.parsedUserAgent?.device.model ?? "Ismeretlen modell"} {session.parsedUserAgent?.device.type ?? "Ismeretlen típus"} ({session.parsedUserAgent?.os.name ?? "Ismeretlen OS"} {session.parsedUserAgent?.os.version ?? "Ismeretlen verzió"})
+                    {session.parsedUserAgent?.browser.name ?? "Unknown browser"} {session.parsedUserAgent?.browser.major ?? "Unknown version"} - {session.parsedUserAgent?.device.vendor ?? "Unknown device"} {session.parsedUserAgent?.device.model ?? "Unknown model"} {session.parsedUserAgent?.device.type ?? "Unknown type"} ({session.parsedUserAgent?.os.name ?? "Unknown OS"} {session.parsedUserAgent?.os.version ?? "Unknown version"})
                 </CardDescription>
               </div>
               <div>
                 {!session?.isCurrentSession && (
                   <Dialog>
                     <DialogTrigger asChild>
-                        <Button size="sm" variant="destructive" className="w-full sm:w-auto">Munkamenet törlése</Button>
+                        <Button size="sm" variant="destructive" className="w-full sm:w-auto">Delete session</Button>
                     </DialogTrigger>
                     <DialogContent>
                       <DialogHeader>
-                          <DialogTitle>Munkamenet törlése?</DialogTitle>
+                          <DialogTitle>Delete session?</DialogTitle>
                         <DialogDescription>
-                          Ez kijelentkezteti ezt az eszközt. A művelet nem vonható vissza.
+                          This will sign out this device. This action cannot be undone.
                         </DialogDescription>
                       </DialogHeader>
                       <DialogFooter className="mt-6 sm:mt-0">
                         <DialogClose ref={dialogCloseRef} asChild>
-                          <Button variant="outline">Mégse</Button>
+                          <Button variant="outline">Cancel</Button>
                         </DialogClose>
                         <Button
                           variant="destructive"
                           className="mb-4 sm:mb-0"
                           onClick={() => deleteSession({ sessionId: session.id })}
                         >
-                          Munkamenet törlése
+                          Delete session
                         </Button>
                       </DialogFooter>
                     </DialogContent>

@@ -27,13 +27,13 @@ export default function GDPRNotice() {
     <div className="fixed bottom-0 inset-x-0 z-[200] bg-background border-t p-4 text-sm">
       <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         <span>
-          Ez a weboldal sütiket használ a felhasználói élmény javítása érdekében.{' '}
+          This website uses cookies to enhance your experience.{' '}
           <Link href="/privacy" className="underline underline-offset-2">
-            További információ
+            Learn more
           </Link>
         </span>
         <Button size="sm" onClick={accept}>
-          Rendben
+          Got it
         </Button>
       </div>
     </div>

@@ -57,10 +57,10 @@ function PaymentForm({ packageId, clientSecret, onSuccess, onCancel, credits, pr
           });
 
           if (success) {
-            toast.success("Sikeres fizetés!");
+            toast.success("Payment successful!");
             onSuccess();
           } else {
-            toast.error("A fizetés nem sikerült");
+            toast.error("Payment failed");
           }
         } else {
           throw new Error("No payment intent found");
@@ -68,7 +68,7 @@ function PaymentForm({ packageId, clientSecret, onSuccess, onCancel, credits, pr
       }
     } catch (error) {
       console.error("Payment error:", error);
-      toast.error("Váratlan hiba történt");
+      toast.error("Unexpected error occurred");
     } finally {
       setIsProcessing(false);
     }
@@ -95,13 +95,13 @@ function PaymentForm({ packageId, clientSecret, onSuccess, onCancel, credits, pr
             <div className="h-px bg-border" />
             <div className="text-xs text-muted-foreground space-y-2">
               <p>
-                A fizetés biztonságos és titkosított. A Stripe megbízható szolgáltató kezeli a tranzakciót.
+                Payments are secure and encrypted. Stripe handles the transaction.
               </p>
               <p>
-                A fizetési adataid közvetlenül a Stripe-hoz kerülnek, és nem jutnak el a szervereinkre.
+                Your payment details go directly to Stripe and never reach our servers.
               </p>
               <p>
-                A kreditek sikeres fizetés után azonnal jóváíródnak, és {CREDITS_EXPIRATION_YEARS} évig érvényesek.
+                Credits are added instantly after a successful payment and remain valid for {CREDITS_EXPIRATION_YEARS} years.
               </p>
             </div>
           </div>
@@ -117,14 +117,14 @@ function PaymentForm({ packageId, clientSecret, onSuccess, onCancel, credits, pr
             onClick={onCancel}
             disabled={isProcessing}
           >
-            Mégse
+            Cancel
           </Button>
           <Button
             type="submit"
             disabled={isProcessing || !stripe || !elements}
             className="px-8"
           >
-            {isProcessing ? "Feldolgozás..." : "Fizetés"}
+            {isProcessing ? "Processing..." : "Pay"}
           </Button>
         </div>
       </form>

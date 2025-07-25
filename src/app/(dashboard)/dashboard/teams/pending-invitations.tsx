@@ -66,7 +66,7 @@ export function PendingInvitations() {
       const [result] = await acceptInvitationAction({ token });
 
       if (result?.success) {
-        toast.success("Sikeresen csatlakoztál a csapathoz");
+        toast.success("Successfully joined the team");
 
         // Remove from pending list
         setPendingInvitations(prev => prev.filter(inv => inv.token !== token));
@@ -75,7 +75,7 @@ export function PendingInvitations() {
         router.refresh();
       }
     } catch {
-        toast.error("Nem sikerült elfogadni a meghívást");
+        toast.error("Failed to accept the invitation");
     } finally {
       setIsAccepting(prev => ({ ...prev, [token]: false }));
     }
@@ -92,9 +92,9 @@ export function PendingInvitations() {
   return (
     <Card className="mb-8 border-orange-200 dark:border-orange-900 bg-orange-50 dark:bg-orange-950/20">
       <CardHeader>
-        <CardTitle className="text-xl">Függőben lévő csapatmeghívások</CardTitle>
+        <CardTitle className="text-xl">Pending team invitations</CardTitle>
         <CardDescription>
-          Meghívást kaptál a következő csapatokhoz
+          You have been invited to the following teams
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -118,7 +118,7 @@ export function PendingInvitations() {
               <div>
                 <h3 className="font-medium">{invitation.team.name}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Meghívta {invitation.invitedBy.firstName || ''} {invitation.invitedBy.lastName || ''}
+                  Invited by {invitation.invitedBy.firstName || ''} {invitation.invitedBy.lastName || ''}
                 </p>
               </div>
             </div>
@@ -128,11 +128,11 @@ export function PendingInvitations() {
               size="sm"
             >
               {isAccepting[invitation.token] ? (
-                "Elfogadás..."
+                "Accepting..."
               ) : (
                 <>
                   <CheckCircle className="mr-2 h-4 w-4" />
-                  Elfogadás
+                  Accept
                 </>
               )}
             </Button>

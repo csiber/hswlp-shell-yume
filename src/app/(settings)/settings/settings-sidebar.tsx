@@ -89,14 +89,14 @@ export function SettingsSidebar() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Kijelentkezel?</DialogTitle>
+              <DialogTitle>Sign out?</DialogTitle>
               <DialogDescription>
-                Biztosan kijelentkezel a fiókodból?
+                Are you sure you want to sign out?
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="mt-4 flex flex-col gap-4">
               <DialogClose ref={dialogCloseRef} asChild>
-                <Button variant="outline">Mégse</Button>
+                <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
                 variant="destructive"

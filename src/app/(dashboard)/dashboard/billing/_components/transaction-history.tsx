@@ -19,28 +19,28 @@ import { Badge } from "@/components/ui/badge";
 import { useTransactionStore } from "@/state/transaction";
 
 const TRANSACTION_TYPE_LABELS: Record<string, string> = {
-  PURCHASE: "Vásárlás",
-  USAGE: "Felhasználás",
-  MONTHLY_REFRESH: "Havi frissítés",
-  UPLOAD_REWARD: "Feltöltési jutalom",
-  SIGN_UP_BONUS: "Regisztrációs bónusz",
+  PURCHASE: "Purchase",
+  USAGE: "Usage",
+  MONTHLY_REFRESH: "Monthly refresh",
+  UPLOAD_REWARD: "Upload reward",
+  SIGN_UP_BONUS: "Sign up bonus",
 };
 
 const UPLOAD_REWARD_ITEM_LABELS: Record<string, string> = {
-  image: "kép",
-  music: "zene",
+  image: "image",
+  music: "music",
   prompt: "prompt",
-  video: "videó",
+  video: "video",
 };
 
-const huDateFormat: Intl.DateTimeFormatOptions = {
+const enDateFormat: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "long",
   day: "numeric",
 };
 
 function formatDate(date: Date) {
-  return date.toLocaleDateString("hu-HU", huDateFormat);
+  return date.toLocaleDateString("en-US", enDateFormat);
 }
 
 function localizeTransactionType(type: string) {
@@ -53,7 +53,7 @@ function localizeDescription(description: string) {
   if (match) {
     const item = match[1].toLowerCase();
     const itemHu = UPLOAD_REWARD_ITEM_LABELS[item] ?? item;
-    return `Feltöltési jutalom (${itemHu})`;
+    return `Upload reward (${itemHu})`;
   }
   return description;
 }
@@ -162,7 +162,7 @@ export function TransactionHistory() {
                   </TableRow>
                 )) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">Nincs tranzakció</TableCell>
+                    <TableCell colSpan={4} className="h-24 text-center">No transactions</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -217,7 +217,7 @@ export function TransactionHistory() {
             </div>
           )) : (
             <div className="text-center py-8 text-muted-foreground">
-              Nincs tranzakció
+              No transactions
             </div>
           )}
         </div>

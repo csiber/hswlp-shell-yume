@@ -27,14 +27,14 @@ export default function CreateAlbumDialog({ onCreated }: { onCreated?: () => voi
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Új album létrehozása</DialogTitle>
+          <DialogTitle>Create new album</DialogTitle>
         </DialogHeader>
-        <Input value={name} onChange={e => setName(e.target.value)} placeholder="Album neve" className="mb-4" />
+        <Input value={name} onChange={e => setName(e.target.value)} placeholder="Album name" className="mb-4" />
         <div className="flex justify-end gap-2">
           <DialogClose asChild>
-            <Button type="button" variant="outline">Mégsem</Button>
+            <Button type="button" variant="outline">Cancel</Button>
           </DialogClose>
-          <Button onClick={create}>Létrehozás</Button>
+          <Button onClick={create}>Create</Button>
         </div>
       </DialogContent>
     </Dialog>

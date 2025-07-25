@@ -92,13 +92,13 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
         <div className="container mx-auto px-5 py-12">
           <Alert
             color="danger"
-            title="Hozzáférés megtagadva"
-            description={`Nincs jogosultságod a(z) "${team.name}" csapathoz. Vedd fel a kapcsolatot a csapat tulajdonosával a hozzáférésért.`}
+            title="Access denied"
+            description={`You don't have permission to access "${team.name}". Contact the team owner for access.`}
             className="mb-6"
           />
           <Button asChild className="mt-4">
             <Link href="/dashboard/teams">
-              Vissza a csapatokhoz
+              Back to teams
             </Link>
           </Button>
         </div>
@@ -252,7 +252,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
                             userId={member.userId}
                             memberName={`${member.user.firstName || ''} ${member.user.lastName || ''}`.trim() || member.user.email || ''}
                             isDisabled={member.isSystemRole && member.roleId === 'owner'}
-                            tooltipText="A csapat tulajdonosát nem lehet eltávolítani"
+                            tooltipText="The team owner cannot be removed"
                           />
                         </TableCell>
                       )}

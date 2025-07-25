@@ -113,12 +113,12 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
             <div className="flex justify-end gap-2 pt-2">
               <DialogClose asChild>
                 <Button type="button" variant="outline">
-                  Mégsem
+                  Cancel
                 </Button>
               </DialogClose>
 
               <Button type="submit">
-                Meghívó küldése
+                Send invite
               </Button>
             </div>
           </form>
