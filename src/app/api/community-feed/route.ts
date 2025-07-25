@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
+import { BADGE_DEFINITIONS } from '@/constants'
 
 export interface CommunityPreview {
   id: string
@@ -25,6 +26,7 @@ export async function GET() {
     env.DB.prepare(`
       SELECT u.id, u.title, u.url, u.r2_key, u.created_at, u.download_points,
              usr.nickname, usr.email,
+             (SELECT badge_key FROM user_badges WHERE user_id = usr.id ORDER BY awarded_at LIMIT 1) as badge_key,
              COUNT(f.id) AS favorites
         FROM uploads u
         JOIN user usr ON u.user_id = usr.id
@@ -77,6 +79,13 @@ export async function GET() {
       image_url: await resolveUrl(row.r2_key, row.url),
       created_at: row.created_at,
       author: row.nickname || row.email,
+      badge: row.badge_key
+        ? {
+            icon: BADGE_DEFINITIONS[row.badge_key as keyof typeof BADGE_DEFINITIONS].icon,
+            name: BADGE_DEFINITIONS[row.badge_key as keyof typeof BADGE_DEFINITIONS].name,
+            description: BADGE_DEFINITIONS[row.badge_key as keyof typeof BADGE_DEFINITIONS].description,
+          }
+        : undefined,
       points: row.download_points ? Number(row.download_points) : undefined,
     })),
   )

@@ -28,10 +28,17 @@ interface Props {
     profileFrameEnabled?: boolean
   }
   uploads: Upload[]
+  badges: {
+    key: string
+    name: string
+    description: string
+    icon: string
+    awarded_at: string
+  }[]
   currentUserId?: string
 }
 
-export default function ProfileClient({ user, uploads, currentUserId }: Props) {
+export default function ProfileClient({ user, uploads, badges, currentUserId }: Props) {
   const [tab, setTab] = useState<'image' | 'music' | 'prompt'>('image')
   const filtered = uploads.filter((u) => u.type === tab)
 
@@ -78,6 +85,20 @@ export default function ProfileClient({ user, uploads, currentUserId }: Props) {
         <UserMiniCard user={user} currentUserId={currentUserId} />
         <Badge variant="secondary">{user.credits} kredit</Badge>
       </div>
+      {badges.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {badges.map((b) => (
+            <TooltipProvider delayDuration={200} key={b.key}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-xl cursor-default">{b.icon}</span>
+                </TooltipTrigger>
+                <TooltipContent>{`${b.name} – ${b.description}`}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ))}
+        </div>
+      )}
       {currentUserId === user.id ? (
         <p className="mb-4 text-sm text-primary">Saját profilod</p>
       ) : (

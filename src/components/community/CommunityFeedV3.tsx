@@ -23,6 +23,7 @@ export interface FeedItem {
     name: string | null;
     email: string;
     avatar_url?: string | null;
+    badge?: { icon: string; name: string; description: string };
   };
   pinned?: boolean;
 }

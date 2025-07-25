@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { NextRequest } from 'next/server'
+import { BADGE_DEFINITIONS } from '@/constants'
 import { init } from '@paralleldrive/cuid2'
 
 interface RouteContext<T> {
@@ -17,6 +18,7 @@ interface CommentRow {
   nickname: string | null
   email: string
   avatar: string | null
+  badge_key: string | null
 }
 
 export async function GET(
@@ -27,17 +29,18 @@ export async function GET(
   const { env } = getCloudflareContext()
   const session = await getSessionFromCookie()
   const rows = await env.DB.prepare(
-    `SELECT c.id, c.content, c.created_at, u.nickname, u.email, u.avatar
+    `SELECT c.id, c.content, c.created_at, u.nickname, u.email, u.avatar,
+            (SELECT badge_key FROM user_badges WHERE user_id = u.id ORDER BY awarded_at LIMIT 1) as badge_key
      FROM comments c
      LEFT JOIN user u ON c.user_id = u.id
      WHERE c.upload_id = ?1
      ORDER BY c.created_at ASC`
-  ).bind(uploadId).all<CommentRow>()
+  ).bind(uploadId).all<CommentRow & { badge_key: string | null }>()
   const comments = [] as {
     id: string
     text: string
     created_at: string
-    user: { name: string; avatar?: string }
+    user: { name: string; avatar?: string; badge?: { key: string; icon: string; name: string; description: string } }
     reactions: { emoji: string; count: number; reacted: boolean }[]
   }[]
 
@@ -57,6 +60,7 @@ export async function GET(
       count: r.count,
       reacted: userRows.some(u => u.emoji === r.emoji)
     }))
+    const badgeKey = row.badge_key as keyof typeof BADGE_DEFINITIONS | null
     comments.push({
       id: row.id,
       text: row.content,
@@ -64,6 +68,14 @@ export async function GET(
       user: {
         name: row.nickname || row.email,
         avatar: row.avatar ?? undefined,
+        badge: badgeKey
+          ? {
+              key: badgeKey,
+              icon: BADGE_DEFINITIONS[badgeKey].icon,
+              name: BADGE_DEFINITIONS[badgeKey].name,
+              description: BADGE_DEFINITIONS[badgeKey].description,
+            }
+          : undefined,
       },
       reactions
     })

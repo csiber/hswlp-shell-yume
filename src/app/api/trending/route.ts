@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
 import { NextRequest } from 'next/server'
+import { BADGE_DEFINITIONS } from '@/constants'
 
 export async function GET(req: NextRequest) {
   const { env } = getCloudflareContext()
@@ -16,6 +17,7 @@ export async function GET(req: NextRequest) {
   const result = await env.DB.prepare(`
       SELECT u.id, u.title, u.url, u.r2_key, u.created_at,
              usr.nickname, usr.email,
+             (SELECT badge_key FROM user_badges WHERE user_id = usr.id ORDER BY awarded_at LIMIT 1) as badge_key,
              COUNT(f.id) AS likes
         FROM uploads u
         JOIN user usr ON u.user_id = usr.id
@@ -50,6 +52,13 @@ export async function GET(req: NextRequest) {
         url,
         created_at: row.created_at,
         author: row.nickname || row.email,
+        badge: row.badge_key
+          ? {
+              icon: BADGE_DEFINITIONS[row.badge_key as keyof typeof BADGE_DEFINITIONS].icon,
+              name: BADGE_DEFINITIONS[row.badge_key as keyof typeof BADGE_DEFINITIONS].name,
+              description: BADGE_DEFINITIONS[row.badge_key as keyof typeof BADGE_DEFINITIONS].description,
+            }
+          : undefined,
         is_nsfw: false,
       }
     })
