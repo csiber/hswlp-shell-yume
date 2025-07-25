@@ -33,12 +33,16 @@ export async function POST(req: Request) {
   if (!session?.user?.id) {
     return jsonResponse({ error: 'Unauthorized' }, { status: 401 })
   }
-  const { prompt, type, style, offered_credits } = (await req.json()) as {
-    prompt?: string
-    type?: string
-    style?: string
-    offered_credits?: number
-  }
+  const body = (await req.json().catch(() => null)) as
+    | {
+        prompt?: string
+        type?: string
+        style?: string
+        offered_credits?: number
+      }
+    | null
+  if (!body) return jsonResponse({ error: 'Invalid JSON' }, { status: 400 })
+  const { prompt, type, style, offered_credits } = body
   if (!prompt || !type || !style || typeof offered_credits !== 'number') {
     return jsonResponse({ error: 'Missing fields' }, { status: 400 })
   }
