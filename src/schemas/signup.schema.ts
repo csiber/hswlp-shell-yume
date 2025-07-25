@@ -15,6 +15,7 @@ export const signUpSchema = z
     password: z.string().min(6),
     confirmPassword: z.string().min(6),
     captchaToken: catchaSchema,
+    referrerId: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "A jelszavak nem egyeznek",

@@ -18,6 +18,7 @@ export const passkeyEmailSchema = z.object({
     .min(2, "A vezetéknévnek legalább 2 karakter hosszúnak kell lennie")
     .max(255),
   captchaToken: catchaSchema,
+  referrerId: z.string().optional(),
 });
 
 export type PasskeyEmailSchema = z.infer<typeof passkeyEmailSchema>;

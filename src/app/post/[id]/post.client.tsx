@@ -78,6 +78,7 @@ export default function PostClient({ id }: { id: string }) {
         title={post.title}
         url={`${typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL ?? ''}/post/${id}`}
         className="fixed right-4 bottom-4 z-20 print:hidden"
+        referrerId={session?.user?.id}
       />
     </main>
   )
