@@ -134,9 +134,6 @@ importers:
       react-intersection-observer:
         specifier: ^9.16.0
         version: 9.16.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react-native-fs:
-        specifier: ^2.20.0
-        version: 2.20.0(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0))
       react-turnstile:
         specifier: ^1.1.4
         version: 1.1.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -6133,14 +6130,6 @@ packages:
   react-is@18.3.1:
     resolution: {integrity: sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==}
 
-  react-native-fs@2.20.0:
-    resolution: {integrity: sha512-VkTBzs7fIDUiy/XajOSNk0XazFE9l+QlMAce7lGuebZcag5CnjszB+u4BdqzwaQOdcYb5wsJIsqq4kxInIRpJQ==}
-    peerDependencies:
-      react-native: '*'
-      react-native-windows: '*'
-    peerDependenciesMeta:
-      react-native-windows:
-        optional: true
 
   react-native@0.80.1:
     resolution: {integrity: sha512-cIiJiPItdC2+Z9n30FmE2ef1y4522kgmOjMIoDtlD16jrOMNTUdB2u+CylLTy3REkWkWTS6w8Ub7skUthkeo5w==}
@@ -14696,11 +14685,6 @@ snapshots:
 
   react-is@18.3.1: {}
 
-  react-native-fs@2.20.0(react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0)):
-    dependencies:
-      base-64: 0.1.0
-      react-native: 0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0)
-      utf8: 3.0.0
 
   react-native@0.80.1(@babel/core@7.28.0)(@types/react@19.1.8)(react@19.1.0):
     dependencies:
