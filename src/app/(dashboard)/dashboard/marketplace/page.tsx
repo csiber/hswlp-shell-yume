@@ -21,8 +21,8 @@ export default async function MarketplacePage() {
 
         <Alert
           color="warning"
-          title="Demo funkció"
-          description="Ez a bemutató lehetőséget ad a kredit alapú vásárlás és a komponensek aktiválásának kipróbálására."
+          title="Hogyan működik?"
+          description="Válassz ki egy komponenst, vásárold meg a kreditjeid felhasználásával, majd az aktiválás után azonnal élesben használhatod."
           className="mb-6"
         />
 
