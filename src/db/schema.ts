@@ -82,6 +82,8 @@ uploadBanUntil: integer("upload_ban_until", { mode: "timestamp" }),
 
   uploadBanReason: text(),
   uploadLimitMb: integer().default(100),
+  lastLoginAt: integer("last_login_at", { mode: "timestamp" }),
+  emailNotificationsEnabled: integer("email_notifications_enabled").default(1).notNull(),
   usedStorageMb: integer().default(0),
 }, (table) => ([
   index('email_idx').on(table.email),
@@ -264,6 +266,16 @@ export const userBadgeTable = sqliteTable('user_badges', {
   index('user_badges_badge_key_idx').on(table.badgeKey),
 ]);
 
+
+export const emailLogTable = sqliteTable("email_log", {
+  id: text().primaryKey().$defaultFn(() => `elog_${createId()}`).notNull(),
+  userId: text("user_id").notNull().references(() => userTable.id),
+  emailType: text("email_type").notNull(),
+  sentAt: integer("sent_at", { mode: "timestamp" }).$defaultFn(() => new Date()).notNull(),
+}, (table) => [
+  index("email_log_user_type_idx").on(table.userId, table.emailType),
+  index("email_log_sent_idx").on(table.sentAt),
+]);
 
 
 // System-defined roles - these are always available
@@ -458,4 +470,5 @@ export type HighlightedPost = InferSelectModel<typeof highlightedPostsTable>;
 export type MarketplaceActivation = InferSelectModel<typeof marketplaceActivationsTable>;
 export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
 export type ReferralEvent = InferSelectModel<typeof referralEventsTable>;
+export type EmailLog = InferSelectModel<typeof emailLogTable>;
 export type UserBadge = InferSelectModel<typeof userBadgeTable>;

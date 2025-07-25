@@ -197,6 +197,8 @@ export async function createAndStoreSession(
     authenticationType,
     passkeyCredentialId
   });
+  const db = await getDB();
+  await db.update(userTable).set({ lastLoginAt: new Date() }).where(eq(userTable.id, userId));
   await setSessionTokenCookie({
     token: sessionToken,
     userId,

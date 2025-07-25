@@ -28,7 +28,7 @@
     "placement": { "mode": "smart" },
 
     "triggers": {
-      "crons": ["0 0 1 * *"]
+      "crons": ["0 0 1 * *", "0 4 * * *"]
     },
 
     /**

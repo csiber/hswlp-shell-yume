@@ -1,17 +1,32 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getDB } from '@/db'
-import { userTable, CREDIT_TRANSACTION_TYPE } from '@/db/schema'
+import {
+  userTable,
+  emailLogTable,
+  CREDIT_TRANSACTION_TYPE,
+} from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
-import { lt, isNull, or, eq } from 'drizzle-orm'
+import { lt, isNull, or, eq, gt, and, not } from 'drizzle-orm'
+import { sendEmail, renderEmail } from '@/utils/email'
+import { ReengagementEmail } from '@/react-email'
+import { createId } from '@paralleldrive/cuid2'
 
 // Ütemezett Worker, amely havonta kreditet ad a kevésbé aktív felhasználóknak
 
-export const onScheduled = async () => {
+export const onScheduled = async (event: ScheduledEvent) => {
   getCloudflareContext()
   const db = await getDB()
 
+  if (event.cron === '0 0 1 * *') {
+    await handleMonthlyCredits(db)
+  } else {
+    await sendReengagementEmails(db)
+  }
+}
+
+async function handleMonthlyCredits(db: any) {
   const now = new Date()
   const monthAgo = new Date(now)
   monthAgo.setMonth(monthAgo.getMonth() - 1)
@@ -21,12 +36,9 @@ export const onScheduled = async () => {
       isNull(userTable.lastCreditRefreshAt),
       lt(userTable.lastCreditRefreshAt, monthAgo)
     ),
-    columns: {
-      id: true,
-    },
+    columns: { id: true },
   })
 
-  // Végigmegyünk a jogosult felhasználókon és jóváírjuk a krediteket
   for (const user of users) {
     const expirationDate = new Date(now)
     expirationDate.setMonth(expirationDate.getMonth() + 1)
@@ -46,6 +58,55 @@ export const onScheduled = async () => {
   }
 
   await checkBadges(db)
+}
+
+async function sendReengagementEmails(db: any) {
+  const now = new Date()
+  const sevenDaysAgo = new Date(now)
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+  const users = await db.query.userTable.findMany({
+    where: and(
+      lt(userTable.lastLoginAt, sevenDaysAgo),
+      not(isNull(userTable.emailVerified)),
+      eq(userTable.emailNotificationsEnabled, 1)
+    ),
+    columns: { id: true, email: true, nickname: true }
+  })
+
+  for (const user of users) {
+    const already = await db.query.emailLogTable.findFirst({
+      where: and(
+        eq(emailLogTable.userId, user.id),
+        eq(emailLogTable.emailType, 'reengagement'),
+        gt(emailLogTable.sentAt, sevenDaysAgo)
+      ),
+      columns: { id: true }
+    })
+    if (already) continue
+
+    if (!user.email) continue
+
+    const html = renderEmail(
+      <ReengagementEmail
+        userName={user.nickname}
+        ctaUrl="https://yumekai.com/explore"
+      />
+    )
+
+    await sendEmail({
+      to: user.email,
+      subject: '👀 Rég nem láttunk – új NSFW képek várnak!',
+      html,
+    })
+
+    await db.insert(emailLogTable).values({
+      id: `elog_${createId()}`,
+      userId: user.id,
+      emailType: 'reengagement',
+      sentAt: now,
+    })
+  }
 }
 
 async function checkBadges(db: any) {

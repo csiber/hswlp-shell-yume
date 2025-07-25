@@ -75,6 +75,8 @@ export const signUpAction = createServerAction()
             emailVerified: new Date(),
             currentCredits: SIGN_UP_BONUS_CREDITS,
             lastCreditRefreshAt: new Date(),
+            lastLoginAt: new Date(),
+            emailNotificationsEnabled: 1,
             referredBy: input.referrerId ?? null,
           })
           .returning();
