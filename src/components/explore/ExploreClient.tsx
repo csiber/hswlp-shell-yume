@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer'
 import ExplorePostCard, { ExploreItem } from './ExplorePostCard'
 import EmptyState from '@/components/favorites/EmptyState'
 import { ImageOff } from 'lucide-react'
+import { useSessionStore } from '@/state/session'
 
 export default function ExploreClient() {
   const [items, setItems] = useState<ExploreItem[]>([])
@@ -12,6 +13,8 @@ export default function ExploreClient() {
   const [loading, setLoading] = useState(false)
   const [hasMore, setHasMore] = useState(true)
   const { ref, inView } = useInView()
+  const session = useSessionStore(s => s.session)
+  const guest = !session?.user?.id
 
   useEffect(() => {
     if (inView && hasMore && !loading) {
@@ -52,12 +55,14 @@ export default function ExploreClient() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
-      <div className="text-center text-sm bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-100 text-yellow-800 p-2 rounded">
-        Vendégként böngészed a nyilvános galériát – belépés után több tartalom elérhető.
-      </div>
+      {guest && (
+        <div className="text-center text-sm bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-100 text-yellow-800 p-2 rounded">
+          🔓 További funkciókért jelentkezz be vagy regisztrálj
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {items.map(item => (
-          <ExplorePostCard key={item.id} item={item} />
+          <ExplorePostCard key={item.id} item={item} isGuest={guest} />
         ))}
       </div>
       {loading && <p className="text-center">Betöltés...</p>}

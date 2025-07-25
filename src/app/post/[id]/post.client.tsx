@@ -45,9 +45,9 @@ export default function PostClient({ id }: { id: string }) {
       {post.tags && <p className="text-sm text-muted-foreground">{post.tags}</p>}
       <p className="text-sm text-muted-foreground">Készítette: {post.author}</p>
       {guest && (
-        <button className="w-full rounded-md bg-amber-500 text-white py-2">
-          🔓 További funkciókért jelentkezz be
-        </button>
+        <div className="w-full rounded-md bg-amber-500 text-white text-center py-2">
+          🔓 További funkciókért jelentkezz be vagy regisztrálj
+        </div>
       )}
       <div className="flex gap-4 pt-2">
         <a

@@ -13,9 +13,10 @@ import {
 
 interface Props {
   postId: string
+  isGuest?: boolean
 }
 
-export default function LikeButton({ postId }: Props) {
+export default function LikeButton({ postId, isGuest = false }: Props) {
   const [count, setCount] = useState(0)
   const [liked, setLiked] = useState(false)
 
@@ -35,6 +36,7 @@ export default function LikeButton({ postId }: Props) {
   }, [postId])
 
   async function toggle() {
+    if (isGuest) return
     try {
       if (liked) {
         const res = await fetch(`/api/posts/${postId}/unlike`, { method: "DELETE" })
@@ -70,7 +72,8 @@ export default function LikeButton({ postId }: Props) {
             whileTap={{ scale: 0.95 }}
             whileHover={{ scale: 1.05 }}
             onClick={toggle}
-            className="flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800"
+            disabled={isGuest}
+            className={`flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {liked ? (
               <HeartSolid className="h-5 w-5 text-red-500" />
@@ -81,7 +84,7 @@ export default function LikeButton({ postId }: Props) {
           </motion.button>
         </TooltipTrigger>
         <TooltipContent>
-          {liked ? "Mégse tetszik" : "Tetszik"}
+          {isGuest ? 'Bejelentkezés szükséges' : liked ? 'Mégse tetszik' : 'Tetszik'}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
