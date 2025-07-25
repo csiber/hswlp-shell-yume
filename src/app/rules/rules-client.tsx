@@ -19,23 +19,33 @@ export default function RulesClient() {
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
               <Ban className="mt-1 text-red-500" />
-              <span><strong>No NSFW content.</strong> This includes nudity, pornography, and sexually explicit material. Yumekai is a safe-for-work platform and strictly adheres to Cloudflare’s acceptable use policies.</span>
+              <span>
+                <strong>No NSFW content —</strong> includes nudity, pornography, and sexually explicit material. Yumekai is a safe-for-work platform and strictly adheres to Cloudflare’s acceptable use policies.
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <Ban className="mt-1 text-red-500" />
-              <span><strong>No loli or hentai content.</strong> Any material that may be interpreted as child exploitation or drawn sexualized minors is strictly prohibited and will be removed without warning.</span>
+              <span>
+                <strong>No loli or hentai content —</strong> any material that may be interpreted as child exploitation or drawn sexualized minors is strictly prohibited and will be removed without warning.
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <AlertTriangle className="mt-1 text-yellow-500" />
-              <span><strong>No harassment or abuse.</strong> Do not target real individuals with hate speech, defamation, or harassment, including deepfakes or misleading representations.</span>
+              <span>
+                <strong>No harassment or abuse —</strong> do not target real individuals with hate speech, defamation, or harassment, including deepfakes or misleading representations.
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle className="mt-1 text-green-500" />
-              <span><strong>Respect community standards.</strong> Content should align with our platform’s creative, respectful and constructive environment. Artistic freedom is welcomed, but not at the expense of others.</span>
+              <span>
+                <strong>Respect community standards —</strong> artistic freedom is welcomed, but content must be constructive and respectful to others.
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <Pin className="mt-1 text-blue-500" />
-              <span><strong>Moderators may remove any content at their discretion.</strong> No justification is required. Repeated violations may result in suspension or permanent ban.</span>
+              <span>
+                <strong>Moderators may remove any content at their discretion —</strong> no justification required. Repeated violations may lead to suspension or permanent ban.
+              </span>
             </li>
           </ul>
           <p className="mt-6 text-sm text-muted-foreground">
