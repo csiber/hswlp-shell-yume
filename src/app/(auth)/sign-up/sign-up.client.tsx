@@ -127,9 +127,9 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
             Create a new account
           </h2>
           <p className="mt-2 text-muted-foreground">
-            Already have an account?{" "}
+            Already have an account?{' '}
             <Link href={`/sign-in?redirect=${encodeURIComponent(redirectPath)}`} className="font-medium text-primary hover:text-primary/90 underline">
-              Jelentkezz be
+              Sign in
             </Link>
           </p>
         </div>
@@ -266,7 +266,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
                 className="w-full flex justify-center py-2.5 mt-8"
                 disabled={Boolean(isTurnstileEnabled && !captchaToken)}
               >
-                Fiók létrehozása jelszóval
+                Create account with password
               </Button>
             </div>
           </form>

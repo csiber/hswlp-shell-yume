@@ -239,7 +239,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
           onClick={() => setVisible(comments.length)}
           className="mt-2 text-xs text-indigo-500 hover:underline"
         >
-          További hozzászólások
+          More comments
         </button>
       )}
       <div className="relative mt-3">
@@ -252,7 +252,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
               submit();
             }
           }}
-          placeholder={isGuest ? 'Bejelentkezés szükséges' : 'Írj hozzászólást...'}
+          placeholder={isGuest ? 'Login required' : 'Write a comment...'}
           className="w-full rounded-md border border-gray-300 bg-white dark:bg-zinc-800 p-2 pr-8 text-sm focus:outline-none"
           maxLength={500}
           disabled={isGuest}

@@ -148,7 +148,7 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
             Sign in to your account
           </h2>
           <p className="mt-2 text-muted-foreground">
-            vagy{" "}
+            or{' '}
             <Link
               href={`/sign-up?redirect=${encodeURIComponent(redirectPath)}`}
               className="font-medium text-primary hover:text-primary/90 underline"

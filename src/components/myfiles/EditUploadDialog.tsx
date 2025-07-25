@@ -111,7 +111,7 @@ export default function EditUploadDialog({ upload, trigger, onSaved }: Props) {
               name="note"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Privát megjegyzés</FormLabel>
+                  <FormLabel>Private note</FormLabel>
                   <FormControl>
                     <Textarea rows={3} {...field} />
                   </FormControl>
@@ -119,8 +119,8 @@ export default function EditUploadDialog({ upload, trigger, onSaved }: Props) {
               )}
             />
             <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Mégse</Button>
-              <Button type="submit">Mentés</Button>
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button type="submit">Save</Button>
             </div>
           </form>
         </Form>

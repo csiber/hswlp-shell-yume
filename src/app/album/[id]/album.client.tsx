@@ -28,7 +28,7 @@ interface AlbumClientProps {
 export default function AlbumClient({ id }: AlbumClientProps) {
   const fetcher = (url: string) => fetch(url).then(res => res.json() as Promise<ApiResponse>)
   const { data } = useSWR<ApiResponse>(`/api/albums/${id}`, fetcher)
-  if (!data) return <div className="p-4">Betöltés...</div>
+  if (!data) return <div className="p-4">Loading...</div>
   return (
     <main className="max-w-6xl mx-auto p-4 space-y-4">
       <AlbumHeader

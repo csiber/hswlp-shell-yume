@@ -40,10 +40,10 @@ export default function DeletionLogsPage() {
           {!logs ? (
             <div className="flex justify-center items-center py-10 text-muted-foreground">
               <Loader2 className="w-5 h-5 animate-spin mr-2" />
-              Betöltés...
+              Loading...
             </div>
           ) : logs.length === 0 ? (
-            <p className="text-muted-foreground">Még nincs törlés rögzítve.</p>
+            <p className="text-muted-foreground">No deletions recorded yet.</p>
           ) : (
             <ul className="space-y-2">
               {logs.map((log) => (

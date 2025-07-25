@@ -62,15 +62,15 @@ export default async function TeamsIndexPage() {
       <div className="container mx-auto px-5 pb-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold">Csapataim</h1>
+            <h1 className="text-4xl font-bold">My Teams</h1>
             <p className="text-muted-foreground mt-2">
-              Kezeld a csapataidat és együttműködéseidet
+              Manage your teams and collaborations
             </p>
           </div>
           <Button asChild>
             <Link href={"/dashboard/teams/create" as Route}>
               <PlusIcon className="h-4 w-4 mr-2" />
-              Csapat létrehozása
+              Create team
             </Link>
           </Button>
         </div>
@@ -81,10 +81,9 @@ export default async function TeamsIndexPage() {
         {teams.length === 0 ? (
           <Card className="border-dashed border-2">
             <CardHeader>
-              <CardTitle className="text-xl">Még nincs csapatod</CardTitle>
+              <CardTitle className="text-xl">You have no teams yet</CardTitle>
               <CardDescription>
-                A csapatok lehetővé teszik, hogy másokkal közösen dolgozz
-                projekteken és megoszd az erőforrásokat.
+                Teams let you work together on projects and share resources.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex justify-center py-8">
@@ -94,7 +93,7 @@ export default async function TeamsIndexPage() {
               <Button asChild>
                 <Link href={"/dashboard/teams/create" as Route}>
                   <PlusIcon className="h-4 w-4 mr-2" />
-                  Hozd létre az első csapatodat
+                  Create your first team
                 </Link>
               </Button>
             </CardFooter>
@@ -145,7 +144,7 @@ export default async function TeamsIndexPage() {
               <Card className="h-full border-dashed border-2 hover:border-primary transition-all">
                 <CardHeader className="text-center pt-8">
                   <CardTitle className="text-xl">
-                    Új csapat létrehozása
+                    Create new team
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex justify-center">

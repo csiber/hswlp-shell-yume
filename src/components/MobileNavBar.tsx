@@ -5,10 +5,10 @@ import { Home, FolderDown, Heart, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "Főoldal", icon: Home },
-  { href: "/my-files", label: "Fájljaim", icon: FolderDown },
-  { href: "/favorites", label: "Kedvencek", icon: Heart },
-  { href: "/settings", label: "Beállítások", icon: Settings },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/my-files", label: "My Files", icon: FolderDown },
+  { href: "/favorites", label: "Favorites", icon: Heart },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export default function MobileNavBar() {

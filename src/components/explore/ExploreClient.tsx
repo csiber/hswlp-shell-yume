@@ -65,7 +65,7 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
           <ExplorePostCard key={item.id} item={item} isGuest={guest} />
         ))}
       </div>
-      {loading && <p className="text-center">Betöltés...</p>}
+      {loading && <p className="text-center">Loading...</p>}
       {hasMore && <div ref={ref} className="h-8" />}
     </div>
   )
