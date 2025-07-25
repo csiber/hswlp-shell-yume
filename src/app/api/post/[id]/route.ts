@@ -22,7 +22,7 @@ export async function GET(_req: NextRequest, { params }: RouteContext<{ id: stri
 
   if (!row) return new Response('Not found', { status: 404 })
 
-  const isPublic = row.visibility === 'public' && row.approved === 1
+  const isPublic = row.visibility === 'public' && Number(row.approved) === 1
   if (!isPublic && !session?.user?.id) {
     return new Response('Not found', { status: 404 })
   }
