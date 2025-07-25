@@ -92,7 +92,7 @@ export async function POST(req: Request) {
 
           await sendEmail({
             to: user.email,
-            subject: '🧾 Yumekai – Vásárlás visszaigazolás',
+            subject: '🧾 Yumekai – Purchase confirmation',
             html,
             text
           })

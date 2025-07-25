@@ -34,7 +34,7 @@ export async function awardBadge(userId: string, badge: BadgeKey) {
 
     await sendEmail({
       to: user.email,
-      subject: '🏅 Gratulálunk, új rangot szereztél!',
+      subject: '🏅 Congratulations, you\'ve earned a new badge!',
       html,
       text
     })

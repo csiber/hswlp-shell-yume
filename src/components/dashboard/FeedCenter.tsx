@@ -34,8 +34,8 @@ export default function FeedCenter() {
           >
             <Alert
               color="secondary"
-              title="Folyamatban lévő fejlesztés"
-              description="Ez a platform még fejlesztés alatt áll. Funkciók és tartalmak folyamatosan bővülnek."
+              title="Ongoing development"
+              description="This platform is still under development. Features and content are continuously expanding."
               className="px-4 py-3"
             />
           </motion.div>

@@ -14,15 +14,15 @@ export default function ActivateButton({ componentId, componentName }: { compone
   const { execute, isPending } = useServerAction(activateComponentAction, {
     onError: (error) => {
       toast.dismiss()
-      toast.error(error.err?.message || "Nem sikerült az aktiválás")
+      toast.error(error.err?.message || "Activation failed")
     },
     onStart: () => {
-      toast.loading("Aktiválás...")
+      toast.loading("Activating...")
     },
     onSuccess: () => {
       toast.dismiss()
       toast.custom(() => (
-        <Alert color="success" title="Siker" description={`${componentName} aktiválva`} />
+        <Alert color="success" title="Success" description={`${componentName} activated`} />
       ))
     },
   })
@@ -45,7 +45,7 @@ export default function ActivateButton({ componentId, componentName }: { compone
   return (
     <>
       <ShinyButton onClick={handleActivate} disabled={isPending}>
-        {isPending ? "Feldolgozás..." : "Aktiválás"}
+        {isPending ? "Processing..." : "Activate"}
       </ShinyButton>
       {needPostId && (
         <PostSelectModal

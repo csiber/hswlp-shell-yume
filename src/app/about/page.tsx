@@ -72,68 +72,64 @@ export default function AboutPage() {
 
       <Section>
         <Heading level={2} className="mb-4">
-          Küldetésünk
+          Our mission
         </Heading>
         <Text>
-          A Yumekai célja, hogy egy olyan platformot hozzon létre, ahol a
-          kreatív alkotók – zenészek, képzőművészek, fotósok, írók és fejlesztők
-          – szabadon kifejezhetik magukat, miközben modern AI technológiák
-          segítik őket az alkotásban. A közösség és az innováció nálunk kéz a
-          kézben járnak.
+          Yumekai aims to create a space where creative artists – musicians,
+          visual artists, photographers, writers and developers – can freely
+          express themselves while modern AI technologies assist them. Community
+          and innovation go hand in hand here.
         </Text>
       </Section>
 
       <Section>
         <Heading level={2} className="mb-4">
-          Mit kínálunk?
+          What we offer
         </Heading>
         <ul className="list-disc space-y-2 pl-6">
-          <li>🎵 Zene feltöltés, lejátszás, waveform vizualizáció</li>
-          <li>🖼️ Képek, alkotások, AI által generált tartalmak kezelése</li>
-          <li>💬 Prompt alapú generálás és inspiráció</li>
-          <li>🎮 Saját fiók, statisztikák, kreditrendszer</li>
-          <li>🌐 Teljesen online, mobilbarát felület</li>
+          <li>🎵 Music uploads, playback and waveform visualisation</li>
+          <li>🖼️ Manage images, artwork and AI-generated content</li>
+          <li>💬 Prompt-based generation and inspiration</li>
+          <li>🎮 Personal accounts, statistics and credit system</li>
+          <li>🌐 Fully online, mobile-friendly interface</li>
         </ul>
       </Section>
 
       <Section>
         <Heading level={2} className="mb-4">
-          Technológia
+          Technology
         </Heading>
         <Text>
-          A Yumekai a HSWLP platformon alapul, amely Cloudflare Workers, R2, D1
-          és KV technológiákat használ a maximális sebesség, biztonság és
-          skálázhatóság érdekében. A rendszer teljesen statikus, edge-alapú,
-          globálisan elérhető infrastruktúrával.
+          Yumekai is built on the HSWLP platform using Cloudflare Workers, R2,
+          D1 and KV technologies for maximum speed, security and scalability. The
+          system is fully static and edge-based with global availability.
         </Text>
       </Section>
 
       <Section>
         <Heading level={2} className="mb-4">
-          Kiknek szól?
+          Who is it for?
         </Heading>
         <ul className="list-disc space-y-2 pl-6">
-          <li>AI-rajongóknak, akik szívesen játszanak képgenerálással</li>
+          <li>AI enthusiasts who love experimenting with image generation</li>
           <li>
-            Zenészeknek, akik hangmintákat vagy teljes zenéket szeretnének
-            megosztani
+            Musicians looking to share samples or full tracks
           </li>
           <li>
-            Kreatív alkotóknak, akik a saját portfóliójukat szeretnék publikálni
+            Creators wanting to publish their own portfolios
           </li>
           <li>
-            Fejlesztőknek, akik szeretnének saját SaaS appot indítani a jövőben
+            Developers who plan to launch their own SaaS apps in the future
           </li>
         </ul>
       </Section>
 
       <Section>
         <Heading level={2} className="mb-4">
-          Kapcsolat
+          Contact
         </Heading>
         <Text>
-          Ha kérdésed van, vagy együttműködnél velünk, írj az alábbi email
-          címre:
+          If you have questions or want to collaborate, write to us at:
         </Text>
         <Text className="font-medium">📧 hello@yumekai.hu</Text>
       </Section>
@@ -141,7 +137,7 @@ export default function AboutPage() {
       <Separator className="my-8" />
 
       <Section className="text-center">
-        <Heading level={2}>Yumekai – Ne csak álmodj. Alkoss.</Heading>
+        <Heading level={2}>Yumekai – Don&apos;t just dream. Create.</Heading>
       </Section>
     </Container>
   );

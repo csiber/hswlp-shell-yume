@@ -23,7 +23,7 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
     <Card className="relative">
       {credits > 0 && (
         <Badge className="absolute top-2 right-2 bg-yellow-400 text-black shadow-md">
-          {credits} pont
+          {credits} credits
         </Badge>
       )}
       <CardHeader>
@@ -39,7 +39,7 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
       </CardContent>
       <CardFooter className="mt-4 flex justify-end gap-2">
         {isActive ? (
-          <Badge variant="secondary">Már aktív</Badge>
+          <Badge variant="secondary">Already active</Badge>
         ) : (
           <ActivateButton componentId={id} componentName={name} />
         )}

@@ -4,52 +4,51 @@ import Link from "next/link";
 import { CREDITS_EXPIRATION_YEARS } from "@/constants";
 
 export const metadata: Metadata = {
-  title: "Felhasználási feltételek",
+  title: "Terms of Service",
   description:
-    "Olvasd el a Yumekai használati feltételeit és szolgáltatási szabályzatát.",
+    "Read the Yumekai terms of use and service policy.",
 };
 
 export default function TermsPage() {
   return (
     <>
       <h1 className="text-4xl font-bold text-foreground mb-8">
-        Felhasználási feltételek
+        Terms of Service
       </h1>
 
       <p className="text-muted-foreground mb-6">
-        Utolsó frissítés: {new Date().toLocaleDateString("hu-HU")}
+        Last updated: {new Date().toLocaleDateString("en-US")}
       </p>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-foreground mb-4">
-          1. A feltételek elfogadása
+          1. Acceptance of terms
         </h2>
         <p className="text-muted-foreground">
-          A weboldal elérésével és használatával elfogadod, hogy jelen
-          felhasználási feltételek rád nézve kötelező érvényűek.
+          By accessing and using the website you agree that these terms of use
+          are binding upon you.
         </p>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-foreground mb-4">
-          2. Használati engedély
+          2. License to use
         </h2>
         <p className="text-muted-foreground">
-          A Yumekai platform tartalma egy példányban, személyes és nem
-          kereskedelmi célra letölthető és megtekinthető, ideiglenes jelleggel.
-          Minden egyéb felhasználás előzetes írásos engedélyhez kötött.
+          You may download and view one copy of Yumekai content for personal and
+          non-commercial use on a temporary basis. Any other use requires prior
+          written permission.
         </p>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-foreground mb-4">
-          3. Felelősségkizárás
+          3. Disclaimer
         </h2>
         <p className="text-muted-foreground">
-          A weboldalon elérhető tartalmak „jelen állapotukban” kerülnek
-          biztosításra. A Yumekai nem vállal sem kifejezett, sem hallgatólagos
-          garanciát, többek között nem garantálja az adott célra való
-          alkalmasságot vagy a szellemi tulajdonjogok megsértésének hiányát.
+          Content on this site is provided &quot;as is&quot;. Yumekai gives no express or
+          implied warranties including fitness for a particular purpose or
+          non-infringement of intellectual property rights.
         </p>
       </section>
 
@@ -58,39 +57,30 @@ export default function TermsPage() {
           4. Kreditrendszer és fizetések
         </h2>
         <p className="text-muted-foreground mb-4">
-          A Yumekai működése kreditalapú rendszerre épül. A megvásárolt kreditek{" "}
-          {CREDITS_EXPIRATION_YEARS} évig érvényesek a vásárlás napjától
-          számítva. A fizetések biztonságosan, Stripe-en keresztül történnek.
+          Yumekai operates on a credit-based system. Purchased credits are valid for {CREDITS_EXPIRATION_YEARS} years from the date of purchase and payments are processed securely via Stripe.
         </p>
         <p className="text-muted-foreground mb-4">
-          Sikeres fizetés után a kreditek azonnal jóváírásra kerülnek a
-          felhasználói fiókodban. A vásárolt kreditekre visszatérítést nem
-          biztosítunk. A csomagok ára és elérhetősége előzetes értesítés nélkül
-          is változhat.
+          After a successful payment credits are added immediately to your account. Credits are non-refundable and package prices or availability may change without notice.
         </p>
         <p className="text-muted-foreground">
-          Ingyenes kreditek időszakos promóciók vagy havi kiosztások részeként
-          is elérhetőek lehetnek. Ezekre eltérő szabályok és lejárati feltételek
-          vonatkozhatnak, amelyekről az adott alkalommal külön tájékoztatást
-          adunk.
+          Free credits may be offered through promotions or monthly grants. Different rules and expiration terms may apply which we will announce separately.
         </p>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-foreground mb-4">
-          5. Korlátozások
+          5. Limitations
         </h2>
         <p className="text-muted-foreground">
-          A Yumekai és partnerei nem vállalnak felelősséget semmilyen olyan
-          kárért, amely az oldal használatából, vagy a használat
-          ellehetetlenüléséből ered (beleértve, de nem kizárólagosan:
-          adatvesztés, üzleti kiesés vagy bevételkiesés).
+          Yumekai and its partners are not liable for any damages arising from
+          the use or inability to use the site including but not limited to
+          loss of data, business interruption or loss of revenue.
         </p>
       </section>
 
       <div className="mt-12 text-center">
         <Button asChild>
-          <Link href="/">Vissza a főoldalra</Link>
+          <Link href="/">Back to home</Link>
         </Button>
       </div>
     </>
