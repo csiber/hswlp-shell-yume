@@ -6,10 +6,8 @@ import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
 import { lt, isNull, or, eq } from 'drizzle-orm'
 import { sendEmail } from '@/utils/email'
-import { CreditsLowWarning } from '@/react-email'
-import { renderToStaticMarkup } from 'react-dom/server'
+import { renderCreditsLowWarningEmail } from '@/utils/credits-low-warning-email'
 import { createId } from '@paralleldrive/cuid2'
-import React from 'react'
 
 // Ütemezett Worker, amely havonta kreditet ad a kevésbé aktív felhasználóknak
 
@@ -115,25 +113,27 @@ async function sendLowCreditWarnings(db: any) {
        AND u.emailVerified IS NOT NULL
        AND (u.last_login_at IS NULL OR u.last_login_at <= ?1)
        AND (l.sent_at IS NULL OR l.sent_at <= ?2)`
-  ).bind(threeDaysAgo.toISOString(), weekAgo.toISOString()).all<{
-    id: string
-    email: string
-    nickname: string | null
-    sent_at?: string
-  }>()
+  ).bind(threeDaysAgo.toISOString(), weekAgo.toISOString()).all() as {
+    results?: {
+      id: string
+      email: string
+      nickname: string | null
+      sent_at?: string
+    }[]
+  }
 
   for (const row of rows.results || []) {
     if (!row.email) continue
 
-    const html = renderToStaticMarkup(
-      <CreditsLowWarning userName={row.nickname || undefined} />
-    )
+    const { html, text } = renderCreditsLowWarningEmail({
+      userName: row.nickname || undefined
+    })
 
     await sendEmail({
       to: row.email,
       subject: '🪙 Elfogytak a pontjaid – ne maradj le!',
       html,
-      text: 'Jelenleg 0 pontod van. Azóta új képek, badge-ek, funkciók jelentek meg...'
+      text
     })
 
     await db.insert(creditWarningEmailTable).values({

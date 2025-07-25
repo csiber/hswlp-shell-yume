@@ -4,8 +4,7 @@ import { userBadgeTable, userTable } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { BADGE_DEFINITIONS, BadgeKey } from '@/constants'
 import { sendEmail } from './email'
-import { NewBadge } from '@/react-email'
-import React from 'react'
+import { renderNewBadgeEmail } from './new-badge-email'
 
 export async function awardBadge(userId: string, badge: BadgeKey) {
   const db = await getDB()
@@ -27,16 +26,17 @@ export async function awardBadge(userId: string, badge: BadgeKey) {
   })
 
   if (user?.email && user.emailVerified && user.notificationsEnabled) {
+    const { html, text } = renderNewBadgeEmail({
+      badgeName: BADGE_DEFINITIONS[badge].name,
+      badgeDescription: BADGE_DEFINITIONS[badge].description,
+      badgeIcon: BADGE_DEFINITIONS[badge].icon
+    })
+
     await sendEmail({
       to: user.email,
       subject: '🏅 Gratulálunk, új rangot szereztél!',
-      component: (
-        <NewBadge
-          badgeName={BADGE_DEFINITIONS[badge].name}
-          badgeDescription={BADGE_DEFINITIONS[badge].description}
-          badgeIcon={BADGE_DEFINITIONS[badge].icon}
-        />
-      )
+      html,
+      text
     })
   }
 }
