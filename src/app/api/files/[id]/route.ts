@@ -29,8 +29,14 @@ export async function GET(req: NextRequest) {
     return new Response('Internal Server Error', { status: 500 })
   }
 
-  if (!upload || upload.approved !== 1 || upload.visibility !== 'public' || !upload.r2_key) {
-    return new Response('Not found', { status: 404 })
+  if (!upload) {
+    console.warn('File not found in DB', id)
+    return new Response('Fájl nem található', { status: 404 })
+  }
+
+  if (upload.approved !== 1 || upload.visibility !== 'public' || !upload.r2_key) {
+    console.warn('File not public or missing key', id)
+    return new Response('Fájl nem található', { status: 404 })
   }
 
   let object: R2ObjectBody | string | null
@@ -42,7 +48,8 @@ export async function GET(req: NextRequest) {
   }
 
   if (!object || typeof object === 'string' || !object.body) {
-    return new Response('File not found', { status: 404 })
+    console.warn('File not found in R2', upload.r2_key)
+    return new Response('Fájl nem található', { status: 404 })
   }
 
   try {
