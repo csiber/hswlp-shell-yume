@@ -47,12 +47,15 @@ export function Navigation() {
 
   const navItems: NavItem[] = [
     { name: "Főoldal", href: "/" },
+    { name: "Explore", href: "/explore" as Route },
+    { name: "Trending", href: "/trending" as Route },
+    { name: "Random", href: "/random" as Route },
     ...(session
       ? [
           { name: "Vezérlőpult", href: "/dashboard" as Route },
           { name: "Beállítások", href: "/settings" as Route },
         ]
-      : [{ name: "Explore", href: "/explore" as Route }]),
+      : []),
   ];
 
   const isActiveLink = (href: string) => {

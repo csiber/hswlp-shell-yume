@@ -1,47 +1,31 @@
 "use client"
 
-import { useState, useEffect } from 'react'
-import { useInView } from 'react-intersection-observer'
+import { useEffect, useState } from 'react'
+import { useSessionStore } from '@/state/session'
 import ExplorePostCard, { ExploreItem } from './ExplorePostCard'
 import EmptyState from '@/components/favorites/EmptyState'
 import { ImageOff } from 'lucide-react'
-import { useSessionStore } from '@/state/session'
 
-export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?: string } = {}) {
+export default function RandomClient() {
   const [items, setItems] = useState<ExploreItem[]>([])
-  const [page, setPage] = useState(1)
-  const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
-  const { ref, inView } = useInView()
-  const session = useSessionStore(s => s.session)
+  const [loading, setLoading] = useState(true)
+  const session = useSessionStore((s) => s.session)
   const guest = !session?.user?.id
 
   useEffect(() => {
-    if (inView && hasMore && !loading) {
-      setPage(p => p + 1)
-    }
-  }, [inView, hasMore, loading])
-
-  useEffect(() => {
     async function load() {
-      setLoading(true)
       try {
-        const res = await fetch(`${endpoint}?page=${page}`)
+        const res = await fetch('/api/random')
         if (res.ok) {
           const data = (await res.json()) as { items: ExploreItem[] }
-          setItems(prev => [...prev, ...data.items])
-          if (data.items.length === 0) setHasMore(false)
-        } else {
-          setHasMore(false)
+          setItems(data.items)
         }
-      } catch {
-        setHasMore(false)
       } finally {
         setLoading(false)
       }
     }
     load()
-  }, [page, endpoint])
+  }, [])
 
   if (!loading && items.length === 0) {
     return (
@@ -61,12 +45,10 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
         </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.map(item => (
+        {items.map((item) => (
           <ExplorePostCard key={item.id} item={item} isGuest={guest} />
         ))}
       </div>
-      {loading && <p className="text-center">Betöltés...</p>}
-      {hasMore && <div ref={ref} className="h-8" />}
     </div>
   )
 }
