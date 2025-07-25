@@ -2,6 +2,14 @@
 import { Heart } from 'lucide-react'
 import ImageLightbox from '@/components/ui/ImageLightbox'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import useSWR from 'swr'
+
+interface MusicMeta {
+  picture: string | null
+}
+
+const PLACEHOLDER =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAFElEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=='
 
 export interface FavoriteItem {
   id: string
@@ -12,6 +20,12 @@ export interface FavoriteItem {
 }
 
 export default function FavoritesCard({ item, onRemove }: { item: FavoriteItem; onRemove: () => void }) {
+  const { data } = useSWR<MusicMeta | null>(
+    item.mime?.startsWith('audio/') ? `/api/music-meta?id=${item.id}` : null,
+    (u: string): Promise<MusicMeta | null> =>
+      fetch(u).then(res => (res.ok ? (res.json() as Promise<MusicMeta>) : null))
+  )
+
   return (
     <div className="favorites-card relative overflow-hidden rounded-2xl shadow-md hover:shadow-lg transition-transform hover:scale-105 bg-background/50">
       <TooltipProvider delayDuration={200}>
@@ -34,7 +48,15 @@ export default function FavoritesCard({ item, onRemove }: { item: FavoriteItem; 
         </ImageLightbox>
       )}
       {item.mime?.startsWith('audio/') && (
-        <audio controls src={item.url} className="w-full h-48" />
+        <>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={data?.picture || PLACEHOLDER}
+            alt={item.title}
+            className="h-48 w-full object-cover"
+          />
+          <audio controls src={item.url} className="w-full" />
+        </>
       )}
       {item.mime === 'text/plain' && (
         <div className="p-3 text-sm whitespace-pre-wrap max-h-48 overflow-auto">{item.title}</div>
