@@ -3,6 +3,7 @@
 import useSWR from 'swr'
 import { useSessionStore } from '@/state/session'
 import PromptBox from '@/components/community/PromptBox'
+import NsfwImage from '@/components/ui/NsfwImage'
 
 interface ApiResponse {
   post: {
@@ -30,15 +31,17 @@ export default function PostClient({ id }: { id: string }) {
 
   return (
     <main className="max-w-md mx-auto p-4 space-y-4">
-      <div className="relative">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={post.url} alt={post.title} className={`w-full rounded-xl ${blurred ? 'blur-md' : ''}`} />
-        {blurred && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 text-white rounded-xl">
-            NSFW tartalom
-          </div>
-        )}
-      </div>
+      <NsfwImage
+        src={post.url}
+        alt={post.title}
+        blurred={blurred}
+        className="w-full rounded-xl"
+      />
+      {blurred && (
+        <div className="text-center text-sm bg-red-100 dark:bg-red-800 dark:text-red-100 text-red-800 p-2 rounded">
+          Ez a tartalom érzékeny lehet. Belépés után teljes felbontásban megtekinthető.
+        </div>
+      )}
       <h1 className="text-xl font-semibold">{post.title}</h1>
       {post.description && <p>{post.description}</p>}
       {post.prompt && <PromptBox text={post.prompt} lines={10} />}
