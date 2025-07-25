@@ -1,7 +1,12 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getDB } from '@/db'
-import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, firstPostEmailTable } from '@/db/schema'
-import { userTable, CREDIT_TRANSACTION_TYPE, creditWarningEmailTable, emailLogTable } from '@/db/schema'
+import {
+  userTable,
+  CREDIT_TRANSACTION_TYPE,
+  creditWarningEmailTable,
+  firstPostEmailTable,
+  emailLogTable,
+} from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
@@ -157,10 +162,10 @@ async function sendFirstPostEmails(db: any) {
     .from(firstPostEmailTable)
     .leftJoin(userTable, eq(firstPostEmailTable.userId, userTable.id))
     .where(and(isNull(firstPostEmailTable.sentAt), lt(firstPostEmailTable.sendAfter, new Date())))
-    .all<{
+    .all() as {
       first_post_email: { id: string; userId: string; postId: string };
       user: { email: string | null; nickname: string | null; emailVerified: number | null };
-    }>();
+    }[];
 
   for (const row of rows) {
     const email = row.user.email;
@@ -169,7 +174,7 @@ async function sendFirstPostEmails(db: any) {
     const likesRow = await db
       .execute('SELECT COUNT(*) as c FROM post_likes WHERE post_id = ?1')
       .bind(row.first_post_email.postId)
-      .first<{ c: number }>();
+      .first() as { c: number } | undefined;
 
     const likeCount = likesRow?.c ?? 0;
     const postUrl = `https://yumekai.com/post/${row.first_post_email.postId}`;
@@ -182,10 +187,13 @@ async function sendFirstPostEmails(db: any) {
       text,
     });
 
-    await db
-      .update(firstPostEmailTable)
-      .set({ sentAt: new Date() })
-      .where(eq(firstPostEmailTable.id, row.first_post_email.id));
+      await db
+        .update(firstPostEmailTable)
+        .set({ sentAt: new Date() })
+        .where(eq(firstPostEmailTable.id, row.first_post_email.id));
+
+  }
+}
 
 async function sendReengagementEmails(db: any) {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
