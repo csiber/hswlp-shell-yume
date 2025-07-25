@@ -79,7 +79,7 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/dashboard">
                   <Home className="size-5" />
-                  <span className="sr-only">Kezdőlap</span>
+                  <span className="sr-only">Home</span>
                 </Link>
               </Button>
             </TooltipTrigger>
@@ -100,12 +100,12 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/my-files">
                   <FolderDown className="size-5" />
-                  <span className="sr-only">Fájljaim</span>
+                  <span className="sr-only">My files</span>
                 </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Feltöltéseim</p>
+              <p>My uploads</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -121,12 +121,12 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/favorites">
                   <Heart className="size-5" />
-                  <span className="sr-only">Kedvencek</span>
+                  <span className="sr-only">Favorites</span>
                 </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Kedvencek</p>
+              <p>Favorites</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -142,12 +142,12 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/dashboard/marketplace">
                   <ShoppingCart className="size-5" />
-                  <span className="sr-only">Piactér</span>
+                  <span className="sr-only">Marketplace</span>
                 </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Piactér</p>
+              <p>Marketplace</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -163,12 +163,12 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/dashboard/teams">
                   <Users className="size-5" />
-                  <span className="sr-only">Csapatok</span>
+                  <span className="sr-only">Teams</span>
                 </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Csapatok</p>
+              <p>Teams</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -184,12 +184,12 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/dashboard/billing">
                   <CreditCard className="size-5" />
-                  <span className="sr-only">Számlázás</span>
+                  <span className="sr-only">Billing</span>
                 </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Számlázás</p>
+              <p>Billing</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -206,12 +206,12 @@ export default function TopBar({}: TopBarProps) {
                 >
                   <Link href="/moderation">
                     <CheckCircle2 className="size-5" />
-                    <span className="sr-only">Moderáció</span>
+                    <span className="sr-only">Moderation</span>
                   </Link>
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p>Moderáció</p>
+                <p>Moderation</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -228,7 +228,7 @@ export default function TopBar({}: TopBarProps) {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Aktív tagok</p>
+              <p>Active members</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -246,12 +246,12 @@ export default function TopBar({}: TopBarProps) {
               >
                 <Link href="/rules">
                   <ShieldCheck className="size-5 animate-glow" />
-                  <span className="sr-only">Szabályzat</span>
+                  <span className="sr-only">Rules</span>
                 </Link>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>Szabályzat</p>
+              <p>Rules</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -291,7 +291,7 @@ export default function TopBar({}: TopBarProps) {
                     </>
                   )}
                   <DropdownMenuItem onClick={() => router.push("/settings")}>
-                    Beállítások
+                    Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -299,7 +299,7 @@ export default function TopBar({}: TopBarProps) {
                       signOut().then(() => router.push("/"));
                     }}
                   >
-                    Kijelentkezés
+                    Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

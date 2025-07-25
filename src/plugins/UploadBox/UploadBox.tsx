@@ -55,10 +55,10 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         if (fileInputRef.current) fileInputRef.current.value = ""
         setShowSuccess(true)
         setDownloadPoints(data.download_points ?? null)
-        toast.success("Sikeres feltöltés, moderációra vár")
+        toast.success("Upload successful, pending moderation")
         if (onSuccess) onSuccess()
       } catch {
-        toast.error("Feltöltés sikertelen")
+        toast.error("Upload failed")
       }
     })
   }
@@ -66,7 +66,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
   return (
     <Card className="mb-4 shadow-lg">
       <CardHeader>
-        <h2 className="text-xl font-semibold">Feltöltés</h2>
+        <h2 className="text-xl font-semibold">Upload</h2>
       </CardHeader>
       <CardContent className="space-y-4">
         <Input
@@ -109,10 +109,10 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         >
           {isPending ? (
             <>
-              <Spinner size="small" className="mr-2" /> Feltöltés...
+              <Spinner size="small" className="mr-2" /> Uploading...
             </>
           ) : (
-            "Feltöltés"
+            "Upload"
           )}
         </Button>
       </CardFooter>

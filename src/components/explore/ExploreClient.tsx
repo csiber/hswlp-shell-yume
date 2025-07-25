@@ -47,8 +47,8 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
     return (
       <EmptyState
         icon={<ImageOff className="w-8 h-8" />}
-        title="Nincs publikus poszt"
-        subtitle="Jelentkezz be, hogy feltölthess vagy böngéssz további tartalmakat"
+        title="No public posts"
+        subtitle="Sign in to upload or browse more content"
       />
     )
   }
@@ -57,7 +57,7 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       {guest && (
         <div className="text-center text-sm bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-100 text-yellow-800 p-2 rounded">
-          🔓 További funkciókért jelentkezz be vagy regisztrálj
+          🔓 Sign in or register to unlock more features
         </div>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

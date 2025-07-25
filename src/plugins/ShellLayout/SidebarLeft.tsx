@@ -29,7 +29,7 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
               className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <span className="text-lg">🌍</span>
-              <span>Felfedezés</span>
+              <span>Explore</span>
             </Link>
           </li>
           <li>
@@ -47,15 +47,15 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
               className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <span className="text-lg">💥</span>
-              <span>Csoportok</span>
+              <span>Groups</span>
             </Link>
           </li>
         </ul>
       </div>
 
-      {/* Közösség szekció */}
+      {/* Community section */}
       <div>
-        <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">Közösség</h3>
+        <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">Community</h3>
         <ul className="flex flex-col gap-1 border-b border-gray-200 dark:border-gray-800 pb-4">
           <li>
             <Link
@@ -63,7 +63,7 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
               className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <span className="text-lg">📍</span>
-              <span>Események</span>
+              <span>Events</span>
             </Link>
           </li>
           <li>
@@ -84,15 +84,15 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
               className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <span className="text-lg">🏅</span>
-              <span>Jelvények</span>
+              <span>Badges</span>
             </Link>
           </li>
         </ul>
       </div>
 
-      {/* Fiókom szekció */}
+      {/* My account section */}
       <div>
-        <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">Fiókom</h3>
+        <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">My Account</h3>
         <ul className="flex flex-col gap-1">
           <li>
             <Link
@@ -100,7 +100,7 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
               className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <span className="text-lg">⚙️</span>
-              <span>Beállítások</span>
+              <span>Settings</span>
             </Link>
           </li>
           {user?.id && (
@@ -110,7 +110,7 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
                 className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
               >
                 <span className="text-lg">👤</span>
-                <span>Profilom</span>
+                <span>Profile</span>
               </Link>
             </li>
           )}
@@ -120,7 +120,7 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
               className="flex items-center gap-2 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <span className="text-lg">📊</span>
-              <span>Statisztika</span>
+              <span>Analytics</span>
             </Link>
           </li>
         </ul>

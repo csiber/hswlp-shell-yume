@@ -6,12 +6,12 @@ interface CreditsLowWarningProps {
 
 export default function CreditsLowWarning({ userName }: CreditsLowWarningProps) {
   return (
-    <html lang="hu">
+    <html lang="en">
       <body>
-        <p>Kedves {userName || "felhasználó"}!</p>
-        <p>Jelenleg 0 pontod van. Azóta új képek, badge-ek, funkciók jelentek meg...</p>
+        <p>Dear {userName || "user"},</p>
+        <p>You currently have 0 credits. New images, badges and features have appeared since then...</p>
         <p>
-          <a href="https://yumekai.com/credits">Tölts fel pontot most → yumekai.com/credits</a>
+          <a href="https://yumekai.com/credits">Top up now → yumekai.com/credits</a>
         </p>
       </body>
     </html>

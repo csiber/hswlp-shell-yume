@@ -7,14 +7,14 @@ interface VerifyEmailProps {
 
 export default function VerifyEmail({ verifyUrl, userName }: VerifyEmailProps) {
   return (
-    <html lang="hu">
+    <html lang="en">
       <body>
-        <p>Kedves {userName || "felhasználó"}!</p>
-        <p>Kérjük, erősítsd meg az e-mail címed az alábbi hivatkozással:</p>
+        <p>Dear {userName || "user"},</p>
+        <p>Please verify your email address using the link below:</p>
         <p>
-          <a href={verifyUrl}>E-mail cím megerősítése</a>
+          <a href={verifyUrl}>Verify email address</a>
         </p>
-        <p>Ha nem te regisztráltál, kérjük, hagyd figyelmen kívül ezt a levelet.</p>
+        <p>If you did not sign up, please ignore this message.</p>
       </body>
     </html>
   );

@@ -29,7 +29,7 @@ export const signUpAction = createServerAction()
           if (!success) {
             throw new ZSAError(
               "INPUT_PARSE_ERROR",
-              "Kérjük, töltsd ki a captchát"
+              "Please complete the captcha"
             )
           }
         }
@@ -42,7 +42,7 @@ export const signUpAction = createServerAction()
         if (existingUser) {
           throw new ZSAError(
             "CONFLICT",
-            "Ez az email cím már foglalt"
+            "This email is already taken"
           );
         }
 
@@ -58,7 +58,7 @@ export const signUpAction = createServerAction()
           if (existingNickname) {
             throw new ZSAError(
               "CONFLICT",
-              "Ez a nicknév már foglalt"
+              "This nickname is already taken"
             );
           }
         } else {
@@ -88,7 +88,7 @@ export const signUpAction = createServerAction()
           await logTransaction({
             userId: user.id,
             amount: SIGN_UP_BONUS_CREDITS,
-            description: 'Belépési bónusz kreditek',
+            description: 'Signup bonus credits',
             type: CREDIT_TRANSACTION_TYPE.SIGN_UP_BONUS,
             expirationDate,
           });
@@ -112,7 +112,7 @@ export const signUpAction = createServerAction()
         if (!user || !user.email) {
           throw new ZSAError(
             "INTERNAL_SERVER_ERROR",
-            "Nem sikerült létrehozni a felhasználót"
+            "Failed to create user"
           );
         }
 
@@ -138,7 +138,7 @@ export const signUpAction = createServerAction()
 
           throw new ZSAError(
             "INTERNAL_SERVER_ERROR",
-            "Nem sikerült létrehozni a munkamenetet a regisztráció után"
+            "Failed to create session after registration"
           );
         }
 

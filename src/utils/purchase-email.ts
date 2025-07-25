@@ -10,20 +10,20 @@ export interface PurchaseEmailData {
 export function renderPurchaseEmail({ userName, date, packageName, price, transactionId, credits }: PurchaseEmailData) {
   const summary = 'Köszönjük, a vásárlás sikeres volt!'
   const html = `<!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
   <body>
-    <p>Kedves ${userName}!</p>
+    <p>Dear ${userName}!</p>
     <p>${summary}</p>
     <ul>
-      <li><strong>Dátum és idő:</strong> ${date}</li>
-      <li><strong>Vásárlás típusa:</strong> ${packageName}</li>
-      <li><strong>Ár:</strong> ${price}</li>
-      <li><strong>Stripe tranzakció ID:</strong> ${transactionId}</li>
-      <li><strong>Jóváírt pontok:</strong> ${credits}</li>
+      <li><strong>Date and time:</strong> ${date}</li>
+      <li><strong>Purchase type:</strong> ${packageName}</li>
+      <li><strong>Price:</strong> ${price}</li>
+      <li><strong>Stripe transaction ID:</strong> ${transactionId}</li>
+      <li><strong>Credited points:</strong> ${credits}</li>
     </ul>
-    <p>📄 Letölthető PDF nyugta hamarosan elérhető a profilodban</p>
+    <p>📄 A downloadable PDF receipt will soon be available in your profile</p>
   </body>
 </html>`
-  const text = `Kedves ${userName}!\n\n${summary}\n\nDátum és idő: ${date}\nVásárlás típusa: ${packageName}\nÁr: ${price}\nStripe tranzakció ID: ${transactionId}\nJóváírt pontok: ${credits}\n\n📄 Letölthető PDF nyugta hamarosan elérhető a profilodban`
+  const text = `Dear ${userName}!\n\n${summary}\n\nDate and time: ${date}\nPurchase type: ${packageName}\nPrice: ${price}\nStripe transaction ID: ${transactionId}\nCredited points: ${credits}\n\n📄 A downloadable PDF receipt will soon be available in your profile`
   return { html, text }
 }
