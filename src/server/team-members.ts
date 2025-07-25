@@ -42,7 +42,9 @@ export async function getTeamMembers(teamId: string) {
   // Map roles by ID for easy lookup
   const roleMap = new Map(teamRoles.map(role => [role.id, role.name]));
 
-  return Promise.all(members.map(async member => {
+  return Promise.all(members.map(async (member) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const m = member as any;
     let roleName = "Unknown";
 
     // For system roles, use the roleId directly as the name
@@ -55,19 +57,19 @@ export async function getTeamMembers(teamId: string) {
     }
 
     return {
-      id: member.id,
-      userId: member.userId,
-      roleId: member.roleId,
+      id: m.id,
+      userId: m.userId,
+      roleId: m.roleId,
       roleName,
-      isSystemRole: Boolean(member.isSystemRole),
-      isActive: Boolean(member.isActive),
-      joinedAt: member.joinedAt ? new Date(member.joinedAt) : null,
+      isSystemRole: Boolean(m.isSystemRole),
+      isActive: Boolean(m.isActive),
+      joinedAt: m.joinedAt ? new Date(m.joinedAt) : null,
       user: {
-        id: member.user.id,
-        firstName: member.user.firstName,
-        lastName: member.user.lastName,
-        email: member.user.email,
-        avatar: member.user.avatar,
+        id: m.user.id,
+        firstName: m.user.firstName,
+        lastName: m.user.lastName,
+        email: m.user.email,
+        avatar: m.user.avatar,
       }
     };
   }));
@@ -446,21 +448,25 @@ export async function getTeamInvitations(teamId: string) {
     },
   });
 
-  return invitations.map(invitation => ({
-    id: invitation.id,
-    email: invitation.email,
-    roleId: invitation.roleId,
-    isSystemRole: Boolean(invitation.isSystemRole),
-    createdAt: new Date(invitation.createdAt),
-    expiresAt: invitation.expiresAt ? new Date(invitation.expiresAt) : null,
-    invitedBy: {
-      id: invitation.invitedByUser.id,
-      firstName: invitation.invitedByUser.firstName,
-      lastName: invitation.invitedByUser.lastName,
-      email: invitation.invitedByUser.email,
-      avatar: invitation.invitedByUser.avatar,
-    }
-  }));
+  return invitations.map(invitation => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const i = invitation as any;
+    return {
+      id: i.id,
+      email: i.email,
+      roleId: i.roleId,
+      isSystemRole: Boolean(i.isSystemRole),
+      createdAt: new Date(i.createdAt),
+      expiresAt: i.expiresAt ? new Date(i.expiresAt) : null,
+      invitedBy: {
+        id: i.invitedByUser.id,
+        firstName: i.invitedByUser.firstName,
+        lastName: i.invitedByUser.lastName,
+        email: i.invitedByUser.email,
+        avatar: i.invitedByUser.avatar,
+      }
+    };
+  });
 }
 
 /**
@@ -527,26 +533,30 @@ export async function getPendingInvitationsForCurrentUser() {
     },
   });
 
-  return invitations.map(invitation => ({
-    id: invitation.id,
-    token: invitation.token,
-    teamId: invitation.teamId,
-    team: {
-      id: invitation.team.id,
-      name: invitation.team.name,
-      slug: invitation.team.slug,
-      avatarUrl: invitation.team.avatarUrl,
-    },
-    roleId: invitation.roleId,
-    isSystemRole: Boolean(invitation.isSystemRole),
-    createdAt: new Date(invitation.createdAt),
-    expiresAt: invitation.expiresAt ? new Date(invitation.expiresAt) : null,
-    invitedBy: {
-      id: invitation.invitedByUser.id,
-      firstName: invitation.invitedByUser.firstName,
-      lastName: invitation.invitedByUser.lastName,
-      email: invitation.invitedByUser.email,
-      avatar: invitation.invitedByUser.avatar,
-    }
-  }));
+  return invitations.map(invitation => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const i = invitation as any;
+    return {
+      id: i.id,
+      token: i.token,
+      teamId: i.teamId,
+      team: {
+        id: i.team.id,
+        name: i.team.name,
+        slug: i.team.slug,
+        avatarUrl: i.team.avatarUrl,
+      },
+      roleId: i.roleId,
+      isSystemRole: Boolean(i.isSystemRole),
+      createdAt: new Date(i.createdAt),
+      expiresAt: i.expiresAt ? new Date(i.expiresAt) : null,
+      invitedBy: {
+        id: i.invitedByUser.id,
+        firstName: i.invitedByUser.firstName,
+        lastName: i.invitedByUser.lastName,
+        email: i.invitedByUser.email,
+        avatar: i.invitedByUser.avatar,
+      }
+    };
+  });
 }

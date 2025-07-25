@@ -24,6 +24,7 @@ const commonColumns = {
 }
 
 // Felhasználói tábla a rendszerhez
+// @ts-expect-error self-reference in column definitions
 export const userTable = sqliteTable("user", {
   ...commonColumns,
   id: text().primaryKey().$defaultFn(() => `usr_${createId()}`).notNull(),
@@ -55,6 +56,7 @@ export const userTable = sqliteTable("user", {
   googleAccountId: text({
     length: 255,
   }),
+  // @ts-expect-error circular reference
   referredBy: text('referred_by').references(() => userTable.id),
   /**
    * This can either be an absolute or relative path to an image

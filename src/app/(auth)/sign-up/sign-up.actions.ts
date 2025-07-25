@@ -64,7 +64,7 @@ export const signUpAction = createServerAction()
           nickname = `anon_${createId().slice(0, 8)}`;
         }
 
-        const [user] = await db.insert(userTable)
+        const userResult = await db.insert(userTable)
           .values({
             nickname,
             email: input.email,
@@ -78,6 +78,8 @@ export const signUpAction = createServerAction()
             referredBy: input.referrerId ?? null,
           })
           .returning();
+
+        const user = Array.isArray(userResult) ? userResult[0] : userResult.results?.[0];
 
         if (user) {
           const expirationDate = new Date();
