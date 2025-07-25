@@ -26,7 +26,7 @@ interface Comment {
   reactions: Reaction[]
 }
 
-export default function CommentList({ postId }: { postId: string }) {
+export default function CommentList({ postId, isGuest = false }: { postId: string; isGuest?: boolean }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [visible, setVisible] = useState(2);
   const [text, setText] = useState("");
@@ -103,10 +103,12 @@ export default function CommentList({ postId }: { postId: string }) {
   }
 
   function toggleReaction(commentId: string, emoji: string, reacted: boolean) {
+    if (isGuest) return;
     sendReaction(commentId, emoji, reacted);
   }
 
   async function deleteComment(commentId: string) {
+    if (isGuest) return;
     if (!confirm('Biztosan törlöd a hozzászólást?')) return;
     try {
       const res = await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
@@ -118,6 +120,7 @@ export default function CommentList({ postId }: { postId: string }) {
   }
 
   async function submit() {
+    if (isGuest) return;
     if (!text.trim() || text.length > 500) return;
     try {
       const res = await fetch(`/api/posts/${postId}/comments`, {
@@ -183,7 +186,8 @@ export default function CommentList({ postId }: { postId: string }) {
                     <button
                       key={r.emoji}
                       onClick={() => toggleReaction(c.id, r.emoji, r.reacted)}
-                      className={`flex items-center gap-0.5 rounded-md px-1 py-0.5 bg-gray-100 dark:bg-zinc-700 ${r.reacted ? 'font-semibold' : ''}`}
+                      disabled={isGuest}
+                      className={`flex items-center gap-0.5 rounded-md px-1 py-0.5 bg-gray-100 dark:bg-zinc-700 ${r.reacted ? 'font-semibold' : ''} ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <span>{r.emoji}</span>
                       <span>{r.count}</span>
@@ -193,11 +197,12 @@ export default function CommentList({ postId }: { postId: string }) {
                     <div className="relative">
                       <button
                         onClick={() => setPickerFor(pickerFor === c.id ? null : c.id)}
-                        className="rounded-md p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-700"
+                        disabled={isGuest}
+                        className={`rounded-md p-1 text-gray-500 hover:bg-gray-100 dark:hover:bg-zinc-700 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
                       >
                         😃
                       </button>
-                      {pickerFor === c.id && (
+                      {pickerFor === c.id && !isGuest && (
                         <div className="absolute z-10 mt-1 flex gap-1 rounded-md bg-white dark:bg-zinc-800 p-1 shadow">
                           {['😆','😂','😍','😡','😢','😲','🎉','🥺'].map(e => (
                             <button
@@ -236,13 +241,15 @@ export default function CommentList({ postId }: { postId: string }) {
               submit();
             }
           }}
-          placeholder="Írj hozzászólást..."
+          placeholder={isGuest ? 'Bejelentkezés szükséges' : 'Írj hozzászólást...'}
           className="w-full rounded-md border border-gray-300 bg-white dark:bg-zinc-800 p-2 pr-8 text-sm focus:outline-none"
           maxLength={500}
+          disabled={isGuest}
         />
         <button
           onClick={submit}
-          className="absolute bottom-1.5 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200"
+          disabled={isGuest}
+          className={`absolute bottom-1.5 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <PaperAirplaneIcon className="h-4 w-4" />
         </button>

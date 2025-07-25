@@ -7,6 +7,7 @@ import SkeletonPost from "./SkeletonPost";
 import UploadBox from "./UploadBox";
 import FeedStats, { type FeedFilter } from "./FeedStats";
 import AlbumCard from "./AlbumCard";
+import { useSessionStore } from "@/state/session";
 
 export interface FeedItem {
   id: string;
@@ -44,6 +45,8 @@ export default function CommunityFeedV3({
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<FeedFilter>("all");
   const audioRef = useRef<HTMLAudioElement>(null);
+  const session = useSessionStore((s) => s.session);
+  const guest = !session?.user?.id;
 
   const { ref: loadMoreRef, inView } = useInView();
 
@@ -180,6 +183,7 @@ export default function CommunityFeedV3({
                   audioRef={audioRef}
                   playingId={playingId}
                   setPlayingId={setPlayingId}
+                  isGuest={guest}
                 />
               </div>
             ))}

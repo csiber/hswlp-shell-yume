@@ -14,6 +14,12 @@ import CommentList from "./CommentList";
 import { Download } from "lucide-react";
 import { toast } from "sonner";
 import { useSessionStore } from "@/state/session";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { FeedItem } from "./CommunityFeedV3";
 
 dayjs.extend(relativeTime);
@@ -24,6 +30,7 @@ interface PostCardProps {
   audioRef: React.RefObject<HTMLAudioElement | null>;
   playingId: string | null;
   setPlayingId: (id: string | null) => void;
+  isGuest?: boolean;
 }
 
 type MusicMeta = {
@@ -38,6 +45,7 @@ export default function PostCard({
   audioRef,
   playingId,
   setPlayingId,
+  isGuest,
 }: PostCardProps) {
   const initials =
     item.user.name
@@ -53,8 +61,11 @@ export default function PostCard({
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
   const fetchSession = useSessionStore((s) => s.fetchSession);
+  const session = useSessionStore((s) => s.session);
+  const guest = isGuest ?? !session?.user?.id;
 
   const handleDownload = useCallback(async () => {
+    if (guest) return;
     try {
       const res = await fetch(`/api/uploads/${item.id}/download`);
       if (res.ok) {
@@ -75,7 +86,7 @@ export default function PostCard({
     } catch {
       toast.error("Hálózati hiba történt");
     }
-  }, [item.id, item.title, fetchSession]);
+  }, [item.id, item.title, fetchSession, guest]);
 
   const handlePlay = useCallback(async () => {
     try {
@@ -242,17 +253,32 @@ export default function PostCard({
           </span>
         )}
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleDownload}
-            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <Download className="w-4 h-4" />
-            {item.download_points ?? 2}
-          </button>
-          <LikeButton postId={item.id} />
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleDownload}
+                  disabled={guest}
+                  className={`flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground ${guest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <Download className="w-4 h-4" />
+                  {item.download_points ?? 2}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {guest ? 'Bejelentkezés szükséges' : 'Letöltés'}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <LikeButton postId={item.id} isGuest={guest} />
         </div>
       </div>
-      <CommentList postId={item.id} />
+      <CommentList postId={item.id} isGuest={guest} />
+      {guest && (
+        <div className="mt-4 rounded-md bg-amber-500 text-white text-center py-2">
+          🔓 További funkciókért jelentkezz be vagy regisztrálj
+        </div>
+      )}
     </motion.div>
   );
 }
