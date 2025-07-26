@@ -61,7 +61,7 @@ export default function PrivacyPage() {
         <p className="text-muted-foreground">
           If you have questions about this policy you can reach us at:
           <br />
-          E-mail: privacy@yumekai.hu
+          E-mail: privacy@yumekai.app
         </p>
       </section>
 

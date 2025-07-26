@@ -59,14 +59,14 @@ function Text({
 export default function AboutPage() {
   return (
     <Container className="py-10 text-foreground">
-      <Section className="text-center">
-        <Heading level={1} className="mb-2">
-          Yumekai – A kreativitás jövője
-        </Heading>
-        <Text className="text-xl text-muted-foreground">
-          Ahol a mesterséges intelligencia és a művészet találkozik.
-        </Text>
-      </Section>
+<Section className="text-center">
+<Heading level={1} className="mb-2">
+Yumekai – The Future of Creativity
+</Heading>
+<Text className="text-xl text-muted-foreground">
+Where artificial intelligence and art meet.
+</Text>
+</Section>
 
       <Separator className="my-8" />
 
@@ -131,7 +131,7 @@ export default function AboutPage() {
         <Text>
           If you have questions or want to collaborate, write to us at:
         </Text>
-        <Text className="font-medium">📧 hello@yumekai.hu</Text>
+        <Text className="font-medium">📧 hello@yumekai.app</Text>
       </Section>
 
       <Separator className="my-8" />
