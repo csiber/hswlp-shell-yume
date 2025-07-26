@@ -227,7 +227,7 @@ export default function MyFilesPage() {
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-        {data?.items?.map((item) =>
+        {data?.items?.map((item, idx) =>
           item.mime?.startsWith("audio/") ? (
             <div
               key={item.id}
@@ -305,7 +305,17 @@ export default function MyFilesPage() {
                 </span>
               )}
               {item.mime?.startsWith("image/") && (
-                <ImageLightbox src={item.url} alt={item.title}>
+                <ImageLightbox
+                  src={item.url}
+                  alt={item.title}
+                  images={data?.items?.map(it => ({
+                    src: it.url,
+                    alt: it.title,
+                    title: it.title,
+                    author: "Me",
+                  }))}
+                  index={idx}
+                >
                   <div className="aspect-[3/4] w-full overflow-hidden rounded-md relative">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
