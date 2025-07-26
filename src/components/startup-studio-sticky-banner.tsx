@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, X } from "lucide-react";
-import LogoIcon from "@/components/logo-icon";
 
 const STORAGE_KEY = "hswlp-sticky-banner-collapsed";
 
@@ -65,28 +64,13 @@ export function HSWLPStickyBanner() {
             >
               <X className="h-4 w-4" />
             </Button>
-            <div className="flex items-center flex-col py-3 px-3">
-              <a
-                href="https://hswlp.hu"
-                target="_blank"
-                className="flex flex-col items-center font-medium text-sm hover:text-foreground transition-colors"
-              >
-                <div className="flex items-center">
-                  <span className="whitespace-nowrap">Powered by</span>
-                  <LogoIcon className="h-7 w-7 mx-1.5" />
-                  <span className="whitespace-nowrap">HSWLP</span>
-                </div>
-
-                <div className="text-tiny text-muted-foreground mt-3 text-center">
-                  A single platform to launch services, release websites and
-                  automate tasks. Built for developers, entrepreneurs and tech
-                  enthusiasts. No servers needed – just an idea.
-                </div>
-              </a>
+            <div className="flex items-center flex-col py-3 px-3 text-center">
+              <p className="text-sm font-medium">Találtál hibát az oldalon?</p>
+              <p className="text-tiny text-muted-foreground mt-2">
+                Küldd el nekünk a részleteket, hogy mielőbb javíthassuk.
+              </p>
               <Button size="sm" className="mt-4" asChild>
-                <a href="https://hswlp.hu#pricing" target="_blank">
-                  Try it now
-                </a>
+                <a href="/bug-report">Hibajelentés</a>
               </Button>
             </div>
           </div>
