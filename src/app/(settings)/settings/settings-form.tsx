@@ -84,7 +84,7 @@ export function SettingsForm() {
       toast.error('Not enough credits to change nickname.')
       return
     }
-    toast.loading('Adatok mentése...')
+    toast.loading('Saving data...')
     try {
       const res = await fetch('/api/user/update', {
         method: 'PUT',
@@ -94,14 +94,14 @@ export function SettingsForm() {
       const data = (await res.json()) as { success?: boolean; error?: string }
       toast.dismiss()
       if (res.ok && data.success) {
-        toast.success('Sikeres mentés')
+        toast.success('Saved successfully')
         router.refresh()
       } else {
-        toast.error(data.error || 'Hiba történt')
+        toast.error(data.error || 'Error saving data')
       }
     } catch {
       toast.dismiss()
-      toast.error('Hálózati hiba')
+      toast.error('Network error while saving data')
     }
   }
 

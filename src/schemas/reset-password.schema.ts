@@ -2,10 +2,11 @@ import { z } from "zod";
 
 export const resetPasswordSchema = z.object({
   token: z.string(),
-  password: z.string().min(8, "A jelszónak legalább 8 karakter hosszúnak kell lennie"),
+  // Require a minimum password length
+  password: z.string().min(8, "Password must be at least 8 characters long"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: "A jelszavak nem egyeznek",
+  message: "Passwords do not match",
   path: ["confirmPassword"],
 });
 

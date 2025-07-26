@@ -89,7 +89,16 @@ export async function GET(req: NextRequest) {
       const transformed = await fetch(url, {
         cf: {
           image: {
-            draw: [{ url: overlayUrl, opacity: 0.5, bottom: 10, right: 10 }],
+            draw: [
+              {
+                url: overlayUrl,
+                opacity: 0.5,
+                width: 200,
+                height: 200,
+                bottom: 10,
+                right: 10,
+              },
+            ],
           },
         },
       })
