@@ -1,5 +1,5 @@
 export async function isNsfwImageClient(file: File): Promise<boolean> {
-  const [{ default: nsfwjs }] = await Promise.all([import('nsfwjs')])
+  const nsfwjs = (await import('nsfwjs')) as typeof import('nsfwjs')
   await import('@tensorflow/tfjs')
   const img = document.createElement('img')
   img.src = URL.createObjectURL(file)
