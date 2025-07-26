@@ -19,7 +19,7 @@ export const updateUserProfileAction = createServerAction()
         const db = await getDB();
 
           if (!session?.user?.id) {
-            throw new ZSAError("NOT_AUTHORIZED", "Nincs jogosultság");
+            throw new ZSAError("NOT_AUTHORIZED", "Not authorized");
         }
 
         try {
@@ -37,7 +37,7 @@ export const updateUserProfileAction = createServerAction()
           console.error(error)
           throw new ZSAError(
             "INTERNAL_SERVER_ERROR",
-              "A profil frissítése nem sikerült"
+              "Profile update failed"
           );
         }
       },

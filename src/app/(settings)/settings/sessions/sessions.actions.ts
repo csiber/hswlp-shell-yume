@@ -22,7 +22,7 @@ export const getSessionsAction = createServerAction()
         const session = await requireVerifiedEmail();
 
           if (!session?.user?.id) {
-            throw new ZSAError("NOT_AUTHORIZED", "Nincs jogosultság");
+            throw new ZSAError("NOT_AUTHORIZED", "Not authorized");
         }
 
         const sessionIds = await getAllSessionIdsOfUser(session.user.id);
@@ -86,7 +86,7 @@ export const deleteSessionAction = createServerAction()
           if (!session) {
             throw new ZSAError(
               "NOT_AUTHORIZED",
-              "Nincs bejelentkezve"
+              "Not signed in"
             );
         }
 

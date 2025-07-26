@@ -17,7 +17,7 @@ export default function FlaggedClient() {
           </Card>
         ))
       ) : (
-        <p>Nincs naplózott próbálkozás.</p>
+        <p>No logged attempts.</p>
       )}
     </div>
   )

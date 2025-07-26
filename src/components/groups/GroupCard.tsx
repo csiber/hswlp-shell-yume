@@ -45,7 +45,7 @@ export default function GroupCard({ group }: { group: GroupItem }) {
           disabled={joined}
           className="px-3 py-1 rounded bg-primary text-primary-foreground text-sm hover:bg-primary/90 hover:scale-105 transition-transform disabled:opacity-70"
         >
-          {joined ? 'Tag vagy' : 'Csatlakozás'}
+          {joined ? 'Member' : 'Join'}
         </button>
       </div>
     </Card>

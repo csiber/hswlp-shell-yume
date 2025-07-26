@@ -7,7 +7,7 @@ import { getUserFromDB, getUserTeamsWithPermissions } from "@/utils/auth";
 import { getIP } from "./get-IP";
 import { MAX_SESSIONS_PER_USER } from "@/constants";
 
-// KV alapú session tárolás és kezelő függvények
+// KV-based session storage and helper utilities
 const SESSION_PREFIX = "session:";
 
 export function getSessionKey(userId: string, sessionId: string): string {

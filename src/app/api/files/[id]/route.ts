@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
 
   if (!upload) {
     console.warn('File not found in DB', id)
-    return new Response('Fájl nem található', { status: 404 })
+    return new Response('File not found', { status: 404 })
   }
 
   const isOwner = session?.user?.id === upload.user_id
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
 
   if ((!isOwner && !isAdmin && (upload.approved !== 1 || upload.visibility !== 'public')) || !upload.r2_key) {
     console.warn('File not public or missing key', id)
-    return new Response('Fájl nem található', { status: 404 })
+    return new Response('File not found', { status: 404 })
   }
 
   let isAuthorized = isOwner || isAdmin
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
 
     if (!object || typeof object === 'string' || !object.body) {
       console.warn('File not found in R2', upload.r2_key)
-      return new Response('Fájl nem található', { status: 404 })
+      return new Response('File not found', { status: 404 })
     }
 
     body = object.body
@@ -118,7 +118,7 @@ export async function GET(req: NextRequest) {
       }
       if (!object || typeof object === 'string' || !object.body) {
         console.warn('File not found in R2', upload.r2_key)
-        return new Response('Fájl nem található', { status: 404 })
+        return new Response('File not found', { status: 404 })
       }
       body = object.body
       contentType = object.httpMetadata?.contentType || contentType

@@ -115,10 +115,10 @@ export default function MyFilesPage() {
     try {
       const res = await fetch(`/api/my-files/${id}/delete`, { method: "POST" });
       if (res.ok) {
-        toast.success("Fájl törölve");
+        toast.success("File deleted");
         mutate();
       } else {
-        toast.error("Hiba történt törlés közben");
+        toast.error("Error while deleting");
       }
     } catch {
       toast.error("Network error");
@@ -127,7 +127,7 @@ export default function MyFilesPage() {
 
   const downloadFile = async (item: UploadItem) => {
     if (userCredits < item.download_points) {
-      toast.error("Nincs elég kredit a letöltéshez");
+      toast.error("Not enough credits to download");
       return;
     }
     try {
@@ -141,7 +141,7 @@ export default function MyFilesPage() {
       });
 
       if (!creditRes.ok) {
-        toast.error("Nincs elég kredit a letöltéshez");
+        toast.error("Not enough credits to download");
         return;
       }
 
@@ -366,7 +366,7 @@ export default function MyFilesPage() {
                           }
                         >
                           {downloaded.has(item.id) ? (
-                            "Letöltve"
+                            "Downloaded"
                           ) : (
                             <Download className="w-4 h-4" />
                           )}
@@ -374,11 +374,11 @@ export default function MyFilesPage() {
                       </TooltipTrigger>
                       <TooltipContent>
                         {downloaded.has(item.id)
-                          ? "Már letöltve"
+                          ? "Already downloaded"
                           : item.moderation_status === "punished"
-                          ? "Szankcionált tartalom"
+                          ? "Punished content"
                           : userCredits < item.download_points
-                          ? "Nincs elég kredit a letöltéshez"
+                          ? "Not enough credits to download"
                           : `Download for ${item.download_points} credits`}
                       </TooltipContent>
                     </Tooltip>

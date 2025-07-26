@@ -13,7 +13,7 @@ import { capitalize } from "@/utils/text";
 
 export function SettingsBreadcrumbs() {
   const segment = useSelectedLayoutSegment();
-  const pageTitle = segment ? capitalize(segment.replace(/-/g, ' ')) : 'Áttekintés';
+  const pageTitle = segment ? capitalize(segment.replace(/-/g, ' ')) : 'Overview';
 
   return (
     <Breadcrumb>

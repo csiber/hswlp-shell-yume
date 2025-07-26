@@ -13,10 +13,10 @@ export default function MyRequestsClient() {
   const approve = async (reqId: string, subId: string) => {
     const res = await fetch(`/api/requests/${reqId}/approve/${subId}`, { method: 'POST' })
     if (res.ok) {
-      toast.success('Jóváhagyva')
+      toast.success('Approved')
       mutate()
     } else {
-      toast.error('Hiba történt')
+      toast.error('An error occurred')
     }
   }
 
@@ -33,7 +33,7 @@ export default function MyRequestsClient() {
           </div>
         ))
       ) : (
-        <p>Nincs saját kérésed.</p>
+        <p>You have no requests.</p>
       )}
     </div>
   )
@@ -50,7 +50,7 @@ function Submissions({ requestId, onApprove }: { requestId: string; onApprove: (
       {data.items.map(s => (
         <div key={s.id} className="flex justify-between items-center border p-2 rounded">
           <span>{s.file_url}</span>
-          {!s.is_approved && <Button size="sm" onClick={() => onApprove(requestId, s.id)}>Jóváhagyás</Button>}
+          {!s.is_approved && <Button size="sm" onClick={() => onApprove(requestId, s.id)}>Approve</Button>}
         </div>
       ))}
     </div>

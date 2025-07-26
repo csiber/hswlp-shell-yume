@@ -4,7 +4,7 @@ import ExploreClient from '@/components/explore/ExploreClient'
 export const metadata: Metadata = {
   title: 'Explore \u2013 Yumekai AI Gallery',
   description: 'Browse high-quality AI-generated anime art from the community.',
-  keywords: ['explore', 'galéria', 'nyilvános posztok'],
+  keywords: ['explore', 'gallery', 'public posts'],
   openGraph: {
     images: ['https://yumekai.com/og-cover.png'],
   },

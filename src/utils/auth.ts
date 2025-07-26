@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import { cookies } from "next/headers";
 import isProd from "@/utils/is-prod";
 
-// Felhasználói hitelesítés és session kezelés
+// User authentication and session management
 import {
   createKVSession,
   deleteKVSession,
@@ -65,7 +65,7 @@ const createId = init({
   length: 32,
 });
 
-// Egyedi azonosítóval generálunk session tokent
+// Generate a unique session token
 export function generateSessionToken(): string {
   return createId();
 }

@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import MyRequestsClient from './requests-client'
 
 export const metadata: Metadata = {
-  title: 'Saját kéréseim – Yumekai',
-  description: 'Általad leadott kérések kezelése.',
+  title: 'My requests – Yumekai',
+  description: 'Manage your submitted requests.',
 }
 
 export default function Page() {

@@ -139,7 +139,7 @@ export default function ProfileClient({ user, uploads, badges, currentUserId }: 
                         <Download className="w-4 h-4" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>{`Letöltés ${u.download_points} pontért`}</TooltipContent>
+                    <TooltipContent>{`Download for ${u.download_points} credits`}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>

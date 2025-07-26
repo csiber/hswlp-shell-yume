@@ -22,7 +22,7 @@ export default function SettingsLayout({
           <div className="flex-1">{children}</div>
         </div>
       </div>
-      {/* Footer vagy extra alulra jövő cucc */}
+      {/* Footer or additional bottom content */}
     </ShellLayout>
   );
 }

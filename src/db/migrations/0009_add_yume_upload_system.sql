@@ -1,4 +1,4 @@
--- Feltöltések (képek, zenék, promtok)
+-- Uploads (images, music, prompts)
 CREATE TABLE uploads (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE uploads (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Kedvencek (csillagozás)
+-- Favorites (starred items)
 CREATE TABLE favorites (
   id TEXT PRIMARY KEY,
   user_id TEXT NOT NULL,
