@@ -100,7 +100,7 @@ export default function ImageLightbox({
         {children}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="bg-black/90 border-none shadow-none p-0 flex items-center justify-center fixed inset-0">
+        <DialogContent className="bg-black/90 border-none shadow-none p-0 flex items-center justify-center fixed inset-0 left-0 top-0 translate-x-0 translate-y-0">
           <div
             className="relative w-full h-full flex items-center justify-center"
             onTouchStart={onTouchStart}
