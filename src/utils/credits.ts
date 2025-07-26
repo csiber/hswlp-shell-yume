@@ -5,7 +5,7 @@ import { userTable, creditTransactionTable, teamMembershipTable, teamTable, CRED
 import { updateAllSessionsOfUser, KVSession } from "./kv-session";
 import { CREDIT_PACKAGES, FREE_MONTHLY_CREDITS } from "@/constants";
 
-// Kreditkezeléssel kapcsolatos segédfüggvények
+// Helper functions related to credit management
 
 export type CreditPackage = typeof CREDIT_PACKAGES[number];
 
@@ -13,7 +13,7 @@ export function getCreditPackage(packageId: string): CreditPackage | undefined {
   return CREDIT_PACKAGES.find((pkg) => pkg.id === packageId);
 }
 
-// Eldönti, hogy szükséges-e frissíteni a havi ingyen krediteket
+// Determine whether the monthly free credits should be refreshed
 function shouldRefreshCredits(session: KVSession, currentTime: Date): boolean {
   // Check if it's been at least a month since last refresh
   if (!session.user.lastCreditRefreshAt) {
@@ -28,7 +28,7 @@ function shouldRefreshCredits(session: KVSession, currentTime: Date): boolean {
   return currentTime >= oneMonthAfterLastRefresh;
 }
 
-// A felhasználó csapatainak kredit egyenlegét is frissítjük
+// Also update the credit balance of the user's teams
 async function updateTeamCredits(userId: string, amount: number) {
   const db = await getDB();
   const memberships = await db
@@ -50,7 +50,7 @@ async function updateTeamCredits(userId: string, amount: number) {
     .where(inArray(teamTable.id, memberships.map(m => m.teamId)));
 }
 
-// Lejárt tranzakciók kezelése és a felhasználó egyenlegének frissítése
+// Handle expired transactions and update the user's balance
 async function processExpiredCredits(userId: string, currentTime: Date) {
   const db = await getDB();
   // Find all expired transactions that haven't been processed and have remaining credits
@@ -96,7 +96,7 @@ async function processExpiredCredits(userId: string, currentTime: Date) {
   }
 }
 
-// Felhasználói kreditállomány növelése
+// Increase user's credit balance
 export async function updateUserCredits(userId: string, creditsToAdd: number) {
   const db = await getDB();
   await db

@@ -1,8 +1,10 @@
 import { z } from "zod";
 
 export const signInSchema = z.object({
-  email: z.string().email("Kérjük, érvényes e-mail címet adj meg"),
-  password: z.string().min(8, "A jelszónak legalább 8 karakter hosszúnak kell lennie"),
+  // Require a valid email address
+  email: z.string().email("Please enter a valid email address"),
+  // Require a password of at least 8 characters
+  password: z.string().min(8, "Password must be at least 8 characters long"),
 });
 
 export type SignInSchema = z.infer<typeof signInSchema>;
