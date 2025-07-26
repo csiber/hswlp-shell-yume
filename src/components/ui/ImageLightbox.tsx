@@ -100,7 +100,10 @@ export default function ImageLightbox({
         {children}
       </div>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="bg-black/90 border-none shadow-none p-0 flex items-center justify-center fixed inset-0 left-0 top-0 translate-x-0 translate-y-0">
+        <DialogContent
+          hideClose
+          className="bg-black/90 border-none shadow-none p-0 flex items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full"
+        >
           <div
             className="relative w-full h-full flex items-center justify-center"
             onTouchStart={onTouchStart}
@@ -127,7 +130,7 @@ export default function ImageLightbox({
               src={item.src}
               alt={item.alt}
               onContextMenu={(e) => e.preventDefault()}
-              className="max-h-full max-w-full rounded-lg select-none"
+              className="w-full h-full object-contain rounded-lg select-none"
             />
             {visibleImages.length > 1 && (
               <button
@@ -139,7 +142,7 @@ export default function ImageLightbox({
               </button>
             )}
             <DialogClose asChild>
-              <button className="absolute top-4 right-4 bg-black/60 text-white p-2 rounded-full">
+              <button className="absolute top-2 right-2 z-50 bg-black/60 text-white p-2 rounded-full">
                 <X className="w-4 h-4" />
               </button>
             </DialogClose>
