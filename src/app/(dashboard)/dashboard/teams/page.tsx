@@ -15,6 +15,7 @@ import { PlusIcon, Users } from "lucide-react";
 import type { Route } from "next";
 import { PendingInvitations } from "./pending-invitations";
 import { translateRole } from "@/utils/translate-role";
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 
 export const metadata = {
   title: "My Teams",
@@ -109,8 +110,7 @@ export default async function TeamsIndexPage() {
                   <CardHeader className="flex flex-row items-start gap-4">
                     {team.avatarUrl ? (
                       <div className="h-12 w-12 rounded-md overflow-hidden">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <WatermarkedImage
                           src={team.avatarUrl}
                           alt={`${team.name} logo`}
                           className="h-full w-full object-cover"

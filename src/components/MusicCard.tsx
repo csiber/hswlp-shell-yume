@@ -4,6 +4,7 @@ import useSWR from 'swr'
 import { Button } from '@/components/ui/button'
 import { Download, Trash } from 'lucide-react'
 import { formatTitle, guessMetaFromFilename } from '@/utils/music'
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 
 const PLACEHOLDER =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAFElEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=='
@@ -38,8 +39,7 @@ export default function MusicCard({ id, url, title, onDownload, onDelete, editTr
 
   return (
     <div className="border-2 border-yellow-400 rounded-md p-3 flex flex-col gap-2">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <WatermarkedImage
         src={data?.picture || PLACEHOLDER}
         alt={displayTitle}
         className="object-cover rounded-md relative w-full h-40"

@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
+import WatermarkedImage from './WatermarkedImage'
 
 export interface NsfwImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   blurred?: boolean
@@ -10,8 +11,11 @@ export interface NsfwImageProps extends React.ImgHTMLAttributes<HTMLImageElement
 export default function NsfwImage({ blurred = false, className, ...props }: NsfwImageProps) {
   return (
     <div className="relative">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img {...props} alt={props.alt || ''} className={cn(className, blurred && 'blur-md')} />
+      <WatermarkedImage
+        {...props}
+        alt={props.alt || ''}
+        className={cn(className, blurred && 'blur-md')}
+      />
       {blurred && (
         <>
           <div className="absolute inset-0 rounded-md bg-black/40 backdrop-blur-sm" />

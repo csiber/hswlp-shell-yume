@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
+import WatermarkedImage from "@/components/ui/WatermarkedImage";
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
@@ -208,8 +209,11 @@ export default function PostCard({
             index={index}
           >
             <div className="relative w-full h-48">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.url} alt={item.title} className="object-cover rounded-xl w-full h-full" />
+              <WatermarkedImage
+                src={item.url}
+                alt={item.title}
+                className="object-cover rounded-xl w-full h-full"
+              />
             </div>
           </ImageLightbox>
         )}
@@ -217,8 +221,7 @@ export default function PostCard({
           <div className="flex flex-col items-center gap-2">
             {meta?.picture && (
               <div className="relative w-full h-48">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <WatermarkedImage
                   src={meta.picture}
                   alt={meta.title || item.title}
                   className="object-cover rounded-xl w-full h-full"

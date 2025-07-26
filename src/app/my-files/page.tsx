@@ -38,6 +38,7 @@ import EditUploadDialog from "@/components/myfiles/EditUploadDialog";
 import CreateAlbumDialog from "@/components/album/CreateAlbumDialog";
 import { cn } from "@/utils/cn";
 import { toast } from "sonner";
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 import { useSessionStore } from "@/state/session";
 import UploadBanAlert from "@/components/UploadBanAlert";
 import {
@@ -207,8 +208,7 @@ export default function MyFilesPage() {
           {data.albums.map((al) => (
             <a key={al.id} href={`/album/${al.id}`} className="block">
               {al.cover_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <WatermarkedImage
                   src={al.cover_url}
                   alt={al.name}
                   className="w-full aspect-square object-cover rounded"
@@ -317,8 +317,7 @@ export default function MyFilesPage() {
                   index={idx}
                 >
                   <div className="aspect-[3/4] w-full overflow-hidden rounded-md relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <WatermarkedImage
                       src={item.url}
                       alt={item.title}
                       className="object-cover w-full h-full"

@@ -25,6 +25,7 @@ import { useSessionStore } from "@/state/session";
 import UploadBanAlert from "@/components/UploadBanAlert";
 import useSWR from 'swr'
 import { Progress } from "@/components/ui/progress";
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 
 function detectType(file: File): "image" | "music" | "prompt" {
   if (file.type.startsWith("image/")) return "image";
@@ -281,8 +282,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                   </div>
                   {/* cannot convert to next/image */}
                   {isImage && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
+                    <WatermarkedImage
                       src={url}
                       alt="preview"
                       className="mt-1 max-w-[150px] rounded border"

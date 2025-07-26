@@ -1,6 +1,7 @@
 "use client"
 import { Heart } from 'lucide-react'
 import ImageLightbox from '@/components/ui/ImageLightbox'
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import useSWR from 'swr'
 
@@ -43,14 +44,17 @@ export default function FavoritesCard({ item, onRemove }: { item: FavoriteItem; 
       </TooltipProvider>
       {item.mime?.startsWith('image/') && (
         <ImageLightbox src={item.url} alt={item.title}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={item.url} alt={item.title} className="h-48 w-full object-cover" />
+          <WatermarkedImage
+            src={item.url}
+            alt={item.title}
+            className="h-48 w-full object-cover"
+          />
         </ImageLightbox>
       )}
       {item.mime?.startsWith('audio/') && (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <WatermarkedImage
             src={data?.picture || PLACEHOLDER}
             alt={item.title}
             className="h-48 w-full object-cover"

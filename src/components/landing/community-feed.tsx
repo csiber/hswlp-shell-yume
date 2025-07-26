@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 
 interface CommunityPreview {
   id: string;
@@ -61,8 +62,7 @@ export default function CommunityFeed() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
           {posts.map((post) => (
             <article key={post.id} className="rounded-xl overflow-hidden shadow hover:shadow-lg transition border border-zinc-200 dark:border-zinc-800">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={post.image_url} alt={post.title} className="w-full h-48 object-cover" />
+              <WatermarkedImage src={post.image_url} alt={post.title} className="w-full h-48 object-cover" />
               <div className="p-4">
                 <h3 className="text-gray-900 text-sm font-semibold dark:text-white">{post.title}</h3>
                 <p className="text-zinc-500 text-xs mt-1 dark:text-zinc-400">

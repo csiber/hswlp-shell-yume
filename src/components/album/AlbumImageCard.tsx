@@ -1,5 +1,6 @@
 "use client"
 import ImageLightbox from '@/components/ui/ImageLightbox'
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 
 export interface AlbumFile {
   id: string
@@ -11,8 +12,7 @@ export interface AlbumFile {
 export default function AlbumImageCard({ file }: { file: AlbumFile }) {
   return (
     <ImageLightbox src={file.url} alt={file.title}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
+      <WatermarkedImage
         src={file.url}
         alt={file.title}
         className="object-cover w-full aspect-square rounded"

@@ -8,6 +8,7 @@ import { UserMiniCard } from '@/components/user-mini-card'
 import { Download } from 'lucide-react'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 
 type Upload = {
   id: string
@@ -122,8 +123,7 @@ export default function ProfileClient({ user, uploads, badges, currentUserId }: 
           {filtered.map((u) => (
             <motion.div key={u.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {u.type === 'image' ? (
-                /* eslint-disable-next-line @next/next/no-img-element */
-                <img src={u.url} alt={u.name} className="h-48 w-full object-cover rounded" />
+                <WatermarkedImage src={u.url} alt={u.name} className="h-48 w-full object-cover rounded" />
               ) : u.type === 'music' ? (
                 <audio controls className="w-full">
                   <source src={u.url} />
