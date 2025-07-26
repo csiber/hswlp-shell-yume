@@ -49,17 +49,28 @@ export function Footer() {
                 Yumekai does not allow requests or sharing of erotic, sexual or violent content. All such attempts are logged.
               </p>
 
-              <div className="flex flex-col md:flex-row items-center gap-4">
-                <ThemeSwitch />
-                <a
-                  href="https://promnet.hu"
-                  target="_blank"
-                  className="flex items-center font-medium text-sm hover:text-foreground transition-colors"
-                >
-                  <span>Created by </span>
-                  <span> HSWLP Team</span>
-                </a>
-              </div>
+<div className="flex flex-col md:flex-row items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+  <ThemeSwitch />
+  <a
+    href="https://promnet.hu"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="group flex items-center gap-1 font-medium text-sm text-muted-foreground hover:text-foreground transition-colors"
+  >
+    <span className="transition-all group-hover:translate-x-[2px]">Created by</span>
+    <span className="font-semibold text-primary transition-all group-hover:scale-105">HSWLP Team</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+    </svg>
+  </a>
+</div>
+
             </div>
           </div>
         </div>
