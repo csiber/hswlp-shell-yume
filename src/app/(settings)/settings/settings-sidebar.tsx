@@ -29,17 +29,17 @@ interface SidebarNavItem {
 
 const sidebarNavItems: SidebarNavItem[] = [
   {
-    title: "Profil",
+    title: "Profile",
     href: "/settings",
     icon: User,
   },
   {
-    title: "Biztonság",
+    title: "Security",
     href: "/settings/security",
     icon: Lock,
   },
   {
-    title: "Munkamenetek",
+    title: "Sessions",
     href: "/settings/sessions",
     icon: Smartphone,
   },
@@ -84,7 +84,7 @@ export function SettingsSidebar() {
               )}
             >
               <LogOut className="mr-2 h-4 w-4" />
-              Kijelentkezés
+              Sign out
             </button>
           </DialogTrigger>
           <DialogContent>
@@ -105,7 +105,7 @@ export function SettingsSidebar() {
                   dialogCloseRef.current?.click();
                 }}
               >
-                Kijelentkezés
+                Sign out
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -1,4 +1,4 @@
-// R2 buckethez tartozó aláírt URL generálása
+// Generate signed URL for an R2 bucket
 export interface SignedUrlOptions {
   expiresIn?: number
 }
@@ -25,7 +25,7 @@ export async function getSignedUrl(
     return typeof url === 'string' ? url : url?.toString()
   }
 
-  // Ha nem érhető el az aláírt URL generálás, visszaadjuk a kulcsot,
-  // amit egy belső fetch útvonallal lehet kezelni
+  // If signed URL generation is unavailable, return the key
+  // which can be served through an internal fetch route
   return key
 }

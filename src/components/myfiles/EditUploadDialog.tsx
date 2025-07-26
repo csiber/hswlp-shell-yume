@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
 const schema = z.object({
-  title: z.string().min(1, "Kötelező"),
+  title: z.string().min(1, "Required"),
   description: z.string().optional(),
   tags: z.string().optional(),
   note: z.string().optional(),
@@ -51,13 +51,13 @@ export default function EditUploadDialog({ upload, trigger, onSaved }: Props) {
       body: JSON.stringify(data),
     });
     if (res.ok) {
-      toast.success("Sikeresen mentve");
+      toast.success("Saved successfully");
       onSaved();
       setOpen(false);
     } else if (res.status === 402) {
-      toast.error("Nincs elég kredit");
+      toast.error("Not enough credits");
     } else {
-      toast.error("Hiba történt");
+      toast.error("An error occurred");
     }
   };
 
@@ -66,7 +66,7 @@ export default function EditUploadDialog({ upload, trigger, onSaved }: Props) {
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Fájl szerkesztése</DialogTitle>
+          <DialogTitle>Edit file</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -75,7 +75,7 @@ export default function EditUploadDialog({ upload, trigger, onSaved }: Props) {
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cím</FormLabel>
+                  <FormLabel>Title</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -87,7 +87,7 @@ export default function EditUploadDialog({ upload, trigger, onSaved }: Props) {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Leírás / Prompt</FormLabel>
+                  <FormLabel>Description / Prompt</FormLabel>
                   <FormControl>
                     <Textarea rows={4} {...field} />
                   </FormControl>
@@ -99,7 +99,7 @@ export default function EditUploadDialog({ upload, trigger, onSaved }: Props) {
               name="tags"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tagek</FormLabel>
+                  <FormLabel>Tags</FormLabel>
                   <FormControl>
                     <Input placeholder="tag1, tag2" {...field} />
                   </FormControl>

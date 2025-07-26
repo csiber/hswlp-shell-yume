@@ -52,7 +52,7 @@ export const generateRegistrationOptionsAction = createServerAction()
       if (existingPasskeys.length >= 5) {
         throw new ZSAError(
           "FORBIDDEN",
-          "Elérted a passkeyk maximális, 5 darabos limitjét"
+          "You reached the maximum of 5 passkeys"
         );
       }
 
@@ -114,7 +114,7 @@ export const deletePasskeyAction = createServerAction()
       if (session?.passkeyCredentialId === input.credentialId) {
         throw new ZSAError(
           "FORBIDDEN",
-          "A jelenleg használt passkey nem törölhető"
+          "The currently used passkey cannot be deleted"
         );
       }
 
@@ -135,7 +135,7 @@ export const deletePasskeyAction = createServerAction()
       if (passkeys.length === 1 && !user.passwordHash) {
         throw new ZSAError(
           "FORBIDDEN",
-          "Nem törölheted az utolsó passkeyt, ha nincs jelszó beállítva"
+          "You can't delete your last passkey if no password is set"
         );
       }
 
@@ -159,7 +159,7 @@ export const generateAuthenticationOptionsAction = createServerAction()
 const verifyAuthenticationSchema = z.object({
   response: z.custom<AuthenticationResponseJSON>((val): val is AuthenticationResponseJSON => {
     return typeof val === "object" && val !== null && "id" in val && "rawId" in val;
-  }, "Érvénytelen hitelesítési válasz"),
+  }, "Invalid authentication response"),
   challenge: z.string(),
 });
 
@@ -170,7 +170,7 @@ export const verifyAuthenticationAction = createServerAction()
       const { verification, credential } = await verifyPasskeyAuthentication(input.response, input.challenge);
 
       if (!verification.verified) {
-        throw new ZSAError("FORBIDDEN", "A passkey hitelesítés sikertelen");
+        throw new ZSAError("FORBIDDEN", "Passkey authentication failed");
       }
 
       await createAndStoreSession(credential.userId, "passkey", input.response.id);

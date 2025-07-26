@@ -23,8 +23,8 @@ export default function AlbumHeader({ album }: { album: AlbumInfo }) {
     <div className="space-y-1">
       <h1 className="text-2xl font-bold">{album.name}</h1>
       <p className="text-sm text-muted-foreground">
-        {isOwner ? 'Saját album' : album.author || 'Ismeretlen felhasználó'} ·{' '}
-        {dayjs(album.created_at).fromNow()} · {album.fileCount} kép
+        {isOwner ? 'Your album' : album.author || 'Unknown user'} ·{' '}
+        {dayjs(album.created_at).fromNow()} · {album.fileCount} images
       </p>
     </div>
   )

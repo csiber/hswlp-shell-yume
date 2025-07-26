@@ -81,7 +81,7 @@ const SignUpPage = ({ redirectPath, referrerId }: SignUpClientProps) => {
     onSuccess: async (response) => {
       toast.dismiss()
       if (!response?.data?.optionsJSON) {
-        toast.error("Nem sikerült elindítani a passkey regisztrációt")
+        toast.error("Failed to start passkey registration")
         setIsRegistering(false)
         return;
       }

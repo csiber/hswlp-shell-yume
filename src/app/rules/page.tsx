@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import RulesClient from "./rules-client";
 
 export const metadata: Metadata = {
-  title: "Szabályzat",
-  description: "Közösségi szabályzat és moderációs elvek a Yumekai platformon.",
+  title: "Rules",
+  description: "Community guidelines and moderation principles on Yumekai.",
 };
 
 export default function RulesPage() {

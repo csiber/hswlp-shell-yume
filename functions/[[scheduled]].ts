@@ -18,7 +18,7 @@ import { renderReengagementEmail } from '@/utils/reengagement-email'
 
 import { createId } from '@paralleldrive/cuid2'
 
-// Ütemezett Worker, amely havonta kreditet ad a kevésbé aktív felhasználóknak
+// Scheduled worker that grants monthly credits to less active users
 
 export const onScheduled = async () => {
   getCloudflareContext()
@@ -38,7 +38,7 @@ export const onScheduled = async () => {
     },
   })
 
-  // Végigmegyünk a jogosult felhasználókon és jóváírjuk a krediteket
+  // Iterate over eligible users and credit their accounts
   for (const user of users) {
     const expirationDate = new Date(now)
     expirationDate.setMonth(expirationDate.getMonth() + 1)

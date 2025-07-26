@@ -7,7 +7,7 @@ import {
 } from "@/utils/auth";
 import { RATE_LIMITS, withRateLimit } from "@/utils/with-rate-limit";
 
-// Kijelentkeztetés szerver oldalon, rate limit ellenőrzéssel
+// Server-side sign out with rate limit check
 
 export const signOutAction = async () => {
   return withRateLimit(

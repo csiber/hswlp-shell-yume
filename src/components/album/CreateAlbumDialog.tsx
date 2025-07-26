@@ -12,18 +12,18 @@ export default function CreateAlbumDialog({ onCreated }: { onCreated?: () => voi
     if (!name.trim()) return
     const res = await fetch('/api/albums', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) })
     if (res.ok) {
-      toast.success('Album létrehozva')
+      toast.success('Album created')
       setName('')
       setOpen(false)
       onCreated?.()
     } else {
-      toast.error('Hiba történt')
+      toast.error('Something went wrong')
     }
   }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Új album</Button>
+        <Button variant="outline">New album</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
