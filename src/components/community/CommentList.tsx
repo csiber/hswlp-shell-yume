@@ -215,13 +215,16 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
                       </button>
                       {pickerFor === c.id && !isGuest && (
                         <div className="absolute z-10 mt-1 flex gap-1 rounded-md bg-white dark:bg-zinc-800 p-1 shadow">
-                          {['😆','😂','😍','😡','😢','😲','🎉','🥺'].map(e => (
+                          {['😆','😂','😍','😡','😢','😲','🎉','🥺'].map((emoji) => (
                             <button
-                              key={e}
-                              onClick={() => { setPickerFor(null); sendReaction(c.id, e, false); }}
+                              key={emoji}
+                              onClick={() => {
+                                setPickerFor(null)
+                                sendReaction(c.id, emoji, false)
+                              }}
                               className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded"
                             >
-                              {e}
+                              {emoji}
                             </button>
                           ))}
                         </div>
