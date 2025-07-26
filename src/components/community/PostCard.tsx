@@ -31,6 +31,8 @@ interface PostCardProps {
   playingId: string | null;
   setPlayingId: (id: string | null) => void;
   isGuest?: boolean;
+  images?: { src: string; alt?: string; title?: string | null; author?: string | null }[];
+  index?: number;
 }
 
 type MusicMeta = {
@@ -46,6 +48,8 @@ export default function PostCard({
   playingId,
   setPlayingId,
   isGuest,
+  images,
+  index,
 }: PostCardProps) {
   const initials =
     item.user.name
@@ -196,7 +200,13 @@ export default function PostCard({
       </div>
       <div className="mb-2">
         {item.type === "image" && (
-          <ImageLightbox src={item.url} alt={item.title} onOpen={handleView}>
+          <ImageLightbox
+            src={item.url}
+            alt={item.title}
+            onOpen={handleView}
+            images={images}
+            index={index}
+          >
             <div className="relative w-full h-48">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={item.url} alt={item.title} className="object-cover rounded-xl w-full h-full" />

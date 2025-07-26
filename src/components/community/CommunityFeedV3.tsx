@@ -153,6 +153,21 @@ export default function CommunityFeedV3({
     prompts: items.filter((i) => i.type === "prompt").length,
   };
 
+  const gallery = filteredItems
+    .filter((i) => i.type === "image")
+    .map((it) => ({
+      src: it.url,
+      alt: it.title,
+      title: it.title,
+      author: it.user.name || it.user.email,
+    }));
+
+  const galleryIndex = new Map(
+    filteredItems
+      .filter((i) => i.type === "image")
+      .map((it, idx) => [it.id, idx])
+  );
+
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 xl:max-w-7xl xl:mx-auto">
       <UploadBox onUpload={loadFeed} />
@@ -203,6 +218,8 @@ export default function CommunityFeedV3({
                   playingId={playingId}
                   setPlayingId={setPlayingId}
                   isGuest={guest}
+                  images={gallery}
+                  index={galleryIndex.get(item.id) ?? 0}
                 />
               </div>
             ))}
