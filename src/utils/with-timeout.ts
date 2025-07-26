@@ -23,7 +23,7 @@ export function wrapR2(bucket: R2Bucket) {
             return await withTimeout(Promise.resolve(fn.apply(target, args)), 2000)
           } catch (err) {
             console.error('R2 operation failed', err)
-            return 'Hiba történt a fájl betöltésénél'
+            return 'Failed to load file'
           }
         }
       }

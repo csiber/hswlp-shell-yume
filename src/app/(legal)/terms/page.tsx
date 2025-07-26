@@ -54,7 +54,7 @@ export default function TermsPage() {
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold text-foreground mb-4">
-          4. Kreditrendszer és fizetések
+          4. Credit system and payments
         </h2>
         <p className="text-muted-foreground mb-4">
           Yumekai operates on a credit-based system. Purchased credits are valid for {CREDITS_EXPIRATION_YEARS} years from the date of purchase and payments are processed securely via Stripe.

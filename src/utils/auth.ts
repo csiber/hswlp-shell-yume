@@ -169,7 +169,7 @@ export async function createSession({
   const user = await getUserFromDB(userId);
 
   if (!user) {
-    throw new Error("Felhasználó nem található");
+    throw new Error("User not found");
   }
 
   const teamsWithPermissions = await getUserTeamsWithPermissions(userId);
@@ -310,7 +310,7 @@ export const requireVerifiedEmail = cache(async ({
 
     throw new ZSAError(
       "FORBIDDEN",
-      "Kérjük, előbb erősítsd meg az e-mail címed"
+      "Please verify your email address first"
     );
   }
 
@@ -432,7 +432,7 @@ export async function canSignUp({ email }: { email: string }): Promise<void> {
     if (result.isDisposable) {
       throw new ZSAError(
         "PRECONDITION_FAILED",
-        "Eldobható e-mail címek használata nem engedélyezett"
+        "Disposable email addresses are not allowed"
       );
     }
 
@@ -443,6 +443,6 @@ export async function canSignUp({ email }: { email: string }): Promise<void> {
   // If all validators failed, we can't verify the email
   throw new ZSAError(
     "PRECONDITION_FAILED",
-    "Az e-mail-cím ellenőrzése jelenleg nem lehetséges. Kérjük, próbáld meg később."
+    "Email verification is currently unavailable. Please try again later."
   );
 }

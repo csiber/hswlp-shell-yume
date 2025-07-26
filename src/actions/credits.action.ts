@@ -136,9 +136,9 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
       await logTransaction({
         userId: session.user.id,
         amount: creditPackage.credits,
-        description: `Megvásároltál ${creditPackage.credits} kreditet.`,
+        description: `Purchased ${creditPackage.credits} credits.`,
         type: CREDIT_TRANSACTION_TYPE.PURCHASE,
-        expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} év`)),
+        expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} years`)),
         paymentIntentId: paymentIntent?.id
       });
 
@@ -147,7 +147,7 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
         : session.user.nickname || session.user.email;
       const { html, text } = renderPurchaseEmail({
         userName,
-        date: new Date().toLocaleString('hu-HU', { timeZone: 'Europe/Budapest' }),
+        date: new Date().toLocaleString('en-US', { timeZone: 'Europe/Budapest' }),
         packageName: packageId,
         price: `${creditPackage.price} Ft`,
         transactionId: paymentIntent.id,

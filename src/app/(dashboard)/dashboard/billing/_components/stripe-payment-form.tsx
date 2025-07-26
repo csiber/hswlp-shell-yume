@@ -46,7 +46,7 @@ function PaymentForm({ packageId, clientSecret, onSuccess, onCancel, credits, pr
       });
 
       if (error) {
-        toast.error(error.message || "A fizetés nem sikerült");
+        toast.error(error.message || "Payment failed");
       } else {
         // The payment was successful
         const paymentIntent = await stripe.retrievePaymentIntent(clientSecret);

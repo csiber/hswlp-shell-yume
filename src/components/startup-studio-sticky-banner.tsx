@@ -78,14 +78,14 @@ export function HSWLPStickyBanner() {
                 </div>
 
                 <div className="text-tiny text-muted-foreground mt-3 text-center">
-                  Egyetlen platform szolgáltatások indítására, weboldalak
-                  kiadására és automatizálásra. Fejlesztőknek, vállalkozóknak és
-                  techmániásoknak. Nincs szükség szerverre – elég egy ötlet.
+                  A single platform to launch services, release websites and
+                  automate tasks. Built for developers, entrepreneurs and tech
+                  enthusiasts. No servers needed – just an idea.
                 </div>
               </a>
               <Button size="sm" className="mt-4" asChild>
                 <a href="https://hswlp.hu#pricing" target="_blank">
-                  Próbáld ki most
+                  Try it now
                 </a>
               </Button>
             </div>

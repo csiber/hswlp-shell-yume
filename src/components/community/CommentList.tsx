@@ -110,7 +110,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
 
   async function deleteComment(commentId: string) {
     if (isGuest) return;
-    if (!confirm('Biztosan törlöd a hozzászólást?')) return;
+    if (!confirm('Are you sure you want to delete this comment?')) return;
     try {
       const res = await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
       if (!res.ok) return;
@@ -142,7 +142,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
   return (
     <div className="mt-4">
       <h4 className="mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400">
-        Hozzászólások
+        Comments
       </h4>
       <div className="space-y-3">
         <AnimatePresence initial={false}>

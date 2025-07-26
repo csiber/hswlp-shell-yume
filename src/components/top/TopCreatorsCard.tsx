@@ -16,7 +16,7 @@ export default function TopCreatorsCard() {
   if (!data) return null;
   return (
     <div className="p-4 border rounded-md">
-      <h3 className="font-bold mb-2">Top alkotók</h3>
+      <h3 className="font-bold mb-2">Top creators</h3>
       <ol className="space-y-2">
         {data.creators.map((c, i) => (
           <li key={c.id} className="flex items-center gap-2">

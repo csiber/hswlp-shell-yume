@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   const kv = env.NEXT_INC_CACHE_KV
   if (!kv) {
-    throw new Error('Nem sikerült csatlakozni a KV tárhoz')
+    throw new Error('Unable to connect to KV store')
   }
   const { searchParams } = new URL(req.url)
   let page = parseInt(searchParams.get('page') || '1', 10)

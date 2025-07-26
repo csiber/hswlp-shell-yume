@@ -90,7 +90,7 @@ export function TransactionHistory() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Tranzakciók</CardTitle>
+          <CardTitle>Transactions</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -108,7 +108,7 @@ export function TransactionHistory() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tranzakciók</CardTitle>
+        <CardTitle>Transactions</CardTitle>
       </CardHeader>
       <CardContent>
         {/* Desktop Table View */}
@@ -117,10 +117,10 @@ export function TransactionHistory() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Dátum</TableHead>
-                  <TableHead>Típus</TableHead>
-                  <TableHead>Összeg</TableHead>
-                  <TableHead>Leírás</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Description</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -142,7 +142,7 @@ export function TransactionHistory() {
                       }
                     >
                       {transaction.type === "USAGE" ? "-" : "+"}
-                      {Math.abs(transaction.amount)} pont
+                      {Math.abs(transaction.amount)} points
                     </TableCell>
                     <TableCell>
                       {localizeDescription(transaction.description)}
@@ -154,7 +154,7 @@ export function TransactionHistory() {
                             : "bg-muted"
                             }`}
                         >
-                          {isTransactionExpired(transaction) ? "Lejárt: " : "Lejárat: "}
+                          {isTransactionExpired(transaction) ? "Expired: " : "Expires: "}
                           {formatDate(new Date(transaction.expirationDate))}
                         </Badge>
                       )}
@@ -199,7 +199,7 @@ export function TransactionHistory() {
                   }
                 >
                   {transaction.type === "USAGE" ? "-" : "+"}
-                  {Math.abs(transaction.amount)} pont
+                  {Math.abs(transaction.amount)} points
                 </span>
               </div>
               {transaction.type !== "USAGE" && transaction.expirationDate && (
@@ -210,7 +210,7 @@ export function TransactionHistory() {
                     : "bg-muted"
                     }`}
                 >
-                  {isTransactionExpired(transaction) ? "Lejárt: " : "Lejárat: "}
+                  {isTransactionExpired(transaction) ? "Expired: " : "Expires: "}
                   {formatDate(new Date(transaction.expirationDate))}
                 </Badge>
               )}

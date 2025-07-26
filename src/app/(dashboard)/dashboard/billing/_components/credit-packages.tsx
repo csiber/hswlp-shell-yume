@@ -102,11 +102,10 @@ export function CreditPackages() {
           <div className="space-y-4">
             <div>
               <h2 className="text-xl sm:text-2xl font-semibold">
-                Töltsd fel a kreditjeidet
+                Top up your credits
               </h2>
               <p className="text-sm text-muted-foreground mt-2 sm:mt-3">
-                Vásárolj további krediteket szolgáltatásaink használatához. Minél
-                több kreditet vásárolsz, annál kedvezőbb az ár.
+                Purchase additional credits to use our services. The more you buy, the better the price.
               </p>
             </div>
 
@@ -134,14 +133,14 @@ export function CreditPackages() {
                           {pkg.price} Ft
                         </div>
                         <div className="text-xs sm:text-sm text-muted-foreground">
-                          egyszeri fizetés
+                          one-time payment
                         </div>
                         {index > 0 ? (
                           <Badge
                             variant="secondary"
                             className="mt-1 text-xs sm:text-sm bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                           >
-                            Megtakarítás {calculateSavings(pkg)}%
+                            Save {calculateSavings(pkg)}%
                           </Badge>
                         ) : (
                           <div className="h-[22px] sm:h-[26px]" /> /* Placeholder for badge height */
@@ -155,13 +154,13 @@ export function CreditPackages() {
                           handlePurchase(pkg);
                         } else {
                           toast.error(
-                            "Hiba történt a fizetési szolgáltatónál. Próbáld meg később."
+                            "Payment provider error. Please try again later."
                           );
                         }
                       }}
                       className="w-full text-sm sm:text-base"
                     >
-                      Vásárlás
+                      Purchase
                     </Button>
                   </CardContent>
                 </Card>
@@ -174,7 +173,7 @@ export function CreditPackages() {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Kreditek vásárlása</DialogTitle>
+            <DialogTitle>Purchase credits</DialogTitle>
           </DialogHeader>
           {clientSecret && selectedPackage && (
             <StripePaymentForm

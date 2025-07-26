@@ -49,7 +49,7 @@ export default function CommunityFeed() {
     return (
       <section className="bg-gray-50 text-gray-900 py-24 dark:bg-[#0c0c1f] dark:text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p>Nincs elérhető közösségi tartalom</p>
+          <p>No community content available</p>
         </div>
       </section>
     );
@@ -66,9 +66,9 @@ export default function CommunityFeed() {
               <div className="p-4">
                 <h3 className="text-gray-900 text-sm font-semibold dark:text-white">{post.title}</h3>
                 <p className="text-zinc-500 text-xs mt-1 dark:text-zinc-400">
-                  {post.author} • <time dateTime={post.created_at}>{new Date(post.created_at).toLocaleDateString("hu-HU")}</time>
+                  {post.author} • <time dateTime={post.created_at}>{new Date(post.created_at).toLocaleDateString("en-US")}</time>
                 </p>
-                <p className="text-indigo-600 text-xs mt-1 dark:text-indigo-400">⭐ {post.points ?? 2} pont</p>
+                <p className="text-indigo-600 text-xs mt-1 dark:text-indigo-400">⭐ {post.points ?? 2} points</p>
               </div>
             </article>
           ))}

@@ -69,7 +69,7 @@ export default function PostCard({
     try {
       const res = await fetch(`/api/uploads/${item.id}/download`);
       if (res.ok) {
-        toast.success("Letöltés indítása");
+        toast.success("Download started");
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -79,12 +79,12 @@ export default function PostCard({
         URL.revokeObjectURL(url);
         fetchSession?.();
       } else if (res.status === 402) {
-        toast.error("Nincs elég kredit a letöltéshez");
+        toast.error("Not enough credits to download");
       } else {
-        toast.error("Letöltés sikertelen");
+        toast.error("Download failed");
       }
     } catch {
-      toast.error("Hálózati hiba történt");
+      toast.error("Network error");
     }
   }, [item.id, item.title, fetchSession, guest]);
 
@@ -153,7 +153,7 @@ export default function PostCard({
     >
       {item.pinned && (
         <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
-          📌 Rögzített
+          📌 Pinned
         </span>
       )}
       <div className="mb-3 flex items-center gap-3">
@@ -216,13 +216,13 @@ export default function PostCard({
               </div>
             )}
             <div className="text-center text-sm">
-              <h3>{meta?.title || item.title || "Ismeretlen szám"}</h3>
+              <h3>{meta?.title || item.title || "Unknown track"}</h3>
               {meta?.artist && <p>{meta.artist}</p>}
             </div>
             <MusicPlayer
               id={item.id}
               url={item.url}
-              title={meta?.title || item.title || "Ismeretlen szám"}
+              title={meta?.title || item.title || "Unknown track"}
               audioRef={audioRef}
               playingId={playingId}
               setPlayingId={setPlayingId}
@@ -232,7 +232,7 @@ export default function PostCard({
         )}
         {item.type === "prompt" && (
           <PromptBox
-            text={promptError ? "A prompt nem olvasható" : promptText || ""}
+            text={promptError ? "Prompt not readable" : promptText || ""}
             lines={5}
           />
         )}

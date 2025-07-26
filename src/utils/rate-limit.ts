@@ -54,7 +54,7 @@ export async function checkRateLimit({
   const now = Math.floor(Date.now() / 1000);
 
   if (!env?.NEXT_INC_CACHE_KV) {
-    throw new Error("Nem sikerült csatlakozni a KV tárhoz");
+    throw new Error("Unable to connect to KV store");
   }
 
   // Normalize the key if it looks like an IP address

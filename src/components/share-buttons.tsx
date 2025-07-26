@@ -20,14 +20,14 @@ export default function ShareButtons({ title, url, className, referrerId }: Shar
 
   function copyLink() {
     navigator.clipboard.writeText(shareUrl).then(() => {
-      toast.success("Link másolva a vágólapra");
+      toast.success("Link copied to clipboard");
     });
   }
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
       {referrerId && (
-        <p className="text-sm text-center">💌 Küldd el egy barátodnak:<br/>Ha regisztrál → kapsz 20 pontot!</p>
+        <p className="text-sm text-center">💌 Send it to a friend:<br/>If they sign up you get 20 points!</p>
       )}
       <Button size="icon" variant="secondary" asChild>
         <a

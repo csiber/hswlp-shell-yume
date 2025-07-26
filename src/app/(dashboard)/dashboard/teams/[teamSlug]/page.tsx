@@ -41,13 +41,13 @@ export async function generateMetadata({ params }: TeamPageProps) {
 
   if (!team) {
     return {
-      title: "Csapat nem található",
+      title: "Team not found",
     };
   }
 
   return {
-    title: `${team.name} - Vezérlőpult`,
-    description: team.description || `Csapat vezérlőpultja: ${team.name}`,
+    title: `${team.name} - Dashboard`,
+    description: team.description || `Team dashboard: ${team.name}`,
   };
 }
 
@@ -81,7 +81,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
           items={[
             {
               href: "/dashboard",
-              label: "Vezérlőpult"
+              label: "Dashboard"
             },
             {
               href: "/dashboard/teams",
@@ -119,7 +119,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
         items={[
           {
             href: "/dashboard",
-            label: "Vezérlőpult"
+              label: "Dashboard"
           },
           {
             href: "/dashboard/teams",
@@ -147,7 +147,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
               <InviteMemberModal
                 teamId={team.id}
                 trigger={
-                  <Button>Tagok meghívása</Button>
+                  <Button>Invite members</Button>
                 }
               />
             )}
@@ -169,19 +169,19 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
           {/* Quick stats */}
           <div className="col-span-3 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="p-6 border rounded-lg bg-card flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground">Csapat kreditek</span>
+              <span className="text-sm font-medium text-muted-foreground">Team credits</span>
               <span className="text-2xl font-bold">{team.creditBalance || 0}</span>
             </div>
 
             <div className="p-6 border rounded-lg bg-card flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground">Szereped</span>
+              <span className="text-sm font-medium text-muted-foreground">Your role</span>
               <span className="text-2xl font-bold capitalize">
                 {translateRole(teamSession?.teams?.find(t => t.id === team.id)?.role.name || "tag")}
               </span>
             </div>
 
             <div className="p-6 border rounded-lg bg-card flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground">Létrehozva</span>
+              <span className="text-sm font-medium text-muted-foreground">Created</span>
               <span className="text-2xl font-bold">
                 {formatDateLongHu(team.createdAt)}
               </span>
@@ -194,24 +194,24 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
 
           {/* Team Members Table */}
           <div className="col-span-3 border rounded-lg p-6 bg-card">
-            <h2 className="text-xl font-semibold mb-4">Csapattagok</h2>
+            <h2 className="text-xl font-semibold mb-4">Team members</h2>
 
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tag</TableHead>
+                  <TableHead>Member</TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Szerep</TableHead>
-                  <TableHead>Csatlakozott</TableHead>
-                  <TableHead>Állapot</TableHead>
-                  {canRemoveMembers && <TableHead className="text-right">Művelet</TableHead>}
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead>Status</TableHead>
+                  {canRemoveMembers && <TableHead className="text-right">Action</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {teamMembers.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={canRemoveMembers ? 6 : 5} className="text-center py-6 text-muted-foreground">
-                      Nincs egyetlen tag sem
+                      No members yet
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -238,12 +238,12 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
                       <TableCell>
                         {member.joinedAt !== null
                           ? formatDateLongHu(member.joinedAt)
-                          : 'Nincs csatlakozva'}
+                          : 'Not joined'}
                       </TableCell>
                       <TableCell>
                         {member.isActive
-                          ? <span className="text-green-600 dark:text-green-400">Aktív</span>
-                          : <span className="text-red-600 dark:text-red-400">Inaktív</span>}
+                          ? <span className="text-green-600 dark:text-green-400">Active</span>
+                          : <span className="text-red-600 dark:text-red-400">Inactive</span>}
                       </TableCell>
                       {canRemoveMembers && (
                         <TableCell className="text-right">
