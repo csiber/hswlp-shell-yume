@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { SiX as FacebookIcon } from "@icons-pack/react-simple-icons";
 import ThemeSwitch from "@/components/theme-switch";
 import { SITE_NAME } from "@/constants";
 
@@ -31,29 +30,11 @@ export function Footer() {
               <h3 className="text-sm font-semibold text-foreground">Company</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <Link href="/" className="hover:text-foreground">
+                  <Link href="https://hswlp.com" className="hover:text-foreground">
                     Home
                   </Link>
                 </li>
               </ul>
-            </div>
-
-            {/* Social icons and theme */}
-            <div className="space-y-3 md:space-y-4 flex flex-col items-center md:items-start">
-              <h3 className="text-sm font-semibold text-foreground">
-                Community
-              </h3>
-              <div className="flex items-center space-x-4">
-                <a
-                  href="https://facebook.com/csiber"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <FacebookIcon className="h-5 w-5" />
-                  <span className="sr-only">Facebook</span>
-                </a>
-              </div>
             </div>
           </div>
 
@@ -76,7 +57,7 @@ export function Footer() {
                   className="flex items-center font-medium text-sm hover:text-foreground transition-colors"
                 >
                   <span>Created by </span>
-                  <span>Csaba Polyak</span>
+                  <span> HSWLP Team</span>
                 </a>
               </div>
             </div>
