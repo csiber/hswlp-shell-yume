@@ -41,8 +41,9 @@ export default function CommunityFeedV3({
 }: { endpoint?: string } = {}) {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [albums, setAlbums] = useState<AlbumItem[]>([]);
-  const [visible, setVisible] = useState(10);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<FeedFilter>("all");
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -59,10 +60,10 @@ export default function CommunityFeedV3({
     return () => audio.removeEventListener("ended", onEnded);
   }, []);
 
-  const loadFeed = useCallback(async () => {
+  const loadFeed = useCallback(async (p = 1) => {
     setLoading(true);
     try {
-      const res = await fetch(endpoint);
+      const res = await fetch(`${endpoint}?page=${p}`);
       if (!res.ok) throw new Error("failed to load feed");
       const raw: unknown = await res.json();
       type FeedResponse = { items?: FeedItem[]; albums?: AlbumItem[] } | unknown;
@@ -74,7 +75,9 @@ export default function CommunityFeedV3({
       const alb = Array.isArray((data as { albums?: unknown }).albums)
         ? ((data as { albums?: AlbumItem[] }).albums as AlbumItem[])
         : [];
-      setAlbums(alb);
+      if (p === 1) {
+        setAlbums(alb);
+      }
 
       const detect = (url: string): "image" | "music" | "prompt" => {
         const ext = url.split(".").pop()?.toLowerCase() || "";
@@ -91,42 +94,57 @@ export default function CommunityFeedV3({
             : detect(it.url),
       }));
 
-      const pinned = arr.filter((i) => i.pinned)
-      const others = arr.filter((i) => !i.pinned)
+      const pinned = arr.filter((i) => i.pinned);
+      const others = arr.filter((i) => !i.pinned);
       others.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
-      setItems([...pinned, ...others])
-      setVisible(10);
+      );
+      if (p === 1) {
+        setItems([...pinned, ...others]);
+      } else {
+        setItems((prev) => [...prev, ...others]);
+      }
+      const respLimit: number =
+        typeof (data as { limit?: number }).limit === "number"
+          ? (data as { limit?: number }).limit as number
+          : 20;
+      if (arr.length < respLimit) setHasMore(false);
     } catch (err) {
       console.warn("Hiba a feed betöltésekor", err);
-      setItems([]);
+      if (p === 1) setItems([]);
+      setHasMore(false);
     } finally {
       setLoading(false);
     }
   }, [endpoint]);
 
   useEffect(() => {
-    loadFeed();
-    const timer = setInterval(loadFeed, 60000);
+    loadFeed(page);
+  }, [page, loadFeed]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPage(1);
+      setHasMore(true);
+    }, 60000);
     return () => clearInterval(timer);
-  }, [endpoint, loadFeed]);
+  }, []);
 
   useEffect(() => {
-    if (inView && visible < items.length) {
-      setVisible((v) => v + 10);
+    setPage(1);
+    setHasMore(true);
+  }, [filter, endpoint]);
+
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      setPage((p) => p + 1);
     }
-  }, [inView, visible, items.length]);
-
-  useEffect(() => {
-    setVisible(10);
-  }, [filter]);
+  }, [inView, hasMore, loading]);
 
   const filteredItems = items.filter((it) =>
     filter === "all" ? true : it.type === filter
   );
-  const visibleItems = filteredItems.slice(0, visible);
 
   const stats = {
     total: items.length,
@@ -156,7 +174,7 @@ export default function CommunityFeedV3({
             <SkeletonPost key={i} />
           ))}
         </div>
-      ) : visibleItems.length === 0 ? (
+      ) : filteredItems.length === 0 ? (
         <div className="flex flex-col items-center py-10 text-muted-foreground">
           <svg
             className="mb-4 h-16 w-16"
@@ -177,7 +195,7 @@ export default function CommunityFeedV3({
             {albums.map((album) => (
               <AlbumCard key={album.id} album={album} />
             ))}
-            {visibleItems.map((item) => (
+            {filteredItems.map((item) => (
               <div key={item.id} className="animate-fade-in">
                 <PostCard
                   item={item}
@@ -189,7 +207,7 @@ export default function CommunityFeedV3({
               </div>
             ))}
           </div>
-          {visible < items.length && <div ref={loadMoreRef} className="h-12" />}
+          {hasMore && <div ref={loadMoreRef} className="h-12" />}
         </>
       )}
 
