@@ -33,21 +33,21 @@ export default function ModerationClient() {
   const approve = async (id: string) => {
     const res = await fetch(`/api/moderation/${id}/approve`, { method: 'POST' })
     if (res.ok) {
-      toast.success('Jóváhagyva')
+      toast.success('Approved')
       mutate()
-    } else toast.error('Hiba történt')
+    } else toast.error('An error occurred')
   }
 
   const reject = async (id: string) => {
     const res = await fetch(`/api/moderation/${id}/reject`, { method: 'POST' })
     if (res.ok) {
-      toast.success('Elutasítva')
+      toast.success('Rejected')
       mutate()
-    } else toast.error('Hiba történt')
+    } else toast.error('An error occurred')
   }
 
   const punish = async (id: string) => {
-    const reason = prompt('Szankció indoka:')
+    const reason = prompt('Reason for punishment:')
     if (!reason) return
     const res = await fetch(`/api/moderation/${id}/punish`, {
       method: 'POST',
@@ -55,9 +55,9 @@ export default function ModerationClient() {
       body: JSON.stringify({ reason })
     })
     if (res.ok) {
-      toast.success('Szankcionálva')
+      toast.success('Punished')
       mutate()
-    } else toast.error('Hiba történt')
+    } else toast.error('An error occurred')
   }
 
   return (
@@ -74,7 +74,7 @@ export default function ModerationClient() {
         ))
       ) : (
         <div className="col-span-full text-center py-8 text-muted-foreground">
-          Nincs mit moderálni – mindenki példásan viselkedik. ☕
+          Nothing to moderate – everyone is behaving. ☕
         </div>
       )}
     </div>
@@ -126,7 +126,7 @@ function ModerationCard({
                   <Check className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Elfogadás</TooltipContent>
+              <TooltipContent>Approve</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider delayDuration={200}>
@@ -140,7 +140,7 @@ function ModerationCard({
                   <X className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Elutasítás</TooltipContent>
+              <TooltipContent>Reject</TooltipContent>
             </Tooltip>
           </TooltipProvider>
           <TooltipProvider delayDuration={200}>
@@ -154,7 +154,7 @@ function ModerationCard({
                   <Ban className="w-4 h-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Szankcionálás</TooltipContent>
+              <TooltipContent>Punish</TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
@@ -187,7 +187,7 @@ function PromptPreview({ url }: { url: string }) {
       {hasMore && (
         <Button asChild size="sm" className="mt-2">
           <a href={url} target="_blank" rel="noopener noreferrer">
-            Megnyitás
+            Open
           </a>
         </Button>
       )}

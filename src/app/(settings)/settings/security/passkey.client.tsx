@@ -95,7 +95,7 @@ export function PasskeysList({ passkeys, currentPasskeyId, email }: PasskeysList
   const dialogCloseRef = useRef<HTMLButtonElement>(null);
   const { execute: deletePasskey } = useServerAction(deletePasskeyAction, {
     onSuccess: () => {
-        toast.success("Passkulcs törölve");
+        toast.success("Passkey deleted");
       dialogCloseRef.current?.click();
       router.refresh();
     }

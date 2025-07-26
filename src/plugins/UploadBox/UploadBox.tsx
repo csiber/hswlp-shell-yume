@@ -39,7 +39,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
 
   async function upload() {
     if (!file) {
-      toast.error("Hiányzó fájl")
+      toast.error("Missing file")
       return
     }
     startTransition(async () => {
@@ -70,7 +70,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <Input
-          placeholder="Adj címet a feltöltésednek... (opcionális)"
+          placeholder="Add a title to your upload... (optional)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
@@ -85,7 +85,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
           className={`flex cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed p-6 text-sm transition-colors ${dragging ? "bg-primary/10" : "bg-muted"}`}
         >
           <p className="select-none text-muted-foreground">
-            {file ? "Fájl kiválasztva" : "Húzd ide a fájlt vagy kattints"}
+            {file ? "File selected" : "Drag file here or click"}
           </p>
           <Input
             ref={fileInputRef}
@@ -96,8 +96,8 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
         </div>
         {showSuccess && (
           <p className="text-center text-sm text-green-600">
-            Sikeres feltöltés – moderációra vár
-            {downloadPoints !== null ? ` – a fájl értéke: ${downloadPoints} pont` : ''}
+            Upload successful – awaiting moderation
+            {downloadPoints !== null ? ` – file value: ${downloadPoints} credits` : ''}
           </p>
         )}
       </CardContent>

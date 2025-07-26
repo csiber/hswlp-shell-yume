@@ -8,14 +8,15 @@ export const passkeyEmailSchema = z.object({
     .max(20)
     .regex(/^[a-zA-Z0-9_-]+$/)
     .optional(),
-  email: z.string().email("Kérjük, érvényes e-mail címet adj meg"),
+  // User must provide a valid email address
+  email: z.string().email("Please enter a valid email address"),
   firstName: z
     .string()
-    .min(2, "A keresztnévnek legalább 2 karakter hosszúnak kell lennie")
+    .min(2, "First name must be at least 2 characters long")
     .max(255),
   lastName: z
     .string()
-    .min(2, "A vezetéknévnek legalább 2 karakter hosszúnak kell lennie")
+    .min(2, "Last name must be at least 2 characters long")
     .max(255),
   captchaToken: catchaSchema,
   referrerId: z.string().optional(),

@@ -26,18 +26,18 @@ export default function PurchaseButton({
     {
       onError: (error) => {
         toast.dismiss();
-        toast.error(error.err?.message || "Nem sikerült a vásárlás");
+        toast.error(error.err?.message || "Purchase failed");
       },
       onStart: () => {
-        toast.loading("Vásárlás feldolgozása...");
+        toast.loading("Processing purchase...");
       },
       onSuccess: () => {
         toast.dismiss();
         toast.custom(() => (
           <Alert
             color="success"
-            title="Sikeres vásárlás"
-            description={`${itemName} hozzáadva`}
+            title="Purchase successful"
+            description={`${itemName} added`}
           />
         ));
       },
@@ -53,7 +53,7 @@ export default function PurchaseButton({
       }}
       disabled={isPending}
     >
-      {isPending ? "Feldolgozás..." : "Vásárlás"}
+      {isPending ? "Processing..." : "Purchase"}
     </ShinyButton>
   );
 }

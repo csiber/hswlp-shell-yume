@@ -2,29 +2,29 @@
 
 echo "🕰️  Yumekaira / Next rollback script"
 echo "-------------------------------"
-read -p "Add meg a commit hash-t vagy relatív pozíciót (pl. HEAD~1): " rollback_point
+read -p "Enter commit hash or relative ref (e.g. HEAD~1): " rollback_point
 
-# Ellenőrizzük, hogy van-e ilyen commit
+# Check if commit exists
 if ! git cat-file -e "${rollback_point}^{commit}" 2>/dev/null; then
-  echo "❌ Hibás commit: nem található. Ellenőrizd a hash-t vagy pozíciót."
+  echo "❌ Invalid commit. Check the hash or reference."
   exit 1
 fi
 
-echo "⚠️  A 'main' branch visszaáll erre: $rollback_point"
-read -p "Biztosan folytatod? [y/N]: " confirm
+echo "⚠️  'main' will be reset to: $rollback_point"
+read -p "Are you sure? [y/N]: " confirm
 
 if [[ "$confirm" != "y" && "$confirm" != "Y" ]]; then
-  echo "⛔ Megszakítva."
+  echo "⛔ Aborted."
   exit 0
 fi
 
-# Visszaállás
+# Roll back
 git reset --hard "$rollback_point"
 
-# Újra létrehozzuk a 'main' branchet
+# Recreate 'main' branch
 git checkout -B main
 
 # Force push
 git push origin main --force
 
-echo "✅ Rollback kész: main → $rollback_point"
+echo "✅ Rollback finished: main → $rollback_point"

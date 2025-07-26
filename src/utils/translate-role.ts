@@ -1,17 +1,17 @@
 export function translateRole(role: string): string {
   switch (role.toLowerCase()) {
     case 'owner':
-      return 'Tulajdonos';
+      return 'Owner';
     case 'member':
-      return 'Tag';
+      return 'Member';
     case 'invited':
-      return 'Meghívott';
+      return 'Invited';
     case 'pending':
-      return 'Függőben';
+      return 'Pending';
     case 'admin':
       return 'Admin';
     case 'guest':
-      return 'Vendég';
+      return 'Guest';
     default:
       return role;
   }

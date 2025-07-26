@@ -8,7 +8,7 @@ export interface PurchaseEmailData {
 }
 
 export function renderPurchaseEmail({ userName, date, packageName, price, transactionId, credits }: PurchaseEmailData) {
-  const summary = 'Köszönjük, a vásárlás sikeres volt!'
+  const summary = 'Thank you, your purchase was successful!'
   const html = `<!DOCTYPE html>
 <html lang="en">
   <body>

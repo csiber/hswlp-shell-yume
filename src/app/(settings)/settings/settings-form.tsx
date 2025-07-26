@@ -108,9 +108,9 @@ export function SettingsForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Profil beállítások</CardTitle>
+        <CardTitle>Profile settings</CardTitle>
         <CardDescription>
-          Személyes adataid és elérhetőségeid frissítése.
+          Update your personal info and contact details.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -118,16 +118,16 @@ export function SettingsForm() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid gap-6 sm:grid-cols-2">
             <div className="space-y-2">
-              <FormLabel>Keresztnév</FormLabel>
+              <FormLabel>First name</FormLabel>
               <Input disabled value={session.user.firstName ?? ''} />
             </div>
             <div className="space-y-2">
-              <FormLabel>Vezetéknév</FormLabel>
+              <FormLabel>Last name</FormLabel>
               <Input disabled value={session.user.lastName ?? ''} />
             </div>
             <div className="col-span-2">
               <FormDescription>
-                A teljes neved rejtve marad más felhasználók elől.
+                Your full name remains hidden from other users.
               </FormDescription>
             </div>
           </div>
@@ -137,12 +137,12 @@ export function SettingsForm() {
               name="nickname"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Felhasználónév / Nicknév</FormLabel>
+                  <FormLabel>Username / Nickname</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
                   <FormDescription>
-                    50 kreditbe kerül és 30 naponta egyszer módosítható.
+                    Costs 50 credits and can be changed once every 30 days.
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -151,7 +151,7 @@ export function SettingsForm() {
 
 
             <FormItem>
-              <FormLabel>E-mail cím</FormLabel>
+              <FormLabel>Email address</FormLabel>
               <FormControl>
                 <Input
                   type="email"
@@ -160,14 +160,14 @@ export function SettingsForm() {
                 />
               </FormControl>
               <FormDescription>
-                Ez az a e-mail cím, amellyel bejelentkezel.
+                This is the email you use to sign in.
               </FormDescription>
               <FormMessage />
             </FormItem>
 
             <div className="flex justify-end">
               <Button type="submit" disabled={!canChangeNickname}>
-                Változtatások mentése
+                Save changes
               </Button>
             </div>
           </form>

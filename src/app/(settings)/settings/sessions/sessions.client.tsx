@@ -36,7 +36,7 @@ export function SessionsClient({ sessions }: { sessions: SessionWithMeta[] }) {
   const dialogCloseRef = React.useRef<HTMLButtonElement>(null);
   const { execute: deleteSession } = useServerAction(deleteSessionAction, {
     onSuccess: () => {
-      toast.success("Munkamenet törölve");
+      toast.success("Session deleted");
       dialogCloseRef.current?.click();
       router.refresh();
     }
@@ -58,7 +58,7 @@ export function SessionsClient({ sessions }: { sessions: SessionWithMeta[] }) {
                   </CardTitle>
                   {session?.authenticationType && (
                       <Badge variant='outline'>
-                        Hitelesítés: {capitalize(session?.authenticationType ?? "password")?.replace("-", " ")}
+                        Authentication: {capitalize(session?.authenticationType ?? "password")?.replace("-", " ")}
                       </Badge>
                   )}
                   <div className="text-sm text-muted-foreground whitespace-nowrap">

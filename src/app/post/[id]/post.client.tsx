@@ -30,7 +30,7 @@ export default function PostClient({ id }: { id: string }) {
   const guest = !session?.user?.id
   const limitReached = useGuestPostLimiter(guest)
 
-  if (!data) return <div className="p-4">Betöltés...</div>
+  if (!data) return <div className="p-4">Loading...</div>
   const { post } = data
   const blurred = guest && post.is_nsfw
 
