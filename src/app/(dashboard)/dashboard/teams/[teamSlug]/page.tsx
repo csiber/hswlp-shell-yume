@@ -19,6 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDateLongHu } from "@/utils/format-date";
 import { translateRole } from "@/utils/translate-role";
@@ -154,8 +155,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
 
             {team.avatarUrl ? (
               <div className="h-16 w-16 rounded-md overflow-hidden">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <WatermarkedImage
                   src={team.avatarUrl || ""}
                   alt={`${team.name} avatar`}
                   className="h-full w-full object-cover"

@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { toast } from 'sonner'
 import { Check, X, Ban, Image as ImageIcon, Music, FileText } from 'lucide-react'
 import { formatTitle, guessMetaFromFilename } from '@/utils/music'
+import WatermarkedImage from '@/components/ui/WatermarkedImage'
 
 interface UploadItem {
   id: string
@@ -167,7 +168,7 @@ function ImagePreview({ url, alt }: { url: string; alt: string }) {
   return (
     <ImageLightbox src={url} alt={alt}>
       <div className="w-full h-full aspect-square flex items-center justify-center relative">
-        <img src={url} alt={alt} className="object-contain w-full h-full" />
+        <WatermarkedImage src={url} alt={alt} className="object-contain w-full h-full" />
       </div>
     </ImageLightbox>
   )
@@ -210,7 +211,7 @@ function MusicPreview({ id, url, title }: { id: string; url: string; title: stri
     <div className="p-2 flex flex-col items-center gap-2 w-full">
       {data?.picture && (
         <div className="relative w-full aspect-square">
-          <img
+          <WatermarkedImage
             src={data.picture}
             alt={displayTitle}
             className="object-contain rounded w-full h-full"
