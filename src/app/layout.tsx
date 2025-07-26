@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NextTopLoader from "nextjs-toploader";
+import Script from "next/script";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/constants";
 import { HSWLPStickyBanner } from "@/components/startup-studio-sticky-banner";
 import GDPRNotice from "@/components/gdpr-notice";
@@ -104,6 +105,16 @@ export default async function BaseLayout({
         {session?.user && <GlobalMusicPlayer />}
         <HSWLPStickyBanner />
         <GDPRNotice />
+        <Script id="cf-beacon" strategy="afterInteractive">
+          {`(function () {
+  const s = document.createElement("script");
+  s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+  s.defer = true;
+  s.setAttribute("data-cf-beacon", '{"token": "TOKENED"}');
+  s.onerror = () => console.warn("Cloudflare beacon not loaded – offline mode");
+  document.head.appendChild(s);
+})();`}
+        </Script>
       </body>
     </html>
   );
