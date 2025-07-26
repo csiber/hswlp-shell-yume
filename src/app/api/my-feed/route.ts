@@ -16,22 +16,26 @@ export async function GET(req: NextRequest) {
     throw new Error('Nem sikerült csatlakozni a KV tárhoz')
   }
   const { searchParams } = new URL(req.url)
+  let page = parseInt(searchParams.get('page') || '1', 10)
+  if (Number.isNaN(page) || page < 1) page = 1
   let limit = parseInt(searchParams.get('limit') || '20', 10)
   if (Number.isNaN(limit) || limit <= 0) limit = 20
   if (limit > 50) limit = 50
-
-  const feedCacheKey = `feed_latest:${limit}`
+  const offset = (page - 1) * limit
+  const feedCacheKey = page === 1 ? `feed_latest:${limit}` : null
   const pinnedCacheKey = `user:${session.user.id}:pinned`
 
   let rows: Record<string, string>[] | null = null
   let pinnedItem: Record<string, string> | null | undefined = undefined
 
-  const cachedFeed = await kv.get(feedCacheKey)
-  if (cachedFeed) {
-    rows = JSON.parse(cachedFeed) as Record<string, string>[]
+  if (feedCacheKey) {
+    const cachedFeed = await kv.get(feedCacheKey)
+    if (cachedFeed) {
+      rows = JSON.parse(cachedFeed) as Record<string, string>[]
+    }
   }
 
-  const cachedPinned = await kv.get(pinnedCacheKey)
+  const cachedPinned = page === 1 ? await kv.get(pinnedCacheKey) : null
   if (cachedPinned !== null) {
     pinnedItem = cachedPinned === 'null' ? null : (JSON.parse(cachedPinned) as Record<string, string>)
   }
@@ -43,13 +47,17 @@ export async function GET(req: NextRequest) {
          JOIN user usr ON u.user_id = usr.id
         WHERE u.approved = 1 AND u.visibility = 'public'
         ORDER BY u.created_at DESC
-        LIMIT ?1`
-    ).bind(limit).all<Record<string, string>>()
+        LIMIT ?1 OFFSET ?2`
+    )
+      .bind(limit, offset)
+      .all<Record<string, string>>()
     rows = result.results || []
-    await kv.put(feedCacheKey, JSON.stringify(rows), { expirationTtl: 60 })
+    if (feedCacheKey) {
+      await kv.put(feedCacheKey, JSON.stringify(rows), { expirationTtl: 60 })
+    }
   }
   
-  if (pinnedItem === undefined) {
+  if (page === 1 && pinnedItem === undefined) {
     const pinnedRow = await env.DB.prepare(
       'SELECT pinned_post_id FROM user WHERE id = ?1 LIMIT 1'
     ).bind(session.user.id).first<{ pinned_post_id: string | null }>()
@@ -83,7 +91,7 @@ export async function GET(req: NextRequest) {
   }[]
 
   const rowsList = [...(rows || [])]
-  if (pinnedItem) {
+  if (page === 1 && pinnedItem) {
     const idx = rowsList.findIndex(r => r.id === pinnedItem!.id)
     if (idx !== -1) rowsList.splice(idx, 1)
     rowsList.unshift(pinnedItem)
@@ -106,9 +114,9 @@ export async function GET(req: NextRequest) {
         name: displayName,
         email: '',
       },
-      pinned: pinnedItem ? row.id === pinnedItem.id : false,
+      pinned: page === 1 && pinnedItem ? row.id === pinnedItem.id : false,
     })
   }
 
-  return jsonResponse({ items })
+  return jsonResponse({ items, page, limit })
 }
