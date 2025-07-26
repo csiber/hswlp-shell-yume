@@ -197,7 +197,7 @@ export const completePasskeyRegistrationAction = createServerAction()
       if (!user || !user.email) {
         throw new ZSAError(
           "INTERNAL_SERVER_ERROR",
-          "Felhasználó nem található"
+          "User not found"
         );
       }
 

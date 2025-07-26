@@ -35,12 +35,12 @@ export const generateRegistrationOptionsAction = createServerAction()
       });
 
       if (!user) {
-        throw new ZSAError("NOT_FOUND", "Felhasználó nem található");
+        throw new ZSAError("NOT_FOUND", "User not found");
       }
 
       // Verify the email matches the logged-in user
       if (user.id !== session?.user?.id) {
-        throw new ZSAError("FORBIDDEN", "Csak a saját fiókodhoz regisztrálhatsz passkeyt");
+        throw new ZSAError("FORBIDDEN", "You can only register a passkey for your own account");
       }
 
       // Check if user has reached the passkey limit
@@ -80,12 +80,12 @@ export const verifyRegistrationAction = createServerAction()
       });
 
       if (!user) {
-        throw new ZSAError("NOT_FOUND", "Felhasználó nem található");
+        throw new ZSAError("NOT_FOUND", "User not found");
       }
 
       // Verify the email matches the logged-in user
       if (user.id !== session?.user?.id) {
-        throw new ZSAError("FORBIDDEN", "Csak a saját fiókodhoz regisztrálhatsz passkeyt");
+        throw new ZSAError("FORBIDDEN", "You can only register a passkey for your own account");
       }
 
       await verifyPasskeyRegistration({

@@ -111,7 +111,7 @@ export default function CommunityFeedV3({
           : 20;
       if (arr.length < respLimit) setHasMore(false);
     } catch (err) {
-      console.warn("Hiba a feed betöltésekor", err);
+      console.warn("Error loading feed", err);
       if (p === 1) setItems([]);
       setHasMore(false);
     } finally {
@@ -187,7 +187,7 @@ export default function CommunityFeedV3({
           >
             <path d="M12 5v14M5 12h14" />
           </svg>
-          <p className="text-sm">Nincs közösségi tartalom</p>
+          <p className="text-sm">No community content available</p>
         </div>
       ) : (
         <>

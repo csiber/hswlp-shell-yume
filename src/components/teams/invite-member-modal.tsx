@@ -23,8 +23,8 @@ import {
 const formSchema = z.object({
   email: z
     .string()
-    .email("Kérjük, érvényes email címet adj meg")
-    .min(1, "Az email megadása kötelező")
+    .email("Please enter a valid email address")
+    .min(1, "Email is required")
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -49,15 +49,15 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
   const { execute } = useServerAction(inviteUserAction, {
     onError: (error) => {
       toast.dismiss();
-      toast.error(error.err?.message || "Nem sikerült meghívni a felhasználót");
+      toast.error(error.err?.message || "Failed to invite user");
       console.error("Invite error:", error);
     },
     onStart: () => {
-      toast.loading("Meghívó küldése...");
+      toast.loading("Sending invite...");
     },
     onSuccess: () => {
       toast.dismiss();
-      toast.success("A meghívó sikeresen elküldve");
+      toast.success("Invite sent successfully");
       form.reset();
 
       if (onInviteSuccess) {
@@ -87,7 +87,7 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Csapattag meghívása</DialogTitle>
+          <DialogTitle>Invite team member</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -97,7 +97,7 @@ export function InviteMemberModal({ teamId, trigger, onInviteSuccess }: InviteMe
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email cím</FormLabel>
+                  <FormLabel>Email address</FormLabel>
                   <FormControl>
                     <Input
                       type="email"

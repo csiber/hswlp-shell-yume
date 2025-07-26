@@ -17,7 +17,7 @@ export default function AlbumCard({ album }: { album: { id: string; name: string
         ))}
       </div>
       <div className="mt-24 text-sm font-bold">
-        {album.name} ({album.images.length} kép)
+        {album.name} ({album.images.length} images)
       </div>
       <div className="text-xs text-muted-foreground">{album.author}</div>
     </div>

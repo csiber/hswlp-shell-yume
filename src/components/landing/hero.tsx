@@ -21,7 +21,7 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="text-5xl font-bold sm:text-6xl lg:text-7xl bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-pink-500 dark:via-purple-500 dark:to-indigo-500"
         >
-          A kreativitás jövője itt kezdődik
+          The future of creativity starts here
         </motion.h1>
 
         <motion.p
@@ -30,8 +30,7 @@ export default function Hero() {
           transition={{ delay: 0.3, duration: 0.8 }}
           className="mt-6 text-lg text-zinc-700 dark:text-zinc-300"
         >
-          Építs, alkoss, inspirálj – a Yumekaira egy olyan hely, ahol a közösség, a
-          mesterséges intelligencia és a művészet összeolvad.
+          Build, create, inspire – Yumekai is where community, AI and art unite.
         </motion.p>
 
         <motion.div
@@ -44,13 +43,13 @@ export default function Hero() {
             href="/sign-up"
             className="rounded-full bg-indigo-600 px-8 py-3 text-lg font-medium text-white shadow-lg transition hover:bg-indigo-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
-            Csatlakozz most
+            Join now
           </Link>
           <Link
             href="/about"
             className="rounded-full border border-zinc-300 px-8 py-3 text-lg font-medium text-zinc-900 transition hover:bg-zinc-100 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-900"
           >
-            Tudj meg többet
+            Learn more
           </Link>
         </motion.div>
       </div>

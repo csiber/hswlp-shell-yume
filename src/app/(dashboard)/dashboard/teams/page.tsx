@@ -17,8 +17,8 @@ import { PendingInvitations } from "./pending-invitations";
 import { translateRole } from "@/utils/translate-role";
 
 export const metadata = {
-  title: "Csapataim",
-  description: "Csapatok és együttműködések kezelése",
+  title: "My Teams",
+  description: "Manage teams and collaborations",
 };
 
 interface TeamRole {
@@ -125,7 +125,7 @@ export default async function TeamsIndexPage() {
                       <CardTitle>{team.name}</CardTitle>
                       {team.role && (
                         <CardDescription>
-                          Szereped:{" "}
+                          Your role:{" "}
                           <span className="capitalize">{translateRole(team.role.name)}</span>
                         </CardDescription>
                       )}
@@ -133,7 +133,7 @@ export default async function TeamsIndexPage() {
                   </CardHeader>
                   <CardContent>
                     <p className="line-clamp-2 text-muted-foreground">
-                      {team.description || "Nincs leírás"}
+                      {team.description || "No description"}
                     </p>
                   </CardContent>
                 </Card>

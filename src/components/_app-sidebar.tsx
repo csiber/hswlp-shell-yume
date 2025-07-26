@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     teams: formattedTeams,
     navMain: [
       {
-        title: "Vezérlőpult",
+        title: "Dashboard",
         url: "/dashboard",
         icon: SquareTerminal,
         isActive: true,

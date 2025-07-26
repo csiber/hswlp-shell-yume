@@ -124,12 +124,12 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
 
   const handleUpload = async () => {
     if (!selectedFiles || selectedFiles.length === 0) {
-      toast.error("Nincs kiválasztott fájl");
+      toast.error("No file selected");
       return;
     }
 
     if (selectedFiles.length > MAX_ALBUM_UPLOAD) {
-      toast.error(`Legfeljebb ${MAX_ALBUM_UPLOAD} fájlt tölthetsz fel egyszerre`);
+      toast.error(`You can upload at most ${MAX_ALBUM_UPLOAD} files at once`);
       return;
     }
 
@@ -141,9 +141,9 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     let currentAlbumId = albumId;
     let currentAlbumName = albumName;
     if (isAlbum && !currentAlbumId) {
-      const name = window.prompt("Album neve:")?.trim();
+      const name = window.prompt("Album name:")?.trim();
       if (!name) {
-        toast.error("Album név kötelező");
+        toast.error("Album name is required");
         return;
       }
       currentAlbumName = name;
@@ -173,13 +173,13 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         const data = (await res.json()) as { success: boolean; error?: string };
         if (res.ok && data.success) {
           success = true;
-          toast.success(`Feltöltve: ${file.name}`);
+          toast.success(`Uploaded: ${file.name}`);
           await mutateQuota();
         } else {
-          toast.error(data.error || `Hiba a(z) ${file.name} feltöltésekor`);
+          toast.error(data.error || `Error uploading ${file.name}`);
         }
       } catch {
-        toast.error(`Hálózati hiba: ${file.name}`);
+        toast.error(`Network error: ${file.name}`);
       }
     }
 
