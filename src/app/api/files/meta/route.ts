@@ -21,7 +21,7 @@ export async function GET() {
         obj = await withTimeout(env.yumekai_r2.head(row.r2_key), 2000)
       } catch (err) {
         console.error('R2 head failed', err)
-        obj = 'Hiba történt a fájl betöltésénél'
+        obj = 'Failed to load file'
       }
       size = obj && typeof obj !== 'string' ? obj.size ?? null : null
     }
