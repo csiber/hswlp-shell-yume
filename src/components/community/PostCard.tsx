@@ -155,56 +155,27 @@ export default function PostCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, scale: 1 }}
-      animate={{ opacity: 1, y: 0, scale: [1.05, 1, 0.95, 1] }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.5 }}
-      className="relative flex flex-col w-full mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-transform hover:shadow-lg hover:ring-2 hover:ring-yellow-400/70 hover:scale-[1.02]"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="relative flex flex-col w-full mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4"
     >
-      {item.pinned && (
-        <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
-          📌 Pinned
-        </span>
-      )}
-      <div className="mb-3 flex items-center gap-3">
-        <Avatar className="h-12 w-12">
-          {item.user.avatar_url && (
-            <AvatarImage
-              src={item.user.avatar_url}
-              alt={item.user.name || item.user.email}
-            />
-          )}
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center justify-between">
-            <span className="font-semibold text-sm flex items-center gap-1">
-              {item.user.name || item.user.email}
-              {item.user.badge && (
-                <TooltipProvider delayDuration={200}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="text-sm cursor-default">{item.user.badge.icon}</span>
-                    </TooltipTrigger>
-                    <TooltipContent>{`${item.user.badge.name} – ${item.user.badge.description}`}</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            </span>
-            <span className="text-muted-foreground">
-              {item.type === "music"
-                ? "🎵"
-                : item.type === "prompt"
-                ? "💬"
-                : "🖼"}
-            </span>
-          </div>
-          <span className="text-xs text-gray-500">
-            {dayjs(item.created_at).fromNow()}
+      <div className="relative mb-3">
+        {item.pinned && (
+          <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
+            📌 Pinned
           </span>
+        )}
+        <div className="absolute top-2 left-2 flex items-center gap-2 text-xs text-white opacity-80">
+          <Avatar className="h-6 w-6">
+            {item.user.avatar_url && (
+              <AvatarImage src={item.user.avatar_url} alt={item.user.name || item.user.email} />
+            )}
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{item.user.name || item.user.email}</span>
+          <span className="text-[10px]">{dayjs(item.created_at).fromNow()}</span>
         </div>
-      </div>
-      <div className="mb-2">
         {item.type === "image" && (
           <ImageLightbox
             src={item.url}
@@ -266,28 +237,22 @@ export default function PostCard({
       <div className="mt-auto flex justify-between items-center text-gray-500">
         {item.type === "music" && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span role="img" aria-label="plays">
-              🎧
-            </span>{" "}
-            {playCount}
+            <span role="img" aria-label="plays">🎧</span> {playCount}
           </span>
         )}
         {item.type === "image" && (
           <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span role="img" aria-label="views">
-              👁️
-            </span>{" "}
-            {viewCount}
+            <span role="img" aria-label="views">👁️</span> {viewCount}
           </span>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex gap-3 justify-end">
           <TooltipProvider delayDuration={200}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
                   onClick={handleDownload}
                   disabled={guest}
-                  className={`flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground ${guest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`flex items-center gap-1 text-sm opacity-50 hover:opacity-100 transition-opacity ${guest ? 'cursor-not-allowed' : ''}`}
                 >
                   <Download className="w-4 h-4" />
                   {item.download_points ?? 2}
@@ -300,7 +265,7 @@ export default function PostCard({
           </TooltipProvider>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-1 text-muted-foreground hover:text-foreground">
+              <button className="p-1 opacity-50 hover:opacity-100 transition-opacity">
                 <Share2 className="w-4 h-4" />
               </button>
             </DropdownMenuTrigger>

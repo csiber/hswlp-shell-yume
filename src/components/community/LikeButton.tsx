@@ -73,12 +73,12 @@ export default function LikeButton({ postId, isGuest = false }: Props) {
             whileHover={{ scale: 1.05 }}
             onClick={toggle}
             disabled={isGuest}
-            className={`flex items-center gap-1 rounded-md p-2 text-sm hover:bg-gray-100 dark:hover:bg-zinc-800 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`flex items-center gap-1 p-1 text-sm opacity-50 hover:opacity-100 transition-opacity ${isGuest ? 'cursor-not-allowed' : ''}`}
           >
             {liked ? (
-              <HeartSolid className="h-5 w-5 text-red-500" />
+              <HeartSolid className="h-4 w-4 text-red-500" />
             ) : (
-              <HeartOutline className="h-5 w-5" />
+              <HeartOutline className="h-4 w-4" />
             )}
             <span>{count}</span>
           </motion.button>

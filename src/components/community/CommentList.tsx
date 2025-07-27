@@ -141,9 +141,6 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
 
   return (
     <div className="mt-4">
-      <h4 className="mb-2 text-sm font-semibold text-gray-500 dark:text-gray-400">
-        Comments
-      </h4>
       <div className="space-y-3">
         <AnimatePresence initial={false}>
           {comments.slice(0, visible).map((c) => (
@@ -153,7 +150,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -10 }}
               transition={{ duration: 0.2 }}
-              className="flex items-start gap-2"
+              className="flex items-start gap-2 text-sm opacity-70"
             >
               <Avatar className="h-6 w-6">
                 {c.user.avatar ? (
@@ -181,7 +178,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
                     {dayjs(c.created_at).fromNow()}
                   </span>
                 </p>
-                <p className="text-gray-700 dark:text-gray-300">
+                <p>
                   {c.text}
                   {session?.user?.role === 'admin' && (
                     <button
@@ -240,12 +237,12 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
       {visible < comments.length && (
         <button
           onClick={() => setVisible(comments.length)}
-          className="mt-2 text-xs text-indigo-500 hover:underline"
+          className="mt-2 text-xs text-indigo-400 hover:underline"
         >
-          More comments
+          View all comments
         </button>
       )}
-      <div className="relative mt-3 flex w-full items-center gap-2 rounded-md shadow-inner bg-white/70 dark:bg-black/40 backdrop-blur-sm px-2 py-1">
+      <div className="relative mt-3 flex w-full items-center gap-2 rounded-md bg-black/40 backdrop-blur-sm px-2 py-1">
         {!isGuest && (
           <Avatar className="h-6 w-6">
             {session?.user?.avatar && (
@@ -266,7 +263,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
             }
           }}
           placeholder={isGuest ? 'Login required' : 'Write a comment...'}
-          className="flex-1 rounded-md border border-transparent bg-transparent h-8 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
+          className="h-8 w-24 flex-1 rounded-md bg-transparent px-2 text-sm text-white placeholder:text-white/70 transition-all focus:w-full focus:outline-none"
           maxLength={500}
           disabled={isGuest}
         />
