@@ -70,6 +70,6 @@
 }
 
 .upload-dropzone.dragover {
-  border-color: #000;
-  background-color: rgba(0, 0, 0, 0.02);
+  border-color: rgba(234, 179, 8, 0.7);
+  background-color: rgba(234, 179, 8, 0.1);
 }
