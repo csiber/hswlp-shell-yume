@@ -3,11 +3,17 @@
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/hu";
+import "dayjs/locale/en";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
+interface GalleryItem {
+  src: string
+  alt?: string
+  title?: string | null
+  author?: string | null
+}
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
@@ -23,7 +29,7 @@ import {
 import type { FeedItem } from "./CommunityFeedV3";
 
 dayjs.extend(relativeTime);
-dayjs.locale("hu");
+dayjs.locale("en");
 
 interface PostCardProps {
   item: FeedItem;
@@ -31,6 +37,8 @@ interface PostCardProps {
   playingId: string | null;
   setPlayingId: (id: string | null) => void;
   isGuest?: boolean;
+  images?: GalleryItem[];
+  index?: number;
 }
 
 type MusicMeta = {
@@ -46,6 +54,8 @@ export default function PostCard({
   playingId,
   setPlayingId,
   isGuest,
+  images,
+  index,
 }: PostCardProps) {
   const initials =
     item.user.name
@@ -69,7 +79,7 @@ export default function PostCard({
     try {
       const res = await fetch(`/api/uploads/${item.id}/download`);
       if (res.ok) {
-        toast.success("Letöltés indítása");
+        toast.success("Download started");
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -79,12 +89,12 @@ export default function PostCard({
         URL.revokeObjectURL(url);
         fetchSession?.();
       } else if (res.status === 402) {
-        toast.error("Nincs elég kredit a letöltéshez");
+        toast.error("Not enough credits to download");
       } else {
-        toast.error("Letöltés sikertelen");
+        toast.error("Download failed");
       }
     } catch {
-      toast.error("Hálózati hiba történt");
+      toast.error("Network error");
     }
   }, [item.id, item.title, fetchSession, guest]);
 
@@ -149,11 +159,11 @@ export default function PostCard({
       exit={{ opacity: 0, y: -10 }}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
-      className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
+      className="relative flex flex-col w-full max-w-2xl mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
     >
       {item.pinned && (
         <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
-          📌 Rögzített
+          📌 Pinned
         </span>
       )}
       <div className="mb-3 flex items-center gap-3">
@@ -196,33 +206,33 @@ export default function PostCard({
       </div>
       <div className="mb-2">
         {item.type === "image" && (
-          <ImageLightbox src={item.url} alt={item.title} onOpen={handleView}>
-            <div className="relative w-full h-48">
+          <ImageLightbox src={item.url} alt={item.title} onOpen={handleView} images={images} index={index}>
+            <div className="relative w-full pb-[56.25%]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.url} alt={item.title} className="object-cover rounded-xl w-full h-full" />
+              <img src={item.url} alt={item.title} className="absolute inset-0 object-cover rounded-xl w-full h-full" />
             </div>
           </ImageLightbox>
         )}
         {item.type === "music" && (
           <div className="flex flex-col items-center gap-2">
             {meta?.picture && (
-              <div className="relative w-full h-48">
+              <div className="relative w-full pb-[56.25%]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={meta.picture}
                   alt={meta.title || item.title}
-                  className="object-cover rounded-xl w-full h-full"
+                  className="absolute inset-0 object-cover rounded-xl w-full h-full"
                 />
               </div>
             )}
             <div className="text-center text-sm">
-              <h3>{meta?.title || item.title || "Ismeretlen szám"}</h3>
+              <h3>{meta?.title || item.title || "Unknown track"}</h3>
               {meta?.artist && <p>{meta.artist}</p>}
             </div>
             <MusicPlayer
               id={item.id}
               url={item.url}
-              title={meta?.title || item.title || "Ismeretlen szám"}
+              title={meta?.title || item.title || "Unknown track"}
               audioRef={audioRef}
               playingId={playingId}
               setPlayingId={setPlayingId}
@@ -232,7 +242,7 @@ export default function PostCard({
         )}
         {item.type === "prompt" && (
           <PromptBox
-            text={promptError ? "A prompt nem olvasható" : promptText || ""}
+            text={promptError ? "Prompt could not be loaded" : promptText || ""}
             lines={5}
           />
         )}
@@ -286,7 +296,7 @@ export default function PostCard({
       <CommentList postId={item.id} isGuest={guest} />
       {guest && (
         <div className="mt-4 rounded-md bg-amber-500 text-white text-center py-2">
-          🔓 Sign in or sign up to unlock more features
+          🔓 Log in or register to unlock full features
         </div>
       )}
     </motion.div>
