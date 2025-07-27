@@ -169,9 +169,11 @@ export default function CommunityFeedV3({
       )}
 
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="flex flex-col items-center gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <SkeletonPost key={i} />
+            <div key={i} className="w-full max-w-2xl">
+              <SkeletonPost />
+            </div>
           ))}
         </div>
       ) : filteredItems.length === 0 ? (
@@ -191,12 +193,14 @@ export default function CommunityFeedV3({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="flex flex-col items-center gap-4">
             {albums.map((album) => (
-              <AlbumCard key={album.id} album={album} />
+              <div key={album.id} className="w-full max-w-2xl">
+                <AlbumCard album={album} />
+              </div>
             ))}
             {filteredItems.map((item) => (
-              <div key={item.id} className="animate-fade-in">
+              <div key={item.id} className="w-full max-w-2xl animate-fade-in">
                 <PostCard
                   item={item}
                   audioRef={audioRef}
