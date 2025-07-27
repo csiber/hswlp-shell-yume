@@ -14,8 +14,14 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
 
   useEffect(() => {
     fetch(`/api/posts/${postId}/comments`)
-      .then((res) => (res.ok ? res.json() : { comments: [] }))
-      .then((data: { comments: Comment[] }) => setComments(Array.isArray(data.comments) ? data.comments : []))
+      .then((res) =>
+        res.ok
+          ? (res.json() as Promise<{ comments: Comment[] }>)
+          : Promise.resolve({ comments: [] })
+      )
+      .then((data) =>
+        setComments(Array.isArray(data.comments) ? data.comments : [])
+      )
       .catch(() => {})
   }, [postId])
 
