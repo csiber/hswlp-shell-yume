@@ -245,7 +245,17 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
           More comments
         </button>
       )}
-      <div className="relative mt-3">
+      <div className="relative mt-3 flex items-center gap-2 rounded-md shadow-inner bg-white/70 dark:bg-black/40 backdrop-blur-sm px-2 py-1">
+        {!isGuest && (
+          <Avatar className="h-6 w-6">
+            {session?.user?.avatar && (
+              <AvatarImage src={session.user.avatar} alt={session.user.nickname || session.user.email} />
+            )}
+            <AvatarFallback>
+              {(session?.user?.nickname || session?.user?.email || 'U').slice(0,2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        )}
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
@@ -256,14 +266,14 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
             }
           }}
           placeholder={isGuest ? 'Login required' : 'Write a comment...'}
-          className="w-full rounded-md border border-gray-300 bg-white dark:bg-zinc-800 p-2 pr-8 text-sm focus:outline-none"
+          className="flex-1 rounded-md border border-transparent bg-transparent h-8 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 transition"
           maxLength={500}
           disabled={isGuest}
         />
         <button
           onClick={submit}
           disabled={isGuest}
-          className={`absolute bottom-1.5 right-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <PaperAirplaneIcon className="h-4 w-4" />
         </button>

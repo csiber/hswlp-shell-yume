@@ -1,9 +1,15 @@
 "use client";
 import WatermarkedImage from '@/components/ui/WatermarkedImage'
+import { motion } from 'framer-motion'
 
 export default function AlbumCard({ album }: { album: { id: string; name: string; images: string[]; author: string } }) {
   return (
-    <div className="p-2 border rounded shadow relative">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="p-2 border rounded shadow relative hover:ring-2 hover:ring-yellow-400/70 hover:scale-[1.02] transition-transform"
+    >
       <div className="relative h-32">
         {album.images.slice(0,3).map((img, i) => (
           <WatermarkedImage
@@ -20,6 +26,6 @@ export default function AlbumCard({ album }: { album: { id: string; name: string
         {album.name} ({album.images.length} images)
       </div>
       <div className="text-xs text-muted-foreground">{album.author}</div>
-    </div>
+    </motion.div>
   )
 }
