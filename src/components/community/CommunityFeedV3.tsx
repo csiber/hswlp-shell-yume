@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useInView } from "react-intersection-observer";
-import { motion, AnimatePresence } from "framer-motion";
 import PostCard from "./PostCard";
 import SkeletonPost from "./SkeletonPost";
 import UploadBox from "./UploadBox";
@@ -154,23 +153,8 @@ export default function CommunityFeedV3({
     prompts: items.filter((i) => i.type === "prompt").length,
   };
 
-  const gallery = filteredItems
-    .filter((i) => i.type === "image")
-    .map((it) => ({
-      src: it.url,
-      alt: it.title,
-      title: it.title,
-      author: it.user.name || it.user.email,
-    }));
-
-  const galleryIndex = new Map(
-    filteredItems
-      .filter((i) => i.type === "image")
-      .map((it, idx) => [it.id, idx])
-  );
-
   return (
-    <div className="w-full px-4 sm:px-6 lg:px-8 xl:max-w-7xl xl:mx-auto rounded-xl bg-white/10 dark:bg-black/40 backdrop-blur-lg py-4">
+    <div className="w-full px-4 sm:px-6 lg:px-8 xl:max-w-7xl xl:mx-auto">
       <UploadBox onUpload={loadFeed} />
 
       {!loading && items.length > 0 && (
@@ -185,7 +169,7 @@ export default function CommunityFeedV3({
       )}
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <SkeletonPost key={i} />
           ))}
@@ -207,36 +191,22 @@ export default function CommunityFeedV3({
         </div>
       ) : (
         <>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={filter}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 gap-4"
-              layout
-            >
-              {albums.map((album) => (
-                <motion.div key={album.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                  <AlbumCard album={album} />
-                </motion.div>
-              ))}
-              {filteredItems.map((item) => (
-                <motion.div key={item.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-                  <PostCard
-                    item={item}
-                    audioRef={audioRef}
-                    playingId={playingId}
-                    setPlayingId={setPlayingId}
-                    isGuest={guest}
-                    images={gallery}
-                    index={galleryIndex.get(item.id) ?? 0}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {albums.map((album) => (
+              <AlbumCard key={album.id} album={album} />
+            ))}
+            {filteredItems.map((item) => (
+              <div key={item.id} className="animate-fade-in">
+                <PostCard
+                  item={item}
+                  audioRef={audioRef}
+                  playingId={playingId}
+                  setPlayingId={setPlayingId}
+                  isGuest={guest}
+                />
+              </div>
+            ))}
+          </div>
           {hasMore && <div ref={loadMoreRef} className="h-12" />}
         </>
       )}

@@ -3,27 +3,27 @@
 import { motion } from "framer-motion";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/en";
+import "dayjs/locale/hu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
-import WatermarkedImage from "@/components/ui/WatermarkedImage";
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
-import { Share2 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import ShareButtons from "@/components/share-buttons";
+import { Download } from "lucide-react";
+import { toast } from "sonner";
 import { useSessionStore } from "@/state/session";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { FeedItem } from "./CommunityFeedV3";
 
 dayjs.extend(relativeTime);
-dayjs.locale("en");
+dayjs.locale("hu");
 
 interface PostCardProps {
   item: FeedItem;
@@ -31,8 +31,6 @@ interface PostCardProps {
   playingId: string | null;
   setPlayingId: (id: string | null) => void;
   isGuest?: boolean;
-  images?: { src: string; alt?: string; title?: string | null; author?: string | null }[];
-  index?: number;
 }
 
 type MusicMeta = {
@@ -48,8 +46,6 @@ export default function PostCard({
   playingId,
   setPlayingId,
   isGuest,
-  images,
-  index,
 }: PostCardProps) {
   const initials =
     item.user.name
@@ -64,8 +60,33 @@ export default function PostCard({
   const [playCount, setPlayCount] = useState(item.play_count ?? 0);
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
+  const fetchSession = useSessionStore((s) => s.fetchSession);
   const session = useSessionStore((s) => s.session);
   const guest = isGuest ?? !session?.user?.id;
+
+  const handleDownload = useCallback(async () => {
+    if (guest) return;
+    try {
+      const res = await fetch(`/api/uploads/${item.id}/download`);
+      if (res.ok) {
+        toast.success("Letöltés indítása");
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = item.title;
+        a.click();
+        URL.revokeObjectURL(url);
+        fetchSession?.();
+      } else if (res.status === 402) {
+        toast.error("Nincs elég kredit a letöltéshez");
+      } else {
+        toast.error("Letöltés sikertelen");
+      }
+    } catch {
+      toast.error("Hálózati hiba történt");
+    }
+  }, [item.id, item.title, fetchSession, guest]);
 
   const handlePlay = useCallback(async () => {
     try {
@@ -123,48 +144,85 @@ export default function PostCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="relative flex flex-col w-full mx-auto"
+      exit={{ opacity: 0, y: -10 }}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
     >
       {item.pinned && (
-        <span className="absolute right-2 top-2 z-10 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
-          📌 Pinned
+        <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
+          📌 Rögzített
         </span>
       )}
-      {item.type === "image" && (
-        <ImageLightbox
-          src={item.url}
-          alt={item.title}
-          onOpen={handleView}
-          images={images}
-          index={index}
-        >
-          <WatermarkedImage
-            src={item.url}
-            alt={item.title}
-            className="w-full aspect-square object-cover rounded-none"
-          />
-        </ImageLightbox>
-      )}
-      {item.type === "music" && (
-        <div className="flex flex-col items-center gap-2">
-          {meta?.picture && (
-            <WatermarkedImage
-              src={meta.picture}
-              alt={meta.title || item.title}
-              className="w-full aspect-square object-cover rounded-none"
+      <div className="mb-3 flex items-center gap-3">
+        <Avatar className="h-12 w-12">
+          {item.user.avatar_url && (
+            <AvatarImage
+              src={item.user.avatar_url}
+              alt={item.user.name || item.user.email}
             />
           )}
+          <AvatarFallback>{initials}</AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-sm flex items-center gap-1">
+              {item.user.name || item.user.email}
+              {item.user.badge && (
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="text-sm cursor-default">{item.user.badge.icon}</span>
+                    </TooltipTrigger>
+                    <TooltipContent>{`${item.user.badge.name} – ${item.user.badge.description}`}</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </span>
+            <span className="text-muted-foreground">
+              {item.type === "music"
+                ? "🎵"
+                : item.type === "prompt"
+                ? "💬"
+                : "🖼"}
+            </span>
+          </div>
+          <span className="text-xs text-gray-500">
+            {dayjs(item.created_at).fromNow()}
+          </span>
+        </div>
+      </div>
+      <div className="mb-2">
+        {item.type === "image" && (
+          <ImageLightbox src={item.url} alt={item.title} onOpen={handleView}>
+            <div className="relative w-full h-48">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.url} alt={item.title} className="object-cover rounded-xl w-full h-full" />
+            </div>
+          </ImageLightbox>
+        )}
+        {item.type === "music" && (
+          <div className="flex flex-col items-center gap-2">
+            {meta?.picture && (
+              <div className="relative w-full h-48">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={meta.picture}
+                  alt={meta.title || item.title}
+                  className="object-cover rounded-xl w-full h-full"
+                />
+              </div>
+            )}
             <div className="text-center text-sm">
-              <h3>{meta?.title || item.title || "Unknown track"}</h3>
+              <h3>{meta?.title || item.title || "Ismeretlen szám"}</h3>
               {meta?.artist && <p>{meta.artist}</p>}
             </div>
             <MusicPlayer
               id={item.id}
               url={item.url}
-              title={meta?.title || item.title || "Unknown track"}
+              title={meta?.title || item.title || "Ismeretlen szám"}
               audioRef={audioRef}
               playingId={playingId}
               setPlayingId={setPlayingId}
@@ -174,39 +232,57 @@ export default function PostCard({
         )}
         {item.type === "prompt" && (
           <PromptBox
-            text={promptError ? "Prompt not readable" : promptText || ""}
+            text={promptError ? "A prompt nem olvasható" : promptText || ""}
             lines={5}
           />
         )}
+      </div>
       {item.type !== "prompt" && (
-        <div className="flex justify-between items-center px-2 py-1">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-6 w-6">
-              {item.user.avatar_url && (
-                <AvatarImage src={item.user.avatar_url} alt={item.user.name || item.user.email} />
-              )}
-              <AvatarFallback>{initials}</AvatarFallback>
-            </Avatar>
-            <span className="text-sm font-medium">{item.user.name || item.user.email}</span>
-          </div>
-          <div className="flex items-center gap-3 opacity-70">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="p-1">
-                  <Share2 className="w-4 h-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="p-2">
-                <ShareButtons
-                  title={item.title}
-                  url={`${typeof window !== 'undefined' ? window.location.origin : ''}/post/${item.id}`}
-                />
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <LikeButton postId={item.id} isGuest={guest} />
-          </div>
-        </div>
+        <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">
+          {item.title}
+        </p>
       )}
+      {item.tags && (
+        <p className="mb-2 text-xs text-muted-foreground">{item.tags}</p>
+      )}
+      <div className="mt-auto flex justify-between items-center text-gray-500">
+        {item.type === "music" && (
+          <span className="flex items-center gap-1 text-sm text-muted-foreground">
+            <span role="img" aria-label="plays">
+              🎧
+            </span>{" "}
+            {playCount}
+          </span>
+        )}
+        {item.type === "image" && (
+          <span className="flex items-center gap-1 text-sm text-muted-foreground">
+            <span role="img" aria-label="views">
+              👁️
+            </span>{" "}
+            {viewCount}
+          </span>
+        )}
+        <div className="flex items-center gap-2">
+          <TooltipProvider delayDuration={200}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleDownload}
+                  disabled={guest}
+                  className={`flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground ${guest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <Download className="w-4 h-4" />
+                  {item.download_points ?? 2}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {guest ? 'Login required' : 'Download'}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <LikeButton postId={item.id} isGuest={guest} />
+        </div>
+      </div>
       <CommentList postId={item.id} isGuest={guest} />
       {guest && (
         <div className="mt-4 rounded-md bg-amber-500 text-white text-center py-2">
