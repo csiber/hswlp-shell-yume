@@ -150,10 +150,10 @@ export default function PostCard({
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 1 }}
-      animate={{ opacity: 1, y: 0, scale: [1.1, 1, 0.95, 1] }}
+      animate={{ opacity: 1, y: 0, scale: [1.05, 1, 0.95, 1] }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-transform hover:shadow-lg hover:ring-2 hover:ring-yellow-400/70 hover:scale-[1.02]"
+      className="relative flex flex-col w-full mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-transform hover:shadow-lg hover:ring-2 hover:ring-yellow-400/70 hover:scale-[1.02]"
     >
       {item.pinned && (
         <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
