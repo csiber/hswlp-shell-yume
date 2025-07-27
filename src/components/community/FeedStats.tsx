@@ -20,31 +20,43 @@ export default function FeedStats({
   onFilterChange,
 }: Props) {
   return (
-    <div className="mb-4 flex flex-wrap gap-y-1 justify-between text-sm text-muted-foreground">
-      <span
-        className={cn("block cursor-pointer", filter === "all" && "font-semibold text-primary")}
+    <div className="mb-4 flex gap-4 text-sm text-muted-foreground">
+      <button
+        className={cn(
+          "pb-1", 
+          filter === "all" && "border-b-2 border-yellow-500 text-yellow-300 font-semibold"
+        )}
         onClick={() => onFilterChange("all")}
       >
         📦 {total} items
-      </span>
-      <span
-        className={cn("block cursor-pointer", filter === "image" && "font-semibold text-primary")}
+      </button>
+      <button
+        className={cn(
+          "pb-1", 
+          filter === "image" && "border-b-2 border-yellow-500 text-yellow-300 font-semibold"
+        )}
         onClick={() => onFilterChange("image")}
       >
         🖼️ {images} images
-      </span>
-      <span
-        className={cn("block cursor-pointer", filter === "music" && "font-semibold text-primary")}
+      </button>
+      <button
+        className={cn(
+          "pb-1",
+          filter === "music" && "border-b-2 border-yellow-500 text-yellow-300 font-semibold"
+        )}
         onClick={() => onFilterChange("music")}
       >
         🎵 {music} music
-      </span>
-      <span
-        className={cn("block cursor-pointer", filter === "prompt" && "font-semibold text-primary")}
+      </button>
+      <button
+        className={cn(
+          "pb-1",
+          filter === "prompt" && "border-b-2 border-yellow-500 text-yellow-300 font-semibold"
+        )}
         onClick={() => onFilterChange("prompt")}
       >
         💬 {prompts} prompts
-      </span>
+      </button>
     </div>
   );
 }
