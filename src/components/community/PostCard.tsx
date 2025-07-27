@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
+import { MessageCircle } from "lucide-react";
 interface GalleryItem {
   src: string
   alt?: string
@@ -70,6 +71,7 @@ export default function PostCard({
   const [playCount, setPlayCount] = useState(item.play_count ?? 0);
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
+  const [commentsOpen, setCommentsOpen] = useState(false);
   const fetchSession = useSessionStore((s) => s.fetchSession);
   const session = useSessionStore((s) => s.session);
   const guest = isGuest ?? !session?.user?.id;
@@ -159,7 +161,7 @@ export default function PostCard({
       exit={{ opacity: 0, y: -10 }}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
-      className="relative flex flex-col w-full max-w-2xl mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
+      className="relative flex flex-col w-full rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
     >
       {item.pinned && (
         <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
@@ -207,21 +209,21 @@ export default function PostCard({
       <div className="mb-2">
         {item.type === "image" && (
           <ImageLightbox src={item.url} alt={item.title} onOpen={handleView} images={images} index={index}>
-            <div className="relative w-full pb-[56.25%]">
+            <div className="relative w-full aspect-[3/4]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.url} alt={item.title} className="absolute inset-0 object-cover rounded-xl w-full h-full" />
+              <img src={item.url} alt={item.title} className="absolute inset-0 object-contain rounded-xl w-full h-full" />
             </div>
           </ImageLightbox>
         )}
         {item.type === "music" && (
           <div className="flex flex-col items-center gap-2">
             {meta?.picture && (
-              <div className="relative w-full pb-[56.25%]">
+              <div className="relative w-full aspect-[3/4]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={meta.picture}
                   alt={meta.title || item.title}
-                  className="absolute inset-0 object-cover rounded-xl w-full h-full"
+                  className="absolute inset-0 object-contain rounded-xl w-full h-full"
                 />
               </div>
             )}
@@ -291,9 +293,15 @@ export default function PostCard({
             </Tooltip>
           </TooltipProvider>
           <LikeButton postId={item.id} isGuest={guest} />
+          <button
+            onClick={() => setCommentsOpen((v) => !v)}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <MessageCircle className="w-4 h-4" />
+          </button>
         </div>
       </div>
-      <CommentList postId={item.id} isGuest={guest} />
+      {commentsOpen && <CommentList postId={item.id} isGuest={guest} />}
       {guest && (
         <div className="mt-4 rounded-md bg-amber-500 text-white text-center py-2">
           🔓 Log in or register to unlock full features
