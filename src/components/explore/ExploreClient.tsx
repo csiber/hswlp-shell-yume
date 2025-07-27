@@ -29,7 +29,8 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
         const res = await fetch(`${endpoint}?page=${page}`)
         if (res.ok) {
           const data = (await res.json()) as { items: ExploreItem[] }
-          setItems(prev => [...prev, ...data.items])
+          const shuffled = data.items.sort(() => Math.random() - 0.5)
+          setItems(prev => [...prev, ...shuffled])
           if (data.items.length === 0) setHasMore(false)
         } else {
           setHasMore(false)
@@ -60,7 +61,7 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
           🔓 Sign in or register to unlock more features
         </div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((item, idx) => (
           <ExplorePostCard
             key={item.id}

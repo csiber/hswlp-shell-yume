@@ -18,7 +18,8 @@ export default function RandomClient() {
         const res = await fetch('/api/random')
         if (res.ok) {
           const data = (await res.json()) as { items: ExploreItem[] }
-          setItems(data.items)
+          const shuffled = data.items.sort(() => Math.random() - 0.5)
+          setItems(shuffled)
         }
       } finally {
         setLoading(false)
@@ -44,7 +45,7 @@ export default function RandomClient() {
           🔓 Sign in or register to unlock more features
         </div>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((item, idx) => (
           <ExplorePostCard
             key={item.id}
