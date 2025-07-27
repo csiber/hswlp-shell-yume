@@ -1,11 +1,11 @@
 "use client"
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/hu'
+import 'dayjs/locale/en'
 import { useSessionStore } from '@/state/session'
 
 dayjs.extend(relativeTime)
-dayjs.locale('hu')
+dayjs.locale('en')
 
 export interface AlbumInfo {
   id: string

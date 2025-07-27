@@ -51,14 +51,14 @@ export async function POST(req: Request) {
     await env.DB.prepare(
       'INSERT INTO request_flagged_attempts (id, user_id, prompt) VALUES (?1, ?2, ?3)'
     ).bind(`rfa_${createId()}`, session.user.id, prompt).run()
-    return jsonResponse({ error: 'Ez a tartalom nem megengedett. Kérlek, fogalmazd újra.' }, { status: 400 })
+    return jsonResponse({ error: 'This content is not allowed. Please rephrase it.' }, { status: 400 })
   }
   const { env } = getCloudflareContext()
   const creditRow = await env.DB.prepare('SELECT current_credits as c FROM user WHERE id = ?1')
     .bind(session.user.id)
     .first<{ c: number }>()
   if (!creditRow || creditRow.c < offered_credits) {
-    return jsonResponse({ error: 'Nincs elegendő kredited' }, { status: 400 })
+    return jsonResponse({ error: 'Insufficient credits' }, { status: 400 })
   }
   const id = `req_${createId()}`
   await env.DB.prepare(

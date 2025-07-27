@@ -84,7 +84,7 @@ export default function ProfileClient({ user, uploads, badges, currentUserId }: 
       </div>
       <div className="flex items-center justify-between mb-4">
         <UserMiniCard user={user} currentUserId={currentUserId} />
-        <Badge variant="secondary">{user.credits} kredit</Badge>
+        <Badge variant="secondary">{user.credits} credits</Badge>
       </div>
       {badges.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">

@@ -233,7 +233,7 @@ export function TransactionHistory() {
               <ChevronLeft className="h-4 w-4" />
             </Button>
             <span className="text-sm text-muted-foreground">
-              Oldal {page} / {data?.pagination.pages ?? 1}
+              Page {page} / {data?.pagination.pages ?? 1}
             </span>
             <Button
               variant="outline"

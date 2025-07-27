@@ -93,7 +93,7 @@ export function CreditPackages() {
               )}
             </div>
             <div className="text-sm text-muted-foreground">
-              Havonta {FREE_MONTHLY_CREDITS} ingyenes kreditet kapsz.
+              You receive {FREE_MONTHLY_CREDITS} free credits each month.
             </div>
           </div>
 

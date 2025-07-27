@@ -63,7 +63,7 @@ export function NavUser() {
             <span className="font-semibold truncate leading-none">{name}</span>
             <span className="text-xs text-muted-foreground truncate">{user.email}</span>
             <Badge variant="secondary" className="w-fit text-[10px] mt-1">
-              {user.currentCredits} kredit
+              {user.currentCredits} credits
             </Badge>
           </div>
         </SidebarMenuButton>

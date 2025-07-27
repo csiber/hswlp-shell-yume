@@ -80,7 +80,7 @@ export default function RequestsClient() {
           {items.map(it => (
             <div key={it.id} className="border p-2 rounded">
               <p className="font-medium">{it.prompt}</p>
-              <p className="text-sm text-muted-foreground">{it.style} – {it.offered_credits} kredit – {it.nickname}</p>
+              <p className="text-sm text-muted-foreground">{it.style} – {it.offered_credits} credits – {it.nickname}</p>
             </div>
           ))}
           {items.length === 0 && <p>No open requests.</p>}
