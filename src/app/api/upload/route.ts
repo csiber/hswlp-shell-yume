@@ -66,7 +66,7 @@ export async function POST(req: Request) {
   }
 
   if (session.user.uploadBanUntil && new Date(session.user.uploadBanUntil) > new Date()) {
-    return jsonResponse({ success: false, error: 'Feltöltés ideiglenesen letiltva' }, { status: 403 })
+    return jsonResponse({ success: false, error: 'Uploads temporarily disabled' }, { status: 403 })
   }
 
   const freshUser = await getUserFromDB(session.user.id)
@@ -101,7 +101,7 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'File too large' }, { status: 400 })
   }
 
-  // MIME ellenőrzés
+  // MIME validation
   const mime = file.type
   if (
     (type === 'image' && !mime.startsWith('image/')) ||
@@ -117,7 +117,7 @@ export async function POST(req: Request) {
   const usedStorageMb = Number(freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0)
   const uploadLimitMb = Number(freshUser?.uploadLimitMb ?? session.user.uploadLimitMb ?? 0)
   if (usedStorageMb + fileSizeMb > uploadLimitMb) {
-    throw new Error('Tárhelykeret túllépve. Vásárolj bővítést a Marketplace-en.')
+    throw new Error('Storage quota exceeded. Purchase more on the Marketplace.')
   }
 
   let meta: Awaited<ReturnType<typeof parseBuffer>> | null = null
@@ -205,10 +205,10 @@ export async function POST(req: Request) {
       await withTimeout(env.yumekai_r2.put(key, file), 2000)
     } catch (err) {
       console.error('R2 put failed', err)
-      return jsonResponse({ success: false, error: 'Hiba történt a fájl betöltésénél' }, { status: 500 })
+      return jsonResponse({ success: false, error: 'Failed to load file' }, { status: 500 })
     }
 
-    const url = `/api/files/${id}` // helyi proxy link, védett!
+    const url = `/api/files/${id}` // local proxy link, protected!
 
     const creditValue = calculateUploadCredits({
       type: type as 'image' | 'music' | 'prompt',
@@ -271,7 +271,7 @@ export async function POST(req: Request) {
       uploadId: id,
       album_id: albumId ?? undefined,
       url,
-      message: 'Feltöltés sikeres!',
+      message: 'Upload successful!',
       download_points: downloadPoints,
       awarded_credits: creditValue,
       total_credits: creditsRow?.currentCredits ?? null,

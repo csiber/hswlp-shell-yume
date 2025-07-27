@@ -27,7 +27,7 @@ export async function POST(req: NextRequest, { params }: any) {
     await withTimeout(env.yumekai_r2.delete(file.r2_key), 2000)
   } catch (err) {
     console.error('R2 delete failed', err)
-    return jsonResponse({ success: false, error: 'Hiba történt a fájl betöltésénél' }, { status: 500 })
+    return jsonResponse({ success: false, error: 'Failed to load file' }, { status: 500 })
   }
 
   await env.DB.prepare(
