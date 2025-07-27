@@ -66,9 +66,9 @@ export async function POST(req: Request) {
       await logTransaction({
         userId,
         amount: credits,
-        description: `Megvásároltál ${credits} kreditet.`,
+        description: `You purchased ${credits} credits.`,
         type: CREDIT_TRANSACTION_TYPE.PURCHASE,
-        expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} év`)),
+        expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} years`)),
         paymentIntentId: paymentIntent.id
       })
 

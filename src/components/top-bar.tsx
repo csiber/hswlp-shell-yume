@@ -334,7 +334,7 @@ export default function TopBar({}: TopBarProps) {
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                   >
-                    {user.currentCredits} kredit
+                    {user.currentCredits} credits
                   </motion.span>
                 </Badge>
               )}

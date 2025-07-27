@@ -26,7 +26,7 @@ export default function MyRequestsClient() {
         data.items.map(it => (
           <div key={it.id} className="border p-2 rounded space-y-2">
             <p className="font-medium">{it.prompt}</p>
-            <p className="text-sm">{it.style} – {it.offered_credits} kredit – {it.status}</p>
+            <p className="text-sm">{it.style} – {it.offered_credits} credits – {it.status}</p>
             {it.status === 'open' && (
               <Submissions requestId={it.id} onApprove={approve} />
             )}

@@ -52,3 +52,12 @@ export function formatDateLongHu(date: Date | string): string {
     day: 'numeric',
   });
 }
+
+export function formatDateLong(date: Date | string): string {
+  const d = date instanceof Date ? date : new Date(date);
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}

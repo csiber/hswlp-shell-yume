@@ -84,7 +84,7 @@ function PaymentForm({ packageId, clientSecret, onSuccess, onCancel, credits, pr
                 {getPackageIcon(credits)}
                 <div>
                   <div className="text-2xl font-bold">
-                    {credits.toLocaleString()} kredit
+                    {credits.toLocaleString()} credits
                   </div>
                 </div>
               </div>

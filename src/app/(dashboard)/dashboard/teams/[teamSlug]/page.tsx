@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import WatermarkedImage from '@/components/ui/WatermarkedImage'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDateLongHu } from "@/utils/format-date";
+import { formatDateLong } from "@/utils/format-date";
 import { translateRole } from "@/utils/translate-role";
 import { RemoveMemberButton } from "@/components/teams/remove-member-button";
 
@@ -183,7 +183,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
             <div className="p-6 border rounded-lg bg-card flex flex-col">
               <span className="text-sm font-medium text-muted-foreground">Created</span>
               <span className="text-2xl font-bold">
-                {formatDateLongHu(team.createdAt)}
+                {formatDateLong(team.createdAt)}
               </span>
             </div>
           </div>
@@ -237,7 +237,7 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
                       </TableCell>
                       <TableCell>
                         {member.joinedAt !== null
-                          ? formatDateLongHu(member.joinedAt)
+                          ? formatDateLong(member.joinedAt)
                           : 'Not joined'}
                       </TableCell>
                       <TableCell>
