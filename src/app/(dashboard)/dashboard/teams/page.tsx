@@ -59,7 +59,7 @@ export default async function TeamsIndexPage() {
 
   return (
     <>
-      <div className="h-4" /> {/* sorköz a fejléc helyett */}
+      <div className="h-4" /> {/* spacer instead of header */}
       <div className="container mx-auto px-5 pb-12">
         <div className="mb-8 flex items-center justify-between">
           <div>
