@@ -4,6 +4,7 @@ import FavoritesGrid from '@/components/favorites/FavoritesGrid'
 import FavoritesCard, { FavoriteItem } from '@/components/favorites/FavoritesCard'
 import EmptyState from '@/components/favorites/EmptyState'
 import { HeartCrack } from 'lucide-react'
+import { AnimatePresence } from 'framer-motion'
 
 interface ApiResponse { items: FavoriteItem[] }
 
@@ -40,9 +41,11 @@ export default function FavoritesPage() {
     <main className="max-w-6xl mx-auto space-y-4">
       <h1 className="text-2xl font-bold">My Favorites</h1>
       <FavoritesGrid>
-        {data?.items.map(item => (
-          <FavoritesCard key={item.id} item={item} onRemove={() => removeFavorite(item.id)} />
-        ))}
+        <AnimatePresence>
+          {data?.items.map(item => (
+            <FavoritesCard key={item.id} item={item} onRemove={() => removeFavorite(item.id)} />
+          ))}
+        </AnimatePresence>
       </FavoritesGrid>
     </main>
   )

@@ -4,6 +4,7 @@ import ImageLightbox from '@/components/ui/ImageLightbox'
 import WatermarkedImage from '@/components/ui/WatermarkedImage'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import useSWR from 'swr'
+import { motion } from 'framer-motion'
 
 interface MusicMeta {
   picture: string | null
@@ -28,7 +29,15 @@ export default function FavoritesCard({ item, onRemove }: { item: FavoriteItem; 
   )
 
   return (
-    <div className="favorites-card relative overflow-hidden rounded-2xl shadow-md hover:shadow-lg transition-transform hover:scale-105 bg-background/50">
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      whileHover={{ scale: 1.03 }}
+      transition={{ duration: 0.3 }}
+      className="favorites-card relative overflow-hidden rounded-2xl shadow-md bg-background/50"
+    >
       <TooltipProvider delayDuration={200}>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -44,28 +53,31 @@ export default function FavoritesCard({ item, onRemove }: { item: FavoriteItem; 
       </TooltipProvider>
       {item.mime?.startsWith('image/') && (
         <ImageLightbox src={item.url} alt={item.title}>
-          <WatermarkedImage
-            src={item.url}
-            alt={item.title}
-            className="h-48 w-full object-cover"
-          />
+          <div className="relative aspect-square">
+            <WatermarkedImage
+              src={item.url}
+              alt={item.title}
+              className="w-full h-full object-contain"
+            />
+          </div>
         </ImageLightbox>
       )}
       {item.mime?.startsWith('audio/') && (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <WatermarkedImage
-            src={data?.picture || PLACEHOLDER}
-            alt={item.title}
-            className="h-48 w-full object-cover"
-          />
-          <audio controls src={item.url} className="w-full" />
+          <div className="relative aspect-square">
+            <WatermarkedImage
+              src={data?.picture || PLACEHOLDER}
+              alt={item.title}
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <audio controls src={item.url} className="w-full mt-2" />
         </>
       )}
       {item.mime === 'text/plain' && (
         <div className="p-3 text-sm whitespace-pre-wrap max-h-48 overflow-auto">{item.title}</div>
       )}
       <div className="p-2 text-sm font-medium truncate">{item.title}</div>
-    </div>
+    </motion.div>
   )
 }
