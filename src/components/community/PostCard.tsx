@@ -12,7 +12,13 @@ import WatermarkedImage from "@/components/ui/WatermarkedImage";
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
-import { Download } from "lucide-react";
+import { Download, Share2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import ShareButtons from "@/components/share-buttons";
 import { toast } from "sonner";
 import { useSessionStore } from "@/state/session";
 import {
@@ -292,6 +298,19 @@ export default function PostCard({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 text-muted-foreground hover:text-foreground">
+                <Share2 className="w-4 h-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="p-2">
+              <ShareButtons
+                title={item.title}
+                url={`${typeof window !== 'undefined' ? window.location.origin : ''}/post/${item.id}`}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
           <LikeButton postId={item.id} isGuest={guest} />
         </div>
       </div>
