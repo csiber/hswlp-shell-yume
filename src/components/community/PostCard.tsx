@@ -209,21 +209,23 @@ export default function PostCard({
       <div className="mb-2">
         {item.type === "image" && (
           <ImageLightbox src={item.url} alt={item.title} onOpen={handleView} images={images} index={index}>
-            <div className="relative w-full aspect-[3/4]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={item.url} alt={item.title} className="absolute inset-0 object-contain rounded-xl w-full h-full" />
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={item.url}
+              alt={item.title}
+              className="mx-auto w-full max-h-[70vh] object-contain rounded-xl"
+            />
           </ImageLightbox>
         )}
         {item.type === "music" && (
           <div className="flex flex-col items-center gap-2">
             {meta?.picture && (
-              <div className="relative w-full aspect-[3/4]">
+              <div className="w-full">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={meta.picture}
                   alt={meta.title || item.title}
-                  className="absolute inset-0 object-contain rounded-xl w-full h-full"
+                  className="mx-auto w-full max-h-[70vh] object-contain rounded-xl"
                 />
               </div>
             )}
@@ -248,6 +250,13 @@ export default function PostCard({
             lines={5}
           />
         )}
+        {item.type !== "image" &&
+          item.type !== "music" &&
+          item.type !== "prompt" && (
+            <div className="text-center text-sm text-muted-foreground">
+              Unknown post type
+            </div>
+          )}
       </div>
       {item.type !== "prompt" && (
         <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">
