@@ -29,16 +29,16 @@ export async function POST(req: NextRequest) {
   }
 
   const html = `<!DOCTYPE html><html><body>
-    <p><strong>Beküldő:</strong> ${email}</p>
+    <p><strong>Sender:</strong> ${email}</p>
     <p>${description.replace(/\n/g, '<br/>')}</p>
-    ${fileUrl ? `<p>Kép: <a href="${fileUrl}">${fileUrl}</a></p>` : ''}
+    ${fileUrl ? `<p>Image: <a href="${fileUrl}">${fileUrl}</a></p>` : ''}
   </body></html>`
-  const text = `Beküldő: ${email}\n\n${description}${fileUrl ? `\nKép: ${fileUrl}` : ''}`
+  const text = `Sender: ${email}\n\n${description}${fileUrl ? `\nImage: ${fileUrl}` : ''}`
 
   try {
     await sendEmail({
       to: 'info@hswlp.com',
-      subject: 'Új hibajelentés',
+      subject: 'New bug report',
       html,
       text,
     })

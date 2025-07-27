@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
     object = await withTimeout(env.yumekai_r2.get(row.r2_key), 2000)
   } catch (err) {
     console.error('R2 get failed', err)
-    object = 'Hiba történt a fájl betöltésénél'
+    object = 'Failed to load file'
   }
   if (!object || typeof object === 'string' || !object.body) {
     return new Response('File not found', { status: 404 })
