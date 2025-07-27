@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 const bugSchema = z.object({
   email: z.string().email(),
-  description: z.string().min(10, "Legalább 10 karaktert írj le"),
+  description: z.string().min(10, "Please write at least 10 characters"),
 });
 
 export default function BugReportClient() {
@@ -35,11 +35,11 @@ export default function BugReportClient() {
         body: fd,
       });
       if (!res.ok) throw new Error("failed");
-      toast.success("Köszönjük! A hibajelentést megkaptuk.");
+      toast.success("Thank you! We received your bug report.");
       form.reset();
       setFile(null);
     } catch {
-      toast.error("Nem sikerült elküldeni a hibajelentést.");
+      toast.error("Failed to send the bug report.");
     } finally {
       setSubmitting(false);
     }
@@ -47,10 +47,9 @@ export default function BugReportClient() {
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Hibajelentő űrlap</h1>
+      <h1 className="text-2xl font-bold mb-4">Bug Report Form</h1>
       <p className="text-sm text-muted-foreground mb-6">
-        Írd le részletesen a hibát és a lépéseket, amelyekkel előidézhető. Kérjük,
-        csatolj képernyőképet, ha lehetséges.
+        Describe the issue and steps to reproduce it. Please attach a screenshot if possible.
       </p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -59,7 +58,7 @@ export default function BugReportClient() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>E-mail cím</FormLabel>
+                <FormLabel>Email address</FormLabel>
                 <FormControl>
                   <Input type="email" {...field} />
                 </FormControl>
@@ -73,7 +72,7 @@ export default function BugReportClient() {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Hiba leírása</FormLabel>
+                <FormLabel>Bug description</FormLabel>
                 <FormControl>
                   <Textarea rows={6} {...field} />
                 </FormControl>
@@ -83,7 +82,7 @@ export default function BugReportClient() {
           />
 
           <div>
-            <FormLabel>Csatolmány (opcionális)</FormLabel>
+            <FormLabel>Attachment (optional)</FormLabel>
             <Input
               type="file"
               accept="image/*"
@@ -94,10 +93,10 @@ export default function BugReportClient() {
           <Button type="submit" disabled={submitting} className="flex items-center">
             {submitting ? (
               <>
-                <Spinner size="small" className="mr-2" /> Küldés...
+                <Spinner size="small" className="mr-2" /> Sending...
               </>
             ) : (
-              "Hibajelentés küldése"
+              "Submit bug report"
             )}
           </Button>
         </form>

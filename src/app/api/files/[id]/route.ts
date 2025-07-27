@@ -141,7 +141,7 @@ export async function GET(req: NextRequest) {
       'Content-Type': contentType,
       'Content-Disposition': 'inline',
       'Access-Control-Allow-Origin': allowedOrigin,
-      'Accept-Ranges': 'bytes', // <--- ez fontos a seek és stream működéséhez
+      'Accept-Ranges': 'bytes', // <--- this is important for seek and streaming
       'Cache-Control': 'public, max-age=86400',
     },
   })

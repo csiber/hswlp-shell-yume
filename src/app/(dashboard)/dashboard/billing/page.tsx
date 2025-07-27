@@ -12,7 +12,7 @@ export default async function BillingPage() {
 
   return (
     <>
-      <div className="h-4" /> {/* sorköz a fejléc helyett */}
+      <div className="h-4" /> {/* spacer instead of header */}
       <div className="container mx-auto px-5 pb-12">
         <CreditPackages />
         <div className="mt-4">

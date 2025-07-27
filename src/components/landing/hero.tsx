@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-white text-zinc-900 dark:bg-zinc-950 dark:text-white">
-      {/* animált háttér glow */}
+      {/* animated background glow */}
       <motion.div
         initial={{ rotate: 0 }}
         animate={{ rotate: 360 }}

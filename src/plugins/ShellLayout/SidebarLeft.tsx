@@ -10,7 +10,7 @@ interface UserInfo {
 export default function SidebarLeft({ user }: { user?: UserInfo }) {
   return (
     <div className="w-[250px] dark:bg-gray-900 p-4 flex flex-col gap-6 text-sm">
-      {/* Feed szekció */}
+      {/* Feed section */}
       <div>
         <h3 className="uppercase text-xs text-gray-400 mb-3 px-2">Feed</h3>
         <ul className="flex flex-col gap-1 border-b border-gray-200 dark:border-gray-800 pb-4">

@@ -65,12 +65,12 @@ export function HSWLPStickyBanner() {
               <X className="h-4 w-4" />
             </Button>
             <div className="flex items-center flex-col py-3 px-3 text-center">
-              <p className="text-sm font-medium">Találtál hibát az oldalon?</p>
+              <p className="text-sm font-medium">Found a bug on the site?</p>
               <p className="text-tiny text-muted-foreground mt-2">
-                Küldd el nekünk a részleteket, hogy mielőbb javíthassuk.
+                Send us the details so we can fix it as soon as possible.
               </p>
               <Button size="sm" className="mt-4" asChild>
-                <a href="/bug-report">Hibajelentés</a>
+                <a href="/bug-report">Report a bug</a>
               </Button>
             </div>
           </div>
