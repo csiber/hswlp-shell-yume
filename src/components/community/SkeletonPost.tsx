@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SkeletonPost() {
   return (
-    <div className="space-y-2 w-full max-w-md mx-auto rounded-2xl border bg-white dark:bg-zinc-900 p-4 shadow-md">
+    <div className="space-y-2 w-full mx-auto rounded-2xl border bg-white dark:bg-zinc-900 p-4 shadow-md">
       <div className="flex items-center gap-2">
         <Skeleton className="h-8 w-8 rounded-full" />
         <Skeleton className="h-4 w-1/2" />

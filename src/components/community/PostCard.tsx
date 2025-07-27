@@ -12,7 +12,13 @@ import WatermarkedImage from "@/components/ui/WatermarkedImage";
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
-import { Download } from "lucide-react";
+import { Download, Share2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import ShareButtons from "@/components/share-buttons";
 import { toast } from "sonner";
 import { useSessionStore } from "@/state/session";
 import {
@@ -149,12 +155,11 @@ export default function PostCard({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.3 }}
-      className="relative flex flex-col w-full max-w-md mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
+      initial={{ opacity: 0, y: 20, scale: 1 }}
+      animate={{ opacity: 1, y: 0, scale: [1.05, 1, 0.95, 1] }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.5 }}
+      className="relative flex flex-col w-full mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-transform hover:shadow-lg hover:ring-2 hover:ring-yellow-400/70 hover:scale-[1.02]"
     >
       {item.pinned && (
         <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
@@ -293,6 +298,19 @@ export default function PostCard({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1 text-muted-foreground hover:text-foreground">
+                <Share2 className="w-4 h-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="p-2">
+              <ShareButtons
+                title={item.title}
+                url={`${typeof window !== 'undefined' ? window.location.origin : ''}/post/${item.id}`}
+              />
+            </DropdownMenuContent>
+          </DropdownMenu>
           <LikeButton postId={item.id} isGuest={guest} />
         </div>
       </div>
