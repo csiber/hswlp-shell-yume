@@ -79,11 +79,12 @@ export default function CommunityFeedV3({
         setAlbums(alb);
       }
 
-      const detect = (url: string): "image" | "music" | "prompt" => {
+      const detect = (url: string): "image" | "music" | "prompt" | undefined => {
         const ext = url.split(".").pop()?.toLowerCase() || "";
         if (["mp3", "wav", "ogg"].includes(ext)) return "music";
         if (["txt", "prompt"].includes(ext)) return "prompt";
-        return ["jpg", "jpeg", "png", "webp"].includes(ext) ? "image" : "image";
+        if (["jpg", "jpeg", "png", "webp"].includes(ext)) return "image";
+        return undefined;
       };
 
       arr = arr.map((it) => ({
@@ -169,7 +170,7 @@ export default function CommunityFeedV3({
       )}
 
       {loading ? (
-        <div className="flex flex-col space-y-6">
+        <div className="flex flex-col max-w-2xl mx-auto space-y-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="w-full">
               <SkeletonPost />
@@ -193,7 +194,7 @@ export default function CommunityFeedV3({
         </div>
       ) : (
         <>
-          <div className="flex flex-col space-y-6">
+          <div className="flex flex-col max-w-2xl mx-auto space-y-6">
             {albums.map((album) => (
               <div key={album.id} className="w-full">
                 <AlbumCard album={album} />
