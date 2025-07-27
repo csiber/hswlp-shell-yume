@@ -245,7 +245,7 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
           More comments
         </button>
       )}
-      <div className="relative mt-3 flex items-center gap-2 rounded-md shadow-inner bg-white/70 dark:bg-black/40 backdrop-blur-sm px-2 py-1">
+      <div className="relative mt-3 flex w-full items-center gap-2 rounded-md shadow-inner bg-white/70 dark:bg-black/40 backdrop-blur-sm px-2 py-1">
         {!isGuest && (
           <Avatar className="h-6 w-6">
             {session?.user?.avatar && (
