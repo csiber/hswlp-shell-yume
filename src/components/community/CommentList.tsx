@@ -242,39 +242,41 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
           View all comments
         </button>
       )}
-      <div className="relative mt-3 flex w-full items-center gap-2 rounded-md bg-black/40 backdrop-blur-sm px-2 py-1">
-        {!isGuest && (
-          <Avatar className="h-6 w-6">
-            {session?.user?.avatar && (
-              <AvatarImage src={session.user.avatar} alt={session.user.nickname || session.user.email} />
-            )}
-            <AvatarFallback>
-              {(session?.user?.nickname || session?.user?.email || 'U').slice(0,2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        )}
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              e.preventDefault();
-              submit();
-            }
-          }}
-          placeholder={isGuest ? 'Login required' : 'Write a comment...'}
-          className="h-8 w-24 flex-1 rounded-md bg-transparent px-2 text-sm text-white placeholder:text-white/70 transition-all focus:w-full focus:outline-none"
-          maxLength={500}
-          disabled={isGuest}
-        />
-        <button
-          onClick={submit}
-          disabled={isGuest}
-          className={`text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
-          <PaperAirplaneIcon className="h-4 w-4" />
-        </button>
-      </div>
+      {comments.length > 0 && (
+        <div className="mt-1 flex w-full items-center gap-2 border-b bg-transparent px-2 h-8 focus-within:bg-black/10">
+          {!isGuest && (
+            <Avatar className="h-6 w-6">
+              {session?.user?.avatar && (
+                <AvatarImage src={session.user.avatar} alt={session.user.nickname || session.user.email} />
+              )}
+              <AvatarFallback>
+                {(session?.user?.nickname || session?.user?.email || 'U').slice(0,2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          )}
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                submit();
+              }
+            }}
+            placeholder={isGuest ? 'Login required' : 'Write a comment...'}
+            className="h-8 flex-1 bg-transparent px-2 text-sm text-white placeholder:text-white/70 focus:outline-none"
+            maxLength={500}
+            disabled={isGuest}
+          />
+          <button
+            onClick={submit}
+            disabled={isGuest}
+            className={`text-gray-500 hover:text-gray-800 dark:hover:text-gray-200 ${isGuest ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <PaperAirplaneIcon className="h-4 w-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

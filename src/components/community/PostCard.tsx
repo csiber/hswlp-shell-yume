@@ -12,21 +12,14 @@ import WatermarkedImage from "@/components/ui/WatermarkedImage";
 import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
-import { Download, Share2 } from "lucide-react";
+import { Share2 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ShareButtons from "@/components/share-buttons";
-import { toast } from "sonner";
 import { useSessionStore } from "@/state/session";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import type { FeedItem } from "./CommunityFeedV3";
 
 dayjs.extend(relativeTime);
@@ -71,33 +64,8 @@ export default function PostCard({
   const [playCount, setPlayCount] = useState(item.play_count ?? 0);
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
-  const fetchSession = useSessionStore((s) => s.fetchSession);
   const session = useSessionStore((s) => s.session);
   const guest = isGuest ?? !session?.user?.id;
-
-  const handleDownload = useCallback(async () => {
-    if (guest) return;
-    try {
-      const res = await fetch(`/api/uploads/${item.id}/download`);
-      if (res.ok) {
-        toast.success("Download started");
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = item.title;
-        a.click();
-        URL.revokeObjectURL(url);
-        fetchSession?.();
-      } else if (res.status === 402) {
-        toast.error("Not enough credits to download");
-      } else {
-        toast.error("Download failed");
-      }
-    } catch {
-      toast.error("Network error");
-    }
-  }, [item.id, item.title, fetchSession, guest]);
 
   const handlePlay = useCallback(async () => {
     try {
@@ -158,52 +126,37 @@ export default function PostCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="relative flex flex-col w-full mx-auto rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4"
+      className="relative flex flex-col w-full mx-auto"
     >
-      <div className="relative mb-3">
-        {item.pinned && (
-          <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
-            📌 Pinned
-          </span>
-        )}
-        <div className="absolute top-2 left-2 flex items-center gap-2 text-xs text-white opacity-80">
-          <Avatar className="h-6 w-6">
-            {item.user.avatar_url && (
-              <AvatarImage src={item.user.avatar_url} alt={item.user.name || item.user.email} />
-            )}
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <span className="font-medium">{item.user.name || item.user.email}</span>
-          <span className="text-[10px]">{dayjs(item.created_at).fromNow()}</span>
-        </div>
-        {item.type === "image" && (
-          <ImageLightbox
+      {item.pinned && (
+        <span className="absolute right-2 top-2 z-10 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
+          📌 Pinned
+        </span>
+      )}
+      {item.type === "image" && (
+        <ImageLightbox
+          src={item.url}
+          alt={item.title}
+          onOpen={handleView}
+          images={images}
+          index={index}
+        >
+          <WatermarkedImage
             src={item.url}
             alt={item.title}
-            onOpen={handleView}
-            images={images}
-            index={index}
-          >
-            <div className="relative w-full h-48">
-              <WatermarkedImage
-                src={item.url}
-                alt={item.title}
-                className="object-cover rounded-xl w-full h-full"
-              />
-            </div>
-          </ImageLightbox>
-        )}
-        {item.type === "music" && (
-          <div className="flex flex-col items-center gap-2">
-            {meta?.picture && (
-              <div className="relative w-full h-48">
-                <WatermarkedImage
-                  src={meta.picture}
-                  alt={meta.title || item.title}
-                  className="object-cover rounded-xl w-full h-full"
-                />
-              </div>
-            )}
+            className="w-full aspect-square object-cover rounded-none"
+          />
+        </ImageLightbox>
+      )}
+      {item.type === "music" && (
+        <div className="flex flex-col items-center gap-2">
+          {meta?.picture && (
+            <WatermarkedImage
+              src={meta.picture}
+              alt={meta.title || item.title}
+              className="w-full aspect-square object-cover rounded-none"
+            />
+          )}
             <div className="text-center text-sm">
               <h3>{meta?.title || item.title || "Unknown track"}</h3>
               {meta?.artist && <p>{meta.artist}</p>}
@@ -225,60 +178,35 @@ export default function PostCard({
             lines={5}
           />
         )}
-      </div>
       {item.type !== "prompt" && (
-        <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">
-          {item.title}
-        </p>
-      )}
-      {item.tags && (
-        <p className="mb-2 text-xs text-muted-foreground">{item.tags}</p>
-      )}
-      <div className="mt-auto flex justify-between items-center text-gray-500">
-        {item.type === "music" && (
-          <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span role="img" aria-label="plays">🎧</span> {playCount}
-          </span>
-        )}
-        {item.type === "image" && (
-          <span className="flex items-center gap-1 text-sm text-muted-foreground">
-            <span role="img" aria-label="views">👁️</span> {viewCount}
-          </span>
-        )}
-        <div className="flex gap-3 justify-end">
-          <TooltipProvider delayDuration={200}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleDownload}
-                  disabled={guest}
-                  className={`flex items-center gap-1 text-sm opacity-50 hover:opacity-100 transition-opacity ${guest ? 'cursor-not-allowed' : ''}`}
-                >
-                  <Download className="w-4 h-4" />
-                  {item.download_points ?? 2}
+        <div className="flex justify-between items-center px-2 py-1">
+          <div className="flex items-center gap-2">
+            <Avatar className="h-6 w-6">
+              {item.user.avatar_url && (
+                <AvatarImage src={item.user.avatar_url} alt={item.user.name || item.user.email} />
+              )}
+              <AvatarFallback>{initials}</AvatarFallback>
+            </Avatar>
+            <span className="text-sm font-medium">{item.user.name || item.user.email}</span>
+          </div>
+          <div className="flex items-center gap-3 opacity-70">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-1">
+                  <Share2 className="w-4 h-4" />
                 </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                {guest ? 'Login required' : 'Download'}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="p-1 opacity-50 hover:opacity-100 transition-opacity">
-                <Share2 className="w-4 h-4" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="p-2">
-              <ShareButtons
-                title={item.title}
-                url={`${typeof window !== 'undefined' ? window.location.origin : ''}/post/${item.id}`}
-              />
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <LikeButton postId={item.id} isGuest={guest} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="p-2">
+                <ShareButtons
+                  title={item.title}
+                  url={`${typeof window !== 'undefined' ? window.location.origin : ''}/post/${item.id}`}
+                />
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <LikeButton postId={item.id} isGuest={guest} />
+          </div>
         </div>
-      </div>
+      )}
       <CommentList postId={item.id} isGuest={guest} />
       {guest && (
         <div className="mt-4 rounded-md bg-amber-500 text-white text-center py-2">
