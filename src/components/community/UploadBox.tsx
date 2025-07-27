@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { IAudioMetadata } from "music-metadata-browser";
 import { v4 as uuidv4 } from 'uuid'
 import { formatTitle } from "@/utils/music";
@@ -18,6 +19,7 @@ import {
   File as FileIcon,
   Image as ImageIcon,
   Music as MusicIcon,
+  CheckCircle,
 } from "lucide-react";
 import AudioWaveform from "@/components/AudioWaveform";
 import "./UploadBox.css";
@@ -44,6 +46,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [loading, setLoading] = useState(false);
   const [albumName, setAlbumName] = useState<string | null>(null);
   const [albumId, setAlbumId] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const parseBlobRef = useRef<((file: Blob) => Promise<IAudioMetadata>) | null>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
@@ -190,6 +193,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     setAlbumId(null);
     setAlbumName(null);
     if (success) {
+      setUploadSuccess(true);
+      setTimeout(() => setUploadSuccess(false), 2000);
       await mutateQuota();
       if (onUpload) onUpload();
     }
@@ -221,7 +226,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
       <CardContent>
         <div
           ref={dropRef}
-          className="upload-dropzone relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-6 text-center transition hover:border-black dark:border-gray-700 dark:hover:border-white"
+          className="upload-dropzone relative flex flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-6 text-center transition hover:bg-yellow-400/10 hover:border-yellow-400/40 dark:border-gray-700"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -315,19 +320,43 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         )}
       </CardContent>
       <CardFooter className="flex justify-end">
-        <button
-          onClick={handleUpload}
-          disabled={loading || percent >= 100}
-          className={clsx(
-            "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
-            loading
-              ? "bg-gray-600"
-              : "bg-gradient-to-r from-black via-gray-800 to-black hover:brightness-110",
-          )}
-        >
-          <span className="z-10">{loading ? "Uploading..." : "Upload"}</span>
-          {!loading && <span className="upload-wave-glow" />}
-        </button>
+        <div className="w-full relative">
+          <AnimatePresence>
+            {uploadSuccess && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0, scaleX: 0 }}
+                  animate={{ opacity: 1, scaleX: 1 }}
+                  exit={{ opacity: 0, scaleX: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute -top-2 left-0 right-0 h-1 rounded-t-md bg-gradient-to-r from-purple-500 to-green-500 origin-left"
+                />
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="absolute -top-7 right-2 text-green-400"
+                >
+                  <CheckCircle className="h-5 w-5" />
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
+          <button
+            onClick={handleUpload}
+            disabled={loading || percent >= 100}
+            className={clsx(
+              "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
+              loading
+                ? "bg-gray-600"
+                : "bg-gradient-to-r from-black via-gray-800 to-black hover:brightness-110",
+            )}
+          >
+            <span className="z-10">{loading ? "Uploading..." : "Upload"}</span>
+            {!loading && <span className="upload-wave-glow" />}
+          </button>
+        </div>
       </CardFooter>
     </Card>
   );
