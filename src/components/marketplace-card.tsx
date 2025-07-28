@@ -4,6 +4,7 @@ import * as React from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import ActivateButton from "@/components/activate-button"
 import { Badge } from "@/components/ui/badge"
+import { formatCredits } from "@/utils/format-credits"
 import { COMPONENTS } from "@/app/(dashboard)/dashboard/marketplace/components-catalog"
 
 interface MarketplaceCardProps {
@@ -23,7 +24,7 @@ export function MarketplaceCard({ id, name, description, credits, containerClass
     <Card className="relative">
       {credits > 0 && (
         <Badge className="absolute top-2 right-2 bg-yellow-400 text-black shadow-md">
-          {credits} credits
+          {formatCredits(credits)} credits
         </Badge>
       )}
       <CardHeader>

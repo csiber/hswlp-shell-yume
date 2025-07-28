@@ -11,6 +11,7 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { confirmPayment } from "@/actions/credits.action";
+import { formatCredits } from "@/utils/format-credits";
 import { useTheme } from "next-themes";
 import { Card, CardContent } from "@/components/ui/card";
 import { getPackageIcon } from "./credit-packages";
@@ -84,7 +85,7 @@ function PaymentForm({ packageId, clientSecret, onSuccess, onCancel, credits, pr
                 {getPackageIcon(credits)}
                 <div>
                   <div className="text-2xl font-bold">
-                    {credits.toLocaleString()} credits
+                    {formatCredits(credits)} credits
                   </div>
                 </div>
               </div>
