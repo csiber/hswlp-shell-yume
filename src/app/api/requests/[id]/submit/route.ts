@@ -12,10 +12,13 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   if (!file_url) return jsonResponse({ success:false, error:'file_url required' }, { status:400 })
   const { id } = await params
   const { env } = getCloudflareContext()
-  const requestRow = await env.DB.prepare('SELECT status FROM requests WHERE id = ?1')
-    .bind(id).first<{ status: string }>()
-  if (!requestRow || requestRow.status !== 'open') {
+  const requestRow = await env.DB.prepare('SELECT status, accepted_user_id FROM requests WHERE id = ?1')
+    .bind(id).first<{ status: string; accepted_user_id: string | null }>()
+  if (!requestRow || requestRow.status === 'fulfilled') {
     return jsonResponse({ success:false, error:'Request closed' }, { status:400 })
+  }
+  if (requestRow.status === 'accepted' && requestRow.accepted_user_id !== session.user.id) {
+    return jsonResponse({ success:false, error:'Not your request' }, { status:403 })
   }
   await env.DB.prepare(
     'INSERT INTO request_submissions (id, request_id, user_id, file_url, is_approved) VALUES (?1, ?2, ?3, ?4, 0)'

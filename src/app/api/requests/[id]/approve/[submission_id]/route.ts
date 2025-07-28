@@ -12,7 +12,7 @@ export async function POST(_req: Request, { params }: RouteContext<{ id:string; 
   const reqRow = await env.DB.prepare('SELECT user_id, offered_credits, status FROM requests WHERE id = ?1')
     .bind(id).first<{ user_id:string; offered_credits:number; status:string }>()
   if (!reqRow || reqRow.user_id !== session.user.id) return jsonResponse({ success:false }, { status:403 })
-  if (reqRow.status !== 'open') return jsonResponse({ success:false, error:'Already closed' }, { status:400 })
+  if (reqRow.status === 'fulfilled') return jsonResponse({ success:false, error:'Already closed' }, { status:400 })
   const subRow = await env.DB.prepare('SELECT user_id, is_approved FROM request_submissions WHERE id = ?1 AND request_id = ?2')
     .bind(submission_id, id).first<{ user_id:string; is_approved:number }>()
   if (!subRow) return jsonResponse({ success:false, error:'Submission not found' }, { status:404 })

@@ -55,6 +55,16 @@ export default function RequestsClient() {
     }
   }
 
+  const accept = async (id: string) => {
+    const res = await fetch(`/api/requests/${id}/accept`, { method: 'POST' })
+    if (res.ok) {
+      toast.success('Request accepted')
+      setItems(items.filter(it => it.id !== id))
+    } else {
+      toast.error('Failed to accept')
+    }
+  }
+
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-4">
       <div className="flex gap-4">
@@ -78,9 +88,10 @@ export default function RequestsClient() {
       {tab === 'list' && (
         <div className="space-y-4">
           {items.map(it => (
-            <div key={it.id} className="border p-2 rounded">
+            <div key={it.id} className="border p-2 rounded space-y-2">
               <p className="font-medium">{it.prompt}</p>
               <p className="text-sm text-muted-foreground">{it.style} – {it.offered_credits} credits – {it.nickname}</p>
+              <Button size="sm" onClick={() => accept(it.id)}>Accept</Button>
             </div>
           ))}
           {items.length === 0 && <p>No open requests.</p>}
