@@ -1,5 +1,5 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -43,6 +43,29 @@ interface Props {
 export default function ProfileClient({ user, uploads, badges, currentUserId }: Props) {
   const [tab, setTab] = useState<'image' | 'music' | 'prompt'>('image')
   const filtered = uploads.filter((u) => u.type === tab)
+  const [isFollowing, setIsFollowing] = useState(false)
+
+  useEffect(() => {
+    async function load() {
+      if (!currentUserId) return
+      const res = await fetch('/api/user/follow')
+      if (res.ok) {
+        const data = (await res.json()) as { following: string[] }
+        setIsFollowing(data.following.includes(user.id))
+      }
+    }
+    load()
+  }, [currentUserId, user.id])
+
+  async function followUser() {
+    if (!currentUserId) return
+    await fetch('/api/user/follow', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: user.id, action: isFollowing ? 'unfollow' : undefined })
+    })
+    setIsFollowing(!isFollowing)
+  }
 
   async function downloadFile(item: Upload) {
     try {
@@ -104,9 +127,12 @@ export default function ProfileClient({ user, uploads, badges, currentUserId }: 
       {currentUserId === user.id ? (
         <p className="mb-4 text-sm text-primary">Your profile</p>
       ) : (
-        <Button className="mb-4" variant="outline">
-          Send message
-        </Button>
+        <div className="flex gap-2 mb-4">
+          <Button variant="outline" onClick={() => followUser()}>
+            {isFollowing ? 'Unfollow' : 'Follow'}
+          </Button>
+          <Button variant="outline">Send message</Button>
+        </div>
       )}
       <div className="flex gap-2 mb-4">
         <Button variant={tab === 'image' ? 'default' : 'outline'} onClick={() => setTab('image')}>
