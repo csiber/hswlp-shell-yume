@@ -232,7 +232,25 @@ export async function POST(req: Request) {
 
     await env.DB.prepare(
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
-    ).bind(id, session.user.id, finalTitle, type, mime, url, key, creditValue, downloadPoints, albumId ?? null, 'pending').run()
+    ).bind(
+      id,
+      session.user.id,
+      finalTitle,
+      type,
+      mime,
+      url,
+      key,
+      creditValue,
+      downloadPoints,
+      albumId ?? null,
+      'pending'
+    ).run()
+
+    if (env.AUTO_APPROVE_UPLOADS === '1') {
+      await env.DB.prepare(
+        'UPDATE uploads SET approved = 1, moderation_status = ?1 WHERE id = ?2'
+      ).bind('approved', id).run()
+    }
 
     if (albumId) {
       await env.DB.prepare(
