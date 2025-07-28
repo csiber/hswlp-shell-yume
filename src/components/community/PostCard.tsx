@@ -71,7 +71,7 @@ export default function PostCard({
   const [playCount, setPlayCount] = useState(item.play_count ?? 0);
   const [viewCount, setViewCount] = useState(item.view_count ?? 0);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(true);
   const fetchSession = useSessionStore((s) => s.fetchSession);
   const session = useSessionStore((s) => s.session);
   const guest = isGuest ?? !session?.user?.id;
