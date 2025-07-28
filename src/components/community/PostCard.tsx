@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/en";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
 import ImageLightbox from "@/components/ui/ImageLightbox";
@@ -191,9 +192,12 @@ export default function PostCard({
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="text-sm cursor-default">{item.user.badge.icon}</span>
+                      <Badge variant="outline" className="ml-1 flex items-center gap-1 cursor-default">
+                        <span>{item.user.badge.icon}</span>
+                        <span>{item.user.badge.name}</span>
+                      </Badge>
                     </TooltipTrigger>
-                    <TooltipContent>{`${item.user.badge.name} – ${item.user.badge.description}`}</TooltipContent>
+                    <TooltipContent>{item.user.badge.description}</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
