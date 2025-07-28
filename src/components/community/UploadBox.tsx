@@ -50,6 +50,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const parseBlobRef = useRef<((file: Blob) => Promise<SimpleID3Data | null>) | null>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
   const sessionUser = useSessionStore((s) => s.session?.user)
@@ -235,6 +236,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
+          onClick={() => inputRef.current?.click()}
         >
           <UploadCloud className="h-10 w-10 text-gray-400 dark:text-gray-500" />
           <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -242,6 +244,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
             <label className="ml-1 cursor-pointer font-medium underline">
               choose
               <input
+                ref={inputRef}
                 type="file"
                 multiple
                 className="hidden"
