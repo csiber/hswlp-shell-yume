@@ -1,6 +1,6 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
-import { parseBuffer } from 'music-metadata-browser'
+import { parseID3 } from '@/utils/simple-id3'
 import { NextRequest } from 'next/server'
 import { guessMetaFromFilename } from '@/utils/music'
 import { withTimeout } from '@/utils/with-timeout'
@@ -35,19 +35,16 @@ export async function GET(req: NextRequest) {
 
   try {
     const buffer = await object.arrayBuffer()
-    const meta = await parseBuffer(Buffer.from(buffer), object.httpMetadata?.contentType || 'audio/mpeg')
-    const common = meta.common || {}
+    const meta = parseID3(buffer)
     let picture: string | null = null
-    if (common.picture && common.picture[0]) {
-      const pic = common.picture[0]
-      const mime = pic.format || 'image/jpeg'
-      picture = `data:${mime};base64,${Buffer.from(pic.data).toString('base64')}`
+    if (meta?.picture) {
+      picture = `data:${meta.picture.mime};base64,${Buffer.from(meta.picture.data).toString('base64')}`
     }
     const fallback = guessMetaFromFilename(row.title)
     return jsonResponse({
-      title: common.title ?? fallback.title ?? null,
-      artist: common.artist ?? fallback.artist ?? null,
-      album: common.album ?? null,
+      title: meta?.title ?? fallback.title ?? null,
+      artist: meta?.artist ?? fallback.artist ?? null,
+      album: meta?.album ?? null,
       picture,
     })
   } catch (err) {

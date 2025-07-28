@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { IAudioMetadata } from "music-metadata-browser";
+import type { SimpleID3Data } from "@/utils/simple-id3";
 import { v4 as uuidv4 } from 'uuid'
 import { formatTitle } from "@/utils/music";
 import { MAX_ALBUM_UPLOAD } from "@/constants";
@@ -50,13 +50,13 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
-  const parseBlobRef = useRef<((file: Blob) => Promise<IAudioMetadata>) | null>(null);
+  const parseBlobRef = useRef<((file: Blob) => Promise<SimpleID3Data | null>) | null>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
   const sessionUser = useSessionStore((s) => s.session?.user)
 
   useEffect(() => {
-    import('music-metadata-browser').then((mod) => {
-      parseBlobRef.current = mod.parseBlob;
+    import('@/utils/simple-id3').then((mod) => {
+      parseBlobRef.current = async (file: Blob) => mod.parseID3(await file.arrayBuffer());
     });
   }, []);
 
@@ -112,9 +112,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           const parseBlob = parseBlobRef.current;
           if (parseBlob) {
             const meta = await parseBlob(file);
-            const common = meta.common || {};
-            const t = common.title ? formatTitle(common.title) : formatTitle(file.name);
-            entries[file.name] = common.artist ? `${common.artist} - ${t}` : t;
+            const t = meta?.title ? formatTitle(meta.title) : formatTitle(file.name);
+            entries[file.name] = meta?.artist ? `${meta.artist} - ${t}` : t;
           } else {
             entries[file.name] = formatTitle(file.name);
           }
