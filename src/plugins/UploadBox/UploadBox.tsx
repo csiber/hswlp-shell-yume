@@ -19,6 +19,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
   const [isPending, startTransition] = useTransition()
   const [showSuccess, setShowSuccess] = useState(false)
   const [downloadPoints, setDownloadPoints] = useState<number | null>(null)
+  const [status, setStatus] = useState<string | null>(null)
 
   useEffect(() => {
     if (!showSuccess) return
@@ -50,13 +51,18 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       try {
         const res = await fetch("/api/upload", { method: "POST", body: form })
         if (!res.ok) throw new Error("failed")
-        const data = await res.json() as { download_points?: number }
+        const data = await res.json() as { download_points?: number; status?: string }
         setFile(null)
         setTitle("")
         if (fileInputRef.current) fileInputRef.current.value = ""
         setShowSuccess(true)
+        setStatus(data.status ?? null)
         setDownloadPoints(data.download_points ?? null)
-        toast.success("Upload successful, pending moderation")
+        toast.success(
+          data.status === 'approved'
+            ? 'Upload successful and approved'
+            : 'Upload successful, awaiting moderation'
+        )
         if (onSuccess) onSuccess()
       } catch {
         toast.error("Upload failed")
@@ -91,14 +97,15 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
           <Input
             ref={fileInputRef}
             type="file"
+            accept="image/png,image/jpeg,image/webp"
             onChange={(e) => handleFiles(e.target.files)}
             className="hidden"
           />
         </div>
         {showSuccess && (
           <p className="text-center text-sm text-green-600">
-            Upload successful – awaiting moderation
-            {downloadPoints !== null ? ` – file value: ${downloadPoints} credits` : ''}
+            {downloadPoints !== null ? `File value: ${downloadPoints} credits – ` : ''}
+            {status === 'approved' ? 'Upload approved' : 'Upload pending moderation'}
           </p>
         )}
       </CardContent>

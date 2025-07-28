@@ -35,10 +35,10 @@ function detectType(file: File): "image" | "music" | "prompt" {
   if (file.type.startsWith("audio/")) return "music";
   if (file.type.startsWith("text/")) return "prompt";
   const ext = file.name.split(".").pop()?.toLowerCase() || "";
-  if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
+  if (["jpg", "jpeg", "png", "webp"].includes(ext)) return "image";
   if (["mp3", "wav", "ogg"].includes(ext)) return "music";
   if (["txt", "prompt", "md"].includes(ext)) return "prompt";
-  return "image";
+  return "prompt";
 }
 
 export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
@@ -180,10 +180,13 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           method: "POST",
           body: formData,
         });
-        const data = (await res.json()) as { success: boolean; error?: string };
+        const data = (await res.json()) as { success: boolean; error?: string; status?: string };
         if (res.ok && data.success) {
           success = true;
-          toast.success(`Uploaded: ${file.name}`);
+          const msg = data.status === 'approved'
+            ? `${file.name} uploaded and approved`
+            : `${file.name} uploaded, awaiting moderation`;
+          toast.success(msg);
           await mutateQuota();
         } else {
           toast.error(data.error || `Error uploading ${file.name}`);
@@ -247,6 +250,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                 ref={inputRef}
                 type="file"
                 multiple
+                accept="image/png,image/jpeg,image/webp"
                 className="hidden"
                 onChange={async (e) => {
                   if (e.target.files) {
