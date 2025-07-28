@@ -2,7 +2,6 @@
 
 import { signInAction } from "./sign-in.actions";
 import { type SignInSchema, signInSchema } from "@/schemas/signin.schema";
-import { type ReactNode, useState } from "react";
 
 import {
   Form,
@@ -20,102 +19,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import Link from "next/link";
-import { KeyIcon } from "lucide-react";
-import {
-  generateAuthenticationOptionsAction,
-  verifyAuthenticationAction,
-} from "@/app/(settings)/settings/security/passkey-settings.actions";
-import { startAuthentication } from "@simplewebauthn/browser";
 
 interface SignInClientProps {
   redirectPath: string;
 }
 
-interface PasskeyAuthenticationButtonProps {
-  className?: string;
-  disabled?: boolean;
-  children?: ReactNode;
-  redirectPath: string;
-}
-
-function PasskeyAuthenticationButton({
-  className,
-  disabled,
-  children,
-  redirectPath,
-}: PasskeyAuthenticationButtonProps) {
-  const { execute: generateOptions } = useServerAction(
-    generateAuthenticationOptionsAction,
-    {
-      onError: (error) => {
-        toast.dismiss();
-        toast.error(
-          error.err?.message || "Failed to fetch authentication options"
-        );
-      },
-    }
-  );
-
-  const { execute: verifyAuthentication } = useServerAction(
-    verifyAuthenticationAction,
-    {
-      onError: (error) => {
-        toast.dismiss();
-        toast.error(error.err?.message || "Authentication failed");
-      },
-      onSuccess: () => {
-        toast.dismiss();
-        toast.success("Successfully authenticated");
-        window.location.href = redirectPath;
-      },
-    }
-  );
-
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
-
-  const handleAuthenticate = async () => {
-    try {
-      setIsAuthenticating(true);
-      toast.loading("Authenticating with passkey...");
-
-      // Get authentication options from the server
-      const [options] = await generateOptions({});
-
-      if (!options) {
-        throw new Error("Failed to fetch authentication options");
-      }
-
-      // Start the authentication process in the browser
-      const authenticationResponse = await startAuthentication({
-        optionsJSON: options,
-      });
-
-      // Send the response back to the server for verification
-      await verifyAuthentication({
-        response: authenticationResponse,
-        challenge: options.challenge,
-      });
-    } catch (error) {
-      console.error("Passkey authentication error:", error);
-      toast.dismiss();
-      toast.error("Authentication failed");
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
-
-  return (
-    <Button
-      onClick={handleAuthenticate}
-      disabled={isAuthenticating || disabled}
-      className={className}
-    >
-      {isAuthenticating
-        ? "Authenticating..."
-        : children || "Login with Passkey"}
-    </Button>
-  );
-}
 
 const SignInPage = ({ redirectPath }: SignInClientProps) => {
   const { execute: signIn } = useServerAction(signInAction, {
@@ -156,16 +64,6 @@ const SignInPage = ({ redirectPath }: SignInClientProps) => {
               create a new account
             </Link>
           </p>
-        </div>
-
-        <div className="space-y-4">
-          <PasskeyAuthenticationButton
-            className="w-full"
-            redirectPath={redirectPath}
-          >
-            <KeyIcon className="w-5 h-5 mr-2" />
-            Login with Passkey
-          </PasskeyAuthenticationButton>
         </div>
 
         <SeparatorWithText>
