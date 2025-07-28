@@ -15,4 +15,5 @@ interface CloudflareEnv {
   STRIPE_WEBHOOK_SECRET?: string;
   IMAGE_CAPTION_URL?: string;
   IMAGE_CAPTION_KEY?: string;
+  AUTO_APPROVE_UPLOADS?: string;
 }
