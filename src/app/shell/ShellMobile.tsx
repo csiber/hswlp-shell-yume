@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import MobileNavBar from "@/components/MobileNavBar";
 import FloatingUploadButton from "@/components/FloatingUploadButton";
 import InstallPrompt from "@/components/InstallPrompt";
-import { Navigation } from "@/components/navigation";
+import TopBar from "@/components/top-bar";
 
 export default function ShellMobile({ children }: { children?: React.ReactNode }) {
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function ShellMobile({ children }: { children?: React.ReactNode }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navigation />
+      <TopBar />
       <main className="flex-1 overflow-x-hidden">{children}</main>
       <MobileNavBar />
       <FloatingUploadButton />

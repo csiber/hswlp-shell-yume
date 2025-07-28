@@ -188,3 +188,7 @@ body.mobile-ui img {
   width: 100%;
   height: auto;
 }
+
+body.mobile-ui .bottom-player {
+  bottom: 56px;
+}

@@ -6,9 +6,9 @@ export default function LogoIcon({ className }: { className?: string }) {
     <Image
       src="/favicon.svg"
       alt="HSWLP logo"
-      width={32}
-      height={32}
-      className={className}
+      width={48}
+      height={48}
+      className={className ? `${className} max-h-12` : 'max-h-12'}
     />
   );
 }
