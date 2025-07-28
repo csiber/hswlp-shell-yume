@@ -24,7 +24,7 @@ export async function GET() {
   const { env } = getCloudflareContext()
   const [result, albumRows] = await Promise.all([
     env.DB.prepare(`
-      SELECT u.id, u.title, u.type, u.url, u.r2_key, u.created_at, u.download_points,
+      SELECT u.id, u.title, u.type, u.mime, u.url, u.r2_key, u.created_at, u.download_points,
              usr.nickname, usr.email,
              (SELECT badge_key FROM user_badges WHERE user_id = usr.id ORDER BY awarded_at LIMIT 1) as badge_key,
              COUNT(f.id) AS favorites
@@ -75,6 +75,7 @@ export async function GET() {
     (result.results || []).map(async row => ({
       id: row.id,
       title: row.title,
+      mime: row.mime,
       image_url: await resolveUrl(row.r2_key, row.url),
       created_at: row.created_at,
       author: row.nickname || row.email,
