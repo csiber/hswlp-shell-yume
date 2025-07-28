@@ -17,7 +17,6 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
   const [title, setTitle] = useState("")
   const [dragging, setDragging] = useState(false)
   const [isPending, startTransition] = useTransition()
-  const [checking, setChecking] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [downloadPoints, setDownloadPoints] = useState<number | null>(null)
 
@@ -43,21 +42,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       toast.error("Missing file")
       return
     }
-    if (file.type.startsWith('image/')) {
-      try {
-        setChecking(true)
-        const { isNsfwImageClient } = await import('@/utils/nsfw-client')
-        const nsfw = await isNsfwImageClient(file)
-        setChecking(false)
-        if (nsfw) {
-          toast.error('NSFW image detected')
-          return
-        }
-      } catch (err) {
-        console.warn('NSFW check failed', err)
-        setChecking(false)
-      }
-    }
+    // NSFW check moved to server
     startTransition(async () => {
       const form = new FormData()
       form.append("file", file)
@@ -120,13 +105,13 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       <CardFooter>
         <Button
           onClick={upload}
-          disabled={isPending || checking}
+          disabled={isPending}
           className="w-full flex items-center justify-center"
         >
-          {isPending || checking ? (
+          {isPending ? (
             <>
               <Spinner size="small" className="mr-2" />
-              {checking ? 'Checking...' : 'Uploading...'}
+              Uploading...
             </>
           ) : (
             'Upload'
