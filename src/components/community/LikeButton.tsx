@@ -76,11 +76,24 @@ export default function LikeButton({ postId, isGuest = false }: Props) {
             className={`flex items-center gap-1 p-1 text-sm opacity-50 hover:opacity-100 transition-opacity ${isGuest ? 'cursor-not-allowed' : ''}`}
           >
             {liked ? (
-              <HeartSolid className="h-4 w-4 text-red-500" />
+              <motion.span
+                key="liked"
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 0.3 }}
+              >
+                <HeartSolid className="h-4 w-4 text-red-500" />
+              </motion.span>
             ) : (
               <HeartOutline className="h-4 w-4" />
             )}
-            <span>{count}</span>
+            <motion.span
+              key={count}
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              {count}
+            </motion.span>
           </motion.button>
         </TooltipTrigger>
         <TooltipContent>

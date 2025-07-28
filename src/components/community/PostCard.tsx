@@ -19,6 +19,7 @@ import { useEffect, useState, useCallback } from "react";
 import LikeButton from "./LikeButton";
 import CommentList from "./CommentList";
 import { Download } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";
 import { useSessionStore } from "@/state/session";
 import {
@@ -75,9 +76,11 @@ export default function PostCard({
   const fetchSession = useSessionStore((s) => s.fetchSession);
   const session = useSessionStore((s) => s.session);
   const guest = isGuest ?? !session?.user?.id;
+  const [downloading, setDownloading] = useState(false);
 
   const handleDownload = useCallback(async () => {
     if (guest) return;
+    setDownloading(true);
     try {
       const res = await fetch(`/api/uploads/${item.id}/download`);
       if (res.ok) {
@@ -97,6 +100,8 @@ export default function PostCard({
       }
     } catch {
       toast.error("Network error");
+    } finally {
+      setDownloading(false);
     }
   }, [item.id, item.title, fetchSession, guest]);
 
@@ -289,10 +294,16 @@ export default function PostCard({
               <TooltipTrigger asChild>
                 <button
                   onClick={handleDownload}
-                  disabled={guest}
-                  className={`flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground ${guest ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  disabled={guest || downloading}
+                  className={`flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground ${
+                    guest || downloading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
-                  <Download className="w-4 h-4" />
+                  {downloading ? (
+                    <Spinner size="small" className="w-4 h-4" />
+                  ) : (
+                    <Download className="w-4 h-4" />
+                  )}
                   {item.download_points ?? 2}
                 </button>
               </TooltipTrigger>
