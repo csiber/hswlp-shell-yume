@@ -277,6 +277,19 @@ export async function POST(req: Request) {
 
     await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
 
+    const followerRows = await env.DB.prepare(
+      'SELECT follower_id FROM user_follows WHERE followee_id = ?1'
+    ).bind(session.user.id).all<{ follower_id: string }>()
+    for (const row of followerRows.results || []) {
+      await env.DB.prepare(
+        'INSERT INTO notifications (id, user_id, message) VALUES (?1, ?2, ?3)'
+      ).bind(
+        `not_${createId()}`,
+        row.follower_id,
+        `${session.user.nickname || session.user.email} uploaded a new file`
+      ).run()
+    }
+
     if (userUploadCount === 0) {
       const sendAfter = new Date(Date.now() + 60 * 60 * 1000)
       await env.DB.prepare(
