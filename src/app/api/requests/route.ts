@@ -60,7 +60,7 @@ export async function POST(req: Request) {
   }
   const { env } = getCloudflareContext()
   try {
-    const creditRow = await env.DB.prepare('SELECT current_credits as c FROM user WHERE id = ?1')
+    const creditRow = await env.DB.prepare('SELECT currentCredits as c FROM user WHERE id = ?1')
       .bind(session.user.id)
       .first<{ c: number }>()
     if (!creditRow || creditRow.c < offered_credits) {
