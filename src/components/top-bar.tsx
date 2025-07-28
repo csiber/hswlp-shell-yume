@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { RandomAvatar } from "@/components/RandomAvatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge"; // 🆕
 import { formatCredits } from "@/utils/format-credits"
@@ -56,12 +57,6 @@ export default function TopBar({}: TopBarProps) {
     (user?.firstName && user?.lastName
       ? `${user.firstName} ${user.lastName}`
       : user?.email ?? "");
-  const initials = displayName
-    .split(" ")
-    .map((n: string) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 
   return (
     <div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900">
@@ -300,7 +295,9 @@ export default function TopBar({}: TopBarProps) {
                       )}
                     >
                       <AvatarImage src={user?.avatar ?? ""} alt={displayName} />
-                      <AvatarFallback>{initials}</AvatarFallback>
+                      <AvatarFallback>
+                        <RandomAvatar name={user?.id || displayName} size={32} />
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>

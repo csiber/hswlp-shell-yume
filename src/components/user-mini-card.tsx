@@ -1,6 +1,7 @@
 "use client"
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { RandomAvatar } from "@/components/RandomAvatar"
 import { cn } from "@/lib/utils"
 
 export interface UserMiniCardProps {
@@ -16,12 +17,6 @@ export interface UserMiniCardProps {
 }
 
 export function UserMiniCard({ user, className, currentUserId }: UserMiniCardProps) {
-  const initials = user.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase()
 
   return (
     <div className={`flex items-center gap-2 ${className ?? ""}`.trim()}>
@@ -32,7 +27,9 @@ export function UserMiniCard({ user, className, currentUserId }: UserMiniCardPro
         )}
       >
         <AvatarImage src={user.avatar ?? ""} alt={user.name} />
-        <AvatarFallback>{initials}</AvatarFallback>
+        <AvatarFallback>
+          <RandomAvatar name={user.email || user.name} size={40} />
+        </AvatarFallback>
       </Avatar>
       <div className="leading-tight">
         <div className="font-semibold truncate max-w-[12rem]">{user.name}</div>

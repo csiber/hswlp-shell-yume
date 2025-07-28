@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/table";
 import WatermarkedImage from '@/components/ui/WatermarkedImage'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RandomAvatar } from "@/components/RandomAvatar";
 import { formatDateLong } from "@/utils/format-date";
 import { translateRole } from "@/utils/translate-role";
 import { RemoveMemberButton } from "@/components/teams/remove-member-button";
@@ -224,7 +225,10 @@ export default async function TeamDashboardPage({ params }: TeamPageProps) {
                             alt={`${member.user.firstName || ''} ${member.user.lastName || ''}`}
                           />
                           <AvatarFallback>
-                            {member.user.firstName?.[0]}{member.user.lastName?.[0]}
+                            <RandomAvatar
+                              name={member.user.id || member.user.email}
+                              size={32}
+                            />
                           </AvatarFallback>
                         </Avatar>
                         <span>
