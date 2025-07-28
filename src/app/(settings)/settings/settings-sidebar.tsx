@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ScrollShadow } from "@heroui/react";
-import { User, Smartphone, Lock, LogOut } from "lucide-react";
+import { User, Smartphone, LogOut } from "lucide-react";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   Dialog,
@@ -32,11 +32,6 @@ const sidebarNavItems: SidebarNavItem[] = [
     title: "Profile",
     href: "/settings",
     icon: User,
-  },
-  {
-    title: "Security",
-    href: "/settings/security",
-    icon: Lock,
   },
   {
     title: "Sessions",
