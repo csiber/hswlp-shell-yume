@@ -31,6 +31,10 @@ pnpm run deploy
 
 Environment secrets from `.env` must be uploaded with `wrangler secret put` before deploying.
 
+## Usage Guide & Policy
+
+See [docs/USAGE_GUIDE.md](docs/USAGE_GUIDE.md) for instructions on how to use the system and details about the content policy.
+
 ## License
 
 This project is released under the MIT License.

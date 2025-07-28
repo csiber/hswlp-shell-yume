@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import type { IAudioMetadata } from "music-metadata-browser";
 import { v4 as uuidv4 } from 'uuid'
@@ -47,6 +48,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [albumName, setAlbumName] = useState<string | null>(null);
   const [albumId, setAlbumId] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const parseBlobRef = useRef<((file: Blob) => Promise<IAudioMetadata>) | null>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
@@ -56,6 +58,10 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     import('music-metadata-browser').then((mod) => {
       parseBlobRef.current = mod.parseBlob;
     });
+    const stored = localStorage.getItem('accepted_terms');
+    if (stored === '1') {
+      setAcceptedTerms(true);
+    }
   }, []);
 
   const fetchQuota = async (u: string) => {
@@ -124,6 +130,15 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
       }
     }
     setTitles(entries);
+  };
+
+  const handleTermsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAcceptedTerms(e.target.checked);
+    if (e.target.checked) {
+      localStorage.setItem('accepted_terms', '1');
+    } else {
+      localStorage.removeItem('accepted_terms');
+    }
   };
 
   const handleUpload = async () => {
@@ -316,6 +331,21 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                 👉 Need more storage? Buy it on the Marketplace!
               </p>
             )}
+            <div className="mt-4 flex items-center gap-2 justify-center">
+              <input
+                id="accept-terms"
+                type="checkbox"
+                className="h-4 w-4"
+                checked={acceptedTerms}
+                onChange={handleTermsChange}
+              />
+              <label htmlFor="accept-terms" className="text-sm">
+                I accept the{' '}
+                <Link href="/terms" className="underline">
+                  Terms of Service
+                </Link>
+              </label>
+            </div>
           </>
         )}
       </CardContent>
@@ -345,7 +375,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           </AnimatePresence>
           <button
             onClick={handleUpload}
-            disabled={loading || percent >= 100}
+            disabled={loading || percent >= 100 || !acceptedTerms}
             className={clsx(
               "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
               loading
