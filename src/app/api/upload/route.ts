@@ -16,6 +16,9 @@ import { generateRandomName } from '@/utils/random-name'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
+const banned = /(loli|shota|hentai|rape|guro|nude|sexual|porn|fuck|pussy|underage|bdsm|nsfw|abuse|boob|tits|cum)/i
+const maliciousHtml = /<script|<iframe|<object|<embed|javascript:/i
+
 function extFromMime(mime: string): string {
   const map: Record<string, string> = {
     'image/jpeg': 'jpg',
@@ -194,6 +197,16 @@ export async function POST(req: Request) {
     promptText = await file.text()
   } else if (typeof promptField === 'string') {
     promptText = promptField
+  }
+
+  if (promptText) {
+    const lower = promptText.toLowerCase()
+    if (banned.test(lower)) {
+      return jsonResponse({ success: false, error: 'This content is not allowed. Please rephrase it.' }, { status: 400 })
+    }
+    if (maliciousHtml.test(lower)) {
+      return jsonResponse({ success: false, error: 'Text contains potentially harmful code' }, { status: 400 })
+    }
   }
 
     try {
