@@ -19,6 +19,8 @@ interface CommentRow {
   email: string
   avatar: string | null
   badge_key: string | null
+  user_id: string
+  parent_id: string | null
 }
 
 export async function GET(
@@ -29,7 +31,7 @@ export async function GET(
   const { env } = getCloudflareContext()
   const session = await getSessionFromCookie()
   const rows = await env.DB.prepare(
-    `SELECT c.id, c.content, c.created_at, u.nickname, u.email, u.avatar,
+    `SELECT c.id, c.content, c.created_at, c.user_id, c.parent_id, u.nickname, u.email, u.avatar,
             (SELECT badge_key FROM user_badges WHERE user_id = u.id ORDER BY awarded_at LIMIT 1) as badge_key
      FROM comments c
      LEFT JOIN user u ON c.user_id = u.id
@@ -40,6 +42,8 @@ export async function GET(
     id: string
     text: string
     created_at: string
+    reply_to?: string
+    editable: boolean
     user: { name: string; avatar?: string; badge?: { key: string; icon: string; name: string; description: string } }
     reactions: { emoji: string; count: number; reacted: boolean }[]
   }[]
@@ -65,6 +69,8 @@ export async function GET(
       id: row.id,
       text: row.content,
       created_at: new Date(row.created_at).toISOString(),
+      reply_to: row.parent_id ?? undefined,
+      editable: session?.user?.id === row.user_id,
       user: {
         name: row.nickname || row.email,
         avatar: row.avatar ?? undefined,
@@ -92,15 +98,25 @@ export async function POST(
   if (!session?.user?.id) {
     return jsonResponse({ success: false }, { status: 401 })
   }
-  const { text } = (await req.json()) as { text: string }
+  const { text, reply_to } = (await req.json()) as { text: string; reply_to?: string }
   if (typeof text !== 'string' || !text.trim() || text.length > 500) {
     return jsonResponse({ success: false }, { status: 400 })
   }
   const { env } = getCloudflareContext()
   const id = `com_${createId()}`
+  let parent: string | null = null
+  if (reply_to) {
+    const exists = await env.DB.prepare('SELECT id FROM comments WHERE id = ?1')
+      .bind(reply_to)
+      .first<{ id: string }>()
+    if (!exists) {
+      return jsonResponse({ success: false }, { status: 400 })
+    }
+    parent = reply_to
+  }
   await env.DB.prepare(
-    'INSERT INTO comments (id, upload_id, user_id, content) VALUES (?1, ?2, ?3, ?4)'
-  ).bind(id, uploadId, session.user.id, text.trim()).run()
+    'INSERT INTO comments (id, upload_id, user_id, content, parent_id) VALUES (?1, ?2, ?3, ?4, ?5)'
+  ).bind(id, uploadId, session.user.id, text.trim(), parent).run()
 
   return jsonResponse({
     success: true,
@@ -108,6 +124,8 @@ export async function POST(
       id,
       text: text.trim(),
       created_at: new Date().toISOString(),
+      reply_to: parent ?? undefined,
+      editable: true,
       user: {
         name: session.user.nickname || session.user.email,
         avatar: session.user.avatar ?? undefined,
