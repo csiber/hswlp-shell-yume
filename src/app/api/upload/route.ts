@@ -35,6 +35,19 @@ function extFromMime(mime: string): string {
   return map[mime] || 'bin'
 }
 
+function sniffImageMime(buf: Uint8Array): string | null {
+  if (buf.length >= 4 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) {
+    return 'image/png'
+  }
+  if (buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) {
+    return 'image/jpeg'
+  }
+  if (buf.length >= 12 && buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50) {
+    return 'image/webp'
+  }
+  return null
+}
+
 async function isNsfwImage(file: Blob, env: CloudflareEnv): Promise<boolean> {
   const url = env.NSFW_CHECK_URL
   const key = env.NSFW_CHECK_KEY
@@ -105,13 +118,22 @@ export async function POST(req: Request) {
   }
 
   // MIME validation
-  const mime = file.type
+  let mime = file.type
   if (
     (type === 'image' && !mime.startsWith('image/')) ||
     (type === 'music' && !mime.startsWith('audio/')) ||
     (type === 'prompt' && !mime.startsWith('text/'))
   ) {
     return jsonResponse({ success: false, error: 'MIME mismatch' }, { status: 400 })
+  }
+
+  if (type === 'image') {
+    const head = new Uint8Array(await file.slice(0, 16).arrayBuffer())
+    const sniffed = sniffImageMime(head)
+    if (!sniffed || !['image/png', 'image/jpeg', 'image/webp'].includes(sniffed)) {
+      return jsonResponse({ success: false, error: 'Unsupported image type' }, { status: 400 })
+    }
+    mime = sniffed
   }
 
   const { env } = getCloudflareContext()
@@ -310,6 +332,7 @@ export async function POST(req: Request) {
       uploadId: id,
       album_id: albumId ?? undefined,
       url,
+      status: env.AUTO_APPROVE_UPLOADS === '1' ? 'approved' : 'pending',
       message: 'Upload successful!',
       download_points: downloadPoints,
       awarded_credits: creditValue,

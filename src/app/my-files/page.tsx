@@ -52,6 +52,9 @@ import {
   Music,
   Video as VideoIcon,
   Trash,
+  CheckCircle,
+  XCircle,
+  Clock,
 } from "lucide-react";
 import {
   Tooltip,
@@ -238,6 +241,13 @@ export default function MyFilesPage() {
                   "ring-2 ring-red-500 rounded-md opacity-60 pointer-events-none"
               )}
             >
+              {item.approved ? (
+                <CheckCircle className="absolute top-2 left-2 h-4 w-4 text-green-500" />
+              ) : item.moderation_status === 'punished' ? (
+                <XCircle className="absolute top-2 left-2 h-4 w-4 text-red-500" />
+              ) : (
+                <Clock className="absolute top-2 left-2 h-4 w-4 text-yellow-500" />
+              )}
               {!item.approved && (
                 <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
                   Pending moderation
@@ -294,6 +304,13 @@ export default function MyFilesPage() {
                   "ring-2 ring-red-500 opacity-60 pointer-events-none"
               )}
             >
+              {item.approved ? (
+                <CheckCircle className="absolute top-2 left-2 h-4 w-4 text-green-500" />
+              ) : item.moderation_status === 'punished' ? (
+                <XCircle className="absolute top-2 left-2 h-4 w-4 text-red-500" />
+              ) : (
+                <Clock className="absolute top-2 left-2 h-4 w-4 text-yellow-500" />
+              )}
               {!item.approved && (
                 <span className="absolute top-2 right-2 rounded bg-yellow-500 px-2 py-0.5 text-xs font-medium text-black">
                   Pending moderation
