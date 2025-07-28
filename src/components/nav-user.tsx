@@ -2,6 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { formatCredits } from "@/utils/format-credits"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useSessionStore } from "@/state/session"
@@ -63,7 +64,7 @@ export function NavUser() {
             <span className="font-semibold truncate leading-none">{name}</span>
             <span className="text-xs text-muted-foreground truncate">{user.email}</span>
             <Badge variant="secondary" className="w-fit text-[10px] mt-1">
-              {user.currentCredits} credits
+              {formatCredits(user.currentCredits)} credits
             </Badge>
           </div>
         </SidebarMenuButton>

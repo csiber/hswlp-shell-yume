@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { StripePaymentForm } from "./stripe-payment-form";
 import { createPaymentIntent } from "@/actions/credits.action";
+import { formatCredits } from "@/utils/format-credits";
 import { Coins, Sparkles, Zap } from "lucide-react";
 import { useSessionStore } from "@/state/session";
 import { useTransactionStore } from "@/state/transaction";
@@ -87,7 +88,7 @@ export function CreditPackages() {
                 </>
               ) : (
                 <div className="text-3xl font-bold">
-                  {session?.session?.user?.currentCredits.toLocaleString()}{" "}
+                  {formatCredits(session?.session?.user?.currentCredits ?? 0)}{" "}
                   credits
                 </div>
               )}
@@ -121,7 +122,7 @@ export function CreditPackages() {
                         {getPackageIcon(index)}
                         <div>
                           <div className="text-xl sm:text-2xl font-bold">
-                            {pkg.credits.toLocaleString()}
+                            {formatCredits(pkg.credits)}
                           </div>
                           <div className="text-xs sm:text-sm text-muted-foreground">
                             credits

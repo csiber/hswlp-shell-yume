@@ -24,6 +24,7 @@ import {
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge"; // 🆕
+import { formatCredits } from "@/utils/format-credits"
 import { motion } from "framer-motion";
 import { useSessionStore } from "@/state/session";
 import useSignOut from "@/hooks/useSignOut";
@@ -334,7 +335,7 @@ export default function TopBar({}: TopBarProps) {
                     initial={{ scale: 0.8 }}
                     animate={{ scale: 1 }}
                   >
-                    {user.currentCredits} credits
+                    {formatCredits(user.currentCredits)} credits
                   </motion.span>
                 </Badge>
               )}

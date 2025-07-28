@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { formatCredits } from '@/utils/format-credits'
 import { UserMiniCard } from '@/components/user-mini-card'
 import { Download } from 'lucide-react'
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
@@ -84,7 +85,7 @@ export default function ProfileClient({ user, uploads, badges, currentUserId }: 
       </div>
       <div className="flex items-center justify-between mb-4">
         <UserMiniCard user={user} currentUserId={currentUserId} />
-        <Badge variant="secondary">{user.credits} credits</Badge>
+        <Badge variant="secondary">{formatCredits(user.credits)} credits</Badge>
       </div>
       {badges.length > 0 && (
         <div className="flex flex-wrap gap-2 mb-4">
