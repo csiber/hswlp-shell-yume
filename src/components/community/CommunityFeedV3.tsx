@@ -8,6 +8,7 @@ import UploadBox from "./UploadBox";
 import FeedStats, { type FeedFilter } from "./FeedStats";
 import AlbumCard from "./AlbumCard";
 import { useSessionStore } from "@/state/session";
+import useSWR from "swr";
 
 export interface FeedItem {
   id: string;
@@ -50,6 +51,19 @@ export default function CommunityFeedV3({
   const audioRef = useRef<HTMLAudioElement>(null);
   const session = useSessionStore((s) => s.session);
   const guest = !session?.user?.id;
+
+  const fetchStats = useCallback(async () => {
+    const res = await fetch('/api/feed-stats');
+    if (!res.ok) throw new Error('failed');
+    return (await res.json()) as {
+      total: number;
+      images: number;
+      music: number;
+      prompts: number;
+    };
+  }, []);
+
+  const { data: statsData, mutate: mutateStats } = useSWR('/api/feed-stats', fetchStats);
 
   const { ref: loadMoreRef, inView } = useInView();
 
@@ -127,8 +141,9 @@ export default function CommunityFeedV3({
       setHasMore(false);
     } finally {
       setLoading(false);
+      mutateStats();
     }
-  }, [endpoint]);
+  }, [endpoint, mutateStats]);
 
   useEffect(() => {
     loadFeed(page);
@@ -157,7 +172,7 @@ export default function CommunityFeedV3({
     filter === "all" ? true : it.type === filter
   );
 
-  const stats = {
+  const stats = statsData ?? {
     total: items.length,
     images: items.filter((i) => i.type === "image").length,
     music: items.filter((i) => i.type === "music").length,
@@ -166,7 +181,10 @@ export default function CommunityFeedV3({
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 xl:max-w-7xl xl:mx-auto">
-      <UploadBox onUpload={loadFeed} />
+      <UploadBox onUpload={async () => {
+        await loadFeed();
+        mutateStats();
+      }} />
 
       {!loading && items.length > 0 && (
         <FeedStats

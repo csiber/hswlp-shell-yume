@@ -12,6 +12,20 @@ export default function CommentList({ postId, isGuest = false }: { postId: strin
   const [comments, setComments] = useState<Comment[]>([])
   const [text, setText] = useState("")
 
+  // Restore draft from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(`draftComment_${postId}`)
+    if (saved) setText(saved)
+    return () => {
+      localStorage.removeItem(`draftComment_${postId}`)
+    }
+  }, [postId])
+
+  // Autosave draft
+  useEffect(() => {
+    localStorage.setItem(`draftComment_${postId}`, text)
+  }, [text, postId])
+
   useEffect(() => {
     fetch(`/api/posts/${postId}/comments`)
       .then((res) =>
