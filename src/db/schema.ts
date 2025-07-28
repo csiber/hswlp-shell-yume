@@ -306,6 +306,7 @@ export const emailLogTable = sqliteTable('email_log', {
 export const requestsTable = sqliteTable('requests', {
   id: text().primaryKey().$defaultFn(() => `req_${createId()}`).notNull(),
   userId: text('user_id').notNull().references(() => userTable.id),
+  acceptedUserId: text('accepted_user_id').references(() => userTable.id),
   prompt: text().notNull(),
   type: text().notNull(),
   style: text().notNull(),
@@ -315,6 +316,7 @@ export const requestsTable = sqliteTable('requests', {
   createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
 }, (table) => [
   index('requests_user_idx').on(table.userId),
+  index('requests_accepted_user_idx').on(table.acceptedUserId),
   index('requests_status_idx').on(table.status),
 ]);
 
