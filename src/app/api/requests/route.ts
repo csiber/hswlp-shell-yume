@@ -8,24 +8,29 @@ const banned = /(loli|shota|hentai|rape|guro|nude|sexual|porn|fuck|pussy|underag
 
 export async function GET() {
   const { env } = getCloudflareContext()
-  const rows = await env.DB.prepare(
-    `SELECT r.id, r.prompt, r.type, r.style, r.offered_credits, r.status, r.created_at, u.nickname
+  try {
+    const rows = await env.DB.prepare(
+      `SELECT r.id, r.prompt, r.type, r.style, r.offered_credits, r.status, r.created_at, u.nickname
        FROM requests r JOIN user u ON r.user_id = u.id
       WHERE r.status = 'open'
       ORDER BY r.created_at DESC`
-  ).all<Record<string, string>>()
+    ).all<Record<string, string>>()
 
-  const items = (rows.results || []).map(r => ({
-    id: r.id,
-    prompt: r.prompt,
-    type: r.type,
-    style: r.style,
-    offered_credits: Number(r.offered_credits),
-    status: r.status,
-    created_at: r.created_at,
-    nickname: r.nickname,
-  }))
-  return jsonResponse({ items })
+    const items = (rows.results || []).map(r => ({
+      id: r.id,
+      prompt: r.prompt,
+      type: r.type,
+      style: r.style,
+      offered_credits: Number(r.offered_credits),
+      status: r.status,
+      created_at: r.created_at,
+      nickname: r.nickname,
+    }))
+    return jsonResponse({ items })
+  } catch (err) {
+    console.error('Failed to fetch requests', err)
+    return jsonResponse({ items: [] })
+  }
 }
 
 export async function POST(req: Request) {
@@ -54,15 +59,20 @@ export async function POST(req: Request) {
     return jsonResponse({ error: 'This content is not allowed. Please rephrase it.' }, { status: 400 })
   }
   const { env } = getCloudflareContext()
-  const creditRow = await env.DB.prepare('SELECT current_credits as c FROM user WHERE id = ?1')
-    .bind(session.user.id)
-    .first<{ c: number }>()
-  if (!creditRow || creditRow.c < offered_credits) {
-    return jsonResponse({ error: 'Insufficient credits' }, { status: 400 })
+  try {
+    const creditRow = await env.DB.prepare('SELECT current_credits as c FROM user WHERE id = ?1')
+      .bind(session.user.id)
+      .first<{ c: number }>()
+    if (!creditRow || creditRow.c < offered_credits) {
+      return jsonResponse({ error: 'Insufficient credits' }, { status: 400 })
+    }
+    const id = `req_${createId()}`
+    await env.DB.prepare(
+      'INSERT INTO requests (id, user_id, prompt, type, style, offered_credits, status, is_flagged) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0)'
+    ).bind(id, session.user.id, prompt, type, style, offered_credits, 'open').run()
+    return jsonResponse({ id })
+  } catch (err) {
+    console.error('Failed to submit request', err)
+    return jsonResponse({ error: 'Database error' }, { status: 500 })
   }
-  const id = `req_${createId()}`
-  await env.DB.prepare(
-    'INSERT INTO requests (id, user_id, prompt, type, style, offered_credits, status, is_flagged) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 0)'
-  ).bind(id, session.user.id, prompt, type, style, offered_credits, 'open').run()
-  return jsonResponse({ id })
 }
