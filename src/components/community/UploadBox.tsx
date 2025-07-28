@@ -28,6 +28,7 @@ import UploadBanAlert from "@/components/UploadBanAlert";
 import useSWR from 'swr'
 import { Progress } from "@/components/ui/progress";
 import WatermarkedImage from '@/components/ui/WatermarkedImage'
+import Link from "next/link"
 
 function detectType(file: File): "image" | "music" | "prompt" {
   if (file.type.startsWith("image/")) return "image";
@@ -47,6 +48,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const [albumName, setAlbumName] = useState<string | null>(null);
   const [albumId, setAlbumId] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const parseBlobRef = useRef<((file: Blob) => Promise<IAudioMetadata>) | null>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
@@ -127,6 +129,10 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   };
 
   const handleUpload = async () => {
+    if (!acceptedTerms) {
+      toast.error("Please accept the Terms of Service");
+      return;
+    }
     if (!selectedFiles || selectedFiles.length === 0) {
       toast.error("No file selected");
       return;
@@ -316,6 +322,21 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                 👉 Need more storage? Buy it on the Marketplace!
               </p>
             )}
+            <div className="flex items-center gap-2 mt-4">
+              <input
+                id="acceptTerms"
+                type="checkbox"
+                className="h-4 w-4"
+                checked={acceptedTerms}
+                onChange={(e) => setAcceptedTerms(e.target.checked)}
+              />
+              <label htmlFor="acceptTerms" className="text-sm text-muted-foreground">
+                I agree to the{' '}
+                <Link href="/terms" className="font-medium underline hover:text-primary">
+                  Terms of Service
+                </Link>
+              </label>
+            </div>
           </>
         )}
       </CardContent>
@@ -345,7 +366,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           </AnimatePresence>
           <button
             onClick={handleUpload}
-            disabled={loading || percent >= 100}
+            disabled={loading || percent >= 100 || !acceptedTerms}
             className={clsx(
               "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
               loading

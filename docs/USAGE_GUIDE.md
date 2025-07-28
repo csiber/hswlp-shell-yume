@@ -11,3 +11,10 @@ To keep the community safe, explicit NSFW content is not allowed. The system use
 - NSFW images are automatically detected and blocked.
 
 Please use the platform responsibly and respect other members.
+
+## Uploading Content
+
+Before uploading a file you must confirm that you accept the
+[Terms of Service](/terms). A small checkbox is shown
+on the upload page. The upload button remains disabled until you agree.
+
