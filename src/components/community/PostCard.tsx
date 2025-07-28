@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/en";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { RandomAvatar } from "@/components/RandomAvatar";
 import { Badge } from "@/components/ui/badge";
 import MusicPlayer from "./MusicPlayer";
 import PromptBox from "./PromptBox";
@@ -60,13 +61,6 @@ export default function PostCard({
   images,
   index,
 }: PostCardProps) {
-  const initials =
-    item.user.name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase() || item.user.email.slice(0, 2).toUpperCase();
 
   const [promptText, setPromptText] = useState<string | null>(null);
   const [promptError, setPromptError] = useState<boolean>(false);
@@ -182,7 +176,9 @@ export default function PostCard({
               alt={item.user.name || item.user.email}
             />
           )}
-          <AvatarFallback>{initials}</AvatarFallback>
+          <AvatarFallback>
+            <RandomAvatar name={item.user.email} size={48} />
+          </AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="flex items-center justify-between">

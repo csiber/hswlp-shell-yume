@@ -1,6 +1,7 @@
 "use client"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { RandomAvatar } from "@/components/RandomAvatar"
 import { Badge } from "@/components/ui/badge"
 import { formatCredits } from "@/utils/format-credits"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar"
@@ -33,15 +34,11 @@ export function NavUser() {
   const user = session?.user
   if (!user) return null
 
-  const name = user.nickname || [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email || ""
-  const initials =
-    user.initials ||
-    name
-      .split(" ")
-      .map((n: string) => n[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase()
+  const name =
+    user.nickname ||
+    [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+    user.email ||
+    ""
 
   return (
     <SidebarMenu>
@@ -58,7 +55,9 @@ export function NavUser() {
             )}
           >
             <AvatarImage src={user.avatar ?? ""} alt={name} />
-            <AvatarFallback>{initials}</AvatarFallback>
+            <AvatarFallback>
+              <RandomAvatar name={user.id || user.email || name} size={40} />
+            </AvatarFallback>
           </Avatar>
           <div className="grid flex-1 gap-0.5 text-left">
             <span className="font-semibold truncate leading-none">{name}</span>
