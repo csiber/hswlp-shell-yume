@@ -13,6 +13,7 @@ export interface FeedItem {
   id: string;
   title: string;
   tags?: string | null;
+  mime?: string | null;
   type?: "image" | "music" | "prompt";
   url: string;
   download_points?: number;
@@ -79,21 +80,30 @@ export default function CommunityFeedV3({
         setAlbums(alb);
       }
 
-      const detect = (url: string): "image" | "music" | "prompt" | undefined => {
-        const ext = url.split(".").pop()?.toLowerCase() || "";
+      const detect = (
+        url: string,
+        mime?: string | null
+      ): "image" | "music" | "prompt" | undefined => {
+        if (mime?.startsWith("audio/")) return "music";
+        if (mime?.startsWith("text/")) return "prompt";
+        if (mime?.startsWith("image/")) return "image";
+        const ext = url.split("?")[0].split(".").pop()?.toLowerCase() || "";
         if (["mp3", "wav", "ogg"].includes(ext)) return "music";
         if (["txt", "prompt"].includes(ext)) return "prompt";
         if (["jpg", "jpeg", "png", "webp"].includes(ext)) return "image";
         return undefined;
       };
 
-      arr = arr.map((it) => ({
-        ...it,
-        type:
-          it.type === "music" || it.type === "prompt" || it.type === "image"
-            ? it.type
-            : detect(it.url),
-      }));
+      arr = arr.map((it) => {
+        const detected = detect(it.url, it.mime);
+        return {
+          ...it,
+          type:
+            it.type === "music" || it.type === "prompt" || it.type === "image"
+              ? it.type
+              : detected,
+        };
+      });
 
       const pinned = arr.filter((i) => i.pinned);
       const others = arr.filter((i) => !i.pinned);

@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
 
   if (!rows) {
     const result = await env.DB.prepare(
-      `SELECT u.id, u.title, u.type, u.created_at, u.url, usr.nickname
+      `SELECT u.id, u.title, u.type, u.mime, u.created_at, u.url, usr.nickname
          FROM uploads u
          JOIN user usr ON u.user_id = usr.id
         WHERE u.approved = 1 AND u.visibility = 'public'
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
 
     if (pinnedRow?.pinned_post_id) {
       pinnedItem = await env.DB.prepare(
-        `SELECT u.id, u.title, u.type, u.created_at, u.url, usr.nickname
+        `SELECT u.id, u.title, u.type, u.mime, u.created_at, u.url, usr.nickname
            FROM uploads u
            JOIN user usr ON u.user_id = usr.id
           WHERE u.id = ?1 AND u.approved = 1 AND u.visibility = 'public'
@@ -82,6 +82,7 @@ export async function GET(req: NextRequest) {
     tags: string | null
     type: 'image' | 'music' | 'prompt'
     url: string
+    mime?: string | null
     download_points: number
     created_at: string
     view_count: number
@@ -100,12 +101,17 @@ export async function GET(req: NextRequest) {
   for (const row of rowsList) {
     const fileUrl = row.url
     const displayName = row.nickname || `Anon${row.id?.slice(-4)}`
+    let type: 'image' | 'music' | 'prompt' = 'image'
+    if (row.type === 'music' || row.mime?.startsWith('audio/')) type = 'music'
+    else if (row.type === 'prompt' || row.mime?.startsWith('text/')) type = 'prompt'
+
     items.push({
       id: row.id,
       title: row.title,
       tags: null,
-      type: row.type as 'image' | 'music' | 'prompt',
+      type,
       url: fileUrl,
+      mime: row.mime ?? null,
       download_points: 2,
       created_at: new Date(row.created_at).toISOString(),
       view_count: 0,
