@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Play, Pause, SkipForward } from "lucide-react";
+import { Play, Pause, SkipForward, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import LikeButton from "@/components/community/LikeButton";
@@ -123,7 +123,6 @@ export default function GlobalMusicPlayer() {
     <Sheet open={open} onOpenChange={setOpen}>
       <div
         className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-2 flex items-center justify-between max-h-16 overflow-hidden sm:max-h-none"
-        onClick={() => setOpen(true)}
       >
         <div className="flex items-center min-w-0 gap-2">
           {meta?.picture ? (
@@ -159,6 +158,9 @@ export default function GlobalMusicPlayer() {
           ) : (
             <Play className="h-4 w-4" />
           )}
+        </Button>
+        <Button size="icon" variant="ghost" onClick={() => setOpen(true)}>
+          <ChevronUp className="h-4 w-4" />
         </Button>
       </div>
       <SheetContent side="bottom" className="p-4">

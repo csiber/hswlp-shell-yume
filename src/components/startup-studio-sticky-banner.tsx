@@ -8,13 +8,15 @@ import { ChevronLeft, X } from "lucide-react";
 const STORAGE_KEY = "hswlp-sticky-banner-collapsed";
 
 export function HSWLPStickyBanner() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored !== null) {
       setIsCollapsed(JSON.parse(stored));
+    } else {
+      setIsCollapsed(true);
     }
     setIsHydrated(true);
   }, []);
