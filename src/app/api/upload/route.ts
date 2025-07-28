@@ -8,7 +8,7 @@ import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { updateAllSessionsOfUser } from '@/utils/kv-session'
 import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
-import { parseBuffer } from 'music-metadata-browser'
+import { parseID3, type SimpleID3Data } from '@/utils/simple-id3'
 import { formatTitle } from '@/utils/music'
 import { withTimeout } from '@/utils/with-timeout'
 import { createId } from '@paralleldrive/cuid2'
@@ -120,12 +120,12 @@ export async function POST(req: Request) {
     throw new Error('Storage quota exceeded. Purchase more on the Marketplace.')
   }
 
-  let meta: Awaited<ReturnType<typeof parseBuffer>> | null = null
+  let meta: SimpleID3Data | null = null
   let arrayBuffer: ArrayBuffer | null = null
   if (type === 'music') {
     try {
       arrayBuffer = await file.arrayBuffer()
-      meta = await parseBuffer(Buffer.from(arrayBuffer), mime)
+      meta = parseID3(arrayBuffer)
     } catch (err) {
       console.warn('Failed to parse music metadata', err)
     }
@@ -136,9 +136,8 @@ export async function POST(req: Request) {
     finalTitle = generateRandomName()
   }
   if (type === 'music' && meta) {
-    const common = meta.common || {}
-    const t = common.title ? formatTitle(common.title) : formatTitle(title)
-    finalTitle = common.artist ? `${common.artist} - ${t}` : t
+    const t = meta.title ? formatTitle(meta.title) : formatTitle(title)
+    finalTitle = meta.artist ? `${meta.artist} - ${t}` : t
   }
   if (type === 'music' && !meta) {
     finalTitle = formatTitle(title)
@@ -177,12 +176,8 @@ export async function POST(req: Request) {
   let userUploadCount = 0
   try {
     if (type === 'music' && meta) {
-      const common = meta.common || {}
-      if (common.title || common.artist || common.album) downloadPoints++
-      if (common.picture && common.picture.length > 0) downloadPoints++
-      if (meta.format?.duration && meta.format.duration > 120 && mime === 'audio/mpeg') {
-        downloadPoints++
-      }
+      if (meta.title || meta.artist || meta.album) downloadPoints++
+      if (meta.picture) downloadPoints++
     }
     const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE user_id = ?1')
       .bind(session.user.id)
