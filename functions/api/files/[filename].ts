@@ -1,6 +1,13 @@
 export const onRequestGet = async (ctx: any) => {
-  const { env, params } = ctx;
+  const { env, request, params } = ctx;
   const key = params.filename as string;
+
+  const cache = caches.default;
+  const cacheKey = new Request(request.url, request as RequestInit);
+  const cached = await cache.match(cacheKey);
+  if (cached) {
+    return cached;
+  }
 
   let object: R2ObjectBody | null = null;
   try {
@@ -22,18 +29,28 @@ export const onRequestGet = async (ctx: any) => {
     object.httpMetadata?.contentType || getMimeType(key);
 
   const headers = new Headers({
-    'Content-Type': contentType,
-    'Cache-Control': 'public, max-age=31536000, immutable'
+    'Content-Type': contentType
   });
 
   if (object.etag) headers.set('ETag', object.etag);
   if (object.uploaded)
     headers.set('Last-Modified', object.uploaded.toUTCString());
 
-  return new Response(object.body, {
+  const isImage = contentType.startsWith('image/');
+  if (isImage) {
+    headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  }
+
+  const response = new Response(object.body, {
     status: 200,
     headers
   });
+
+  if (isImage) {
+    ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  }
+
+  return response;
 };
 
 function getMimeType(name: string): string {
