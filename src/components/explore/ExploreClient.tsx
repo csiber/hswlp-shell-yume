@@ -75,6 +75,7 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
               isGuest={guest}
               images={items}
               index={idx}
+              baseUrl={baseUrl}
             />
           ))}
         </div>
