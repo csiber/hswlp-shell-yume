@@ -15,6 +15,7 @@ export async function GET(req: NextRequest) {
     `SELECT r2_key
        FROM uploads
       WHERE id = ?1 AND approved = 1 AND visibility = 'public'
+        AND (moderation_status IS NULL OR moderation_status = 'approved')
       LIMIT 1`
   ).bind(id).first<{ r2_key: string | null }>()
 

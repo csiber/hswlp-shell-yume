@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
          FROM uploads u
          JOIN user usr ON u.user_id = usr.id
         WHERE u.approved = 1 AND u.visibility = 'public'
+          AND (u.moderation_status IS NULL OR u.moderation_status = 'approved')
         ORDER BY u.created_at DESC
         LIMIT ?1 OFFSET ?2`
     )
@@ -68,6 +69,7 @@ export async function GET(req: NextRequest) {
            FROM uploads u
            JOIN user usr ON u.user_id = usr.id
           WHERE u.id = ?1 AND u.approved = 1 AND u.visibility = 'public'
+            AND (u.moderation_status IS NULL OR u.moderation_status = 'approved')
           LIMIT 1`
       ).bind(pinnedRow.pinned_post_id).first<Record<string, string>>() || null
     } else {
