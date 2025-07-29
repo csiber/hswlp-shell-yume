@@ -1,8 +1,8 @@
 import type { Route } from "next"
 
-export const SITE_NAME = "🧩 HSWLP Yumekai"
+export const SITE_NAME = "Yumekai"
 export const SITE_DESCRIPTION =
-  "The future of creativity starts here. Explore the boundaries of art and share your creations with a supportive community. Join us and be part of the creative revolution!"
+  "🧩 The future of creativity starts here. Explore the boundaries of art and share your creations with a supportive community. Join us and be part of the creative revolution!"
 export const SITE_URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://yumekai.app"
 export const GITHUB_REPO_URL = "https://github.com/csiber/hswlp-next"
 
