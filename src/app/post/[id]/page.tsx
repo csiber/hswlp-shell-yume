@@ -25,10 +25,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const data = (await res.json()) as ApiResponse
     const { post } = data
 
-    const title = post.title || 'Untitled Post'
+    const title = post.title || 'Yumekai.app Post'
     const description = `Created by ${post.author}`
     const image = post.is_nsfw
-      ? 'https://yumekai.app/nsfw-placeholder.png'
+      ? 'https://yumekai.app/og_cover.png'
       : post.url
 
     return {
@@ -51,7 +51,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   } catch {
     return {
-      title: 'Untitled Post',
+      title: 'Yumekai.app Post',
       alternates: { canonical: canonicalUrl },
     }
   }
