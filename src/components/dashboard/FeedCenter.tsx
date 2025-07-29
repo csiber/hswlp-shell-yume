@@ -34,8 +34,8 @@ export default function FeedCenter() {
           >
             <Alert
               color="secondary"
-              title="Ongoing development"
-              description="This platform is still under development. Features and content are continuously expanding."
+              title="Welcome to Yume 1.0"
+              description="The platform is now stable and ready for you to explore."
               className="px-4 py-3"
             />
           </motion.div>

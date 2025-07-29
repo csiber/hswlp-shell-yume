@@ -55,7 +55,6 @@ type Data = {
   projects: NavItem[]
 }
 
-// TODO Add a theme switcher
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { session } = useSessionStore();
   const [formattedTeams, setFormattedTeams] = useState<Data['teams']>([]);
@@ -67,7 +66,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       const teamData = session.teams.map(team => {
         return {
           name: team.name,
-          // TODO Get the actual logo when we implement team avatars
           logo: Building2,
           // Default plan - you might want to add plan data to your team structure
           plan: translateRole(team.role.name || "member")

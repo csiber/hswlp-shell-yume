@@ -3,6 +3,8 @@
 
 This repository contains the frontend called **Yume**, built on the new generation HSWLP system (hswlp-next). It is a **modern, static frontend** application running entirely on the **Cloudflare Pages + Workers** infrastructure – there's no need for a separate backend or server.
 
+This release is **version 1.0**, considered stable and ready for production use.
+
 > Yume uniquely combines AI-generated music, images, prompts and a community feed system. It can run entirely on its own, even under your own domain.
 
 ---
@@ -126,17 +128,6 @@ If you're not tech-savvy but want your own Yume:
 
 ---
 
-## 🌐 Future extensions (free after purchase)
-
-- Comment system
-- Profile pages
-- Search
-- Sharing functionality
-- Private content uploads
-- Built-in AI prompt generator
-- Moderation tools
-
----
 
 Thank you for placing your trust in me!
 Enjoy using it and create something special!

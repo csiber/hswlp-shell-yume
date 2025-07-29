@@ -5,7 +5,6 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 initOpenNextCloudflareForDev();
 
 
-// TODO cache-control headers don't work for static files
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   modularizeImports: {
