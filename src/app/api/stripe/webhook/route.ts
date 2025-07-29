@@ -83,9 +83,9 @@ export async function POST(req: Request) {
           const userName = user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.nickname || user.email
           const { html, text } = renderPurchaseEmail({
             userName,
-            date: new Date().toLocaleString('hu-HU', { timeZone: 'Europe/Budapest' }),
+            date: new Date().toLocaleString('en-EN', { timeZone: 'UTC' }),
             packageName: packageId || '',
-            price: `${pack.price} Ft`,
+            price: `${pack.price} $`,
             transactionId: paymentIntent.id,
             credits: pack.credits
           })
