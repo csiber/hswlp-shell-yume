@@ -18,12 +18,13 @@ export async function GET(req: NextRequest) {
     approved: number
     visibility: string
     user_id: string
+    moderation_status: string | null
   } | null
 
   try {
     upload = await env.DB.prepare(
-      `SELECT r2_key, mime, approved, visibility, user_id
-         FROM uploads
+      `SELECT r2_key, mime, approved, visibility, user_id, moderation_status
+        FROM uploads
         WHERE id = ?1
         LIMIT 1`
     )
@@ -42,7 +43,14 @@ export async function GET(req: NextRequest) {
   const isOwner = session?.user?.id === upload.user_id
   const isAdmin = session?.user?.role === ROLES_ENUM.ADMIN
 
-  if ((!isOwner && !isAdmin && (upload.approved !== 1 || upload.visibility !== 'public')) || !upload.r2_key) {
+  if (
+    (!isOwner &&
+      !isAdmin &&
+      (upload.approved !== 1 ||
+        upload.visibility !== 'public' ||
+        (upload.moderation_status && upload.moderation_status !== 'approved'))) ||
+    !upload.r2_key
+  ) {
     console.warn('File not public or missing key', id)
     return new Response('File not found', { status: 404 })
   }

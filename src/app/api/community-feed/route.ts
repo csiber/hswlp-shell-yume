@@ -34,6 +34,7 @@ export async function GET() {
        WHERE u.title IS NOT NULL
          AND u.visibility = 'public'
          AND u.approved = 1
+         AND (u.moderation_status IS NULL OR u.moderation_status = 'approved')
          AND u.created_at >= datetime('now', '-30 day')
        GROUP BY u.id
        ORDER BY favorites DESC, u.created_at DESC
@@ -47,6 +48,7 @@ export async function GET() {
         JOIN uploads up ON up.album_id = a.id
         JOIN user usr ON a.user_id = usr.id
        WHERE up.approved = 1 AND up.visibility = 'public'
+         AND (up.moderation_status IS NULL OR up.moderation_status = 'approved')
        ORDER BY a.created_at DESC
     `).all<Record<string, string>>(),
   ])

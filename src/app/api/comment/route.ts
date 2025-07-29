@@ -3,6 +3,7 @@ import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { v4 as uuidv4 } from 'uuid'
 import { NextRequest } from 'next/server'
+import { BANNED_WORDS } from '@/constants'
 
 interface CommentRow {
   id: string
@@ -48,9 +49,13 @@ export async function POST(req: NextRequest) {
   if (!upload_id || typeof content !== 'string' || content.trim().length < 2) {
     return jsonResponse({ success: false }, { status: 400 })
   }
+  const text = content.trim()
+  const lower = text.toLowerCase()
+  if (BANNED_WORDS.some(w => lower.includes(w))) {
+    return jsonResponse({ success: false, reason: 'profanity detected' }, { status: 400 })
+  }
   const { env } = getCloudflareContext()
   const id = `com_${uuidv4()}`
-  const text = content.trim()
   await env.DB.prepare(
     'INSERT INTO comments (id, upload_id, user_id, content) VALUES (?1, ?2, ?3, ?4)'
   ).bind(id, upload_id, session.user.id, text).run()

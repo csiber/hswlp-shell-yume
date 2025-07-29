@@ -8,6 +8,7 @@ export async function GET() {
     `SELECT id, title, type, r2_key
        FROM uploads
       WHERE approved = 1 AND visibility = 'public'
+        AND (moderation_status IS NULL OR moderation_status = 'approved')
       ORDER BY created_at DESC
       LIMIT 50`
   ).all<{ id: string; title: string; type: string; r2_key: string | null }>()

@@ -70,3 +70,6 @@ export const BADGE_DEFINITIONS = {
 } as const
 
 export type BadgeKey = keyof typeof BADGE_DEFINITIONS
+
+// Simple profanity filter list for comments
+export const BANNED_WORDS = ['fuck', 'shit', 'bitch'] as const
