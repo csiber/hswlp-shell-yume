@@ -76,7 +76,7 @@ export function CreditPackages() {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Kreditek</CardTitle>
+          <CardTitle>Credits</CardTitle>
         </CardHeader>
         <CardContent className="space-y-8">
           <div className="space-y-2">
@@ -131,7 +131,7 @@ export function CreditPackages() {
                       </div>
                       <div className="flex flex-col items-end">
                         <div className="text-xl sm:text-2xl font-bold text-primary">
-                          {pkg.price} Ft
+                          ${pkg.price}
                         </div>
                         <div className="text-xs sm:text-sm text-muted-foreground">
                           one-time payment
