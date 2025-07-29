@@ -250,7 +250,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
                 ref={inputRef}
                 type="file"
                 multiple
-                accept="image/png,image/jpeg,image/webp"
+                accept="image/png,image/jpeg,image/webp,audio/mp3,text/plain"
                 className="hidden"
                 onChange={async (e) => {
                   if (e.target.files) {
