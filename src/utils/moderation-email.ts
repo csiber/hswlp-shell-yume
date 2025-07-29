@@ -8,9 +8,9 @@ export function renderModerationEmail({ title }: ModerationEmailData) {
   <body>
     <p>A new image requires moderation.</p>
     <p>Title: ${title}</p>
-    <p><a href="https://yumekai.com/moderation">Review now → yumekai.com/moderation</a></p>
+    <p><a href="https://yumekai.app/moderate">Review now → yumekai.com/moderate</a></p>
   </body>
 </html>`;
-  const text = `A new image requires moderation.\nTitle: ${title}\nReview now → https://yumekai.com/moderation`;
+  const text = `A new image requires moderation.\nTitle: ${title}\nReview now → https://yumekai.app/moderate`;
   return { html, text };
 }
