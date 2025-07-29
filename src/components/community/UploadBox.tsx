@@ -244,7 +244,10 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
           <UploadCloud className="h-10 w-10 text-gray-400 dark:text-gray-500" />
           <p className="text-sm text-gray-600 dark:text-gray-300">
             Drag your files here or
-            <label className="ml-1 cursor-pointer font-medium underline">
+            <label
+              className="ml-1 cursor-pointer font-medium underline"
+              onClick={(e) => e.stopPropagation()}
+            >
               choose
               <input
                 ref={inputRef}
