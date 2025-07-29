@@ -35,6 +35,10 @@ export async function POST(req: NextRequest, { params }: any) {
   ).bind(session.user.id, params.id).run()
 
   await env.DB.prepare(
+    'DELETE FROM first_post_email WHERE post_id = ?1'
+  ).bind(params.id).run()
+
+  await env.DB.prepare(
     'DELETE FROM uploads WHERE id = ?1 AND user_id = ?2'
   ).bind(params.id, session.user.id).run()
 

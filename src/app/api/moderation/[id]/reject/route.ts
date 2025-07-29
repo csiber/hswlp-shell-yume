@@ -16,6 +16,7 @@ export async function POST(_req: Request, { params }: RouteContext<{ id: string 
       console.error('R2 delete failed', err)
     }
   }
+  await env.DB.prepare('DELETE FROM first_post_email WHERE post_id = ?1').bind(id).run()
   await env.DB.prepare('DELETE FROM uploads WHERE id = ?1').bind(id).run()
   return new Response(JSON.stringify({ success: true }), {
     status: 200,
