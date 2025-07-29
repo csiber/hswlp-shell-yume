@@ -32,8 +32,7 @@ interface TeamPageProps {
   }>;
 }
 
-// TODO Test the removal process
-export async function generateMetadata({ params }: TeamPageProps) {
+  export async function generateMetadata({ params }: TeamPageProps) {
   const { teamSlug } = await params;
   const db = await getDB();
 

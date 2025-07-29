@@ -2,6 +2,8 @@
 
 Yume is a serverless music and image sharing platform built with Nuxt 3 and Cloudflare Workers. It uses Cloudflare Pages for hosting static assets and Workers for the API layer, so no separate backend server is required.
 
+This repository now reflects **version 1.0**, marking the platform as stable and feature complete.
+
 ## Architecture
 
 - **Nuxt 3 + Tailwind + Pinia** frontend
