@@ -122,7 +122,7 @@ export default function GlobalMusicPlayer() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <div
-        className="bottom-player fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-2 flex items-center justify-between max-h-16 overflow-hidden sm:max-h-none"
+        className="bottom-player md:fixed sm:relative bottom-0 left-0 right-0 z-50 border-t bg-background p-2 flex items-center justify-between max-h-16 overflow-hidden sm:max-h-[64px]"
       >
         <div className="flex items-center min-w-0 gap-2">
           {meta?.picture ? (

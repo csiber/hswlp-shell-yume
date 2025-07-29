@@ -14,7 +14,7 @@ const navItems = [
 export default function MobileNavBar() {
   const pathname = usePathname() ?? "";
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 flex justify-around border-t bg-background/90 backdrop-blur py-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 w-full flex justify-around border-t bg-background/90 backdrop-blur py-2">
       {navItems.map(({ href, label, icon: Icon }) => {
         const active = pathname === href || pathname.startsWith(`${href}/`);
         return (
