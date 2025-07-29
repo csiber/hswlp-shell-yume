@@ -13,6 +13,8 @@ import { formatTitle } from '@/utils/music'
 import { withTimeout } from '@/utils/with-timeout'
 import { createId } from '@paralleldrive/cuid2'
 import { generateRandomName } from '@/utils/random-name'
+import { sendEmail } from '@/utils/email'
+import { renderModerationEmail } from '@/utils/moderation-email'
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024 // 20MB
 
@@ -318,6 +320,20 @@ export async function POST(req: Request) {
         row.follower_id,
         `${session.user.nickname || session.user.email} uploaded a new file`
       ).run()
+    }
+
+    if (env.AUTO_APPROVE_UPLOADS !== '1' && type === 'image') {
+      try {
+        const { html, text } = renderModerationEmail({ title: finalTitle })
+        await sendEmail({
+          to: 'csiberius@gmail.com',
+          subject: 'New image pending moderation',
+          html,
+          text,
+        })
+      } catch (err) {
+        console.error('Failed to send moderation email', err)
+      }
     }
 
     if (userUploadCount === 0) {
