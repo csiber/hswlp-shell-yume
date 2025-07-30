@@ -1,6 +1,6 @@
 "use client"
 
-import { Image, Music, PenLine, Star, Gem } from 'lucide-react'
+import { Image as ImageIcon, Music, PenLine, Star, Gem } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 
@@ -23,7 +23,7 @@ export default function TopUsersList({ users }: { users: TopUser[] }) {
   const renderBadges = (user: TopUser) => (
     <div className="mt-2 flex flex-wrap justify-center gap-2 text-sm">
       <Badge variant="secondary" className="flex items-center gap-1">
-        <Image className="w-4 h-4" /> {user.imageCount}
+        <ImageIcon className="w-4 h-4" /> {user.imageCount}
       </Badge>
       <Badge variant="secondary" className="flex items-center gap-1">
         <Music className="w-4 h-4" /> {user.musicCount}
