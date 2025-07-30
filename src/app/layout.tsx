@@ -45,7 +45,6 @@ export const metadata: Metadata = {
     "prompt generation",
     "creative tools",
   ],
-
   authors: [{ name: "Csaba Polyak" }],
   creator: "L",
   openGraph: {
@@ -55,12 +54,21 @@ export const metadata: Metadata = {
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
     siteName: SITE_NAME,
+    images: [
+      {
+        url: `${SITE_URL}/og-cover.png`, // vagy og-safe.jpg ha azt akarod
+        width: 1200,
+        height: 630,
+        alt: "Yumekai – AI, Anime & Music Platform",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
     creator: "@LubomirGeorg",
+    images: [`${SITE_URL}/og-cover.png`],
   },
   robots: {
     index: true,
@@ -74,6 +82,7 @@ export const metadata: Metadata = {
     },
   },
 };
+
 
 export default async function BaseLayout({
   children,
