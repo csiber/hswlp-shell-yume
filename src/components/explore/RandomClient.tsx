@@ -11,6 +11,8 @@ export default function RandomClient() {
   const [loading, setLoading] = useState(true)
   const session = useSessionStore((s) => s.session)
   const guest = !session?.user?.id
+  const baseUrl = "https://yumekai.app" // vagy dinamikus, pl. process.env.BASE_URL
+
 
   useEffect(() => {
     async function load() {
@@ -53,6 +55,7 @@ export default function RandomClient() {
             isGuest={guest}
             images={items}
             index={idx}
+            baseUrl={baseUrl}
           />
         ))}
       </div>

@@ -7,6 +7,8 @@ export default function SearchClient() {
   const [query, setQuery] = useState('')
   const [items, setItems] = useState<ExploreItem[]>([])
   const [loading, setLoading] = useState(false)
+  const baseUrl = "https://yumekai.app" // vagy derive-old dinamikusan, pl. window.location.origin
+
 
   async function search() {
     setLoading(true)
@@ -40,7 +42,7 @@ export default function SearchClient() {
       {loading && <p>Loading...</p>}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((item, idx) => (
-          <ExplorePostCard key={item.id} item={item} images={items} index={idx} isGuest={false} />
+          <ExplorePostCard key={item.id} item={item} images={items} index={idx} isGuest={false} baseUrl={baseUrl} />
         ))}
       </div>
     </div>

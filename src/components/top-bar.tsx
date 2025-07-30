@@ -274,7 +274,7 @@ export default function TopBar({}: TopBarProps) {
         </TooltipProvider>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-end gap-x-3 flex-wrap max-w-full shrink-0">
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>

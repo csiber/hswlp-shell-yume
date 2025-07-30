@@ -6,6 +6,7 @@ import ExplorePostCard, { ExploreItem } from './ExplorePostCard'
 import EmptyState from '@/components/favorites/EmptyState'
 import { ImageOff } from 'lucide-react'
 import { useSessionStore } from '@/state/session'
+import ShareButtons from '@/components/share-buttons'
 
 export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?: string } = {}) {
   const [items, setItems] = useState<ExploreItem[]>([])
@@ -15,6 +16,10 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
   const { ref, inView } = useInView()
   const session = useSessionStore(s => s.session)
   const guest = !session?.user?.id
+  const baseUrl =
+    typeof window !== 'undefined'
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_BASE_URL ?? ''
 
   useEffect(() => {
     if (inView && hasMore && !loading) {
@@ -55,25 +60,34 @@ export default function ExploreClient({ endpoint = '/api/explore' }: { endpoint?
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-4">
-      {guest && (
-        <div className="text-center text-sm bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-100 text-yellow-800 p-2 rounded">
-          🔓 Sign in or register to unlock more features
+    <>
+      <div className="max-w-6xl mx-auto p-4 space-y-4">
+        {guest && (
+          <div className="text-center text-sm bg-yellow-100 dark:bg-yellow-800 dark:text-yellow-100 text-yellow-800 p-2 rounded">
+            🔓 Sign in or register to unlock more features
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {items.map((item, idx) => (
+            <ExplorePostCard
+              key={item.id}
+              item={item}
+              isGuest={guest}
+              images={items}
+              index={idx}
+              baseUrl={baseUrl}
+            />
+          ))}
         </div>
-      )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item, idx) => (
-          <ExplorePostCard
-            key={item.id}
-            item={item}
-            isGuest={guest}
-            images={items}
-            index={idx}
-          />
-        ))}
+        {loading && <p className="text-center">Loading...</p>}
+        {hasMore && <div ref={ref} className="h-8" />}
       </div>
-      {loading && <p className="text-center">Loading...</p>}
-      {hasMore && <div ref={ref} className="h-8" />}
-    </div>
+      <ShareButtons
+        title="Explore Yumekai AI Gallery"
+        url={`${baseUrl}/explore`}
+        className="fixed right-4 bottom-4 z-20 print:hidden"
+        referrerId={session?.user?.id}
+      />
+    </>
   )
 }

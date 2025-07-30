@@ -82,8 +82,8 @@ export default async function BaseLayout({
 }>) {
   const session = await getSessionFromCookie();
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} pb-[120px]`}>
+    <html lang="en" suppressHydrationWarning className="overflow-x-hidden max-w-full">
+      <body className={`${inter.className} pb-[120px] overflow-x-hidden max-w-full`}>
         <NextTopLoader
           initialPosition={0.15}
           shadow="0 0 10px #000, 0 0 5px #000"

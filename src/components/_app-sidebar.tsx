@@ -14,6 +14,7 @@ import {
   CreditCard,
   Users,
   UploadCloud,
+  Star,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -101,6 +102,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         title: "Teams",
         url: "/dashboard/teams" as Route,
         icon: Users,
+      },
+      {
+        title: "Top Users",
+        url: "/dashboard/top-users" as Route,
+        icon: Star,
       },
       {
         title: "Marketplace",
