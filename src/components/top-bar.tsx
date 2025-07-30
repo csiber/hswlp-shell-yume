@@ -60,8 +60,8 @@ export default function TopBar({}: TopBarProps) {
       : user?.email ?? "");
 
   return (
-    <div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900 overflow-x-hidden">
-      <div className="flex items-center gap-2 flex-wrap max-w-full shrink-0">
+    <div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900">
+      <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap">
         <Link href="/" className="transition-transform hover:scale-105">
           <LogoIcon className="h-8 w-8" />
         </Link>
