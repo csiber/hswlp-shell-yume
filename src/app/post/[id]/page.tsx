@@ -5,9 +5,9 @@ interface ApiResponse {
   post: {
     id: string
     title: string
-    description?: string | null
     url: string
     is_nsfw: boolean
+    author: string
   }
 }
 
@@ -17,7 +17,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  const canonicalUrl = `https://yumekai.com/post/${id}`
+  const canonicalUrl = `https://yumekai.app/post/${id}`
 
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/post/${id}`)
@@ -25,10 +25,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const data = (await res.json()) as ApiResponse
     const { post } = data
 
-    const title = `${post.title || 'Untitled'} \u2013 Yumekai`
-    const description = post.description?.slice(0, 150) ?? ''
+    const title = post.title || 'Yumekai.app Post'
+    const description = `Created by ${post.author}`
     const image = post.is_nsfw
-      ? 'https://yumekai.com/nsfw-placeholder.png'
+      ? 'https://yumekai.app/og_cover.png'
       : post.url
 
     return {
@@ -42,10 +42,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         description,
         images: [image],
       },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [image],
+      },
     }
   } catch {
     return {
-      title: 'Untitled \u2013 Yumekai',
+      title: 'Yumekai.app Post',
       alternates: { canonical: canonicalUrl },
     }
   }

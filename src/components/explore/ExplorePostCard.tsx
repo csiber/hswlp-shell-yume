@@ -8,6 +8,14 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from '@/components/ui/tooltip'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import ShareButtons from '@/components/share-buttons'
+import { Button } from '@/components/ui/button'
+import { Share2 } from 'lucide-react'
 
 export interface ExploreItem {
   id: string
@@ -23,15 +31,17 @@ interface Props {
   isGuest?: boolean
   images: ExploreItem[]
   index: number
+  baseUrl: string
 }
 
-export default function ExplorePostCard({ item, isGuest = false, images, index }: Props) {
+export default function ExplorePostCard({ item, isGuest = false, images, index, baseUrl }: Props) {
   const gallery = images.map(it => ({
     src: it.url,
     alt: it.title || '',
     title: it.title,
     author: it.author,
   }))
+  const shareUrl = `${baseUrl}/post/${item.id}`
 
   return (
     <ImageLightbox src={item.url} alt={item.title || ''} images={gallery} index={index}>
@@ -53,6 +63,20 @@ export default function ExplorePostCard({ item, isGuest = false, images, index }
               </Tooltip>
             </TooltipProvider>
           )}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="secondary"
+                className="absolute bottom-2 right-2 z-10 bg-black/60 text-white hover:bg-black/70"
+              >
+                <Share2 className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="p-2">
+              <ShareButtons title={item.title || 'Untitled'} url={shareUrl} />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div className="p-2 space-y-1">
           {item.title && <h3 className="text-sm font-semibold truncate">{item.title}</h3>}
