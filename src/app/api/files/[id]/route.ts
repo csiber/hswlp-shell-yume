@@ -96,6 +96,8 @@ export async function GET(req: NextRequest) {
       const overlayUrl = `${SITE_URL.replace(/\/$/, '')}/favicon.svg`
       const transformed = await fetch(url, {
         cf: {
+          cacheTtl: 86400,
+          cacheEverything: true,
           image: {
             draw: [
               {
@@ -113,6 +115,18 @@ export async function GET(req: NextRequest) {
       if (transformed.ok && transformed.body) {
         body = transformed.body
         contentType = transformed.headers.get('Content-Type') || contentType
+      }
+    }
+
+    if (!body) {
+      if (url) {
+        const fileRes = await fetch(url, {
+          cf: { cacheTtl: 86400, cacheEverything: true },
+        })
+        if (fileRes.ok && fileRes.body) {
+          body = fileRes.body
+          contentType = fileRes.headers.get('Content-Type') || contentType
+        }
       }
     }
 
@@ -141,14 +155,12 @@ export async function GET(req: NextRequest) {
     console.error('Failed to update view count', err)
   }
 
-  const allowedOrigin = new URL(SITE_URL).origin
-
   return new Response(body, {
     status: 200,
     headers: {
       'Content-Type': contentType,
       'Content-Disposition': 'inline',
-      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Origin': '*',
       'Accept-Ranges': 'bytes', // <--- this is important for seek and streaming
       'Cache-Control': 'public, max-age=86400',
     },
