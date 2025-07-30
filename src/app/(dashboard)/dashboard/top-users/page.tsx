@@ -18,7 +18,7 @@ export default async function TopUsersPage() {
       (
         SELECT COALESCE(SUM(amount),0)
         FROM credit_transaction ct
-        WHERE ct.user_id = u.id
+        WHERE ct.userId = u.id
       ) AS credits
     FROM user u
     LEFT JOIN uploads up ON up.user_id = u.id
