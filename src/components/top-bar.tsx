@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   Crosshair,
   CreditCard,
+  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,7 +61,7 @@ export default function TopBar({}: TopBarProps) {
 
   return (
     <div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap">
         <Link href="/" className="transition-transform hover:scale-105">
           <LogoIcon className="h-8 w-8" />
         </Link>
@@ -208,6 +209,27 @@ export default function TopBar({}: TopBarProps) {
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p>Billing</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+              >
+                <Link href="/dashboard/top-users">
+                  <Star className="size-5" />
+                  <span className="sr-only">Top Users</span>
+                </Link>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Top Users</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
