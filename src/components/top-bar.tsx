@@ -73,7 +73,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className="hidden sm:flex rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
               >
                 <Link href="/dashboard">
                   <Home className="size-5" />
@@ -94,7 +94,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className="hidden sm:flex rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
               >
                 <Link href="/my-files">
                   <FolderDown className="size-5" />
@@ -115,7 +115,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className="hidden sm:flex rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
               >
                 <Link href="/favorites">
                   <Heart className="size-5" />
@@ -332,7 +332,10 @@ export default function TopBar({}: TopBarProps) {
                       <DropdownMenuSeparator />
                     </>
                   )}
-                  <DropdownMenuItem onClick={() => router.push("/settings")}>
+                  <DropdownMenuItem
+                    onClick={() => router.push("/settings")}
+                    className="hidden sm:flex"
+                  >
                     Settings
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
