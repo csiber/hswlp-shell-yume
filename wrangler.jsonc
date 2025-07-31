@@ -2,109 +2,110 @@
  * For more details on how to configure Wrangler, refer to:
  * https://developers.cloudflare.com/workers/wrangler/configuration/
  */
- {
-    "$schema": "node_modules/wrangler/config-schema.json",
-    "account_id": "4e3646aaf967d8895e6596df2d62c3bf",
-    "name": "hswlp-shell-yumekai",
-    "main": ".open-next/worker.js",
-    "compatibility_date": "2025-03-01",
-    "compatibility_flags": [
-      "nodejs_compat",
-      "global_fetch_strictly_public"
-    ],
-    // Minification helps to keep the Worker bundle size down and improve start up time.
-    "minify": true,
-    "assets": {
-      "binding": "ASSETS",
-      "directory": ".open-next/assets"
-    },
-    "observability": {
-      "enabled": true
-    },
-    /**
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "account_id": "4e3646aaf967d8895e6596df2d62c3bf",
+  "name": "hswlp-shell-yumekai",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-03-01",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  // Minification helps to keep the Worker bundle size down and improve start up time.
+  "minify": true,
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".open-next/assets"
+  },
+  "observability": {
+    "enabled": true
+  },
+  /**
      * Smart Placement
      * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
      */
-    "placement": { "mode": "smart" },
-
-    "triggers": {
-      "crons": ["0 0 1 * *", "0 5 * * *"]
-    },
-
-    /**
+  "placement": {
+    "mode": "smart"
+  },
+  "triggers": {
+    "crons": [
+      "0 0 1 * *",
+      "0 5 * * *"
+    ]
+  },
+  /**
      * Bindings
      * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
      * databases, object storage, AI inference, real-time communication and more.
      * https://developers.cloudflare.com/workers/runtime-apis/bindings/
      */
-
-    /**
+  /**
      * Environment Variables
      * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
      */
-    "vars": {
-        "EMAIL_FROM": "no-reply@hswlp.hu",
-        "EMAIL_FROM_NAME": "HSWLP System",
-        "EMAIL_REPLY_TO": "support@hswlp.hu"
-    },
-    /**
+  "vars": {
+    "EMAIL_FROM": "no-reply@hswlp.hu",
+    "EMAIL_FROM_NAME": "HSWLP System",
+    "EMAIL_REPLY_TO": "support@hswlp.hu",
+    "SITE_URL": "https://yumekai.app"
+  },
+  /**
      * Note: Use secrets to store sensitive data.
      * https://developers.cloudflare.com/workers/configuration/secrets/
      */
-
-    /**
+  /**
      * Service Bindings (communicate between multiple Workers)
      * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
      */
-     "services": [
-      {
-        "binding": "WORKER_SELF_REFERENCE",
-        "service": "hswlp-shell-yumekai",
-      }
-    ],
-
-"durable_objects": {
-  "bindings": []
-},
-
-    "migrations": [
-      {
-        "tag": "v1",
-        "new_sqlite_classes": ["DOQueueHandler"],
-      },
-    ],
-
-"d1_databases": [
-  {
-    "binding": "DB",
-    "database_name": "yumekai-d1",
-    "database_id": "2b788aeb-234a-4eef-97bf-0f2e60308d76",
-    "migrations_dir": "src/db/migrations"
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "hswlp-shell-yumekai",
+    }
+  ],
+  "durable_objects": {
+    "bindings": []
   },
-  {
-    "binding": "NEXT_TAG_CACHE_D1",
-    "database_name": "yumekai-d1",
-    "database_id": "2b788aeb-234a-4eef-97bf-0f2e60308d76"
-  }
-],
-"kv_namespaces": [
-  {
-    "binding": "SESSION_KV",
-    "id": "8d54a3027a4a409aaa8f1aaca9dc5171"
-  },
-  {
-    "binding": "NEXT_INC_CACHE_KV",
-    "id": "60d93d82ece44987aefed74b1ec420ef"
-  },
-  {
-    "binding": "PRESENCE_KV",
-    "id": "4be2a04ed91f4b5eb95219f0834861c5"
-  }
-],
-    "r2_buckets": [
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": [
+        "DOQueueHandler"
+      ],
+    },
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "yumekai-d1",
+      "database_id": "2b788aeb-234a-4eef-97bf-0f2e60308d76",
+      "migrations_dir": "src/db/migrations"
+    },
+    {
+      "binding": "NEXT_TAG_CACHE_D1",
+      "database_name": "yumekai-d1",
+      "database_id": "2b788aeb-234a-4eef-97bf-0f2e60308d76"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION_KV",
+      "id": "8d54a3027a4a409aaa8f1aaca9dc5171"
+    },
+    {
+      "binding": "NEXT_INC_CACHE_KV",
+      "id": "60d93d82ece44987aefed74b1ec420ef"
+    },
+    {
+      "binding": "PRESENCE_KV",
+      "id": "4be2a04ed91f4b5eb95219f0834861c5"
+    }
+  ],
+  "r2_buckets": [
     {
       "bucket_name": "yumekai-r2",
       "binding": "yumekai_r2"
     }
   ]
-  }
+}
