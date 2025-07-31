@@ -77,6 +77,9 @@ importers:
       babylonjs:
         specifier: ^8.19.1
         version: 8.19.1
+      babylonjs-loaders:
+        specifier: ^8.19.1
+        version: 8.19.1
       boring-avatars:
         specifier: ^2.0.1
         version: 2.0.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3736,6 +3739,12 @@ packages:
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
     engines: {node: '>= 0.4'}
+
+  babylonjs-gltf2interface@8.19.1:
+    resolution: {integrity: sha512-1yFI57y1U5QuSRsnQMthcs7+cPbEjItFcBbXoLLTfy/0n25IBvTebFJR7lSWZ0LG9I1zJpZ3XnK4N4Gi8jj/7Q==}
+
+  babylonjs-loaders@8.19.1:
+    resolution: {integrity: sha512-cB9h67D2Eh9wOqtVtHkldtikaaduDHrTnkXRDu8VtjUF6/agqDaaXChUzg84tcH1tg3tuvY3pQDt/Uy12RKAcg==}
 
   babylonjs@8.19.1:
     resolution: {integrity: sha512-X/u/oIyrOZ7g26TVOzflMJObo15kE5tnO0agFo8VzlP6p+V8NBs8sDovCNU3tFtGBzf2DvUq3hVe77tu9VPDUQ==}
@@ -10940,6 +10949,13 @@ snapshots:
   axe-core@4.10.3: {}
 
   axobject-query@4.1.0: {}
+
+  babylonjs-gltf2interface@8.19.1: {}
+
+  babylonjs-loaders@8.19.1:
+    dependencies:
+      babylonjs: 8.19.1
+      babylonjs-gltf2interface: 8.19.1
 
   babylonjs@8.19.1: {}
 
