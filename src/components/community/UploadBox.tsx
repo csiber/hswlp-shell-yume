@@ -54,12 +54,28 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
   const parseBlobRef = useRef<((file: Blob) => Promise<SimpleID3Data | null>) | null>(null);
   const uploadBanUntil = useSessionStore((s) => s.session?.user?.uploadBanUntil);
   const sessionUser = useSessionStore((s) => s.session?.user)
+  const isAdmin = sessionUser?.role === 'admin'
+  const [asUser, setAsUser] = useState('')
+  const [userOptions, setUserOptions] = useState<{ id: string; name: string }[]>([])
 
   useEffect(() => {
     import('@/utils/simple-id3').then((mod) => {
       parseBlobRef.current = async (file: Blob) => mod.parseID3(await file.arrayBuffer());
     });
   }, []);
+
+  useEffect(() => {
+    if (!isAdmin || asUser.trim().length < 2) {
+      setUserOptions([]);
+      return;
+    }
+    const controller = new AbortController();
+    fetch(`/api/admin/user-search?q=${encodeURIComponent(asUser)}`, { signal: controller.signal })
+      .then((res) => res.ok ? res.json() : { items: [] })
+      .then((data) => setUserOptions(data.items || []))
+      .catch(() => {});
+    return () => controller.abort();
+  }, [asUser, isAdmin]);
 
   const fetchQuota = async (u: string) => {
     try {
@@ -174,6 +190,9 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
         formData.append("album_id", currentAlbumId);
         if (currentAlbumName) formData.append("album_name", currentAlbumName);
       }
+      if (isAdmin && asUser.trim()) {
+        formData.append('as_user', asUser.trim());
+      }
 
       try {
         const res = await fetch("/api/upload", {
@@ -201,6 +220,7 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     setTitles({});
     setAlbumId(null);
     setAlbumName(null);
+    if (isAdmin) setAsUser('');
     if (success) {
       setUploadSuccess(true);
       setTimeout(() => setUploadSuccess(false), 2000);
@@ -317,6 +337,23 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
               );
             })}
           </ul>
+        )}
+        {isAdmin && (
+          <div className="mt-4">
+            <input
+              type="text"
+              list="user-search-list"
+              className="w-full border rounded px-1 text-sm"
+              placeholder="Upload for user ID or email"
+              value={asUser}
+              onChange={(e) => setAsUser(e.target.value)}
+            />
+            <datalist id="user-search-list">
+              {userOptions.map((u) => (
+                <option key={u.id} value={u.id}>{u.name}</option>
+              ))}
+            </datalist>
+          </div>
         )}
         {sessionUser && (
           <>
