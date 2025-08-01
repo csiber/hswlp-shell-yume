@@ -6,7 +6,7 @@ import { jsonResponse } from '@/utils/api'
 import { WebhookService } from '@/app/services/WebhookService'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { updateAllSessionsOfUser } from '@/utils/kv-session'
-import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
+import { CREDIT_TRANSACTION_TYPE, ROLES_ENUM } from '@/db/schema'
 import { calculateUploadCredits } from '@/utils/upload-credits'
 import { parseID3, type SimpleID3Data } from '@/utils/simple-id3'
 import { formatTitle } from '@/utils/music'
@@ -83,13 +83,26 @@ export async function POST(req: Request) {
     return jsonResponse({ success: false, error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (session.user.uploadBanUntil && new Date(session.user.uploadBanUntil) > new Date()) {
+  const formData = await req.formData()
+  let targetUserId = session.user.id
+  if (session.user.role === ROLES_ENUM.ADMIN) {
+    const asUser = formData.get('as_user')
+    if (typeof asUser === 'string' && asUser.trim()) {
+      targetUserId = asUser.trim()
+    }
+  }
+
+  const freshUser = await getUserFromDB(targetUserId)
+
+  if (!freshUser) {
+    return jsonResponse({ success: false, error: 'User not found' }, { status: 404 })
+  }
+
+  if (freshUser.uploadBanUntil && new Date(freshUser.uploadBanUntil) > new Date()) {
     return jsonResponse({ success: false, error: 'Uploads temporarily disabled' }, { status: 403 })
   }
 
-  const freshUser = await getUserFromDB(session.user.id)
-
-  const formData = await req.formData()
+  const file = formData.get('file')
   const file = formData.get('file')
   const titleField = formData.get('title')
   const title = typeof titleField === 'string' ? titleField : ''
@@ -141,8 +154,8 @@ export async function POST(req: Request) {
   const { env } = getCloudflareContext()
 
   const fileSizeMb = file.size / (1024 * 1024)
-  const usedStorageMb = Number(freshUser?.usedStorageMb ?? session.user.usedStorageMb ?? 0)
-  const uploadLimitMb = Number(freshUser?.uploadLimitMb ?? session.user.uploadLimitMb ?? 0)
+  const usedStorageMb = Number(freshUser?.usedStorageMb ?? 0)
+  const uploadLimitMb = Number(freshUser?.uploadLimitMb ?? 0)
   if (usedStorageMb + fileSizeMb > uploadLimitMb) {
     throw new Error('Storage quota exceeded. Purchase more on the Marketplace.')
   }
@@ -190,13 +203,13 @@ export async function POST(req: Request) {
       }
       await env.DB.prepare(
         'INSERT INTO albums (id, name, user_id) VALUES (?1, ?2, ?3)'
-      ).bind(albumId, albumName, session.user.id).run()
+      ).bind(albumId, albumName, targetUserId).run()
     }
   }
 
   const ext = extFromMime(mime)
   const id = uuidv4()
-  const key = `uploads/${session.user.id}/${id}.${ext}`
+  const key = `uploads/${targetUserId}/${id}.${ext}`
 
   // Calculate download points based on metadata
   let downloadPoints = 2
@@ -207,7 +220,7 @@ export async function POST(req: Request) {
       if (meta.picture) downloadPoints++
     }
     const countRow = await env.DB.prepare('SELECT COUNT(*) as c FROM uploads WHERE user_id = ?1')
-      .bind(session.user.id)
+      .bind(targetUserId)
       .first<{ c: number }>()
     userUploadCount = countRow?.c ?? 0
     if (userUploadCount === 0) downloadPoints++
@@ -256,7 +269,7 @@ export async function POST(req: Request) {
 
     const exists = await env.DB.prepare(
       'SELECT id FROM uploads WHERE user_id = ?1 AND title = ?2 AND type = ?3 LIMIT 1'
-    ).bind(session.user.id, finalTitle, type).first<string>()
+    ).bind(targetUserId, finalTitle, type).first<string>()
 
     if (exists) {
       return jsonResponse({ success: false, error: 'Duplicate upload' }, { status: 400 })
@@ -266,7 +279,7 @@ export async function POST(req: Request) {
       'INSERT INTO uploads (id, user_id, title, type, mime, url, r2_key, credit_value, download_points, album_id, moderation_status) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)'
     ).bind(
       id,
-      session.user.id,
+      targetUserId,
       finalTitle,
       type,
       mime,
@@ -292,33 +305,33 @@ export async function POST(req: Request) {
 
     await env.DB.prepare(
       'UPDATE user SET usedStorageMb = COALESCE(usedStorageMb,0) + ?1 WHERE id = ?2'
-    ).bind(fileSizeMb, session.user.id).run()
-    await updateAllSessionsOfUser(session.user.id)
+    ).bind(fileSizeMb, targetUserId).run()
+    await updateAllSessionsOfUser(targetUserId)
 
-    await updateUserCredits(session.user.id, creditValue)
+    await updateUserCredits(targetUserId, creditValue)
     await logTransaction({
-      userId: session.user.id,
+      userId: targetUserId,
       amount: creditValue,
       description: `Upload reward (${type})`,
       type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
     })
 
     const creditsRow = await env.DB.prepare('SELECT currentCredits FROM user WHERE id = ?1')
-      .bind(session.user.id)
+      .bind(targetUserId)
       .first<{ currentCredits: number }>()
 
-    await WebhookService.dispatch(session.user.id, 'upload_created', { upload_id: id })
+    await WebhookService.dispatch(targetUserId, 'upload_created', { upload_id: id })
 
     const followerRows = await env.DB.prepare(
       'SELECT follower_id FROM user_follows WHERE followee_id = ?1'
-    ).bind(session.user.id).all<{ follower_id: string }>()
+    ).bind(targetUserId).all<{ follower_id: string }>()
     for (const row of followerRows.results || []) {
       await env.DB.prepare(
         'INSERT INTO notifications (id, user_id, message) VALUES (?1, ?2, ?3)'
       ).bind(
         `not_${createId()}`,
         row.follower_id,
-        `${session.user.nickname || session.user.email} uploaded a new file`
+        `${freshUser.nickname || freshUser.email} uploaded a new file`
       ).run()
     }
 
@@ -340,7 +353,7 @@ export async function POST(req: Request) {
       const sendAfter = new Date(Date.now() + 60 * 60 * 1000)
       await env.DB.prepare(
         'INSERT INTO first_post_email (id, user_id, post_id, send_after) VALUES (?1, ?2, ?3, ?4)'
-      ).bind(`fpe_${createId()}`, session.user.id, id, sendAfter.toISOString()).run()
+      ).bind(`fpe_${createId()}`, targetUserId, id, sendAfter.toISOString()).run()
     }
 
     return jsonResponse({
