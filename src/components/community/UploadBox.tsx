@@ -70,10 +70,21 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
       return;
     }
     const controller = new AbortController();
-    fetch(`/api/admin/user-search?q=${encodeURIComponent(asUser)}`, { signal: controller.signal })
-      .then(async (res) => res.ok ? (await res.json()) : { items: [] as { id: string; name: string }[] })
-      .then((data: { items: { id: string; name: string }[] }) => setUserOptions(data.items || []))
-      .catch(() => {});
+    const loadUsers = async () => {
+      try {
+        const res = await fetch(
+          `/api/admin/user-search?q=${encodeURIComponent(asUser)}`,
+          { signal: controller.signal },
+        );
+        const data: { items: { id: string; name: string }[] } = res.ok
+          ? await res.json()
+          : { items: [] };
+        setUserOptions(data.items || []);
+      } catch {
+        // ignore
+      }
+    };
+    loadUsers();
     return () => controller.abort();
   }, [asUser, isAdmin]);
 
