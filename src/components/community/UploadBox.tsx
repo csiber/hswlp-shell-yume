@@ -71,8 +71,8 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
     }
     const controller = new AbortController();
     fetch(`/api/admin/user-search?q=${encodeURIComponent(asUser)}`, { signal: controller.signal })
-      .then((res) => res.ok ? res.json() : { items: [] })
-      .then((data) => setUserOptions(data.items || []))
+      .then(async (res) => res.ok ? (await res.json()) : { items: [] as { id: string; name: string }[] })
+      .then((data: { items: { id: string; name: string }[] }) => setUserOptions(data.items || []))
       .catch(() => {});
     return () => controller.abort();
   }, [asUser, isAdmin]);

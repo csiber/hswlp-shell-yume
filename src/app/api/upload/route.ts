@@ -103,7 +103,6 @@ export async function POST(req: Request) {
   }
 
   const file = formData.get('file')
-  const file = formData.get('file')
   const titleField = formData.get('title')
   const title = typeof titleField === 'string' ? titleField : ''
   const type = formData.get('type')
