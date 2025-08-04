@@ -45,7 +45,7 @@ export default function ExplorePostCard({ item, isGuest = false, images, index, 
 
   return (
     <ImageLightbox src={item.url} alt={item.title || ''} images={gallery} index={index}>
-      <div className="block border rounded-xl overflow-hidden shadow transition-transform hover:scale-105 hover:shadow-lg">
+      <div className="block border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden shadow-sm dark:shadow-none transition-transform hover:scale-105 hover:shadow-lg">
         <div className="relative aspect-[2/3]">
           <NsfwImage
             src={item.url}
@@ -57,7 +57,7 @@ export default function ExplorePostCard({ item, isGuest = false, images, index, 
             <TooltipProvider delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className="absolute top-2 left-2 bg-black/60 text-white text-xs px-1.5 py-0.5 rounded">Y</span>
+                  <span className="absolute top-2 left-2 bg-white/60 text-gray-900 dark:bg-black/60 dark:text-white text-xs px-1.5 py-0.5 rounded">Y</span>
                 </TooltipTrigger>
                 <TooltipContent>Yumekai pick</TooltipContent>
               </Tooltip>
@@ -68,9 +68,9 @@ export default function ExplorePostCard({ item, isGuest = false, images, index, 
               <Button
                 size="icon"
                 variant="secondary"
-                className="absolute bottom-2 right-2 z-10 bg-black/60 text-white hover:bg-black/70"
+                className="absolute bottom-2 right-2 z-10 bg-white/60 text-gray-600 hover:bg-white/70 dark:bg-black/60 dark:text-gray-300 dark:hover:bg-black/70"
               >
-                <Share2 className="w-4 h-4" />
+                <Share2 className="w-4 h-4 text-gray-600 dark:text-gray-300" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="p-2">

@@ -73,7 +73,7 @@ export default function SidebarLeft({ user }: { user?: UserInfo }) {
             >
               <span className="text-lg">💬</span>
               <span>Chat</span>
-              <span className="ml-auto bg-orange-500 text-white text-[10px] px-2 py-0.5 rounded">
+              <span className="ml-auto bg-orange-500 text-gray-900 dark:text-white text-[10px] px-2 py-0.5 rounded">
                 23
               </span>
             </Link>
