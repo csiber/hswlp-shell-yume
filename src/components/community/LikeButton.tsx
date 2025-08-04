@@ -84,7 +84,7 @@ export default function LikeButton({ postId, isGuest = false }: Props) {
                 <HeartSolid className="h-4 w-4 text-red-500" />
               </motion.span>
             ) : (
-              <HeartOutline className="h-4 w-4" />
+              <HeartOutline className="h-4 w-4 text-gray-600 dark:text-gray-300" />
             )}
             <motion.span
               key={count}

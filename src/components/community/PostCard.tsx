@@ -161,7 +161,7 @@ export default function PostCard({
       exit={{ opacity: 0, y: -10 }}
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
-      className="relative flex flex-col w-full rounded-2xl border bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900 p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
+      className="relative flex flex-col w-full rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:shadow-none p-4 transition-shadow hover:shadow-lg hover:border-amber-400 dark:hover:border-amber-400"
     >
       {item.pinned && (
         <span className="absolute right-2 top-2 text-xs rounded bg-amber-200 dark:bg-amber-700 text-amber-900 dark:text-amber-100 px-2 py-0.5">
@@ -302,7 +302,7 @@ export default function PostCard({
                   {downloading ? (
                     <Spinner size="small" className="w-4 h-4" />
                   ) : (
-                    <Download className="w-4 h-4" />
+                    <Download className="w-4 h-4 text-gray-600 dark:text-gray-300" />
                   )}
                   {item.download_points ?? 2}
                 </button>
@@ -317,13 +317,13 @@ export default function PostCard({
             onClick={() => setCommentsOpen((v) => !v)}
             className="text-muted-foreground hover:text-foreground"
           >
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-4 h-4 text-gray-600 dark:text-gray-300" />
           </button>
         </div>
       </div>
       {commentsOpen && <CommentList postId={item.id} isGuest={guest} />}
       {guest && (
-        <div className="mt-4 rounded-md bg-amber-500 text-white text-center py-2">
+        <div className="mt-4 rounded-md bg-amber-500 text-gray-900 dark:text-white text-center py-2">
           🔓 Log in or register to unlock full features
         </div>
       )}

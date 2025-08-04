@@ -9,14 +9,23 @@
   inset: 0;
   background: linear-gradient(
     120deg,
-    rgba(255, 255, 255, 0.05),
-    rgba(255, 255, 255, 0.15),
-    rgba(255, 255, 255, 0.05)
+    rgba(0, 0, 0, 0.05),
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.05)
   );
   transform: translateX(-100%);
   animation: wave-glow 2s infinite linear;
   z-index: 1;
   pointer-events: none;
+}
+
+.dark .upload-wave-glow {
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.15),
+    rgba(255, 255, 255, 0.05)
+  );
 }
 
 @keyframes wave-glow {
@@ -37,12 +46,21 @@
   width: 200%;
   background: linear-gradient(
     120deg,
+    rgba(0, 0, 0, 0.1) 25%,
+    rgba(0, 0, 0, 0.2) 50%,
+    rgba(0, 0, 0, 0.1) 75%
+  );
+  animation: wave 2s linear infinite;
+  z-index: 1;
+}
+
+.dark .upload-wave {
+  background: linear-gradient(
+    120deg,
     rgba(255, 255, 255, 0.1) 25%,
     rgba(255, 255, 255, 0.2) 50%,
     rgba(255, 255, 255, 0.1) 75%
   );
-  animation: wave 2s linear infinite;
-  z-index: 1;
 }
 
 @keyframes wave {

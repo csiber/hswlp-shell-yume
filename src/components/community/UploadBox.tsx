@@ -425,10 +425,10 @@ export default function UploadBox({ onUpload }: { onUpload?: () => void }) {
             onClick={handleUpload}
             disabled={loading || percent >= 100 || !acceptedTerms}
             className={clsx(
-              "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
+              "upload-button relative inline-flex h-12 min-w-[160px] items-center justify-center overflow-hidden rounded-md px-8 text-base font-semibold text-gray-900 dark:text-white shadow transition-all duration-300 w-full mt-3 sm:w-auto sm:mt-0",
               loading
-                ? "bg-gray-600"
-                : "bg-gradient-to-r from-black via-gray-800 to-black hover:brightness-110",
+                ? "bg-gray-300 dark:bg-gray-600"
+                : "bg-gradient-to-r from-white via-gray-200 to-white hover:brightness-110 dark:from-black dark:via-gray-800 dark:to-black",
             )}
           >
             <span className="z-10">{loading ? "Uploading..." : "Upload"}</span>
