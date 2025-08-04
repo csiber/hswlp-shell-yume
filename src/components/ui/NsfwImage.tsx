@@ -18,7 +18,7 @@ export default function NsfwImage({ blurred = false, className, ...props }: Nsfw
       />
       {blurred && (
         <>
-          <div className="absolute inset-0 rounded-md bg-black/40 backdrop-blur-sm" />
+          <div className="absolute inset-0 rounded-md bg-white/40 dark:bg-black/40 backdrop-blur-sm" />
           <Badge variant="destructive" className="absolute top-2 left-2">
             NSFW
           </Badge>

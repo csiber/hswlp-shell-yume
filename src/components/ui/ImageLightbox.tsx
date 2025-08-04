@@ -102,7 +102,7 @@ export default function ImageLightbox({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
           hideClose
-          className="bg-black/90 border-none shadow-none p-0 flex items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full"
+          className="bg-white/90 dark:bg-black/90 border-none shadow-none p-0 flex items-center justify-center fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full"
         >
           <div
             className="relative w-full h-full flex items-center justify-center"
@@ -110,7 +110,7 @@ export default function ImageLightbox({
             onTouchEnd={onTouchEnd}
           >
             {visibleImages.length > 1 && (
-              <span className="absolute top-4 left-1/2 -translate-x-1/2 text-white text-sm">
+              <span className="absolute top-4 left-1/2 -translate-x-1/2 text-gray-900 dark:text-white text-sm">
                 {currentIndex + 1} / {visibleImages.length}
               </span>
             )}
@@ -118,9 +118,9 @@ export default function ImageLightbox({
               <button
                 onClick={showPrev}
                 disabled={currentIndex === 0}
-                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/60 text-white p-2 rounded-full disabled:opacity-30"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/60 text-gray-600 p-2 rounded-full disabled:opacity-30 dark:bg-black/60 dark:text-gray-300"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
             )}
             <motion.img
@@ -136,18 +136,18 @@ export default function ImageLightbox({
               <button
                 onClick={showNext}
                 disabled={currentIndex >= visibleImages.length - 1}
-                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/60 text-white p-2 rounded-full disabled:opacity-30"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/60 text-gray-600 p-2 rounded-full disabled:opacity-30 dark:bg-black/60 dark:text-gray-300"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-300" />
               </button>
             )}
             <DialogClose asChild>
-              <button className="absolute top-2 right-2 z-50 bg-black/60 text-white p-2 rounded-full">
-                <X className="w-4 h-4" />
+              <button className="absolute top-2 right-2 z-50 bg-white/60 text-gray-600 p-2 rounded-full dark:bg-black/60 dark:text-gray-300">
+                <X className="w-4 h-4 text-gray-600 dark:text-gray-300" />
               </button>
             </DialogClose>
             {(item.title || item.author) && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm text-center space-y-1">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-gray-900 dark:text-white text-sm text-center space-y-1">
                 {item.title && <div>{item.title}</div>}
                 {item.author && <div className="text-xs">{item.author}</div>}
               </div>
