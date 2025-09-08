@@ -1,42 +1,91 @@
-# Yume
+# Yume – Serverless Music & Image Sharing Platform
 
-Yume is a serverless music and image sharing platform built with Nuxt 3 and Cloudflare Workers. It uses Cloudflare Pages for hosting static assets and Workers for the API layer, so no separate backend server is required.
+**Yume** is a serverless platform for sharing music and images,  
+built with **Nuxt 3** and **Cloudflare Workers**.  
 
-This repository now reflects **version 1.0**, marking the platform as stable and feature complete.
+It leverages **Cloudflare Pages** for static hosting and **Workers** for the API layer,  
+so no separate backend server is required.  
 
-## Architecture
+This repository reflects **version 1.0**, marking the platform as **stable and feature-complete**.  
 
-- **Nuxt 3 + Tailwind + Pinia** frontend
-- **Cloudflare Workers** handle API routes
-- **D1 database** stores users and posts
-- **R2 object storage** keeps uploaded files
-- JWT based authentication stored locally
+---
 
-## Development
+## ✨ Features
 
-```bash
-pnpm install
-cp .env.example .env
-pnpm db:migrate:dev
-pnpm dev
-```
+- 🎵 **Music Sharing** – upload and stream audio files  
+- 🖼️ **Image Sharing** – post and preview images instantly  
+- 🔐 **Authentication** – JWT-based, stored locally  
+- 🗄️ **Database** – Cloudflare D1 for users and posts  
+- ☁️ **Storage** – Cloudflare R2 for file hosting  
+- ⚡ **Serverless Architecture** – no traditional backend required  
 
-Then open `http://localhost:3000`.
+---
 
-## Deployment
+## 🛠️ Architecture
 
-Build and deploy with Wrangler:
+- **Frontend:** Nuxt 3 + TailwindCSS + Pinia  
+- **API:** Cloudflare Workers  
+- **Database:** D1 (SQL)  
+- **Storage:** R2 object storage  
+- **Auth:** JWT tokens stored locally  
+
+---
+
+## 🚀 Development
+
+1. Install dependencies:
+
+   ```bash
+   pnpm install
+
+2. Configure environment variables:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Run database migrations & start dev server:
+
+   ```bash
+   pnpm db:migrate:dev
+   pnpm dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000)
+
+---
+
+## ☁️ Deployment
+
+Deploy with Wrangler:
 
 ```bash
 pnpm run deploy
 ```
 
-Environment secrets from `.env` must be uploaded with `wrangler secret put` before deploying.
+> ⚠️ Before deploying, make sure to upload all environment secrets with:
+> `wrangler secret put`
 
-## Usage Guide & Policy
+---
 
-See [docs/USAGE_GUIDE.md](docs/USAGE_GUIDE.md) for instructions on how to use the system and details about the content policy.
+## 📖 Documentation
 
-## License
+See [docs/USAGE\_GUIDE.md](docs/USAGE_GUIDE.md) for:
 
-This project is released under the MIT License.
+* How to use the platform
+* Content guidelines & policies
+
+---
+
+## 📜 License
+
+Released under the **MIT License**.
+
+---
+
+**Yume** demonstrates how a **Cloudflare-native, serverless application**
+can deliver a seamless user experience for creative sharing.
+
+```
+👉 Akarod, hogy csináljak egy rövidebb **1 bekezdéses project summary-t** is a GitHub description mezőbe (amit a repo tetején látni)?
+```
