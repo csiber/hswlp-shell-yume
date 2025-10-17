@@ -109,7 +109,7 @@ async function checkBadges(db: any) {
     `SELECT userId, SUM(-amount) as spent FROM credit_transaction WHERE amount < 0 GROUP BY userId HAVING SUM(-amount) >= 1000`
   ).all()
   for (const row of spendRows.results || []) {
-    await awardBadge(row.user_id, 'spender')
+    await awardBadge(row.userId, 'spender')
   }
 }
 
