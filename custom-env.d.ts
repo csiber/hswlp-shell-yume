@@ -15,4 +15,8 @@ interface CloudflareEnv {
   IMAGE_CAPTION_URL?: string;
   IMAGE_CAPTION_KEY?: string;
   AUTO_APPROVE_UPLOADS?: string;
+  ENABLE_ACTIVATION_CAMPAIGN?: string;
+  ENABLE_RETURNING_CAMPAIGN?: string;
+  ENABLE_LOW_CREDIT_CAMPAIGN?: string;
+  ENABLE_FIRST_POST_CAMPAIGN?: string;
 }

@@ -5,23 +5,22 @@ import {
   CREDIT_TRANSACTION_TYPE,
   creditWarningEmailTable,
   firstPostEmailTable,
-  emailLogTable,
 } from '@/db/schema'
 import { updateUserCredits, logTransaction } from '@/utils/credits'
 import { FREE_MONTHLY_CREDITS, BADGE_DEFINITIONS } from '@/constants'
 import { awardBadge } from '@/utils/badges'
 import { lt, isNull, or, eq, and } from 'drizzle-orm'
-import { sendEmail } from '@/utils/email'
 import { renderCreditsLowWarningEmail } from '@/utils/credits-low-warning-email'
 import { renderFirstPostEmail } from '@/utils/first-post-email'
-import { renderReengagementEmail } from '@/utils/reengagement-email'
+import { renderActivationEmail, renderReturningEmail } from '@/utils/campaign-templates'
+import { runCampaigns, type CampaignHandler, type CampaignMessage } from '@/utils/campaign-runner'
 
 import { createId } from '@paralleldrive/cuid2'
 
 // Scheduled worker that grants monthly credits to less active users
 
 export const onScheduled = async () => {
-  getCloudflareContext()
+  const { env } = await getCloudflareContext({ async: true })
   const db = await getDB()
 
   const now = new Date()
@@ -58,9 +57,16 @@ export const onScheduled = async () => {
   }
 
   await checkBadges(db)
-  await sendLowCreditWarnings(db)
-  await sendFirstPostEmails(db)
-  await sendReengagementEmails(db)
+
+  await runCampaigns(
+    { db, env, now },
+    [
+      createActivationCampaign(),
+      createReturningCampaign(),
+      createLowCreditCampaign(),
+      createFirstPostCampaign(),
+    ],
+  )
 }
 
 async function checkBadges(db: any) {
@@ -113,127 +119,221 @@ async function checkBadges(db: any) {
   }
 }
 
-async function sendLowCreditWarnings(db: any) {
-  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+function createLowCreditCampaign(): CampaignHandler {
+  return {
+    key: 'low_credit_warning',
+    name: 'Alacsony kredit figyelmeztetés',
+    triggerType: 'scheduled',
+    eligibility: '0 kredit, 3 napnál régebbi inaktivitás, igazolt e-mail',
+    throttleHours: 72,
+    envFlag: 'ENABLE_LOW_CREDIT_CAMPAIGN',
+    prepare: async ({ db, now }) => {
+      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000)
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-  const rows = await db.execute(
-    `SELECT u.id, u.email, u.nickname, l.sent_at FROM user u
-     LEFT JOIN credit_warning_email l ON l.user_id = u.id
-     WHERE u.currentCredits = 0
-       AND u.emailVerified IS NOT NULL
-       AND (u.last_login_at IS NULL OR u.last_login_at <= ?1)
-       AND (l.sent_at IS NULL OR l.sent_at <= ?2)`
-  ).bind(threeDaysAgo.toISOString(), weekAgo.toISOString()).all() as {
-    results?: {
-      id: string
-      email: string
-      nickname: string | null
-      sent_at?: string
-    }[]
-  }
+      const rows = await db.execute(
+        `SELECT u.id, u.email, u.nickname, l.sent_at FROM user u
+         LEFT JOIN credit_warning_email l ON l.user_id = u.id
+         WHERE u.currentCredits = 0
+           AND u.email IS NOT NULL
+           AND u.emailVerified IS NOT NULL
+           AND u.email_notifications_enabled = 1
+           AND (u.last_login_at IS NULL OR u.last_login_at <= ?1)
+           AND (l.sent_at IS NULL OR l.sent_at <= ?2)`
+      ).bind(threeDaysAgo.toISOString(), weekAgo.toISOString()).all() as {
+        results?: {
+          id: string
+          email: string | null
+          nickname: string | null
+        }[]
+      }
 
-  for (const row of rows.results || []) {
-    if (!row.email) continue
+      const messages: CampaignMessage[] = []
 
-    const { html, text } = renderCreditsLowWarningEmail({
-      userName: row.nickname || undefined
-    })
+      for (const row of rows.results || []) {
+        if (!row.email) continue
 
-    await sendEmail({
-      to: row.email,
-      subject: '🪙 You\'re out of points – don\'t miss out!',
-      html,
-      text
-    })
+        const { html, text } = renderCreditsLowWarningEmail({
+          userName: row.nickname || undefined,
+        })
 
-    await db.insert(creditWarningEmailTable).values({
-      id: `cwl_${createId()}`,
-      userId: row.id,
-      sentAt: new Date()
-    })
-  }
-}
+        messages.push({
+          userId: row.id,
+          email: row.email,
+          subject: '🪙 Elfogytak a pontjaid – ne maradj le!',
+          html,
+          text,
+          onSuccess: async () => {
+            await db.insert(creditWarningEmailTable).values({
+              id: `cwl_${createId()}`,
+              userId: row.id,
+              sentAt: new Date(),
+            })
+          },
+        })
+      }
 
-
-async function sendFirstPostEmails(db: any) {
-  const rows = await db
-    .select()
-    .from(firstPostEmailTable)
-    .leftJoin(userTable, eq(firstPostEmailTable.userId, userTable.id))
-    .where(and(isNull(firstPostEmailTable.sentAt), lt(firstPostEmailTable.sendAfter, new Date())))
-    .all() as {
-      first_post_email: { id: string; userId: string; postId: string };
-      user: { email: string | null; nickname: string | null; emailVerified: number | null };
-    }[];
-
-  for (const row of rows) {
-    const email = row.user.email;
-    if (!email || !row.user.emailVerified) continue;
-
-    const likesRow = await db
-      .execute('SELECT COUNT(*) as c FROM post_likes WHERE post_id = ?1')
-      .bind(row.first_post_email.postId)
-      .first() as { c: number } | undefined;
-
-    const likeCount = likesRow?.c ?? 0;
-    const postUrl = `https://yumekai.com/post/${row.first_post_email.postId}`;
-    const { html, text } = renderFirstPostEmail({ postUrl, likeCount });
-
-    await sendEmail({
-      to: email,
-      subject: '🎉 Your first Yumekai post is live!',
-      html,
-      text,
-    });
-
-      await db
-        .update(firstPostEmailTable)
-        .set({ sentAt: new Date() })
-        .where(eq(firstPostEmailTable.id, row.first_post_email.id));
-
+      return messages
+    },
   }
 }
 
-async function sendReengagementEmails(db: any) {
-  const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+function createFirstPostCampaign(): CampaignHandler {
+  return {
+    key: 'first_post_celebration',
+    name: 'Első poszt értesítés',
+    triggerType: 'scheduled',
+    eligibility: 'Első poszt beküldése után időzített emlékeztető',
+    throttleHours: 24,
+    envFlag: 'ENABLE_FIRST_POST_CAMPAIGN',
+    prepare: async ({ db }) => {
+      const rows = await db
+        .select()
+        .from(firstPostEmailTable)
+        .leftJoin(userTable, eq(firstPostEmailTable.userId, userTable.id))
+        .where(
+          and(
+            isNull(firstPostEmailTable.sentAt),
+            lt(firstPostEmailTable.sendAfter, new Date()),
+          ),
+        )
+        .all() as {
+          first_post_email: { id: string; userId: string; postId: string }
+          user: { email: string | null; nickname: string | null; emailVerified: number | null }
+        }[]
 
-  const rows = await db.execute(
-    `SELECT u.id, u.email, u.nickname, l.sent_at FROM user u
-     LEFT JOIN email_log l ON l.user_id = u.id AND l.type = 'reengagement'
-     WHERE u.email IS NOT NULL
-       AND u.emailVerified IS NOT NULL
-       AND u.email_notifications_enabled = 1
-       AND (u.last_login_at IS NULL OR u.last_login_at <= ?1)
-       AND (l.sent_at IS NULL OR l.sent_at <= ?2)`
-  ).bind(weekAgo.toISOString(), weekAgo.toISOString()).all() as {
-    results?: {
-      id: string
-      email: string
-      nickname: string | null
-      sent_at?: string
-    }[]
+      const messages: CampaignMessage[] = []
+
+      for (const row of rows) {
+        const email = row.user.email
+        if (!email || !row.user.emailVerified) continue
+
+        const likesRow = await db
+          .execute('SELECT COUNT(*) as c FROM post_likes WHERE post_id = ?1')
+          .bind(row.first_post_email.postId)
+          .first() as { c: number } | undefined
+
+        const likeCount = likesRow?.c ?? 0
+        const postUrl = `https://yumekai.com/post/${row.first_post_email.postId}`
+        const { html, text } = renderFirstPostEmail({ postUrl, likeCount })
+
+        messages.push({
+          userId: row.first_post_email.userId,
+          email,
+          subject: '🎉 Az első Yumekai posztod él!',
+          html,
+          text,
+          onSuccess: async () => {
+            await db
+              .update(firstPostEmailTable)
+              .set({ sentAt: new Date() })
+              .where(eq(firstPostEmailTable.id, row.first_post_email.id))
+          },
+        })
+      }
+
+      return messages
+    },
   }
+}
 
-  for (const row of rows.results || []) {
-    if (!row.email) continue
+function createReturningCampaign(): CampaignHandler {
+  return {
+    key: 'returning_highlights',
+    name: 'Visszatérő felhasználó kampány',
+    triggerType: 'scheduled',
+    eligibility: '7 napja nem jelentkezett be, e-mail értesítések engedélyezve',
+    throttleHours: 168,
+    envFlag: 'ENABLE_RETURNING_CAMPAIGN',
+    prepare: async ({ db, now }) => {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-    const { html, text } = renderReengagementEmail({
-      userName: row.nickname || undefined
-    })
+      const rows = await db.execute(
+        `SELECT u.id, u.email, u.nickname FROM user u
+         WHERE u.email IS NOT NULL
+           AND u.emailVerified IS NOT NULL
+           AND u.email_notifications_enabled = 1
+           AND (u.last_login_at IS NULL OR u.last_login_at <= ?1)`
+      ).bind(weekAgo.toISOString()).all() as {
+        results?: {
+          id: string
+          email: string | null
+          nickname: string | null
+        }[]
+      }
 
-    await sendEmail({
-      to: row.email,
-      subject: '👀 Long time no see – new NSFW images await!',
-      html,
-      text
-    })
+      return (rows.results || [])
+        .filter((row) => row.email)
+        .map((row) => {
+          const { html, text } = renderReturningEmail({
+            userName: row.nickname || undefined,
+            exploreUrl: 'https://yumekai.com/explore',
+            highlightUrl: 'https://yumekai.com/explore?tab=top',
+          })
 
-    await db.insert(emailLogTable).values({
-      id: `elog_${createId()}`,
-      userId: row.id,
-      type: 'reengagement',
-      sentAt: new Date()
-    })
+          return {
+            userId: row.id,
+            email: row.email!,
+            subject: '👀 Új inspirációk várnak a Yumekain',
+            html,
+            text,
+          }
+        })
+    },
+  }
+}
+
+function createActivationCampaign(): CampaignHandler {
+  return {
+    key: 'activation_welcome',
+    name: 'Aktiváló kampány',
+    triggerType: 'scheduled',
+    eligibility: 'Friss regisztráció, nincs feltöltés és belépés',
+    throttleHours: 48,
+    envFlag: 'ENABLE_ACTIVATION_CAMPAIGN',
+    prepare: async ({ db, now }) => {
+      const onboardingWindowEnd = new Date(now.getTime() - 6 * 60 * 60 * 1000)
+      const onboardingWindowStart = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
+
+      const rows = await db.execute(
+        `SELECT u.id, u.email, u.nickname
+         FROM user u
+         LEFT JOIN uploads up ON up.user_id = u.id
+         WHERE u.email IS NOT NULL
+           AND u.emailVerified IS NOT NULL
+           AND u.email_notifications_enabled = 1
+           AND u.createdAt >= ?1
+           AND u.createdAt <= ?2
+           AND (u.last_login_at IS NULL OR u.last_login_at <= ?2)
+         GROUP BY u.id
+         HAVING COUNT(up.id) = 0`
+      )
+        .bind(onboardingWindowStart.toISOString(), onboardingWindowEnd.toISOString())
+        .all() as {
+          results?: {
+            id: string
+            email: string | null
+            nickname: string | null
+          }[]
+        }
+
+      return (rows.results || [])
+        .filter((row) => row.email)
+        .map((row) => {
+          const { html, text } = renderActivationEmail({
+            userName: row.nickname || undefined,
+            gettingStartedUrl: 'https://yumekai.com/dashboard',
+            communityUrl: 'https://yumekai.com/community-guidelines',
+          })
+
+          return {
+            userId: row.id,
+            email: row.email!,
+            subject: '🚀 Indítsd el a Yumekai profilodat',
+            html,
+            text,
+          }
+        })
+    },
   }
 }
