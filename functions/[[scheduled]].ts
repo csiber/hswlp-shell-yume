@@ -128,8 +128,9 @@ function createLowCreditCampaign(): CampaignHandler {
     throttleHours: 72,
     envFlag: 'ENABLE_LOW_CREDIT_CAMPAIGN',
     prepare: async ({ db, now }) => {
-      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000)
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      const referenceNow = now ?? new Date()
+      const threeDaysAgo = new Date(referenceNow.getTime() - 3 * 24 * 60 * 60 * 1000)
+      const weekAgo = new Date(referenceNow.getTime() - 7 * 24 * 60 * 60 * 1000)
 
       const rows = await db.execute(
         `SELECT u.id, u.email, u.nickname, l.sent_at FROM user u
@@ -246,7 +247,8 @@ function createReturningCampaign(): CampaignHandler {
     throttleHours: 168,
     envFlag: 'ENABLE_RETURNING_CAMPAIGN',
     prepare: async ({ db, now }) => {
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      const referenceNow = now ?? new Date()
+      const weekAgo = new Date(referenceNow.getTime() - 7 * 24 * 60 * 60 * 1000)
 
       const rows = await db.execute(
         `SELECT u.id, u.email, u.nickname FROM user u
@@ -292,8 +294,11 @@ function createActivationCampaign(): CampaignHandler {
     throttleHours: 48,
     envFlag: 'ENABLE_ACTIVATION_CAMPAIGN',
     prepare: async ({ db, now }) => {
-      const onboardingWindowEnd = new Date(now.getTime() - 6 * 60 * 60 * 1000)
-      const onboardingWindowStart = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000)
+      const referenceNow = now ?? new Date()
+      const onboardingWindowEnd = new Date(referenceNow.getTime() - 6 * 60 * 60 * 1000)
+      const onboardingWindowStart = new Date(
+        referenceNow.getTime() - 14 * 24 * 60 * 60 * 1000,
+      )
 
       const rows = await db.execute(
         `SELECT u.id, u.email, u.nickname
