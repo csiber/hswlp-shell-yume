@@ -10,6 +10,7 @@ interface ApiResponse {
     avatar?: string | null
     credits: number
     profileFrameEnabled: boolean
+    points: number
   }
   uploads: {
     id: string
@@ -26,6 +27,26 @@ interface ApiResponse {
     icon: string
     awarded_at: string
   }[]
+  stats: {
+    monthlyUploads: { month: string; count: number }[]
+    engagement: { totalLikes: number; totalReactions: number }
+    points: {
+      total: number
+      level: number
+      currentLevelThreshold: number
+      nextLevelThreshold: number | null
+      progress: number
+      history: { date: string; points: number }[]
+    }
+  }
+  badgeOverview: {
+    upcoming: {
+      key: string
+      name: string
+      description: string
+      icon: string
+    }[]
+  }
 }
 
 interface ProfilePageProps {
@@ -51,6 +72,8 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       user={data.user}
       uploads={data.uploads}
       badges={data.badges}
+      stats={data.stats}
+      badgeOverview={data.badgeOverview}
       currentUserId={session?.user?.id}
     />
   )
