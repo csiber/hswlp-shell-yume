@@ -16,6 +16,7 @@ import {
   UploadCloud,
   Star,
   Sparkles,
+  BarChart3,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -137,6 +138,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Kiemelések",
       url: "/dashboard/highlights" as Route,
       icon: Sparkles,
+    })
+    navMain.splice(4, 0, {
+      title: "Teljesítmény",
+      url: "/dashboard/metrics" as Route,
+      icon: BarChart3,
     })
   }
 
