@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text, index, real } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, index, real, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { relations, sql } from "drizzle-orm";
 import { type InferSelectModel } from "drizzle-orm";
 
@@ -334,6 +334,10 @@ export const requestsTable = sqliteTable('requests', {
   type: text().notNull(),
   style: text().notNull(),
   offeredCredits: integer('offered_credits').notNull(),
+  requestCategory: text('request_category').default('standard').notNull(),
+  votingMode: text('voting_mode').default('jury').notNull(),
+  deadline: integer({ mode: 'timestamp' }),
+  extraRewardCredits: integer('extra_reward_credits'),
   status: text().default('open').notNull(),
   isFlagged: integer('is_flagged').default(0).notNull(),
   createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
@@ -341,6 +345,7 @@ export const requestsTable = sqliteTable('requests', {
   index('requests_user_idx').on(table.userId),
   index('requests_accepted_user_idx').on(table.acceptedUserId),
   index('requests_status_idx').on(table.status),
+  index('requests_category_idx').on(table.requestCategory),
 ]);
 
 export const requestSubmissionTable = sqliteTable('request_submissions', {
@@ -353,6 +358,20 @@ export const requestSubmissionTable = sqliteTable('request_submissions', {
 }, (table) => [
   index('request_submissions_request_idx').on(table.requestId),
   index('request_submissions_user_idx').on(table.userId),
+]);
+
+export const requestVotesTable = sqliteTable('request_votes', {
+  id: text().primaryKey().$defaultFn(() => `rv_${createId()}`).notNull(),
+  requestId: text('request_id').notNull().references(() => requestsTable.id),
+  submissionId: text('submission_id').notNull().references(() => requestSubmissionTable.id),
+  voterUserId: text('voter_user_id').notNull().references(() => userTable.id),
+  score: integer().default(1).notNull(),
+  createdAt: integer({ mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+}, (table) => [
+  index('request_votes_request_idx').on(table.requestId),
+  index('request_votes_submission_idx').on(table.submissionId),
+  index('request_votes_voter_idx').on(table.voterUserId),
+  uniqueIndex('request_votes_unique').on(table.requestId, table.voterUserId),
 ]);
 
 export const requestFlaggedAttemptTable = sqliteTable('request_flagged_attempts', {

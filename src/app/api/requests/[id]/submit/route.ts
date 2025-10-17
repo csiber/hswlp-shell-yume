@@ -12,12 +12,22 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   if (!file_url) return jsonResponse({ success:false, error:'file_url required' }, { status:400 })
   const { id } = await params
   const { env } = getCloudflareContext()
-  const requestRow = await env.DB.prepare('SELECT status, accepted_user_id FROM requests WHERE id = ?1')
-    .bind(id).first<{ status: string; accepted_user_id: string | null }>()
+  const requestRow = await env.DB.prepare('SELECT status, accepted_user_id, request_category, deadline FROM requests WHERE id = ?1')
+    .bind(id).first<{ status: string; accepted_user_id: string | null; request_category: string; deadline: string | null }>()
   if (!requestRow || requestRow.status === 'fulfilled') {
     return jsonResponse({ success:false, error:'Request closed' }, { status:400 })
   }
-  if (requestRow.status === 'accepted' && requestRow.accepted_user_id !== session.user.id) {
+  if (requestRow.request_category === 'challenge' && requestRow.status === 'voting') {
+    return jsonResponse({ success:false, error:'A szavazás megkezdődött, új nevezés nem adható le.' }, { status:400 })
+  }
+  if (requestRow.request_category === 'challenge') {
+    if (requestRow.deadline) {
+      const deadline = new Date(requestRow.deadline)
+      if (!Number.isNaN(deadline.getTime()) && deadline.getTime() < Date.now()) {
+        return jsonResponse({ success:false, error:'A nevezési határidő lejárt.' }, { status:400 })
+      }
+    }
+  } else if (requestRow.status === 'accepted' && requestRow.accepted_user_id !== session.user.id) {
     return jsonResponse({ success:false, error:'Not your request' }, { status:403 })
   }
   await env.DB.prepare(
