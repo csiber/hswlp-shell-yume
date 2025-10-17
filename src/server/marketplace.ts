@@ -1,6 +1,6 @@
 import "server-only";
 import { getDB } from "@/db";
-import { highlightedPostsTable, marketplaceActivationsTable, userTable } from "@/db/schema";
+import { highlightCollectionsTable, highlightedPostsTable, marketplaceActivationsTable, userTable } from "@/db/schema";
 import { createId } from "@paralleldrive/cuid2";
 import { eq, and, sql } from "drizzle-orm";
 import { consumeCredits } from "@/utils/credits";
@@ -20,16 +20,54 @@ export async function updateUserField(
   await updateAllSessionsOfUser(userId);
 }
 
+const DEFAULT_HIGHLIGHT_COLLECTION_ID = "hlc_marketplace_default";
+const DEFAULT_HIGHLIGHT_COLLECTION_SLUG = "marketplace-featured";
+
+async function ensureDefaultHighlightCollection() {
+  const db = await getDB();
+
+  const existing = await db.query.highlightCollectionsTable.findFirst({
+    where: eq(highlightCollectionsTable.slug, DEFAULT_HIGHLIGHT_COLLECTION_SLUG),
+  });
+
+  if (existing) {
+    return existing;
+  }
+
+  const now = new Date();
+  const fallback = {
+    id: DEFAULT_HIGHLIGHT_COLLECTION_ID,
+    slug: DEFAULT_HIGHLIGHT_COLLECTION_SLUG,
+    title: "Marketplace kiemelések",
+    description: "Automatikus marketplace kiemelések gyűjtése.",
+    isActive: 1 as const,
+    isDefault: 1 as const,
+    displayOrder: 0,
+    activeFrom: now,
+    activeTo: null,
+  };
+
+  await db.insert(highlightCollectionsTable).values(fallback);
+
+  return fallback;
+}
+
 export async function activateHighlightPost(userId: string, postId: string) {
   const db = await getDB();
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
-await db.insert(highlightedPostsTable).values({
-  id: `hlp_${createId()}`,
-  post_id: postId,
-  user_id: userId,
-  expires_at: expires,
-});
+  const collection = await ensureDefaultHighlightCollection();
+  const now = new Date();
+  const expires = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
+  await db.insert(highlightedPostsTable).values({
+    id: `hlp_${createId()}`,
+    postId,
+    userId,
+    collectionId: collection.id,
+    expiresAt: expires,
+    displayFrom: now,
+    displayTo: expires,
+    description: "Marketplace aktiválásból származó kiemelés",
+  });
 }
 
 export async function applyDailySurpriseReward(userId: string): Promise<string> {

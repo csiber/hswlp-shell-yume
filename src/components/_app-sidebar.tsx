@@ -15,6 +15,7 @@ import {
   Users,
   UploadCloud,
   Star,
+  Sparkles,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -30,6 +31,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useSessionStore } from "@/state/session"
 import { translateRole } from "@/utils/translate-role"
+import { ROLES_ENUM } from "@/db/schema"
 
 export type NavItem = {
   title: string
@@ -77,6 +79,67 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   }, [session]);
 
+  const navMain: Data['navMain'] = [
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: SquareTerminal,
+      isActive: true,
+    },
+    {
+      title: "Upload",
+      url: "/upload",
+      icon: UploadCloud,
+    },
+    {
+      title: "Teams",
+      url: "/dashboard/teams" as Route,
+      icon: Users,
+    },
+    {
+      title: "Top Users",
+      url: "/dashboard/top-users" as Route,
+      icon: Star,
+    },
+    {
+      title: "Marketplace",
+      url: "/dashboard/marketplace",
+      icon: ShoppingCart,
+    },
+    {
+      title: "Billing",
+      url: "/dashboard/billing",
+      icon: CreditCard,
+    },
+    {
+      title: "Settings",
+      url: "/settings",
+      icon: Settings2,
+      items: [
+        {
+          title: "Profile",
+          url: "/settings",
+        },
+        {
+          title: "Sessions",
+          url: "/settings/sessions",
+        },
+        {
+          title: "Change password",
+          url: "/forgot-password",
+        },
+      ],
+    },
+  ]
+
+  if (session?.user?.role === ROLES_ENUM.ADMIN) {
+    navMain.splice(3, 0, {
+      title: "Kiemelések",
+      url: "/dashboard/highlights" as Route,
+      icon: Sparkles,
+    })
+  }
+
   const data: Data = {
     user: {
       name:
@@ -86,58 +149,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       email: session?.user?.email || "user@example.com",
     },
     teams: formattedTeams,
-    navMain: [
-      {
-        title: "Dashboard",
-        url: "/dashboard",
-        icon: SquareTerminal,
-        isActive: true,
-      },
-      {
-        title: "Upload",
-        url: "/upload",
-        icon: UploadCloud,
-      },
-      {
-        title: "Teams",
-        url: "/dashboard/teams" as Route,
-        icon: Users,
-      },
-      {
-        title: "Top Users",
-        url: "/dashboard/top-users" as Route,
-        icon: Star,
-      },
-      {
-        title: "Marketplace",
-        url: "/dashboard/marketplace",
-        icon: ShoppingCart,
-      },
-      {
-        title: "Billing",
-        url: "/dashboard/billing",
-        icon: CreditCard,
-      },
-      {
-        title: "Settings",
-        url: "/settings",
-        icon: Settings2,
-        items: [
-          {
-            title: "Profile",
-            url: "/settings",
-          },
-          {
-            title: "Sessions",
-            url: "/settings/sessions",
-          },
-          {
-            title: "Change password",
-            url: "/forgot-password",
-          },
-        ],
-      },
-    ],
+    navMain,
     projects: [
       {
         title: "Design Engineering",
