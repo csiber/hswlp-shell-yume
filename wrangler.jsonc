@@ -7,6 +7,9 @@
   "account_id": "4e3646aaf967d8895e6596df2d62c3bf",
   "name": "hswlp-shell-yumekai",
   "main": ".open-next/worker.js",
+  "build": {
+    "command": "pnpm run opennext:build"
+  },
   "compatibility_date": "2025-03-01",
   "compatibility_flags": [
     "nodejs_compat",
