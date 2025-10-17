@@ -326,6 +326,32 @@ export const emailLogTable = sqliteTable('email_log', {
 
 ]);
 
+export const emailCampaignTable = sqliteTable('email_campaigns', {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `ecmp_${createId()}`).notNull(),
+  campaignKey: text('campaign_key', { length: 100 }).notNull().unique(),
+  name: text({ length: 255 }).notNull(),
+  triggerType: text('trigger_type', { length: 50 }).notNull(),
+  eligibilityCriteria: text('eligibility_criteria', { length: 500 }).notNull(),
+  throttleHours: integer('throttle_hours').default(0).notNull(),
+}, (table) => [
+  index('email_campaign_key_idx').on(table.campaignKey),
+]);
+
+export const emailCampaignRunTable = sqliteTable('email_campaign_runs', {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `erun_${createId()}`).notNull(),
+  campaignId: text('campaign_id').notNull().references(() => emailCampaignTable.id),
+  userId: text('user_id').notNull().references(() => userTable.id),
+  runAt: integer('run_at', { mode: 'timestamp' }).$defaultFn(() => new Date()).notNull(),
+  status: text({ length: 20 }).default('sent').notNull(),
+  error: text(),
+}, (table) => [
+  index('email_campaign_runs_campaign_idx').on(table.campaignId),
+  index('email_campaign_runs_user_idx').on(table.userId),
+  index('email_campaign_runs_run_at_idx').on(table.runAt),
+]);
+
 export const requestsTable = sqliteTable('requests', {
   id: text().primaryKey().$defaultFn(() => `req_${createId()}`).notNull(),
   userId: text('user_id').notNull().references(() => userTable.id),

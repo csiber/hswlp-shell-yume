@@ -11,6 +11,10 @@ declare namespace Cloudflare {
                 EMAIL_REPLY_TO: "support@hswlp.hu";
                 IMAGE_CAPTION_URL?: string;
                 IMAGE_CAPTION_KEY?: string;
+                ENABLE_ACTIVATION_CAMPAIGN?: string;
+                ENABLE_RETURNING_CAMPAIGN?: string;
+                ENABLE_LOW_CREDIT_CAMPAIGN?: string;
+                ENABLE_FIRST_POST_CAMPAIGN?: string;
                 yumekai_r2: R2Bucket;
 		DB: D1Database;
 		NEXT_TAG_CACHE_D1: D1Database;
