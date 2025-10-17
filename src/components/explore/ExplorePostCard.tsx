@@ -24,6 +24,12 @@ export interface ExploreItem {
   author: string
   is_nsfw: boolean
   y?: boolean
+  highlight?: {
+    id: string | number | null
+    description: string | null
+    displayFrom: string | null
+    displayTo: string | null
+  }
 }
 
 interface Props {
@@ -81,6 +87,9 @@ export default function ExplorePostCard({ item, isGuest = false, images, index, 
         <div className="p-2 space-y-1">
           {item.title && <h3 className="text-sm font-semibold truncate">{item.title}</h3>}
           <p className="text-xs text-muted-foreground">{item.author}</p>
+          {item.highlight?.description && (
+            <p className="text-xs text-muted-foreground line-clamp-2">{item.highlight.description}</p>
+          )}
         </div>
       </div>
     </ImageLightbox>

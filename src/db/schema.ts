@@ -226,12 +226,35 @@ export const referralEventsTable = sqliteTable("referral_events", {
   index('referral_events_referrer_idx').on(table.referrerId),
   index('referral_events_referred_idx').on(table.referredUserId),
 ]);
+export const highlightCollectionsTable = sqliteTable("highlight_collections", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `hlc_${createId()}`).notNull(),
+  slug: text().notNull().unique(),
+  title: text().notNull(),
+  description: text(),
+  activeFrom: integer('active_from', { mode: 'timestamp' }),
+  activeTo: integer('active_to', { mode: 'timestamp' }),
+  isActive: integer('is_active').default(1).notNull(),
+  isDefault: integer('is_default').default(0).notNull(),
+  displayOrder: integer('display_order').default(0).notNull(),
+}, (table) => [
+  index('highlight_collections_active_idx').on(table.isActive, table.activeFrom, table.activeTo),
+  index('highlight_collections_display_idx').on(table.displayOrder),
+]);
+
 export const highlightedPostsTable = sqliteTable("highlighted_posts", {
   id: text().primaryKey().$defaultFn(() => `hlp_${createId()}`).notNull(),
-  post_id: text().notNull().references(() => postsTable.id),
-  user_id: text().notNull().references(() => userTable.id),
-  expires_at: integer({ mode: "timestamp" }).notNull(),
-});
+  postId: text('post_id').notNull().references(() => postsTable.id),
+  userId: text('user_id').notNull().references(() => userTable.id),
+  collectionId: text('collection_id').notNull().references(() => highlightCollectionsTable.id, { onDelete: 'cascade' }),
+  expiresAt: integer('expires_at', { mode: "timestamp" }).notNull(),
+  displayFrom: integer('display_from', { mode: 'timestamp' }),
+  displayTo: integer('display_to', { mode: 'timestamp' }),
+  description: text(),
+}, (table) => [
+  index('highlighted_posts_collection_idx').on(table.collectionId),
+  index('highlighted_posts_display_idx').on(table.displayFrom, table.displayTo),
+]);
 
 
 export const marketplaceActivationsTable = sqliteTable("marketplace_activations", {
@@ -531,6 +554,7 @@ export type TeamRole = InferSelectModel<typeof teamRoleTable>;
 export type TeamInvitation = InferSelectModel<typeof teamInvitationTable>;
 export type UploadReward = InferSelectModel<typeof uploadRewardTable>;
 export type Post = InferSelectModel<typeof postsTable>;
+export type HighlightCollection = InferSelectModel<typeof highlightCollectionsTable>;
 export type HighlightedPost = InferSelectModel<typeof highlightedPostsTable>;
 export type MarketplaceActivation = InferSelectModel<typeof marketplaceActivationsTable>;
 export type SlowRequestLog = InferSelectModel<typeof slowRequestLogTable>;
