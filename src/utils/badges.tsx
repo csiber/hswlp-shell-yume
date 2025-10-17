@@ -5,6 +5,7 @@ import { eq, and } from 'drizzle-orm'
 import { BADGE_DEFINITIONS, BadgeKey } from '@/constants'
 import { sendEmail } from './email'
 import { renderNewBadgeEmail } from './new-badge-email'
+import { canSendBadgeEmailNotification } from './badge-notifications'
 
 export async function awardBadge(userId: string, badge: BadgeKey) {
   const db = await getDB()
@@ -22,10 +23,10 @@ export async function awardBadge(userId: string, badge: BadgeKey) {
 
   const user = await db.query.userTable.findFirst({
     where: eq(userTable.id, userId),
-    columns: { email: true, emailVerified: true, notificationsEnabled: true }
+    columns: { email: true, emailVerified: true, emailNotificationsEnabled: true }
   })
 
-  if (user?.email && user.emailVerified && user.notificationsEnabled) {
+  if (canSendBadgeEmailNotification(user)) {
     const { html, text } = renderNewBadgeEmail({
       badgeName: BADGE_DEFINITIONS[badge].name,
       badgeDescription: BADGE_DEFINITIONS[badge].description,
