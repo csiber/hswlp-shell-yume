@@ -67,14 +67,14 @@ async function checkBadges(db: any) {
   // Hot Dropper - 3 trending posts in the last week (>=5 likes)
   const hotRows = await db.execute(
     `SELECT user_id FROM (
-       SELECT u.user_id, COUNT(*) AS cnt
+       SELECT u.user_id
          FROM uploads u
          JOIN favorites f ON u.id = f.upload_id AND f.created_at >= datetime('now','-7 day')
         WHERE u.created_at >= datetime('now','-7 day')
           AND u.visibility = 'public' AND u.approved = 1
         GROUP BY u.id
         HAVING COUNT(f.id) >= 5
-     ) t GROUP BY user_id HAVING cnt >= 3`
+     ) t GROUP BY user_id HAVING COUNT(*) >= 3`
   ).all()
   for (const row of hotRows.results || []) {
     await awardBadge(row.user_id, 'hot_dropper')
