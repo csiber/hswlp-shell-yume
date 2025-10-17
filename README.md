@@ -85,7 +85,3 @@ Released under the **MIT License**.
 
 **Yume** demonstrates how a **Cloudflare-native, serverless application**
 can deliver a seamless user experience for creative sharing.
-
-```
-👉 Akarod, hogy csináljak egy rövidebb **1 bekezdéses project summary-t** is a GitHub description mezőbe (amit a repo tetején látni)?
-```
