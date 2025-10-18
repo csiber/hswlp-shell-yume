@@ -1,5 +1,3 @@
-import type { R2Bucket } from '@cloudflare/workers-types'
-
 // Define the minimum surface needed from an R2 bucket to create signed URLs.
 // Using a structural type avoids version mismatches between the generated
 // Cloudflare types and the `@cloudflare/workers-types` package.
@@ -17,19 +15,21 @@ export interface SignedUrlOptions {
 }
 
 export async function getSignedUrl(
-  bucket: R2Bucket | BucketWithSignedUrl,
+  bucket: unknown,
   key: string,
   options: SignedUrlOptions = {},
 ): Promise<string> {
   const expiresIn = options.expiresIn ?? 3600 // default 1 hour
 
   // createSignedUrl only exists in the actual Cloudflare Workers runtime
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const createSignedUrl = (bucket as any).createSignedUrl as BucketWithSignedUrl['createSignedUrl']
+  const maybeBucket = (typeof bucket === 'object' && bucket !== null
+    ? (bucket as BucketWithSignedUrl)
+    : undefined)
+  const createSignedUrl = maybeBucket?.createSignedUrl
 
   if (typeof createSignedUrl === 'function') {
     // TypeScript may not recognize this method in older type definitions
-    const url = await createSignedUrl.call(bucket, {
+    const url = await createSignedUrl.call(maybeBucket ?? undefined, {
       method: 'GET',
       key,
       expiresIn,
