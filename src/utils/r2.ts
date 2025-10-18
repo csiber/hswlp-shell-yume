@@ -1,3 +1,5 @@
+import type { R2Bucket } from '@cloudflare/workers-types'
+
 // Generate signed URL for an R2 bucket
 export interface SignedUrlOptions {
   expiresIn?: number
