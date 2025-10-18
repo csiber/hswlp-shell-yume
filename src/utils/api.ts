@@ -4,7 +4,7 @@ export interface JsonResponseOptions {
 }
 
 export function jsonResponse(
-  data: Record<string, unknown>,
+  data: unknown,
   options: JsonResponseOptions = {}
 ) {
   const { status = 200, headers = {} } = options
