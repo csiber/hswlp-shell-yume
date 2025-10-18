@@ -2,6 +2,11 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
 import { NextRequest } from 'next/server'
+import type { R2Bucket } from '@cloudflare/workers-types'
+
+function isR2Bucket(value: unknown): value is R2Bucket {
+  return typeof value === 'object' && value !== null && 'createSignedUrl' in value
+}
 
 type RawRow = Record<string, string | number | null>
 
@@ -52,8 +57,7 @@ async function buildItem(
     if (base) {
       url = `${base}${r2Key}`
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    else if (typeof (env.yumekai_r2 as any)?.createSignedUrl === 'function') {
+    else if (isR2Bucket(env.yumekai_r2)) {
       url = await getSignedUrl(env.yumekai_r2, r2Key)
     }
   }
