@@ -16,6 +16,19 @@ import { renderFirstPostEmail } from '@/utils/first-post-email'
 import { renderActivationEmail, renderReturningEmail } from '@/utils/campaign-templates'
 import { runCampaigns, type CampaignHandler, type CampaignMessage } from '@/utils/campaign-runner'
 
+function requireD1Database(
+  db: D1Database | undefined,
+  context: string,
+): D1Database {
+  if (!db) {
+    throw new Error(
+      `A(z) ${context} futtatásához szükséges NEXT_TAG_CACHE_D1 D1-adatbázis nincs konfigurálva.`,
+    )
+  }
+
+  return db
+}
+
 import { createId } from '@paralleldrive/cuid2'
 
 // Scheduled worker that grants monthly credits to less active users
@@ -23,7 +36,7 @@ import { createId } from '@paralleldrive/cuid2'
 export const onScheduled = async () => {
   const { env } = await getCloudflareContext({ async: true })
   const db = await getDB()
-  const rawDb = env.NEXT_TAG_CACHE_D1
+  const rawDb = requireD1Database(env.NEXT_TAG_CACHE_D1, 'időzített feladat')
 
   const now = new Date()
   const monthAgo = new Date(now)
@@ -140,7 +153,7 @@ function createLowCreditCampaign(): CampaignHandler {
       const threeDaysAgo = new Date(referenceNow.getTime() - 3 * 24 * 60 * 60 * 1000)
       const weekAgo = new Date(referenceNow.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-      const rawDb = env.NEXT_TAG_CACHE_D1
+      const rawDb = requireD1Database(env.NEXT_TAG_CACHE_D1, 'alacsony kredit kampány')
       const result = await rawDb
         .prepare(`SELECT u.id, u.email, u.nickname, l.sent_at FROM user u
          LEFT JOIN credit_warning_email l ON l.user_id = u.id
@@ -219,7 +232,10 @@ function createFirstPostCampaign(): CampaignHandler {
         const email = row.user.email
         if (!email || !row.user.emailVerified) continue
 
-        const likesRow = await env.NEXT_TAG_CACHE_D1
+        const likesRow = await requireD1Database(
+          env.NEXT_TAG_CACHE_D1,
+          'első poszt kampány',
+        )
           .prepare('SELECT COUNT(*) as c FROM post_likes WHERE post_id = ?1')
           .bind(row.first_post_email.postId)
           .first<{ c: number }>()
@@ -260,7 +276,10 @@ function createReturningCampaign(): CampaignHandler {
       const referenceNow = now ?? new Date()
       const weekAgo = new Date(referenceNow.getTime() - 7 * 24 * 60 * 60 * 1000)
 
-      const result = await env.NEXT_TAG_CACHE_D1
+      const result = await requireD1Database(
+        env.NEXT_TAG_CACHE_D1,
+        'visszatérő kampány',
+      )
         .prepare(`SELECT u.id, u.email, u.nickname FROM user u
          WHERE u.email IS NOT NULL
            AND u.emailVerified IS NOT NULL
@@ -309,7 +328,10 @@ function createActivationCampaign(): CampaignHandler {
         referenceNow.getTime() - 14 * 24 * 60 * 60 * 1000,
       )
 
-      const result = await env.NEXT_TAG_CACHE_D1
+      const result = await requireD1Database(
+        env.NEXT_TAG_CACHE_D1,
+        'aktiváló kampány',
+      )
         .prepare(`SELECT u.id, u.email, u.nickname
          FROM user u
          LEFT JOIN uploads up ON up.user_id = u.id
