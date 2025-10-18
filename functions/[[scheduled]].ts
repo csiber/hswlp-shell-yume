@@ -85,6 +85,17 @@ export const onScheduled = async () => {
 }
 
 async function checkBadges(db: D1Database) {
+  const toIdString = (value: unknown): string | null => {
+    if (typeof value === 'string') return value
+    if (typeof value === 'number' || typeof value === 'bigint') return value.toString()
+    return null
+  }
+  const getRowValue = (row: unknown, key: string): unknown => {
+    if (!row || typeof row !== 'object') return undefined
+    if (!(key in row)) return undefined
+    return (row as Record<string, unknown>)[key]
+  }
+
   // Hot Dropper - 3 trending posts in the last week (>=5 likes)
   const hotRows = await db
     .prepare(`SELECT user_id FROM (
@@ -98,7 +109,9 @@ async function checkBadges(db: D1Database) {
      ) t GROUP BY user_id HAVING COUNT(*) >= 3`)
     .all()
   for (const row of hotRows.results ?? []) {
-    await awardBadge(row.user_id, 'hot_dropper')
+    const userId = toIdString(getRowValue(row, 'user_id'))
+    if (!userId) continue
+    await awardBadge(userId, 'hot_dropper')
   }
 
   // Fan Favorite - any post with 20+ likes
@@ -108,7 +121,9 @@ async function checkBadges(db: D1Database) {
     )
     .all()
   for (const row of fanRows.results ?? []) {
-    await awardBadge(row.user_id, 'fan_favorite')
+    const userId = toIdString(getRowValue(row, 'user_id'))
+    if (!userId) continue
+    await awardBadge(userId, 'fan_favorite')
   }
 
   // Visual Artist - 100 uploads total
@@ -116,7 +131,9 @@ async function checkBadges(db: D1Database) {
     .prepare(`SELECT user_id FROM uploads GROUP BY user_id HAVING COUNT(*) >= 100`)
     .all()
   for (const row of visualRows.results ?? []) {
-    await awardBadge(row.user_id, 'visual_artist')
+    const userId = toIdString(getRowValue(row, 'user_id'))
+    if (!userId) continue
+    await awardBadge(userId, 'visual_artist')
   }
 
   // Master Commentator - comments received 100 reactions
@@ -126,7 +143,9 @@ async function checkBadges(db: D1Database) {
     )
     .all()
   for (const row of commentRows.results ?? []) {
-    await awardBadge(row.user_id, 'master_commentator')
+    const userId = toIdString(getRowValue(row, 'user_id'))
+    if (!userId) continue
+    await awardBadge(userId, 'master_commentator')
   }
 
   // Spender - spent 1000 points (credits)
@@ -136,7 +155,9 @@ async function checkBadges(db: D1Database) {
     )
     .all()
   for (const row of spendRows.results ?? []) {
-    await awardBadge(row.userId, 'spender')
+    const userId = toIdString(getRowValue(row, 'userId'))
+    if (!userId) continue
+    await awardBadge(userId, 'spender')
   }
 }
 
