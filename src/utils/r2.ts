@@ -1,3 +1,5 @@
+import type { R2Bucket } from '@cloudflare/workers-types'
+
 // Define the minimum surface needed from an R2 bucket to create signed URLs.
 // Using a structural type avoids version mismatches between the generated
 // Cloudflare types and the `@cloudflare/workers-types` package.
@@ -15,7 +17,7 @@ export interface SignedUrlOptions {
 }
 
 export async function getSignedUrl(
-  bucket: BucketWithSignedUrl,
+  bucket: R2Bucket | BucketWithSignedUrl,
   key: string,
   options: SignedUrlOptions = {},
 ): Promise<string> {
