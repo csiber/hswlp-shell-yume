@@ -117,7 +117,7 @@ const items = [] as {
   ] as const
 
   const totalPoints = user.points ?? 0
-  let currentLevel = LEVELS[0]
+  let currentLevel: (typeof LEVELS)[number] = LEVELS[0]
   let nextLevel: (typeof LEVELS)[number] | null = null
 
   for (const level of LEVELS) {

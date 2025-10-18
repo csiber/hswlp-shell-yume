@@ -2,9 +2,14 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
 import { getSignedUrl } from '@/utils/r2'
 import { NextRequest } from 'next/server'
-import type { R2Bucket } from '@cloudflare/workers-types'
+interface BucketLike {
+  createSignedUrl?: (options: { method: string; key: string; expiresIn: number }) =>
+    | Promise<string | URL>
+    | string
+    | URL
+}
 
-function isR2Bucket(value: unknown): value is R2Bucket {
+function hasSignedUrl(value: unknown): value is BucketLike {
   return typeof value === 'object' && value !== null && 'createSignedUrl' in value
 }
 
@@ -47,7 +52,7 @@ interface ExploreResponseItem {
 
 async function buildItem(
   row: RawRow,
-  env: Record<string, unknown>,
+  env: { yumekai_r2?: unknown },
   base: string | null,
 ): Promise<ExploreResponseItem> {
   let url = (row.url as string) || ''
@@ -57,7 +62,7 @@ async function buildItem(
     if (base) {
       url = `${base}${r2Key}`
     }
-    else if (isR2Bucket(env.yumekai_r2)) {
+    else if (hasSignedUrl(env.yumekai_r2)) {
       url = await getSignedUrl(env.yumekai_r2, r2Key)
     }
   }
