@@ -99,8 +99,181 @@
   * {
     @apply border-border;
   }
-  body {
+body {
     @apply bg-background text-foreground;
+  }
+}
+
+body.winter-theme {
+  position: relative;
+  --background: 217 41% 14%;
+  --foreground: 210 40% 98%;
+  --card: 218 42% 18%;
+  --card-foreground: 210 40% 98%;
+  --popover: 218 42% 18%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 199 89% 73%;
+  --primary-foreground: 215 52% 14%;
+  --secondary: 222 47% 22%;
+  --secondary-foreground: 199 89% 95%;
+  --muted: 222 47% 22%;
+  --muted-foreground: 199 56% 78%;
+  --accent: 193 100% 88%;
+  --accent-foreground: 215 52% 12%;
+  --destructive: 355 72% 63%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217 36% 28%;
+  --input: 217 36% 28%;
+  --ring: 198 93% 68%;
+  --sidebar-background: 219 44% 18%;
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  background: radial-gradient(circle at 20% 20%, rgba(164, 211, 255, 0.25), transparent 60%),
+    radial-gradient(circle at 80% 10%, rgba(56, 190, 255, 0.25), transparent 55%),
+    linear-gradient(160deg, rgba(8, 26, 58, 0.95), rgba(13, 38, 71, 0.95));
+  background-attachment: fixed;
+  color-scheme: dark;
+}
+
+html.dark body.winter-theme {
+  background: radial-gradient(circle at 25% 15%, rgba(96, 169, 255, 0.2), transparent 60%),
+    radial-gradient(circle at 75% 20%, rgba(40, 128, 245, 0.22), transparent 55%),
+    linear-gradient(160deg, rgba(5, 18, 40, 0.98), rgba(10, 29, 54, 0.98));
+}
+
+.winter-background {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.winter-gradient,
+.winter-noise,
+.winter-snow {
+  position: absolute;
+  inset: -10%;
+}
+
+.winter-gradient {
+  background: radial-gradient(circle at 30% 40%, rgba(120, 208, 255, 0.35), transparent 60%),
+    radial-gradient(circle at 70% 35%, rgba(108, 188, 255, 0.28), transparent 65%),
+    radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.12), transparent 70%);
+  filter: blur(12px);
+  opacity: 0.9;
+  transform: translate3d(0, 0, 0);
+  animation: winter-glow 18s ease-in-out infinite;
+}
+
+.winter-noise {
+  mix-blend-mode: screen;
+  background-image: repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.04) 0,
+      rgba(255, 255, 255, 0.04) 2px,
+      rgba(255, 255, 255, 0.01) 2px,
+      rgba(255, 255, 255, 0.01) 4px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(140, 200, 255, 0.06) 0,
+      rgba(140, 200, 255, 0.06) 3px,
+      transparent 3px,
+      transparent 6px
+    );
+  opacity: 0.5;
+  animation: winter-noise-shimmer 22s linear infinite;
+}
+
+.winter-snow {
+  background-image:
+    radial-gradient(3px 3px at 10% 20%, rgba(255, 255, 255, 0.9) 0%, transparent 60%),
+    radial-gradient(2px 2px at 30% 80%, rgba(255, 255, 255, 0.65) 0%, transparent 60%),
+    radial-gradient(4px 4px at 70% 40%, rgba(255, 255, 255, 0.85) 0%, transparent 60%),
+    radial-gradient(2px 2px at 90% 10%, rgba(255, 255, 255, 0.6) 0%, transparent 60%),
+    radial-gradient(3px 3px at 50% 60%, rgba(255, 255, 255, 0.75) 0%, transparent 60%),
+    radial-gradient(2px 2px at 80% 85%, rgba(255, 255, 255, 0.55) 0%, transparent 60%);
+  background-size: 260px 260px;
+  opacity: 0.85;
+  animation: snowfall 36s linear infinite;
+}
+
+.winter-snow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 30%, rgba(255, 255, 255, 0.7) 0%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 60% 70%, rgba(255, 255, 255, 0.45) 0%, transparent 60%),
+    radial-gradient(2.5px 2.5px at 80% 25%, rgba(255, 255, 255, 0.55) 0%, transparent 60%);
+  background-size: 220px 220px;
+  animation: snowfall-horizontal 28s ease-in-out infinite;
+}
+
+.winter-snow--far {
+  filter: blur(1.5px);
+  opacity: 0.45;
+  animation-duration: 55s;
+}
+
+.winter-snow--mid {
+  filter: blur(0.6px);
+  opacity: 0.7;
+  animation-duration: 42s;
+}
+
+.winter-snow--near {
+  filter: blur(0.2px);
+  opacity: 0.95;
+  animation-duration: 28s;
+}
+
+@keyframes winter-glow {
+  0%,
+  100% {
+    transform: scale(1) translate3d(-2%, -1%, 0);
+  }
+  50% {
+    transform: scale(1.05) translate3d(1%, 2%, 0);
+  }
+}
+
+@keyframes winter-noise-shimmer {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(1%, -1%, 0);
+  }
+  100% {
+    transform: translate3d(-1%, 1%, 0);
+  }
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translate3d(0, -15%, 0);
+  }
+  100% {
+    transform: translate3d(12%, 115%, 0);
+  }
+}
+
+@keyframes snowfall-horizontal {
+  0% {
+    transform: translate3d(-5%, -10%, 0);
+  }
+  50% {
+    transform: translate3d(3%, 10%, 0);
+  }
+  100% {
+    transform: translate3d(-4%, 20%, 0);
   }
 }
 @keyframes fade-in {

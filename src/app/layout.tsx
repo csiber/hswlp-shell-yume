@@ -12,6 +12,7 @@ import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/constants";
 import { HSWLPStickyBanner } from "@/components/startup-studio-sticky-banner";
 import GDPRNotice from "@/components/gdpr-notice";
 import ShowNewcomerToast from "@/components/show-newcomer-toast";
+import { WinterScene } from "@/components/winter-scene";
 
 import GlobalMusicPlayer from "@/components/global-music-player";
 import { getSessionFromCookie } from "@/utils/auth";
@@ -92,7 +93,10 @@ export default async function BaseLayout({
   const session = await getSessionFromCookie();
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden max-w-full">
-      <body className={`${inter.className} pb-[120px] overflow-x-hidden max-w-full`}>
+      <body
+        className={`${inter.className} pb-[120px] overflow-x-hidden max-w-full winter-theme`}
+      >
+        <WinterScene />
         <NextTopLoader
           initialPosition={0.15}
           shadow="0 0 10px #000, 0 0 5px #000"
