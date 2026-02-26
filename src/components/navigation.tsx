@@ -31,10 +31,10 @@ const ActionButtons = () => {
   return (
     <div className="flex gap-2">
       <Button asChild onClick={() => setIsOpen(false)}>
-        <Link href="/sign-in">Login</Link>
+        <Link href="/sign-in" scroll={false}>Login</Link>
       </Button>
       <Button asChild variant="secondary" onClick={() => setIsOpen(false)}>
-        <Link href="/sign-up">Sign up</Link>
+        <Link href="/sign-up" scroll={false}>Sign up</Link>
       </Button>
     </div>
   );
@@ -69,6 +69,7 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
+            scroll={false}
             className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary transition-colors display-font"
           >
             <LogoIcon className="w-6 h-6 md:w-7 md:h-7 dark:fill-yellow-400 fill-yellow-600" />
@@ -86,6 +87,7 @@ export function Navigation() {
                     <Link
                       key={item.name}
                       href={item.href}
+                      scroll={false}
                       className={cn(
                         "text-sm font-semibold px-3 h-16 flex items-center no-underline relative text-muted-foreground hover:text-foreground transition-colors duration-200",
                         isActiveLink(item.href) &&
@@ -126,6 +128,7 @@ export function Navigation() {
                         <Link
                           key={item.name}
                           href={item.href}
+                          scroll={false}
                           onClick={() => setIsOpen(false)}
                           className={cn(
                             "block px-4 py-2 text-base font-semibold rounded-lg no-underline transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/50",

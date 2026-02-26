@@ -62,9 +62,9 @@ export default function TopBar({}: TopBarProps) {
     "rounded-xl hover:bg-accent/70 text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-105";
 
   return (
-<div className="app-surface sticky top-0 z-40 mx-3 mt-3 flex justify-between items-center px-4 py-2.5 overflow-x-hidden rounded-2xl">
-      <div className="flex items-center gap-2 flex-wrap max-w-full shrink-0">
-        <Link href="/" className="transition-transform hover:scale-105">
+<div className="app-surface sticky top-0 z-40 mx-3 mt-3 flex justify-between items-center px-3 py-2.5 md:px-4 overflow-x-hidden rounded-2xl">
+      <div className="flex items-center gap-1.5 md:gap-2 max-w-full shrink-0">
+        <Link href="/" scroll={false} className="transition-transform hover:scale-105">
           <LogoIcon className="h-8 w-8" />
         </Link>
 
@@ -75,9 +75,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={cn("hidden sm:flex", iconButtonClass)}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/dashboard">
+                <Link href="/dashboard" scroll={false}>
                   <Home className="size-5" />
                   <span className="sr-only">Home</span>
                 </Link>
@@ -96,9 +96,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={cn("hidden sm:flex", iconButtonClass)}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/my-files">
+                <Link href="/my-files" scroll={false}>
                   <FolderDown className="size-5" />
                   <span className="sr-only">My files</span>
                 </Link>
@@ -117,9 +117,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={cn("hidden sm:flex", iconButtonClass)}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/favorites">
+                <Link href="/favorites" scroll={false}>
                   <Heart className="size-5" />
                   <span className="sr-only">Favorites</span>
                 </Link>
@@ -138,9 +138,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={iconButtonClass}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/dashboard/marketplace">
+                <Link href="/dashboard/marketplace" scroll={false}>
                   <ShoppingCart className="size-5" />
                   <span className="sr-only">Marketplace</span>
                 </Link>
@@ -159,9 +159,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={iconButtonClass}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/requests">
+                <Link href="/requests" scroll={false}>
                   <Crosshair className="size-5" />
                   <span className="sr-only">Requests</span>
                 </Link>
@@ -180,9 +180,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={iconButtonClass}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/dashboard/teams">
+                <Link href="/dashboard/teams" scroll={false}>
                   <Users className="size-5" />
                   <span className="sr-only">Teams</span>
                 </Link>
@@ -201,9 +201,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={iconButtonClass}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/dashboard/billing">
+                <Link href="/dashboard/billing" scroll={false}>
                   <CreditCard className="size-5" />
                   <span className="sr-only">Billing</span>
                 </Link>
@@ -222,9 +222,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={iconButtonClass}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/dashboard/top-users">
+                <Link href="/dashboard/top-users" scroll={false}>
                   <Star className="size-5" />
                   <span className="sr-only">Top Users</span>
                 </Link>
@@ -244,9 +244,9 @@ export default function TopBar({}: TopBarProps) {
                   asChild
                   variant="ghost"
                   size="icon"
-                  className={iconButtonClass}
+                  className={cn("hidden md:flex", iconButtonClass)}
                 >
-                  <Link href="/moderation">
+                  <Link href="/moderation" scroll={false}>
                     <CheckCircle2 className="size-5" />
                     <span className="sr-only">Moderation</span>
                   </Link>
@@ -260,7 +260,7 @@ export default function TopBar({}: TopBarProps) {
         )}
       </div>
 
-      <div className="text-center animate-fade-in">
+      <div className="hidden md:block text-center animate-fade-in">
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -276,7 +276,7 @@ export default function TopBar({}: TopBarProps) {
         </TooltipProvider>
       </div>
 
-      <div className="flex items-center justify-end gap-x-3 flex-wrap max-w-full shrink-0">
+      <div className="flex items-center justify-end gap-x-2 md:gap-x-3 max-w-full shrink-0">
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -284,9 +284,9 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className={iconButtonClass}
+                className={cn("hidden md:flex", iconButtonClass)}
               >
-                <Link href="/rules">
+                <Link href="/rules" scroll={false}>
                   <ShieldCheck className="size-5 animate-glow" />
                   <span className="sr-only">Rules</span>
                 </Link>
