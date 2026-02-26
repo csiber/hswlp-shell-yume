@@ -4,6 +4,7 @@ import { getDB } from "@/db";
 import { userTable, creditTransactionTable, teamMembershipTable, teamTable, CREDIT_TRANSACTION_TYPE, purchasedItemsTable } from "@/db/schema";
 import { updateAllSessionsOfUser, KVSession } from "./kv-session";
 import { CREDIT_PACKAGES, FREE_MONTHLY_CREDITS } from "@/constants";
+import { getCloudflareContext } from "@opennextjs/cloudflare";
 
 // Helper functions related to credit management
 
@@ -234,13 +235,15 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
     throw new Error("Invalid amount");
   }
 
-  const debit = await db.run(sql`
-    UPDATE user
-    SET currentCredits = currentCredits - ${normalizedAmount}
-    WHERE id = ${userId} AND currentCredits >= ${normalizedAmount}
-  `);
+  const { env } = await getCloudflareContext({ async: true });
+  const debit = await env.NEXT_TAG_CACHE_D1
+    .prepare(
+      "UPDATE user SET currentCredits = currentCredits - ?1 WHERE id = ?2 AND currentCredits >= ?1"
+    )
+    .bind(normalizedAmount, userId)
+    .run();
 
-  if ((debit as { changes?: number }).changes !== 1) {
+  if ((debit.meta?.changes ?? 0) !== 1) {
     throw new Error("Insufficient credits");
   }
 
