@@ -5,6 +5,7 @@ import { userTable, creditTransactionTable, teamMembershipTable, teamTable, CRED
 import { updateAllSessionsOfUser, KVSession } from "./kv-session";
 import { CREDIT_PACKAGES, FREE_MONTHLY_CREDITS } from "@/constants";
 import { getCloudflareContext } from "@opennextjs/cloudflare";
+import { getD1Changes } from "./d1-result";
 
 // Helper functions related to credit management
 
@@ -243,7 +244,7 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
     .bind(normalizedAmount, userId)
     .run();
 
-  if ((debit.meta?.changes ?? 0) !== 1) {
+  if (getD1Changes(debit) !== 1) {
     throw new Error("Insufficient credits");
   }
 

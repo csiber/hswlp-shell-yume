@@ -2,6 +2,7 @@ import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
 import { init } from '@paralleldrive/cuid2'
+import { getD1Changes } from '@/utils/d1-result'
 interface RouteContext<T>{params: Promise<T>}
 const createId = init({ length:32 })
 
@@ -33,7 +34,7 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   const insertResult = await env.DB.prepare(
     'INSERT OR IGNORE INTO request_submissions (id, request_id, user_id, file_url, is_approved) VALUES (?1, ?2, ?3, ?4, 0)'
   ).bind(`rsb_${createId()}`, id, session.user.id, file_url).run()
-  if ((insertResult.meta?.changes ?? 0) === 0) {
+  if (getD1Changes(insertResult) === 0) {
     return jsonResponse({ success:true, duplicate:true })
   }
   return jsonResponse({ success:true, duplicate:false })

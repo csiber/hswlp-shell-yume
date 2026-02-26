@@ -1,5 +1,6 @@
 import { consumeCredits, addCredits } from '@/utils/credits'
 import type { DatabaseContext } from './enrich-request'
+import { getD1Changes } from '@/utils/d1-result'
 
 interface FinalizeOptions {
   env: DatabaseContext
@@ -26,7 +27,7 @@ export async function finalizeRequest({
     'UPDATE requests SET status = ?1 WHERE id = ?2 AND status = ?3 AND status != ?4 AND status != ?5'
   ).bind('finalizing', requestId, currentStatus, 'finalizing', 'fulfilled').run()
 
-  if ((lockResult.meta?.changes ?? 0) !== 1) {
+  if (getD1Changes(lockResult) !== 1) {
     return { finalized: false, reason: 'stale-status' as const }
   }
 
@@ -87,7 +88,7 @@ export async function finalizeRequest({
     'UPDATE requests SET status = ?1, accepted_user_id = ?2 WHERE id = ?3 AND status = ?4'
   ).bind('fulfilled', winnerUserId, requestId, 'finalizing').run()
 
-  if ((finalizeResult.meta?.changes ?? 0) !== 1) {
+  if (getD1Changes(finalizeResult) !== 1) {
     throw new Error('Failed to finalize request state')
   }
 

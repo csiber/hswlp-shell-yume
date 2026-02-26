@@ -6,6 +6,7 @@ import { ALBUM_PRICING_MODE, ALBUM_GROUP_CREDITS } from '@/constants'
 import { NextRequest } from 'next/server'
 import { v4 as uuidv4 } from 'uuid'
 import { withTimeout } from '@/utils/with-timeout'
+import { getD1Changes } from '@/utils/d1-result'
 
 interface RouteContext<T> { params: Promise<T> }
 
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
     const insertResult = await env.DB.prepare(
       'INSERT OR IGNORE INTO downloads (user_id, upload_id) VALUES (?1, ?2)'
     ).bind(session.user.id, id).run()
-    const firstDownload = (insertResult.meta?.changes ?? 0) === 1
+    const firstDownload = getD1Changes(insertResult) === 1
     alreadyDownloaded = !firstDownload
 
     if (!firstDownload) {

@@ -1,6 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { getSessionFromCookie } from '@/utils/auth'
 import { jsonResponse } from '@/utils/api'
+import { getD1Changes } from '@/utils/d1-result'
 interface RouteContext<T>{params: Promise<T>}
 
 export async function POST(_req: Request, { params }: RouteContext<{ id:string }>) {
@@ -22,7 +23,7 @@ export async function POST(_req: Request, { params }: RouteContext<{ id:string }
   const updateResult = await env.DB.prepare(
     'UPDATE requests SET accepted_user_id = ?1, status = ?2 WHERE id = ?3 AND status = ?4'
   ).bind(session.user.id, 'accepted', id, 'open').run()
-  if ((updateResult.meta?.changes ?? 0) !== 1) {
+  if (getD1Changes(updateResult) !== 1) {
     return jsonResponse({ success:false, error:'A kérés közben státuszt váltott.' }, { status:409 })
   }
   return jsonResponse({ success:true })
