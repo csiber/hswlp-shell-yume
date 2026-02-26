@@ -58,9 +58,11 @@ export default function TopBar({}: TopBarProps) {
     (user?.firstName && user?.lastName
       ? `${user.firstName} ${user.lastName}`
       : user?.email ?? "");
+  const iconButtonClass =
+    "rounded-xl hover:bg-accent/70 text-muted-foreground hover:text-foreground transition-all duration-200 hover:scale-105";
 
   return (
-<div className="flex justify-between items-center px-4 py-2 shadow-sm bg-white dark:bg-zinc-900 overflow-x-hidden">
+<div className="app-surface sticky top-0 z-40 mx-3 mt-3 flex justify-between items-center px-4 py-2.5 overflow-x-hidden rounded-2xl">
       <div className="flex items-center gap-2 flex-wrap max-w-full shrink-0">
         <Link href="/" className="transition-transform hover:scale-105">
           <LogoIcon className="h-8 w-8" />
@@ -73,7 +75,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="hidden sm:flex rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={cn("hidden sm:flex", iconButtonClass)}
               >
                 <Link href="/dashboard">
                   <Home className="size-5" />
@@ -94,7 +96,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="hidden sm:flex rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={cn("hidden sm:flex", iconButtonClass)}
               >
                 <Link href="/my-files">
                   <FolderDown className="size-5" />
@@ -115,7 +117,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="hidden sm:flex rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={cn("hidden sm:flex", iconButtonClass)}
               >
                 <Link href="/favorites">
                   <Heart className="size-5" />
@@ -136,7 +138,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={iconButtonClass}
               >
                 <Link href="/dashboard/marketplace">
                   <ShoppingCart className="size-5" />
@@ -157,7 +159,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={iconButtonClass}
               >
                 <Link href="/requests">
                   <Crosshair className="size-5" />
@@ -178,7 +180,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={iconButtonClass}
               >
                 <Link href="/dashboard/teams">
                   <Users className="size-5" />
@@ -199,7 +201,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={iconButtonClass}
               >
                 <Link href="/dashboard/billing">
                   <CreditCard className="size-5" />
@@ -220,7 +222,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={iconButtonClass}
               >
                 <Link href="/dashboard/top-users">
                   <Star className="size-5" />
@@ -242,7 +244,7 @@ export default function TopBar({}: TopBarProps) {
                   asChild
                   variant="ghost"
                   size="icon"
-                  className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                  className={iconButtonClass}
                 >
                   <Link href="/moderation">
                     <CheckCircle2 className="size-5" />
@@ -262,7 +264,7 @@ export default function TopBar({}: TopBarProps) {
         <TooltipProvider delayDuration={200}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="rounded-xl">
                 <Users className="w-5 h-5" />
                 <span className="text-xs ml-1">{onlineCount}</span>
               </Button>
@@ -282,7 +284,7 @@ export default function TopBar({}: TopBarProps) {
                 asChild
                 variant="ghost"
                 size="icon"
-                className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all hover:scale-110"
+                className={iconButtonClass}
               >
                 <Link href="/rules">
                   <ShieldCheck className="size-5 animate-glow" />
@@ -308,11 +310,11 @@ export default function TopBar({}: TopBarProps) {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 p-0"
+                    className="rounded-xl p-0 hover:bg-accent/70"
                   >
                     <Avatar
                       className={cn(
-                        "h-8 w-8 transition-all hover:ring-2 hover:ring-indigo-500 dark:hover:ring-indigo-400",
+                        "h-8 w-8 transition-all hover:ring-2 hover:ring-primary",
                         user?.profileFrameEnabled ? "avatar-ring" : ""
                       )}
                     >
@@ -351,7 +353,7 @@ export default function TopBar({}: TopBarProps) {
 
               {/* 🟢 Kredit badge itt */}
               {user?.currentCredits != null && (
-                <Badge variant="secondary" className="mt-1 text-[10px]">
+                <Badge variant="secondary" className="mt-1 text-[10px] rounded-full border border-border/70 bg-secondary/80">
                   <motion.span
                     key={user.currentCredits}
                     initial={{ scale: 0.8 }}

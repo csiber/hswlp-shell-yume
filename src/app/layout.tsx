@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Manrope, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import "server-only";
 
@@ -19,7 +19,8 @@ import { getSessionFromCookie } from "@/utils/auth";
 
 export const dynamic = "force-dynamic";
 
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-display" });
 
 export const metadata: Metadata = {
   title: {
@@ -94,7 +95,7 @@ export default async function BaseLayout({
   return (
     <html lang="en" suppressHydrationWarning className="overflow-x-hidden max-w-full">
       <body
-        className={`${inter.className} pb-[120px] overflow-x-hidden max-w-full winter-theme`}
+        className={`${manrope.variable} ${spaceGrotesk.variable} pb-[120px] overflow-x-hidden max-w-full winter-theme`}
       >
         <WinterScene />
         <NextTopLoader

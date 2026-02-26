@@ -18,10 +18,10 @@ export default function ShellLayout({ children }: ShellLayoutProps) {
 
   return (
     <SidebarProvider>
-      <div className="flex h-full w-full flex-col">
+      <div className="flex h-full w-full flex-col px-2 pb-4 md:px-3">
         <TopBar />
-        <div className="grid flex-1 grid-cols-12">
-          <main className="col-span-12">{children}</main>
+        <div className="grid flex-1 grid-cols-12 pt-3">
+          <main className="col-span-12 app-surface rounded-2xl p-3 md:p-5">{children}</main>
         </div>
       </div>
     </SidebarProvider>

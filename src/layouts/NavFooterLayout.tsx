@@ -11,7 +11,7 @@ export default async function NavFooterLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      <main className="flex-1">
+      <main className="flex-1 px-3 pb-6 pt-4 md:px-6">
         {children}
       </main>
       {renderFooter && <Footer />}

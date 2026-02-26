@@ -64,12 +64,12 @@ export function Navigation() {
   };
 
   return (
-    <nav className="bg-background/70 ring-1 ring-border dark:bg-muted/30 backdrop-blur-md shadow-sm dark:shadow-lg z-50 transition-all duration-300">
+    <nav className="app-surface sticky top-0 z-40 mx-3 mt-3 rounded-2xl transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
-            className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary transition-colors"
+            className="flex items-center gap-2 text-xl md:text-2xl font-bold text-primary transition-colors display-font"
           >
             <LogoIcon className="w-6 h-6 md:w-7 md:h-7 dark:fill-yellow-400 fill-yellow-600" />
             {SITE_NAME}
@@ -87,9 +87,9 @@ export function Navigation() {
                       key={item.name}
                       href={item.href}
                       className={cn(
-                        "text-sm font-medium px-3 h-16 flex items-center no-underline relative text-muted-foreground hover:text-foreground transition-colors duration-200",
+                        "text-sm font-semibold px-3 h-16 flex items-center no-underline relative text-muted-foreground hover:text-foreground transition-colors duration-200",
                         isActiveLink(item.href) &&
-                          "text-foreground after:absolute after:left-3 after:bottom-2 after:h-[2px] after:w-[calc(100%-1.5rem)] after:bg-primary after:rounded-full after:transition-all after:duration-300"
+                          "text-foreground after:absolute after:left-3 after:bottom-3 after:h-[2px] after:w-[calc(100%-1.5rem)] after:bg-primary after:rounded-full after:transition-all after:duration-300"
                       )}
                     >
                       {item.name}
@@ -111,7 +111,7 @@ export function Navigation() {
 
               <SheetContent
                 side="right"
-                className="w-[240px] sm:w-[300px] px-4 py-6 bg-background/80 backdrop-blur-md ring-1 ring-border dark:bg-muted/40"
+                className="w-[260px] sm:w-[320px] px-4 py-6 bg-card/90 backdrop-blur-xl ring-1 ring-border/70"
               >
                 <div className="space-y-4">
                   {isLoading ? (
@@ -128,7 +128,7 @@ export function Navigation() {
                           href={item.href}
                           onClick={() => setIsOpen(false)}
                           className={cn(
-                            "block px-4 py-2 text-base font-medium rounded-md no-underline transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                            "block px-4 py-2 text-base font-semibold rounded-lg no-underline transition-all duration-200 text-muted-foreground hover:text-foreground hover:bg-muted/50",
                             isActiveLink(item.href) &&
                               "text-foreground bg-muted/30"
                           )}
