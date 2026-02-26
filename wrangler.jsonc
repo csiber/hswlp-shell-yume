@@ -12,7 +12,6 @@
   },
   "compatibility_date": "2025-03-01",
   "compatibility_flags": [
-    "nodejs_compat",
     "global_fetch_strictly_public"
   ],
   // Minification helps to keep the Worker bundle size down and improve start up time.
