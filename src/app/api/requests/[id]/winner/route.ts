@@ -67,7 +67,7 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
     winnerUserId = submissionRow.user_id
   }
 
-  await finalizeRequest({
+  const finalizeResult = await finalizeRequest({
     env: databaseEnv,
     requestId: id,
     submissionId: winnerSubmissionId,
@@ -75,7 +75,11 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
     requestOwnerId: requestRow.user_id,
     offeredCredits: requestRow.offered_credits,
     extraRewardCredits: requestRow.extra_reward_credits ?? 0,
+    currentStatus: requestRow.status,
   })
+  if (!finalizeResult.finalized) {
+    return jsonResponse({ success:false, error:'A kérés státusza közben megváltozott.' }, { status:409 })
+  }
 
   return jsonResponse({ success:true, winnerSubmissionId })
 }

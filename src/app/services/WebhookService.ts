@@ -1,4 +1,5 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
+import { validateWebhookUrl } from '@/utils/webhook-url'
 
 export class WebhookService {
   static async dispatch(user_id: string, event: string, payload: unknown) {
@@ -8,6 +9,8 @@ export class WebhookService {
     ).bind(user_id).first<{ url: string }>()
 
     if (!result?.url) return
+    const validation = validateWebhookUrl(result.url)
+    if (!validation.ok) return
 
     try {
       await fetch(result.url, {

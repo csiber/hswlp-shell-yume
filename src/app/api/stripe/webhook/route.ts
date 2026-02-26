@@ -1,7 +1,6 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 import { jsonResponse } from '@/utils/api'
-import { updateUserCredits, logTransaction, getCreditPackage } from '@/utils/credits'
-import { CREDIT_TRANSACTION_TYPE } from '@/db/schema'
+import { grantPurchaseCreditsIfNotProcessed, getCreditPackage } from '@/utils/credits'
 import { CREDITS_EXPIRATION_YEARS } from '@/constants'
 import { sendEmail } from '@/utils/email'
 import { renderPurchaseEmail } from '@/utils/purchase-email'
@@ -62,12 +61,10 @@ export async function POST(req: Request) {
     const packageId = paymentIntent.metadata?.packageId
     const credits = parseInt(paymentIntent.metadata?.credits || '0', 10)
     if (userId && credits > 0) {
-      await updateUserCredits(userId, credits)
-      await logTransaction({
+      const grantResult = await grantPurchaseCreditsIfNotProcessed({
         userId,
         amount: credits,
         description: `You purchased ${credits} credits.`,
-        type: CREDIT_TRANSACTION_TYPE.PURCHASE,
         expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} years`)),
         paymentIntentId: paymentIntent.id
       })
@@ -79,7 +76,7 @@ export async function POST(req: Request) {
           columns: { firstName: true, lastName: true, nickname: true, email: true }
         })
         const pack = packageId ? getCreditPackage(packageId) : undefined
-        if (user?.email && pack) {
+        if (grantResult === "granted" && user?.email && pack) {
           const userName = user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.nickname || user.email
           const { html, text } = renderPurchaseEmail({
             userName,

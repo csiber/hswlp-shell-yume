@@ -1,11 +1,16 @@
 import { getSessionFromCookie } from '@/utils/auth'
 import { getCloudflareContext } from '@opennextjs/cloudflare'
+import { validateWebhookUrl } from '@/utils/webhook-url'
 
 export async function PUT(req: Request) {
   const { url } = await req.json() as { url: string }
   const session = await getSessionFromCookie()
   if (!session?.user?.id) {
     return new Response('Unauthorized', { status: 401 })
+  }
+  const validation = validateWebhookUrl(url)
+  if (!validation.ok) {
+    return new Response(validation.error, { status: 400 })
   }
 
   const { env } = getCloudflareContext()

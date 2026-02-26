@@ -13,6 +13,12 @@ export function getCreditPackage(packageId: string): CreditPackage | undefined {
   return CREDIT_PACKAGES.find((pkg) => pkg.id === packageId);
 }
 
+function isUniqueConstraintError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const message = String((error as { message?: string }).message || "");
+  return message.toLowerCase().includes("unique");
+}
+
 // Determine whether the monthly free credits should be refreshed
 function shouldRefreshCredits(session: KVSession, currentTime: Date): boolean {
   // Check if it's been at least a month since last refresh
@@ -98,6 +104,9 @@ async function processExpiredCredits(userId: string, currentTime: Date) {
 
 // Increase user's credit balance
 export async function updateUserCredits(userId: string, creditsToAdd: number) {
+  if (!Number.isFinite(creditsToAdd) || creditsToAdd === 0) {
+    throw new Error("Invalid credit amount");
+  }
   const db = await getDB();
   await db
     .update(userTable)
@@ -137,6 +146,9 @@ export async function logTransaction({
   expirationDate?: Date;
   paymentIntentId?: string;
 }) {
+  if (!Number.isFinite(amount) || amount === 0) {
+    throw new Error("Invalid transaction amount");
+  }
   const db = await getDB();
   await db.insert(creditTransactionTable).values({
     userId,
@@ -216,20 +228,23 @@ export async function hasEnoughCredits({ userId, requiredCredits }: { userId: st
 
 export async function consumeCredits({ userId, amount, description }: { userId: string; amount: number; description: string }) {
   const db = await getDB();
+  const normalizedAmount = Math.floor(amount);
 
-  // First check if user has enough credits
-  const user = await db.query.userTable.findFirst({
-    where: eq(userTable.id, userId),
-    columns: {
-      currentCredits: true,
-    },
-  });
+  if (!Number.isFinite(normalizedAmount) || normalizedAmount <= 0) {
+    throw new Error("Invalid amount");
+  }
 
-  if (!user || user.currentCredits < amount) {
+  const debit = await db.run(sql`
+    UPDATE user
+    SET currentCredits = currentCredits - ${normalizedAmount}
+    WHERE id = ${userId} AND currentCredits >= ${normalizedAmount}
+  `);
+
+  if ((debit as { changes?: number }).changes !== 1) {
     throw new Error("Insufficient credits");
   }
 
-  // Get all non-expired transactions with remaining credits, ordered by creation date
+  // Reconcile per-transaction remaining balances after an atomic debit on user balance.
   const activeTransactionsWithBalance = await db.query.creditTransactionTable.findMany({
     where: and(
       eq(creditTransactionTable.userId, userId),
@@ -243,7 +258,7 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
     orderBy: [asc(creditTransactionTable.createdAt)],
   });
 
-  let remainingToDeduct = amount;
+  let remainingToDeduct = normalizedAmount;
 
   // Deduct from each transaction until we've deducted the full amount
   for (const transaction of activeTransactionsWithBalance) {
@@ -254,27 +269,19 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
     await db
       .update(creditTransactionTable)
       .set({
-        remainingAmount: transaction.remainingAmount - deductFromThis,
+        remainingAmount: Math.max(transaction.remainingAmount - deductFromThis, 0),
       })
       .where(eq(creditTransactionTable.id, transaction.id));
 
     remainingToDeduct -= deductFromThis;
   }
 
-  // Update total credits
-  await db
-    .update(userTable)
-    .set({
-      currentCredits: sql`${userTable.currentCredits} - ${amount}`,
-    })
-    .where(eq(userTable.id, userId));
-
-  await updateTeamCredits(userId, -amount);
+  await updateTeamCredits(userId, -normalizedAmount);
 
   // Log the usage transaction
   await db.insert(creditTransactionTable).values({
     userId,
-    amount: -amount,
+    amount: -normalizedAmount,
     remainingAmount: 0, // Usage transactions don't have remaining amount
     type: CREDIT_TRANSACTION_TYPE.USAGE,
     description,
@@ -297,6 +304,9 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
 }
 
 export async function addCredits({ userId, amount, description }: { userId: string; amount: number; description: string }) {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Invalid amount");
+  }
   await updateUserCredits(userId, amount);
   await logTransaction({
     userId,
@@ -304,6 +314,58 @@ export async function addCredits({ userId, amount, description }: { userId: stri
     description,
     type: CREDIT_TRANSACTION_TYPE.UPLOAD_REWARD,
   });
+}
+
+export async function grantPurchaseCreditsIfNotProcessed({
+  userId,
+  amount,
+  description,
+  expirationDate,
+  paymentIntentId,
+}: {
+  userId: string;
+  amount: number;
+  description: string;
+  expirationDate: Date;
+  paymentIntentId: string;
+}): Promise<"granted" | "already-processed"> {
+  const normalizedAmount = Math.floor(amount);
+  if (!paymentIntentId || !Number.isFinite(normalizedAmount) || normalizedAmount <= 0) {
+    throw new Error("Invalid purchase payload");
+  }
+
+  const db = await getDB();
+  try {
+    await db.insert(creditTransactionTable).values({
+      userId,
+      amount: normalizedAmount,
+      remainingAmount: normalizedAmount,
+      type: CREDIT_TRANSACTION_TYPE.PURCHASE,
+      description,
+      expirationDate,
+      paymentIntentId,
+    });
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      return "already-processed";
+    }
+    throw error;
+  }
+
+  try {
+    await updateUserCredits(userId, normalizedAmount);
+  } catch (error) {
+    await db
+      .delete(creditTransactionTable)
+      .where(and(
+        eq(creditTransactionTable.userId, userId),
+        eq(creditTransactionTable.paymentIntentId, paymentIntentId),
+        eq(creditTransactionTable.type, CREDIT_TRANSACTION_TYPE.PURCHASE),
+      ));
+    throw error;
+  }
+
+  return "granted";
 }
 
 export async function getCreditTransactions({

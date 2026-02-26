@@ -30,8 +30,11 @@ export async function POST(req: Request, { params }: RouteContext<{ id: string }
   } else if (requestRow.status === 'accepted' && requestRow.accepted_user_id !== session.user.id) {
     return jsonResponse({ success:false, error:'Not your request' }, { status:403 })
   }
-  await env.DB.prepare(
-    'INSERT INTO request_submissions (id, request_id, user_id, file_url, is_approved) VALUES (?1, ?2, ?3, ?4, 0)'
+  const insertResult = await env.DB.prepare(
+    'INSERT OR IGNORE INTO request_submissions (id, request_id, user_id, file_url, is_approved) VALUES (?1, ?2, ?3, ?4, 0)'
   ).bind(`rsb_${createId()}`, id, session.user.id, file_url).run()
-  return jsonResponse({ success:true })
+  if ((insertResult.meta?.changes ?? 0) === 0) {
+    return jsonResponse({ success:true, duplicate:true })
+  }
+  return jsonResponse({ success:true, duplicate:false })
 }

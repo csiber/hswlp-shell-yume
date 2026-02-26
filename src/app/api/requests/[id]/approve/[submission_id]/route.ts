@@ -21,7 +21,7 @@ export async function POST(_req: Request, { params }: RouteContext<{ id:string; 
   const subRow = await env.DB.prepare('SELECT user_id, is_approved FROM request_submissions WHERE id = ?1 AND request_id = ?2')
     .bind(submission_id, id).first<{ user_id:string; is_approved:number }>()
   if (!subRow) return jsonResponse({ success:false, error:'Submission not found' }, { status:404 })
-  await finalizeRequest({
+  const finalizeResult = await finalizeRequest({
     env: databaseEnv,
     requestId: id,
     submissionId: submission_id,
@@ -29,6 +29,10 @@ export async function POST(_req: Request, { params }: RouteContext<{ id:string; 
     requestOwnerId: reqRow.user_id,
     offeredCredits: reqRow.offered_credits,
     extraRewardCredits: reqRow.extra_reward_credits ?? 0,
+    currentStatus: reqRow.status,
   })
+  if (!finalizeResult.finalized) {
+    return jsonResponse({ success:false, error:'A kérés státusza közben megváltozott.' }, { status:409 })
+  }
   return jsonResponse({ success:true })
 }

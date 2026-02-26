@@ -3,11 +3,9 @@
 import { requireVerifiedEmail } from "@/utils/auth";
 import {
   getCreditTransactions,
-  updateUserCredits,
-  logTransaction,
   getCreditPackage,
+  grantPurchaseCreditsIfNotProcessed,
 } from "@/utils/credits";
-import { CREDIT_TRANSACTION_TYPE } from "@/db/schema";
 import { getStripeClient } from "@/lib/stripe-client";
 import { MAX_TRANSACTIONS_PER_PAGE, CREDITS_EXPIRATION_YEARS } from "@/constants";
 import ms from "ms";
@@ -131,35 +129,34 @@ export async function confirmPayment({ packageId, paymentIntentId }: PurchaseCre
         throw new Error("Invalid payment intent");
       }
 
-      // Add credits and log transaction
-      await updateUserCredits(session.user.id, creditPackage.credits);
-      await logTransaction({
+      const grantResult = await grantPurchaseCreditsIfNotProcessed({
         userId: session.user.id,
         amount: creditPackage.credits,
         description: `Purchased ${creditPackage.credits} credits.`,
-        type: CREDIT_TRANSACTION_TYPE.PURCHASE,
         expirationDate: new Date(Date.now() + ms(`${CREDITS_EXPIRATION_YEARS} years`)),
-        paymentIntentId: paymentIntent?.id
+        paymentIntentId: paymentIntent.id,
       });
 
-      const userName = session.user.firstName
-        ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
-        : session.user.nickname || session.user.email;
-      const { html, text } = renderPurchaseEmail({
-        userName,
-        date: new Date().toLocaleString('en-US', { timeZone: 'Europe/Budapest' }),
-        packageName: packageId,
-        price: `${creditPackage.price} Ft`,
-        transactionId: paymentIntent.id,
-        credits: creditPackage.credits
-      });
+      if (grantResult === "granted") {
+        const userName = session.user.firstName
+          ? `${session.user.firstName} ${session.user.lastName || ''}`.trim()
+          : session.user.nickname || session.user.email;
+        const { html, text } = renderPurchaseEmail({
+          userName,
+          date: new Date().toLocaleString('en-US', { timeZone: 'Europe/Budapest' }),
+          packageName: packageId,
+          price: `${creditPackage.price} Ft`,
+          transactionId: paymentIntent.id,
+          credits: creditPackage.credits
+        });
 
-      await sendEmail({
-        to: session.user.email!,
-        subject: '🧾 Yumekai – Purchase confirmation',
-        html,
-        text
-      });
+        await sendEmail({
+          to: session.user.email!,
+          subject: '🧾 Yumekai – Purchase confirmation',
+          html,
+          text
+        });
+      }
 
       return { success: true };
     } catch (error) {

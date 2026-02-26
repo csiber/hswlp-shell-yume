@@ -166,6 +166,7 @@ export const creditTransactionTable = sqliteTable("credit_transaction", {
   index('credit_transaction_created_at_idx').on(table.createdAt),
   index('credit_transaction_expiration_date_idx').on(table.expirationDate),
   index('credit_transaction_payment_intent_id_idx').on(table.paymentIntentId),
+  uniqueIndex('credit_transaction_payment_intent_unique').on(table.paymentIntentId),
 ]));
 
 // Define item types that can be purchased
@@ -384,6 +385,7 @@ export const requestSubmissionTable = sqliteTable('request_submissions', {
 }, (table) => [
   index('request_submissions_request_idx').on(table.requestId),
   index('request_submissions_user_idx').on(table.userId),
+  uniqueIndex('request_submissions_request_user_unique').on(table.requestId, table.userId),
 ]);
 
 export const requestVotesTable = sqliteTable('request_votes', {

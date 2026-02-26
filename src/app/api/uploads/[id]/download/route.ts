@@ -42,15 +42,28 @@ export async function GET(req: NextRequest, { params }: RouteContext<{ id: strin
 
   let alreadyDownloaded = false
   if (!already) {
-    try {
-      await consumeCredits({ userId: session.user.id, amount: points, description: 'File download' })
-    } catch {
-      return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
+    const insertResult = await env.DB.prepare(
+      'INSERT OR IGNORE INTO downloads (user_id, upload_id) VALUES (?1, ?2)'
+    ).bind(session.user.id, id).run()
+    const firstDownload = (insertResult.meta?.changes ?? 0) === 1
+    alreadyDownloaded = !firstDownload
+
+    if (!firstDownload) {
+      points = 0
     }
 
-    await env.DB.prepare(
-      'INSERT INTO downloads (user_id, upload_id) VALUES (?1, ?2)'
-    ).bind(session.user.id, id).run()
+    try {
+      if (points > 0) {
+        await consumeCredits({ userId: session.user.id, amount: points, description: 'File download' })
+      }
+    } catch {
+      if (firstDownload) {
+        await env.DB.prepare(
+          'DELETE FROM downloads WHERE user_id = ?1 AND upload_id = ?2'
+        ).bind(session.user.id, id).run()
+      }
+      return jsonResponse({ success: false, error: 'Insufficient credits' }, { status: 402 })
+    }
   } else {
     alreadyDownloaded = true
   }

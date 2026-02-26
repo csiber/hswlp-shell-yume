@@ -79,6 +79,10 @@ export async function POST(req: Request) {
   if (!prompt || !type || !style || typeof offered_credits !== 'number') {
     return jsonResponse({ error: 'Missing fields' }, { status: 400 })
   }
+  const normalizedOfferedCredits = Math.floor(offered_credits)
+  if (!Number.isFinite(normalizedOfferedCredits) || normalizedOfferedCredits <= 0) {
+    return jsonResponse({ error: 'Érvénytelen kredit összeg.' }, { status: 400 })
+  }
   if (banned.test(prompt) || banned.test(style)) {
     const { env } = getCloudflareContext()
     await env.DB.prepare(
@@ -89,7 +93,7 @@ export async function POST(req: Request) {
   const normalizedCategory = request_category === 'challenge' ? 'challenge' : 'standard'
   const normalizedVoting = voting_mode === 'community' ? 'community' : 'jury'
   const bonus = typeof extra_reward_credits === 'number' && extra_reward_credits > 0 ? Math.floor(extra_reward_credits) : 0
-  const totalPotentialCost = offered_credits + bonus
+  const totalPotentialCost = normalizedOfferedCredits + bonus
   let deadlineValue: Date | null = null
   if (normalizedCategory === 'challenge') {
     if (!deadline) {
@@ -119,7 +123,7 @@ export async function POST(req: Request) {
         prompt,
         type,
         style,
-        offered_credits,
+        normalizedOfferedCredits,
         normalizedCategory,
         normalizedVoting,
         deadlineValue ? deadlineValue.toISOString() : null,
