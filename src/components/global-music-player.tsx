@@ -31,6 +31,7 @@ export default function GlobalMusicPlayer() {
   const [open, setOpen] = useState(false);
   const [meta, setMeta] = useState<MusicMeta | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const preloadLinkRef = useRef<HTMLLinkElement | null>(null);
   const formatTime = (t: number) => {
     const m = Math.floor(t / 60);
     const s = Math.floor(t % 60);
@@ -61,6 +62,36 @@ export default function GlobalMusicPlayer() {
       });
     }
   }, [currentIndex, queue, isPlaying]);
+
+  useEffect(() => {
+    const current = queue[currentIndex]?.url;
+    const next = queue[currentIndex + 1]?.url;
+    const urls = [current, next].filter(Boolean) as string[];
+    if (!urls.length) return;
+
+    if (navigator.serviceWorker?.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: "CACHE_URLS", urls });
+    }
+
+    const nextUrl = next;
+    if (!nextUrl) {
+      if (preloadLinkRef.current) {
+        preloadLinkRef.current.remove();
+        preloadLinkRef.current = null;
+      }
+      return;
+    }
+
+    if (!preloadLinkRef.current) {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "audio";
+      link.crossOrigin = "use-credentials";
+      document.head.appendChild(link);
+      preloadLinkRef.current = link;
+    }
+    preloadLinkRef.current.href = nextUrl;
+  }, [currentIndex, queue]);
 
   useEffect(() => {
     const track = queue[currentIndex];
@@ -237,6 +268,7 @@ export default function GlobalMusicPlayer() {
       </SheetContent>
       <audio
         ref={audioRef}
+        preload="auto"
         onTimeUpdate={() => setCurrentTime(audioRef.current?.currentTime || 0)}
         onLoadedMetadata={() => setDuration(audioRef.current?.duration || 0)}
         onEnded={handleEnded}

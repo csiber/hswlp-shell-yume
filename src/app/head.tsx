@@ -16,7 +16,7 @@ export default function Head() {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="manifest" href="/manifest.json" />
-      <meta name="theme-color" content="#ff69b4" />
+      <meta name="theme-color" content="#18b7d7" />
       <link rel="apple-touch-icon" href="/web-app-manifest-192x192.png" />
     </>
   );

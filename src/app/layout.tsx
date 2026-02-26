@@ -16,6 +16,7 @@ import { WinterScene } from "@/components/winter-scene";
 
 import GlobalMusicPlayer from "@/components/global-music-player";
 import { getSessionFromCookie } from "@/utils/auth";
+import PwaRuntime from "@/components/PwaRuntime";
 
 export const dynamic = "force-dynamic";
 
@@ -104,6 +105,7 @@ export default async function BaseLayout({
           height={4}
         />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <PwaRuntime />
           <TooltipProvider delayDuration={100} skipDelayDuration={50}>
             {children}
           </TooltipProvider>

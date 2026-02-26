@@ -3,8 +3,8 @@
   "short_name": "Yumekai",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#121212",
-  "theme_color": "#ff69b4",
+  "background_color": "#0a223d",
+  "theme_color": "#18b7d7",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
