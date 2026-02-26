@@ -237,7 +237,12 @@ export async function consumeCredits({ userId, amount, description }: { userId: 
   }
 
   const { env } = await getCloudflareContext({ async: true });
-  const debit = await env.NEXT_TAG_CACHE_D1
+  const d1 = env.NEXT_TAG_CACHE_D1 ?? env.DB;
+  if (!d1) {
+    throw new Error("D1 database not found");
+  }
+
+  const debit = await d1
     .prepare(
       "UPDATE user SET currentCredits = currentCredits - ?1 WHERE id = ?2 AND currentCredits >= ?1"
     )
